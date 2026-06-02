@@ -821,6 +821,6 @@ button { font-family: var(--font); cursor: pointer; border: none; background: no
 }
 @media (max-width: 480px) {
   .hero-trust { flex-wrap: wrap; gap: 16px; }
-  .trust-divider { display: none; }
+  .trust-divider { display: block; }
   .int-cards-3col { grid-template-columns: 1fr 1fr; }
 }
