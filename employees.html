@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en-ZA">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>For Employees — Burse</title>
+  <meta name="description" content="Access your earned wages instantly before payday. No interest, no loans, no debt traps.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+  <style>
+    body, html { height: 100%; overflow: hidden; }
+    .hero { min-height: 100vh; display: flex; align-items: center; padding: 0; }
+    .hero-inner { grid-template-columns: 1fr; }
+    .hero-card { display: none; }
+  </style>
+</head>
+<body>
+
+  <!-- NAV -->
+  <header class="nav" id="nav">
+    <div class="nav-inner">
+      <a class="brand" href="index.html">
+        <span class="brand-b">B</span><span class="brand-urse">urse</span>
+      </a>
+      <div class="nav-ctas">
+        <a class="btn-cta-orange" href="dashboard.html">Get Started</a>
+      </div>
+      <button class="nav-hamburger" id="hamburger" aria-label="Menu">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+    <div class="nav-mobile" id="navMobile">
+      <a href="index.html">Home</a>
+      <a href="employees.html">For Employees</a>
+      <a href="employers.html">For Employers</a>
+      <a href="index.html#faq">FAQ</a>
+      <a href="login.html">Log In</a>
+      <a class="btn-primary" href="dashboard.html">Get Started</a>
+    </div>
+  </header>
+
+  <main>
+    <section class="hero" aria-labelledby="emp-title">
+      <div class="hero-bg-grid" aria-hidden="true"></div>
+      <div class="hero-glow" aria-hidden="true"></div>
+      <div class="container hero-inner">
+        <div>
+          <div class="hero-pill"><span class="pulse-dot"></span> For Employees</div>
+          <h1 id="emp-title">
+            Your money.<br>
+            <span class="grad-text">When you need it.</span>
+          </h1>
+          <p class="hero-sub">You've worked for it — now access it. Burse lets you withdraw your already-earned wages any day of the month. No interest. No loans. No stress.</p>
+          <div class="hero-actions">
+            <a class="btn-cta-orange btn-lg" href="dashboard.html">Access My Wages</a>
+            <a class="btn-outline btn-lg" href="index.html#how">How It Works</a>
+          </div>
+          <div class="hero-trust">
+            <div class="trust-item"><strong>R0</strong><span>Interest charged</span></div>
+            <div class="trust-divider"></div>
+            <div class="trust-item"><strong>2 min</strong><span>To set up</span></div>
+            <div class="trust-divider"></div>
+            <div class="trust-item"><strong>Instant</strong><span>Disbursements</span></div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    const nav = document.getElementById('nav');
+    const hamburger = document.getElementById('hamburger');
+    const navMobile = document.getElementById('navMobile');
+    hamburger.addEventListener('click', () => {
+      const open = navMobile.classList.toggle('open');
+      hamburger.classList.toggle('open', open);
+    });
+  </script>
+</body>
+</html>

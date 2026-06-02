@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<html lang="en-ZA">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Burse — My Dashboard</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+  <style>
+    /* Dashboard-only overrides */
+    body { background: #f0f4f8; }
+  </style>
+</head>
+<body class="dash-body">
+
+  <!-- ─── DASH NAV ─── -->
+  <nav class="dash-nav" aria-label="Dashboard navigation">
+    <a class="brand" href="index.html">
+      <span class="brand-b">B</span><span class="brand-urse">urse</span>
+    </a>
+    <div class="dash-user">
+      <div class="dash-avatar">NM</div>
+      <span class="dash-user-name">Nandi Mokoena</span>
+    </div>
+  </nav>
+
+  <div class="dash-layout">
+
+    <!-- ─── SIDEBAR ─── -->
+    <aside class="dash-sidebar" aria-label="Sidebar navigation">
+      <a href="dashboard.html" class="active"><span>💳</span> Dashboard</a>
+      <a href="#"><span>📤</span> Withdraw</a>
+      <a href="#"><span>📋</span> Transactions</a>
+      <a href="#"><span>🏦</span> Bank Account</a>
+      <a href="#"><span>📊</span> Wellness</a>
+      <a href="#"><span>⚙️</span> Settings</a>
+      <a href="index.html" style="margin-top:auto"><span>←</span> Back to site</a>
+    </aside>
+
+    <!-- ─── MAIN ─── -->
+    <main class="dash-main">
+
+      <div class="dash-greeting">
+        <h2>Good morning, Nandi 👋</h2>
+        <p>Monday, 2 June 2026 · June pay cycle · 2 of 3 withdrawals used</p>
+      </div>
+
+      <!-- Top cards -->
+      <div class="dash-top-cards">
+
+        <!-- Available card -->
+        <div class="dc dc-featured">
+          <div class="dc-label">Available to withdraw</div>
+          <div class="dc-val">R 4,260.00</div>
+          <div class="dc-sub">Based on 18 of 26 workdays earned</div>
+          <div class="dc-progress">
+            <div class="dc-progress-bar">
+              <div class="dc-progress-fill" style="width:68%"></div>
+            </div>
+            <div class="dc-progress-label">68% of pay cycle complete · payday 25 Jun</div>
+          </div>
+          <button class="withdraw-btn" onclick="openWithdrawModal()">Withdraw Now</button>
+        </div>
+
+        <!-- Monthly salary -->
+        <div class="dc">
+          <div class="dc-label">Monthly salary</div>
+          <div class="dc-val">R 18,500</div>
+          <div class="dc-sub">Gross · before deductions</div>
+        </div>
+
+        <!-- Withdrawn this cycle -->
+        <div class="dc">
+          <div class="dc-label">Withdrawn this cycle</div>
+          <div class="dc-val">R 1,500</div>
+          <div class="dc-sub">1 withdrawal · R10 fee paid</div>
+        </div>
+
+      </div>
+
+      <!-- Bottom section -->
+      <div class="dash-bottom">
+
+        <!-- Transactions -->
+        <div class="dc">
+          <div class="dash-section-title">Recent transactions</div>
+          <div class="tx-list">
+
+            <div class="tx-item">
+              <div class="tx-icon tx-icon-withdraw">💸</div>
+              <div class="tx-detail">
+                <strong>Wage withdrawal</strong>
+                <span>28 May 2026 · Capitec Bank ····4821</span>
+              </div>
+              <div class="tx-amount credit">+R 1,500.00</div>
+            </div>
+
+            <div class="tx-item">
+              <div class="tx-icon tx-icon-fee">🏷️</div>
+              <div class="tx-detail">
+                <strong>Burse withdrawal fee</strong>
+                <span>28 May 2026</span>
+              </div>
+              <div class="tx-amount debit">−R 10.00</div>
+            </div>
+
+            <div class="tx-item">
+              <div class="tx-icon tx-icon-payday">🏢</div>
+              <div class="tx-detail">
+                <strong>Salary — Retail Group (Pty) Ltd</strong>
+                <span>25 May 2026 · Full salary minus Burse deduction</span>
+              </div>
+              <div class="tx-amount credit">+R 16,990.00</div>
+            </div>
+
+            <div class="tx-item">
+              <div class="tx-icon tx-icon-withdraw">💸</div>
+              <div class="tx-detail">
+                <strong>Wage withdrawal</strong>
+                <span>12 May 2026 · Capitec Bank ····4821</span>
+              </div>
+              <div class="tx-amount credit">+R 2,000.00</div>
+            </div>
+
+            <div class="tx-item">
+              <div class="tx-icon tx-icon-fee">🏷️</div>
+              <div class="tx-detail">
+                <strong>Burse withdrawal fee</strong>
+                <span>12 May 2026</span>
+              </div>
+              <div class="tx-amount debit">−R 10.00</div>
+            </div>
+
+            <div class="tx-item">
+              <div class="tx-icon tx-icon-payday">🏢</div>
+              <div class="tx-detail">
+                <strong>Salary — Retail Group (Pty) Ltd</strong>
+                <span>26 Apr 2026 · Full salary minus Burse deductions</span>
+              </div>
+              <div class="tx-amount credit">+R 14,490.00</div>
+            </div>
+
+          </div>
+        </div>
+
+        <!-- Right column -->
+        <div style="display:flex;flex-direction:column;gap:20px">
+
+          <!-- Linked bank -->
+          <div class="dc" style="padding:0;overflow:hidden">
+            <div style="padding:20px 24px 0">
+              <div class="dash-section-title">Linked bank account</div>
+            </div>
+            <div class="bank-card" style="margin:0 20px 16px;border-radius:12px">
+              <div class="bank-card-label">Primary account</div>
+              <div class="bank-card-num">**** **** **** 4821</div>
+              <div class="bank-card-footer">
+                <span class="bank-card-bank">Capitec Bank</span>
+                <span class="bank-card-acc">Savings · Verified</span>
+              </div>
+            </div>
+            <div style="padding:0 20px 20px">
+              <a href="#" style="font-size:0.82rem;font-weight:600;color:var(--green)">Change bank account →</a>
+            </div>
+          </div>
+
+          <!-- Cycle limits -->
+          <div class="dc">
+            <div class="dash-section-title">Cycle limits</div>
+            <div class="limits-info">
+              <div class="limit-row">
+                <strong>Max per withdrawal</strong>
+                <span>R 6,250 <span class="limit-badge">50% of earned</span></span>
+              </div>
+              <div class="limit-row">
+                <strong>Withdrawals remaining</strong>
+                <span>1 of 3</span>
+              </div>
+              <div class="limit-row">
+                <strong>Payroll provider</strong>
+                <span>Sage Payroll ✓</span>
+              </div>
+              <div class="limit-row">
+                <strong>Next payday</strong>
+                <span>25 June 2026</span>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <!-- ─── WITHDRAW MODAL ─── -->
+  <div id="withdrawModal" class="modal-overlay" hidden onclick="closeIfOutside(event)">
+    <div class="modal-box" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+      <button class="modal-close" onclick="closeWithdrawModal()" aria-label="Close">✕</button>
+      <div class="modal-icon">💸</div>
+      <h2 id="modal-title">Withdraw wages</h2>
+      <p class="modal-sub">Available: <strong>R 4,260.00</strong> · Fee: R10 flat</p>
+
+      <div class="modal-amount-wrap">
+        <span class="modal-currency">R</span>
+        <input
+          id="withdrawAmount"
+          type="number"
+          class="modal-amount-input"
+          placeholder="0.00"
+          min="50"
+          max="4260"
+          step="50"
+          aria-label="Amount to withdraw"
+        >
+      </div>
+
+      <div class="modal-quick-btns">
+        <button onclick="setAmount(500)">R500</button>
+        <button onclick="setAmount(1000)">R1,000</button>
+        <button onclick="setAmount(2000)">R2,000</button>
+        <button onclick="setAmount(4260)">Max</button>
+      </div>
+
+      <div class="modal-to">
+        <span>To:</span>
+        <span>Capitec ····4821</span>
+      </div>
+
+      <div class="modal-disclaimer">
+        Funds arrive within 2 minutes. A flat R10 fee will be deducted. This is not a loan.
+      </div>
+
+      <button class="modal-confirm-btn" onclick="confirmWithdraw()">Confirm Withdrawal</button>
+    </div>
+  </div>
+
+  <!-- ─── SUCCESS TOAST ─── -->
+  <div id="successToast" class="toast" hidden>
+    ✅ Withdrawal sent! Funds arriving in ~2 minutes.
+  </div>
+
+  <style>
+    .modal-overlay {
+      position: fixed; inset: 0; z-index: 200;
+      background: rgba(10,22,40,0.7);
+      backdrop-filter: blur(6px);
+      display: flex; align-items: center; justify-content: center; padding: 24px;
+    }
+    .modal-overlay[hidden] { display: none; }
+    .modal-box {
+      background: #fff;
+      border-radius: 20px;
+      padding: 40px 36px;
+      max-width: 420px;
+      width: 100%;
+      position: relative;
+      text-align: center;
+      box-shadow: 0 24px 80px rgba(0,0,0,0.3);
+    }
+    .modal-close {
+      position: absolute; top: 16px; right: 16px;
+      width: 32px; height: 32px; border-radius: 50%;
+      background: #f0f4f8; font-size: 0.8rem; color: #4a5e72;
+      display: flex; align-items: center; justify-content: center;
+      transition: background 0.2s;
+    }
+    .modal-close:hover { background: #e2e8f0; }
+    .modal-icon { font-size: 2.4rem; margin-bottom: 12px; }
+    .modal-box h2 { font-size: 1.4rem; font-weight: 800; color: #0a1628; margin-bottom: 6px; }
+    .modal-sub { font-size: 0.88rem; color: #4a5e72; margin-bottom: 28px; }
+    .modal-sub strong { color: #00c264; }
+    .modal-amount-wrap {
+      display: flex; align-items: center; justify-content: center; gap: 8px;
+      margin-bottom: 16px;
+    }
+    .modal-currency { font-size: 1.8rem; font-weight: 800; color: #0a1628; }
+    .modal-amount-input {
+      font-family: 'Inter', sans-serif;
+      font-size: 2rem; font-weight: 900;
+      color: #0a1628;
+      border: none; outline: none;
+      border-bottom: 3px solid #00c264;
+      width: 160px; text-align: center;
+      padding-bottom: 4px;
+      background: transparent;
+      -moz-appearance: textfield;
+    }
+    .modal-amount-input::-webkit-outer-spin-button,
+    .modal-amount-input::-webkit-inner-spin-button { -webkit-appearance: none; }
+    .modal-quick-btns {
+      display: flex; gap: 8px; justify-content: center; flex-wrap: wrap;
+      margin-bottom: 24px;
+    }
+    .modal-quick-btns button {
+      padding: 7px 16px;
+      border-radius: 50px;
+      border: 1px solid #e2e8f0;
+      font-size: 0.82rem; font-weight: 600; color: #1e2d3d;
+      background: #f0f4f8;
+      transition: all 0.15s;
+    }
+    .modal-quick-btns button:hover { background: #00c264; color: #fff; border-color: #00c264; }
+    .modal-to {
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 12px 16px; background: #f0f4f8; border-radius: 8px;
+      font-size: 0.85rem; margin-bottom: 12px;
+    }
+    .modal-to span:first-child { color: #8099b0; }
+    .modal-to span:last-child { font-weight: 600; color: #1e2d3d; }
+    .modal-disclaimer {
+      font-size: 0.78rem; color: #8099b0; text-align: center;
+      margin-bottom: 24px; line-height: 1.5;
+    }
+    .modal-confirm-btn {
+      width: 100%; padding: 15px;
+      background: #00c264; color: #fff;
+      border-radius: 12px; font-weight: 700; font-size: 1rem;
+      transition: background 0.2s;
+    }
+    .modal-confirm-btn:hover { background: #009e50; }
+
+    .toast {
+      position: fixed; bottom: 28px; left: 50%; transform: translateX(-50%);
+      background: #0a1628; color: #fff;
+      padding: 14px 28px; border-radius: 50px;
+      font-size: 0.9rem; font-weight: 600;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+      z-index: 300;
+      animation: slideUp 0.3s ease;
+    }
+    .toast[hidden] { display: none; }
+    @keyframes slideUp {
+      from { transform: translateX(-50%) translateY(20px); opacity: 0; }
+      to   { transform: translateX(-50%) translateY(0); opacity: 1; }
+    }
+  </style>
+
+  <script>
+    function openWithdrawModal() {
+      document.getElementById('withdrawModal').hidden = false;
+      document.getElementById('withdrawAmount').focus();
+    }
+    function closeWithdrawModal() {
+      document.getElementById('withdrawModal').hidden = true;
+    }
+    function closeIfOutside(e) {
+      if (e.target === document.getElementById('withdrawModal')) closeWithdrawModal();
+    }
+    function setAmount(val) {
+      document.getElementById('withdrawAmount').value = val;
+    }
+    function confirmWithdraw() {
+      const amt = parseFloat(document.getElementById('withdrawAmount').value);
+      if (!amt || amt < 50) { alert('Please enter at least R50.'); return; }
+      if (amt > 4260)       { alert('Amount exceeds your available balance.'); return; }
+      closeWithdrawModal();
+      const toast = document.getElementById('successToast');
+      toast.hidden = false;
+      setTimeout(() => { toast.hidden = true; }, 4000);
+    }
+  </script>
+</body>
+</html>

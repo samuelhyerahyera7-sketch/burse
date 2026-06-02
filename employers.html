@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en-ZA">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>For Employers — Burse</title>
+  <meta name="description" content="Give your employees financial freedom at zero cost to your business.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+  <style>
+    body, html { height: 100%; overflow: hidden; }
+    .hero { min-height: 100vh; display: flex; align-items: center; padding: 0; }
+    .hero-inner { grid-template-columns: 1fr; }
+    .hero-card { display: none; }
+  </style>
+</head>
+<body>
+
+  <!-- NAV -->
+  <header class="nav" id="nav">
+    <div class="nav-inner">
+      <a class="brand" href="index.html">
+        <span class="brand-b">B</span><span class="brand-urse">urse</span>
+      </a>
+      <button class="nav-hamburger" id="hamburger" aria-label="Menu">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+    <div class="nav-mobile" id="navMobile">
+      <a href="index.html">Home</a>
+      <a href="employees.html">For Employees</a>
+      <a href="employers.html">For Employers</a>
+      <a href="index.html#faq">FAQ</a>
+      <a href="login.html">Log In</a>
+      <a class="btn-primary" href="mailto:employers@burse.co.za">Book a Demo</a>
+    </div>
+  </header>
+
+  <main>
+    <section class="hero" aria-labelledby="er-title">
+      <div class="hero-bg-grid" aria-hidden="true"></div>
+      <div class="hero-glow" aria-hidden="true"></div>
+      <div class="container hero-inner">
+        <div>
+          <p class="eyebrow" style="margin-bottom:14px;">Earned Wage Access</p>
+          <h1 id="er-title">
+            Retain talent.<br>
+            <span class="grad-text">Cost you nothing.</span>
+          </h1>
+          <p class="hero-sub">Give your employees access to their earned wages before payday — fully funded by Burse. Zero cost to your business, zero impact on your cash flow.</p>
+          <div class="hero-actions">
+            <a class="btn-outline btn-lg" href="mailto:hello@burse.co.za">Talk to Us</a>
+            <a class="btn-outline btn-lg" href="mailto:employers@burse.co.za">Book a Demo</a>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    const nav = document.getElementById('nav');
+    const hamburger = document.getElementById('hamburger');
+    const navMobile = document.getElementById('navMobile');
+    hamburger.addEventListener('click', () => {
+      const open = navMobile.classList.toggle('open');
+      hamburger.classList.toggle('open', open);
+    });
+  </script>
+</body>
+</html>
