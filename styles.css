@@ -285,7 +285,7 @@ button { font-family: var(--font); cursor: pointer; border: none; background: no
 .hero-trust { display: flex; align-items: center; gap: 28px; }
 .trust-item strong { display: block; font-size: 1.3rem; font-weight: 800; color: var(--navy); }
 .trust-item span { font-size: 0.76rem; color: var(--text-soft); }
-.trust-divider { width: 1px; height: 36px; background: var(--border); }
+.trust-divider { width: 1px; height: 36px; background: rgba(255,255,255,0.5); }
 
 /* Hero card */
 .hero-card { position: relative; z-index: 2; }
