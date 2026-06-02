@@ -21,16 +21,16 @@
 
     .login-wrap {
       width: 100%;
-      max-width: 420px;
-      padding: 24px;
+      max-width: 400px;
+      padding: 16px;
     }
 
     .login-logo {
       text-align: center;
-      margin-bottom: 32px;
+      margin-bottom: 16px;
     }
     .login-logo a {
-      font-size: 2rem;
+      font-size: 1.8rem;
       font-weight: 900;
       letter-spacing: -0.04em;
       text-decoration: none;
@@ -41,39 +41,37 @@
     .login-card {
       background: #ffffff;
       border-radius: 20px;
-      padding: 36px 32px;
+      padding: 24px 24px;
       box-shadow: 0 8px 40px rgba(10,20,60,0.1);
       border: 1px solid #e2e8f0;
     }
 
     .login-card h2 {
-      font-size: 1.5rem;
+      font-size: 1.3rem;
       font-weight: 800;
       color: #0e1c40;
-      margin-bottom: 6px;
+      margin-bottom: 4px;
     }
-    .login-card p {
-      font-size: 0.88rem;
+    .login-card > p {
+      font-size: 0.82rem;
       color: #7a8fb0;
-      margin-bottom: 28px;
+      margin-bottom: 16px;
     }
 
-    .form-group {
-      margin-bottom: 18px;
-    }
+    .form-group { margin-bottom: 12px; }
     .form-group label {
       display: block;
-      font-size: 0.82rem;
+      font-size: 0.78rem;
       font-weight: 600;
       color: #3d5070;
-      margin-bottom: 7px;
+      margin-bottom: 5px;
     }
     .form-group input {
       width: 100%;
-      padding: 12px 16px;
+      padding: 10px 14px;
       border: 1.5px solid #e2e8f0;
       border-radius: 10px;
-      font-size: 0.92rem;
+      font-size: 0.88rem;
       font-family: 'Inter', sans-serif;
       color: #0e1c40;
       background: #f8f9fb;
@@ -89,101 +87,53 @@
 
     .forgot {
       text-align: right;
-      margin-top: -10px;
-      margin-bottom: 24px;
+      margin-top: -6px;
+      margin-bottom: 16px;
     }
     .forgot a {
-      font-size: 0.8rem;
+      font-size: 0.76rem;
       color: #2ab3b3;
       font-weight: 600;
       text-decoration: none;
     }
-    .forgot a:hover { text-decoration: underline; }
 
     .btn-login {
       width: 100%;
-      padding: 14px;
+      padding: 12px;
       background: #1a2f72;
       color: #fff;
       border: none;
       border-radius: 10px;
-      font-size: 0.95rem;
+      font-size: 0.92rem;
       font-weight: 700;
       font-family: 'Inter', sans-serif;
       cursor: pointer;
-      transition: background 0.18s, transform 0.18s, box-shadow 0.18s;
+      transition: background 0.18s, transform 0.18s;
     }
-    .btn-login:hover {
-      background: #0e1c40;
-      transform: translateY(-1px);
-      box-shadow: 0 4px 16px rgba(26,47,114,0.3);
-    }
+    .btn-login:hover { background: #0e1c40; transform: translateY(-1px); }
 
     .error-msg {
       display: none;
       background: #fff0f0;
       border: 1px solid #fca5a5;
       color: #dc2626;
-      font-size: 0.82rem;
-      padding: 10px 14px;
+      font-size: 0.78rem;
+      padding: 8px 12px;
       border-radius: 8px;
-      margin-bottom: 16px;
+      margin-bottom: 12px;
       font-weight: 500;
     }
 
-    .login-divider {
-      text-align: center;
-      font-size: 0.8rem;
-      color: #b0bec5;
-      margin: 20px 0;
-      position: relative;
-    }
-    .login-divider::before, .login-divider::after {
-      content: '';
-      position: absolute;
-      top: 50%;
-      width: 42%;
-      height: 1px;
-      background: #e2e8f0;
-    }
-    .login-divider::before { left: 0; }
-    .login-divider::after  { right: 0; }
-
     .signup-row {
       text-align: center;
-      font-size: 0.85rem;
+      font-size: 0.82rem;
       color: #7a8fb0;
-      margin-top: 20px;
+      margin-top: 14px;
     }
     .signup-row a {
       color: #2ab3b3;
       font-weight: 700;
       text-decoration: none;
-    }
-    .signup-row a:hover { text-decoration: underline; }
-
-    .back-link {
-      text-align: center;
-      margin-top: 20px;
-    }
-    .back-link a {
-      font-size: 0.82rem;
-      color: #7a8fb0;
-      text-decoration: none;
-      font-weight: 500;
-    }
-    .back-link a:hover { color: #0e1c40; }
-
-    /* demo hint */
-    .demo-hint {
-      background: #e6f7f7;
-      border: 1px solid #b8e8e8;
-      border-radius: 8px;
-      padding: 10px 14px;
-      font-size: 0.78rem;
-      color: #1e9090;
-      margin-bottom: 20px;
-      font-weight: 500;
     }
   </style>
 </head>
