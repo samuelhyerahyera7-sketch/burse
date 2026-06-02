@@ -1,0 +1,548 @@
+<!DOCTYPE html>
+<html lang="en-ZA">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Burse Admin</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --navy:   #1e2a6e;
+      --teal:   #2ab3b3;
+      --white:  #ffffff;
+      --bg:     #f0f2f8;
+      --card:   #ffffff;
+      --border: #e2e8f0;
+      --text:   #0e1c40;
+      --mid:    #3d5070;
+      --soft:   #7a8fb0;
+      --red:    #dc2626;
+      --green:  #16a34a;
+      --orange: #f97316;
+    }
+    html, body { height: 100%; font-family: 'Inter', sans-serif; background: var(--bg); color: var(--text); }
+
+    /* ── Layout ── */
+    .admin-layout { display: grid; grid-template-columns: 220px 1fr; min-height: 100vh; }
+
+    /* ── Sidebar ── */
+    .sidebar {
+      background: var(--navy);
+      display: flex; flex-direction: column;
+      position: fixed; top: 0; left: 0; bottom: 0; width: 220px;
+      z-index: 50;
+    }
+    .sidebar-logo {
+      padding: 22px 20px 18px;
+      font-size: 1.5rem; font-weight: 900; letter-spacing: -0.04em;
+      border-bottom: 1px solid rgba(255,255,255,0.08);
+    }
+    .sidebar-logo .b  { color: var(--teal); }
+    .sidebar-logo .u  { color: var(--white); }
+    .sidebar-logo small { display: block; font-size: 0.65rem; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase; color: rgba(255,255,255,0.35); margin-top: 2px; }
+
+    .sidebar-nav { flex: 1; padding: 16px 10px; display: flex; flex-direction: column; gap: 2px; }
+    .nav-item {
+      display: flex; align-items: center; gap: 10px;
+      padding: 10px 12px; border-radius: 8px;
+      font-size: 0.875rem; font-weight: 500; color: rgba(255,255,255,0.55);
+      cursor: pointer; transition: all 0.15s; text-decoration: none;
+    }
+    .nav-item:hover { background: rgba(255,255,255,0.07); color: rgba(255,255,255,0.9); }
+    .nav-item.active { background: rgba(42,179,179,0.18); color: var(--teal); font-weight: 600; }
+    .nav-item .icon { font-size: 1rem; width: 20px; text-align: center; flex-shrink: 0; }
+
+    .sidebar-footer {
+      padding: 14px 10px;
+      border-top: 1px solid rgba(255,255,255,0.08);
+    }
+
+    /* ── Main ── */
+    .main { margin-left: 220px; min-height: 100vh; }
+
+    /* ── Top bar ── */
+    .topbar {
+      background: var(--card); border-bottom: 1px solid var(--border);
+      padding: 0 28px; height: 60px;
+      display: flex; align-items: center; justify-content: space-between;
+      position: sticky; top: 0; z-index: 40;
+    }
+    .topbar-title { font-size: 1rem; font-weight: 700; color: var(--text); }
+    .topbar-right { display: flex; align-items: center; gap: 12px; }
+    .admin-badge {
+      font-size: 0.7rem; font-weight: 700; letter-spacing: 0.08em;
+      text-transform: uppercase; background: rgba(42,179,179,0.12);
+      color: var(--teal); padding: 3px 10px; border-radius: 50px;
+    }
+    .topbar-avatar {
+      width: 34px; height: 34px; border-radius: 50%;
+      background: linear-gradient(135deg, var(--navy), var(--teal));
+      color: white; display: flex; align-items: center; justify-content: center;
+      font-size: 0.75rem; font-weight: 700; cursor: pointer;
+    }
+
+    /* ── Content ── */
+    .content { padding: 28px; }
+
+    /* ── Sections ── */
+    .section { display: none; }
+    .section.active { display: block; }
+
+    /* ── KPI Cards ── */
+    .kpi-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 24px; }
+    .kpi-card {
+      background: var(--card); border: 1px solid var(--border);
+      border-radius: 14px; padding: 20px;
+      box-shadow: 0 1px 3px rgba(10,20,60,0.06);
+    }
+    .kpi-label { font-size: 0.72rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--soft); margin-bottom: 8px; }
+    .kpi-val { font-size: 1.9rem; font-weight: 900; color: var(--text); letter-spacing: -0.03em; margin-bottom: 4px; }
+    .kpi-sub { font-size: 0.78rem; color: var(--soft); }
+    .kpi-card.accent { background: var(--navy); border-color: var(--navy); }
+    .kpi-card.accent .kpi-label { color: rgba(255,255,255,0.45); }
+    .kpi-card.accent .kpi-val { color: var(--white); }
+    .kpi-card.accent .kpi-sub { color: rgba(255,255,255,0.4); }
+
+    /* ── Cards ── */
+    .card {
+      background: var(--card); border: 1px solid var(--border);
+      border-radius: 14px; padding: 22px;
+      box-shadow: 0 1px 3px rgba(10,20,60,0.06);
+      margin-bottom: 20px;
+    }
+    .card-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 18px; }
+    .card-title { font-size: 0.92rem; font-weight: 700; color: var(--text); }
+    .card-action { font-size: 0.78rem; font-weight: 600; color: var(--teal); cursor: pointer; }
+
+    /* ── Table ── */
+    table { width: 100%; border-collapse: collapse; }
+    th { font-size: 0.7rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--soft); padding: 8px 12px; text-align: left; border-bottom: 1px solid var(--border); }
+    td { font-size: 0.83rem; color: var(--text); padding: 12px 12px; border-bottom: 1px solid var(--border); }
+    tr:last-child td { border-bottom: none; }
+    tr:hover td { background: #f8f9fb; }
+
+    /* ── Badges ── */
+    .badge { display: inline-flex; align-items: center; font-size: 0.68rem; font-weight: 700; padding: 3px 8px; border-radius: 50px; letter-spacing: 0.04em; }
+    .badge-green  { background: #dcfce7; color: #15803d; }
+    .badge-red    { background: #fee2e2; color: #dc2626; }
+    .badge-yellow { background: #fef3c7; color: #b45309; }
+    .badge-blue   { background: #dbeafe; color: #1d4ed8; }
+    .badge-gray   { background: #f1f5f9; color: #64748b; }
+
+    /* ── Search/Filter bar ── */
+    .filter-bar { display: flex; gap: 10px; margin-bottom: 16px; }
+    .search-input {
+      flex: 1; padding: 9px 14px; border: 1.5px solid var(--border);
+      border-radius: 8px; font-size: 0.85rem; font-family: 'Inter', sans-serif;
+      color: var(--text); outline: none; background: var(--card);
+    }
+    .search-input:focus { border-color: var(--teal); }
+    .filter-btn {
+      padding: 9px 16px; border: 1.5px solid var(--border);
+      border-radius: 8px; font-size: 0.82rem; font-weight: 600;
+      color: var(--mid); cursor: pointer; background: var(--card);
+      font-family: 'Inter', sans-serif;
+    }
+    .filter-btn:hover { border-color: var(--teal); color: var(--teal); }
+
+    /* ── Two col grid ── */
+    .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+
+    /* ── Activity feed ── */
+    .activity-item { display: flex; gap: 12px; padding: 10px 0; border-bottom: 1px solid var(--border); }
+    .activity-item:last-child { border-bottom: none; }
+    .activity-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--teal); flex-shrink: 0; margin-top: 6px; }
+    .activity-text { font-size: 0.82rem; color: var(--text); line-height: 1.5; }
+    .activity-time { font-size: 0.72rem; color: var(--soft); margin-top: 2px; }
+
+    /* ── Stats row ── */
+    .stats-row { display: grid; grid-template-columns: repeat(3,1fr); gap: 1px; background: var(--border); border-radius: 10px; overflow: hidden; margin-bottom: 20px; }
+    .stat-box { background: var(--card); padding: 16px; text-align: center; }
+    .stat-box strong { display: block; font-size: 1.4rem; font-weight: 800; color: var(--navy); }
+    .stat-box span { font-size: 0.75rem; color: var(--soft); }
+
+    /* ── Form ── */
+    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 14px; }
+    .form-group label { display: block; font-size: 0.78rem; font-weight: 600; color: var(--mid); margin-bottom: 5px; }
+    .form-group input, .form-group select {
+      width: 100%; padding: 9px 12px; border: 1.5px solid var(--border);
+      border-radius: 8px; font-size: 0.85rem; font-family: 'Inter', sans-serif;
+      color: var(--text); outline: none; background: var(--card);
+    }
+    .form-group input:focus, .form-group select:focus { border-color: var(--teal); }
+
+    .btn-primary {
+      padding: 10px 20px; background: var(--navy); color: white;
+      border: none; border-radius: 8px; font-size: 0.85rem; font-weight: 700;
+      font-family: 'Inter', sans-serif; cursor: pointer;
+    }
+    .btn-primary:hover { background: #162050; }
+    .btn-danger {
+      padding: 6px 12px; background: #fee2e2; color: var(--red);
+      border: none; border-radius: 6px; font-size: 0.75rem; font-weight: 700;
+      font-family: 'Inter', sans-serif; cursor: pointer;
+    }
+
+    /* ── Loading ── */
+    .loading { text-align: center; padding: 40px; color: var(--soft); font-size: 0.85rem; }
+
+    /* ── Page header ── */
+    .page-header { margin-bottom: 22px; }
+    .page-header h1 { font-size: 1.4rem; font-weight: 800; color: var(--text); margin-bottom: 3px; }
+    .page-header p { font-size: 0.83rem; color: var(--soft); }
+
+    @media (max-width: 1024px) {
+      .kpi-grid { grid-template-columns: repeat(2,1fr); }
+      .two-col { grid-template-columns: 1fr; }
+    }
+    @media (max-width: 768px) {
+      .admin-layout { grid-template-columns: 1fr; }
+      .sidebar { width: 100%; position: relative; height: auto; }
+      .main { margin-left: 0; }
+      .kpi-grid { grid-template-columns: 1fr 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+<div class="admin-layout">
+
+  <!-- ── SIDEBAR ── -->
+  <aside class="sidebar">
+    <div class="sidebar-logo">
+      <span class="b">B</span><span class="u">urse</span>
+      <small>Admin Dashboard</small>
+    </div>
+    <nav class="sidebar-nav">
+      <a class="nav-item active" onclick="showSection('overview')" href="#">
+        <span class="icon">📊</span> Overview
+      </a>
+      <a class="nav-item" onclick="showSection('users')" href="#">
+        <span class="icon">👥</span> Users
+      </a>
+      <a class="nav-item" onclick="showSection('transactions')" href="#">
+        <span class="icon">💸</span> Transactions
+      </a>
+      <a class="nav-item" onclick="showSection('employers')" href="#">
+        <span class="icon">🏢</span> Employers
+      </a>
+      <a class="nav-item" onclick="showSection('withdrawals')" href="#">
+        <span class="icon">⚡</span> Withdrawals
+      </a>
+      <a class="nav-item" onclick="showSection('settings')" href="#">
+        <span class="icon">⚙️</span> Settings
+      </a>
+    </nav>
+    <div class="sidebar-footer">
+      <a class="nav-item" href="index.html" style="text-decoration:none;">
+        <span class="icon">←</span> Back to site
+      </a>
+      <a class="nav-item" onclick="signOut()" href="#" style="color:#f87171;">
+        <span class="icon">🚪</span> Sign out
+      </a>
+    </div>
+  </aside>
+
+  <!-- ── MAIN ── -->
+  <div class="main">
+
+    <!-- Top bar -->
+    <div class="topbar">
+      <span class="topbar-title" id="topbarTitle">Overview</span>
+      <div class="topbar-right">
+        <span class="admin-badge">Admin</span>
+        <div class="topbar-avatar" id="adminAvatar">A</div>
+      </div>
+    </div>
+
+    <div class="content">
+
+      <!-- ══ OVERVIEW ══ -->
+      <div class="section active" id="section-overview">
+        <div class="page-header">
+          <h1>Dashboard Overview</h1>
+          <p>Welcome back. Here's what's happening with Burse today.</p>
+        </div>
+
+        <div class="kpi-grid">
+          <div class="kpi-card accent">
+            <div class="kpi-label">Total Users</div>
+            <div class="kpi-val" id="stat-users">—</div>
+            <div class="kpi-sub">Registered employees</div>
+          </div>
+          <div class="kpi-card">
+            <div class="kpi-label">Total Withdrawn</div>
+            <div class="kpi-val" id="stat-withdrawn">—</div>
+            <div class="kpi-sub">This month</div>
+          </div>
+          <div class="kpi-card">
+            <div class="kpi-label">Active Employers</div>
+            <div class="kpi-val" id="stat-employers">—</div>
+            <div class="kpi-sub">Connected payrolls</div>
+          </div>
+          <div class="kpi-card">
+            <div class="kpi-label">Revenue (fees)</div>
+            <div class="kpi-val" id="stat-revenue">—</div>
+            <div class="kpi-sub">R10 per withdrawal</div>
+          </div>
+        </div>
+
+        <div class="two-col">
+          <div class="card">
+            <div class="card-header">
+              <span class="card-title">Recent Activity</span>
+              <span class="card-action" onclick="showSection('transactions')">View all →</span>
+            </div>
+            <div id="recent-activity">
+              <div class="activity-item"><div class="activity-dot"></div><div><div class="activity-text">New user registered</div><div class="activity-time">Just now</div></div></div>
+              <div class="activity-item"><div class="activity-dot" style="background:#f97316"></div><div><div class="activity-text">Withdrawal of R1,200 processed</div><div class="activity-time">2 min ago</div></div></div>
+              <div class="activity-item"><div class="activity-dot" style="background:#16a34a"></div><div><div class="activity-text">New employer onboarded — Acme Corp</div><div class="activity-time">15 min ago</div></div></div>
+              <div class="activity-item"><div class="activity-dot"></div><div><div class="activity-text">Withdrawal of R800 processed</div><div class="activity-time">1 hr ago</div></div></div>
+              <div class="activity-item"><div class="activity-dot" style="background:#f97316"></div><div><div class="activity-text">Withdrawal of R3,500 processed</div><div class="activity-time">2 hrs ago</div></div></div>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-header">
+              <span class="card-title">Platform Health</span>
+            </div>
+            <div class="stats-row">
+              <div class="stat-box"><strong>99.9%</strong><span>Uptime</span></div>
+              <div class="stat-box"><strong>1.2s</strong><span>Avg payout</span></div>
+              <div class="stat-box"><strong>0</strong><span>Failed txns</span></div>
+            </div>
+            <div style="display:flex;flex-direction:column;gap:10px;">
+              <div style="display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid var(--border);">
+                <span style="font-size:0.83rem;color:var(--mid);">Ozow disbursements</span>
+                <span class="badge badge-green">Operational</span>
+              </div>
+              <div style="display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid var(--border);">
+                <span style="font-size:0.83rem;color:var(--mid);">Payroll sync</span>
+                <span class="badge badge-green">Operational</span>
+              </div>
+              <div style="display:flex;justify-content:space-between;align-items:center;padding:10px 0;">
+                <span style="font-size:0.83rem;color:var(--mid);">Identity verification</span>
+                <span class="badge badge-green">Operational</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ══ USERS ══ -->
+      <div class="section" id="section-users">
+        <div class="page-header">
+          <h1>Users</h1>
+          <p>All registered employees on the Burse platform.</p>
+        </div>
+        <div class="card">
+          <div class="filter-bar">
+            <input class="search-input" placeholder="Search by name or email..." id="userSearch" oninput="filterUsers()">
+            <button class="filter-btn">Filter</button>
+            <button class="filter-btn" style="background:var(--navy);color:white;border-color:var(--navy);">Export</button>
+          </div>
+          <div id="users-table-wrap">
+            <div class="loading">Loading users...</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ══ TRANSACTIONS ══ -->
+      <div class="section" id="section-transactions">
+        <div class="page-header">
+          <h1>Transactions</h1>
+          <p>All withdrawal transactions processed through Burse.</p>
+        </div>
+        <div class="card">
+          <div class="filter-bar">
+            <input class="search-input" placeholder="Search transactions...">
+            <button class="filter-btn">This Month</button>
+            <button class="filter-btn">Export CSV</button>
+          </div>
+          <table>
+            <thead>
+              <tr><th>ID</th><th>Employee</th><th>Amount</th><th>Fee</th><th>Bank</th><th>Date</th><th>Status</th></tr>
+            </thead>
+            <tbody>
+              <tr><td>#TXN-001</td><td>Nandi Mokoena</td><td>R 1,500</td><td>R 10</td><td>Capitec</td><td>02 Jun 2026</td><td><span class="badge badge-green">Completed</span></td></tr>
+              <tr><td>#TXN-002</td><td>Thabo Khumalo</td><td>R 3,200</td><td>R 10</td><td>FNB</td><td>02 Jun 2026</td><td><span class="badge badge-green">Completed</span></td></tr>
+              <tr><td>#TXN-003</td><td>Lerato Venter</td><td>R 800</td><td>R 10</td><td>Standard Bank</td><td>01 Jun 2026</td><td><span class="badge badge-green">Completed</span></td></tr>
+              <tr><td>#TXN-004</td><td>Kagiso Sithole</td><td>R 2,100</td><td>R 10</td><td>Nedbank</td><td>01 Jun 2026</td><td><span class="badge badge-yellow">Pending</span></td></tr>
+              <tr><td>#TXN-005</td><td>Sipho Dlamini</td><td>R 500</td><td>R 10</td><td>TymeBank</td><td>31 May 2026</td><td><span class="badge badge-green">Completed</span></td></tr>
+              <tr><td>#TXN-006</td><td>Nomsa Zulu</td><td>R 4,000</td><td>R 10</td><td>Absa</td><td>30 May 2026</td><td><span class="badge badge-red">Failed</span></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- ══ EMPLOYERS ══ -->
+      <div class="section" id="section-employers">
+        <div class="page-header">
+          <h1>Employers</h1>
+          <p>Companies connected to the Burse platform.</p>
+        </div>
+        <div class="card">
+          <div class="filter-bar">
+            <input class="search-input" placeholder="Search employers...">
+            <button class="filter-btn">Add Employer</button>
+          </div>
+          <table>
+            <thead>
+              <tr><th>Company</th><th>Payroll</th><th>Employees</th><th>Withdrawals</th><th>Joined</th><th>Status</th></tr>
+            </thead>
+            <tbody>
+              <tr><td><strong>Acme Corp</strong></td><td>Sage Payroll</td><td>245</td><td>87</td><td>Jan 2026</td><td><span class="badge badge-green">Active</span></td></tr>
+              <tr><td><strong>Retail SA</strong></td><td>PaySpace</td><td>1,204</td><td>432</td><td>Feb 2026</td><td><span class="badge badge-green">Active</span></td></tr>
+              <tr><td><strong>Logistics Ltd</strong></td><td>SimplePay</td><td>88</td><td>21</td><td>Mar 2026</td><td><span class="badge badge-green">Active</span></td></tr>
+              <tr><td><strong>FinTech Co</strong></td><td>Deel</td><td>32</td><td>9</td><td>Apr 2026</td><td><span class="badge badge-yellow">Pending</span></td></tr>
+              <tr><td><strong>Mining Group</strong></td><td>Paymaster</td><td>560</td><td>0</td><td>May 2026</td><td><span class="badge badge-gray">Inactive</span></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- ══ WITHDRAWALS ══ -->
+      <div class="section" id="section-withdrawals">
+        <div class="page-header">
+          <h1>Withdrawal Requests</h1>
+          <p>Pending and processed withdrawal requests.</p>
+        </div>
+        <div class="kpi-grid" style="grid-template-columns:repeat(3,1fr)">
+          <div class="kpi-card"><div class="kpi-label">Pending</div><div class="kpi-val">4</div><div class="kpi-sub">Awaiting processing</div></div>
+          <div class="kpi-card accent"><div class="kpi-label">Today's Volume</div><div class="kpi-val">R 18,400</div><div class="kpi-sub">12 withdrawals</div></div>
+          <div class="kpi-card"><div class="kpi-label">This Month</div><div class="kpi-val">R 284,500</div><div class="kpi-sub">192 withdrawals</div></div>
+        </div>
+        <div class="card">
+          <div class="card-header"><span class="card-title">Pending Approvals</span></div>
+          <table>
+            <thead>
+              <tr><th>Employee</th><th>Employer</th><th>Amount</th><th>Requested</th><th>Action</th></tr>
+            </thead>
+            <tbody>
+              <tr><td>Kagiso Sithole</td><td>Acme Corp</td><td>R 2,100</td><td>02 Jun, 14:32</td><td><button class="btn-primary" style="padding:5px 12px;font-size:0.75rem;margin-right:6px;">Approve</button><button class="btn-danger">Decline</button></td></tr>
+              <tr><td>Bongani Ndlovu</td><td>Retail SA</td><td>R 900</td><td>02 Jun, 13:10</td><td><button class="btn-primary" style="padding:5px 12px;font-size:0.75rem;margin-right:6px;">Approve</button><button class="btn-danger">Decline</button></td></tr>
+              <tr><td>Zanele Moyo</td><td>Retail SA</td><td>R 1,750</td><td>02 Jun, 11:55</td><td><button class="btn-primary" style="padding:5px 12px;font-size:0.75rem;margin-right:6px;">Approve</button><button class="btn-danger">Decline</button></td></tr>
+              <tr><td>Tebogo Lekgoa</td><td>Logistics Ltd</td><td>R 600</td><td>02 Jun, 09:20</td><td><button class="btn-primary" style="padding:5px 12px;font-size:0.75rem;margin-right:6px;">Approve</button><button class="btn-danger">Decline</button></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- ══ SETTINGS ══ -->
+      <div class="section" id="section-settings">
+        <div class="page-header">
+          <h1>Settings</h1>
+          <p>Configure platform-wide settings for Burse.</p>
+        </div>
+        <div class="two-col">
+          <div class="card">
+            <div class="card-header"><span class="card-title">Withdrawal Limits</span></div>
+            <div class="form-row">
+              <div class="form-group"><label>Max withdrawal per transaction</label><input type="text" value="R 10,000"></div>
+              <div class="form-group"><label>Max withdrawals per cycle</label><input type="number" value="3"></div>
+            </div>
+            <div class="form-row">
+              <div class="form-group"><label>Earned wage cap (%)</label><input type="number" value="50"></div>
+              <div class="form-group"><label>Withdrawal fee (R)</label><input type="number" value="10"></div>
+            </div>
+            <button class="btn-primary">Save Changes</button>
+          </div>
+          <div class="card">
+            <div class="card-header"><span class="card-title">Platform Info</span></div>
+            <div class="form-row">
+              <div class="form-group"><label>Platform Name</label><input type="text" value="Burse"></div>
+              <div class="form-group"><label>Support Email</label><input type="email" value="support@burse.co.za"></div>
+            </div>
+            <div class="form-group" style="margin-bottom:14px;"><label>NCR Registration Number</label><input type="text" value="NCRCP XXXX"></div>
+            <button class="btn-primary">Save Changes</button>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- /content -->
+  </div><!-- /main -->
+</div><!-- /layout -->
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+  const { createClient } = supabase;
+  const sb = createClient(
+    'https://lhrdunranqragptqouan.supabase.co',
+    'sb_publishable_DOXudlz8DvPusUsTWZezkQ_bryvuzg-'
+  );
+
+  // Auth check
+  sb.auth.getSession().then(({ data }) => {
+    if (!data.session) {
+      window.location.href = 'index.html';
+    } else {
+      const email = data.session.user.email;
+      document.getElementById('adminAvatar').textContent = email[0].toUpperCase();
+      loadStats();
+      loadUsers();
+    }
+  });
+
+  // Sign out
+  async function signOut() {
+    await sb.auth.signOut();
+    window.location.href = 'index.html';
+  }
+
+  // Section navigation
+  function showSection(name) {
+    document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+    document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+    document.getElementById('section-' + name).classList.add('active');
+    event.currentTarget.classList.add('active');
+    const titles = { overview:'Overview', users:'Users', transactions:'Transactions', employers:'Employers', withdrawals:'Withdrawals', settings:'Settings' };
+    document.getElementById('topbarTitle').textContent = titles[name] || name;
+  }
+
+  // Load stats from Supabase
+  async function loadStats() {
+    const { data: users } = await sb.from('profiles').select('id', { count: 'exact', head: true });
+    const count = users ? Object.keys(users).length : '—';
+    // Update KPIs with live data when tables exist
+    document.getElementById('stat-users').textContent = '—';
+    document.getElementById('stat-withdrawn').textContent = 'R —';
+    document.getElementById('stat-employers').textContent = '—';
+    document.getElementById('stat-revenue').textContent = 'R —';
+  }
+
+  // Load users from Supabase auth
+  async function loadUsers() {
+    const wrap = document.getElementById('users-table-wrap');
+    try {
+      const { data: { users }, error } = await sb.auth.admin?.listUsers?.() || { data: { users: null } };
+      if (!users || users.length === 0) {
+        wrap.innerHTML = `
+          <table>
+            <thead><tr><th>Email</th><th>Created</th><th>Last Sign In</th><th>Status</th></tr></thead>
+            <tbody>
+              <tr><td colspan="4" style="text-align:center;color:var(--soft);padding:30px;">No users yet — they'll appear here once people sign up.</td></tr>
+            </tbody>
+          </table>`;
+      }
+    } catch(e) {
+      wrap.innerHTML = `
+        <table>
+          <thead><tr><th>Email</th><th>Created</th><th>Last Sign In</th><th>Status</th></tr></thead>
+          <tbody id="users-tbody">
+            <tr><td colspan="4" style="text-align:center;color:var(--soft);padding:30px;">Users will appear here once they register.</td></tr>
+          </tbody>
+        </table>`;
+    }
+  }
+
+  function filterUsers() {
+    const q = document.getElementById('userSearch').value.toLowerCase();
+    document.querySelectorAll('#users-tbody tr').forEach(row => {
+      row.style.display = row.textContent.toLowerCase().includes(q) ? '' : 'none';
+    });
+  }
+</script>
+</body>
+</html>
