@@ -182,10 +182,13 @@
     </div>
 
     <div class="login-card">
-      <h2>Welcome back</h2>
-      <p>Log in to access your earned wages.</p>
+      <h2 id="authTitle">Welcome back</h2>
+      <p id="authSubtitle">Log in to access your earned wages.</p>
 
-      <div class="error-msg" id="errorMsg">Incorrect email or password. Please try again.</div>
+      <div class="error-msg" id="errorMsg"></div>
+      <div class="error-msg" id="successMsg" style="background:#e6f7f7;border-color:#2ab3b3;color:#1e9090;">
+        Account created! Check your email to confirm then log in.
+      </div>
 
       <form id="loginForm" onsubmit="handleLogin(event)">
         <div class="form-group">
@@ -201,7 +204,8 @@
       </form>
 
       <div class="signup-row">
-        Don't have an account? <a href="#" onclick="showLogin(); return false;">Get started free</a>
+        <span id="switchText">Don't have an account?</span>
+        <a href="#" id="switchLink" onclick="toggleMode(); return false;">Sign up free</a>
       </div>
     </div>
 
@@ -209,7 +213,15 @@
 
   </div>
 
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script>
+    // Supabase
+    const { createClient } = supabase;
+    const sb = createClient(
+      'https://lhrdunranqragptqouan.supabase.co',
+      'sb_publishable_DOXudlz8DvPusUsTWZezkQ_bryvuzg-'
+    );
+
     // Nav scroll
     const nav = document.getElementById('nav');
     window.addEventListener('scroll', () => nav.classList.toggle('scrolled', window.scrollY > 20));
@@ -226,6 +238,7 @@
     function showLogin() {
       document.getElementById('screen-home').classList.add('slide-out');
       document.getElementById('screen-login').classList.add('slide-in');
+      setMode('login');
     }
 
     // Show home screen
@@ -234,22 +247,79 @@
       document.getElementById('screen-login').classList.remove('slide-in');
     }
 
-    // Handle login
-    function handleLogin(e) {
-      e.preventDefault();
-      const password = document.getElementById('password').value;
-      const errorMsg = document.getElementById('errorMsg');
+    // Toggle between login and signup
+    let currentMode = 'login';
+    function setMode(mode) {
+      currentMode = mode;
+      const title = document.getElementById('authTitle');
+      const subtitle = document.getElementById('authSubtitle');
       const btn = document.getElementById('loginBtn');
-
-      if (password === 'demo123') {
-        btn.textContent = 'Logging in...';
-        setTimeout(() => { window.location.href = 'dashboard.html'; }, 800);
+      const switchText = document.getElementById('switchText');
+      const switchLink = document.getElementById('switchLink');
+      document.getElementById('errorMsg').style.display = 'none';
+      document.getElementById('successMsg').style.display = 'none';
+      if (mode === 'login') {
+        title.textContent = 'Welcome back';
+        subtitle.textContent = 'Log in to access your earned wages.';
+        btn.textContent = 'Log In';
+        switchText.textContent = "Don't have an account?";
+        switchLink.textContent = 'Sign up free';
       } else {
-        errorMsg.style.display = 'block';
-        document.getElementById('password').value = '';
-        document.getElementById('password').focus();
+        title.textContent = 'Create account';
+        subtitle.textContent = 'Sign up to access your earned wages.';
+        btn.textContent = 'Sign Up';
+        switchText.textContent = 'Already have an account?';
+        switchLink.textContent = 'Log in';
       }
     }
+
+    function toggleMode() {
+      setMode(currentMode === 'login' ? 'signup' : 'login');
+    }
+
+    // Handle login / signup
+    async function handleLogin(e) {
+      e.preventDefault();
+      const email = document.getElementById('email').value;
+      const password = document.getElementById('password').value;
+      const errorMsg = document.getElementById('errorMsg');
+      const successMsg = document.getElementById('successMsg');
+      const btn = document.getElementById('loginBtn');
+
+      errorMsg.style.display = 'none';
+      successMsg.style.display = 'none';
+      btn.textContent = currentMode === 'login' ? 'Logging in...' : 'Creating account...';
+      btn.disabled = true;
+
+      if (currentMode === 'login') {
+        const { data, error } = await sb.auth.signInWithPassword({ email, password });
+        if (error) {
+          errorMsg.textContent = error.message;
+          errorMsg.style.display = 'block';
+          btn.textContent = 'Log In';
+          btn.disabled = false;
+        } else {
+          window.location.href = 'dashboard.html';
+        }
+      } else {
+        const { data, error } = await sb.auth.signUp({ email, password });
+        if (error) {
+          errorMsg.textContent = error.message;
+          errorMsg.style.display = 'block';
+          btn.textContent = 'Sign Up';
+          btn.disabled = false;
+        } else {
+          successMsg.style.display = 'block';
+          btn.textContent = 'Sign Up';
+          btn.disabled = false;
+        }
+      }
+    }
+
+    // Check if already logged in
+    sb.auth.getSession().then(({ data }) => {
+      if (data.session) window.location.href = 'dashboard.html';
+    });
   </script>
 
 </body>
