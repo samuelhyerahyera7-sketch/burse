@@ -9,39 +9,146 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="styles.css">
+  <style>
+    html, body { height: 100%; overflow: hidden; }
+
+    /* ── Two full-screen screens ── */
+    .screen {
+      position: fixed;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      transition: transform 0.5s cubic-bezier(0.77,0,0.18,1), opacity 0.5s ease;
+    }
+
+    /* Home screen */
+    #screen-home {
+      transform: translateX(0);
+      opacity: 1;
+      z-index: 1;
+    }
+    #screen-home.slide-out {
+      transform: translateX(-100%);
+      opacity: 0;
+    }
+
+    /* Login screen */
+    #screen-login {
+      transform: translateX(100%);
+      opacity: 0;
+      z-index: 2;
+      background: #f5f7ff;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+    }
+    #screen-login.slide-in {
+      transform: translateX(0);
+      opacity: 1;
+    }
+
+    /* ── Login styles ── */
+    .login-logo {
+      text-align: center;
+      margin-bottom: 16px;
+    }
+    .login-logo span {
+      font-size: 1.8rem;
+      font-weight: 900;
+      letter-spacing: -0.04em;
+      cursor: pointer;
+    }
+    .login-logo .brand-b   { color: #2ab3b3; }
+    .login-logo .brand-urse { color: #1a2f72; }
+
+    .login-card {
+      background: #fff;
+      border-radius: 20px;
+      padding: 24px;
+      box-shadow: 0 8px 40px rgba(10,20,60,0.1);
+      border: 1px solid #e2e8f0;
+      width: 100%;
+      max-width: 400px;
+    }
+    .login-card h2 { font-size: 1.3rem; font-weight: 800; color: #0e1c40; margin-bottom: 4px; font-family: 'Inter', sans-serif; }
+    .login-card > p { font-size: 0.82rem; color: #7a8fb0; margin-bottom: 16px; font-family: 'Inter', sans-serif; }
+
+    .form-group { margin-bottom: 12px; }
+    .form-group label { display: block; font-size: 0.78rem; font-weight: 600; color: #3d5070; margin-bottom: 5px; font-family: 'Inter', sans-serif; }
+    .form-group input {
+      width: 100%; padding: 10px 14px;
+      border: 1.5px solid #e2e8f0; border-radius: 10px;
+      font-size: 0.88rem; font-family: 'Inter', sans-serif;
+      color: #0e1c40; background: #f8f9fb; outline: none;
+      transition: border-color 0.18s, box-shadow 0.18s;
+    }
+    .form-group input:focus { border-color: #2ab3b3; box-shadow: 0 0 0 3px rgba(42,179,179,0.15); background: #fff; }
+    .form-group input::placeholder { color: #b0bec5; }
+
+    .forgot { text-align: right; margin-top: -6px; margin-bottom: 16px; }
+    .forgot a { font-size: 0.76rem; color: #2ab3b3; font-weight: 600; text-decoration: none; font-family: 'Inter', sans-serif; }
+
+    .btn-login {
+      width: 100%; padding: 12px;
+      background: #1a2f72; color: #fff;
+      border: none; border-radius: 10px;
+      font-size: 0.92rem; font-weight: 700; font-family: 'Inter', sans-serif;
+      cursor: pointer; transition: background 0.18s;
+    }
+    .btn-login:hover { background: #0e1c40; }
+
+    .error-msg {
+      display: none; background: #fff0f0;
+      border: 1px solid #fca5a5; color: #dc2626;
+      font-size: 0.78rem; padding: 8px 12px;
+      border-radius: 8px; margin-bottom: 12px;
+      font-weight: 500; font-family: 'Inter', sans-serif;
+    }
+
+    .signup-row { text-align: center; font-size: 0.82rem; color: #7a8fb0; margin-top: 14px; font-family: 'Inter', sans-serif; }
+    .signup-row a { color: #2ab3b3; font-weight: 700; text-decoration: none; }
+
+    .back-btn {
+      margin-top: 14px; font-size: 0.8rem; color: #7a8fb0;
+      cursor: pointer; font-family: 'Inter', sans-serif;
+      background: none; border: none; font-weight: 500;
+    }
+    .back-btn:hover { color: #0e1c40; }
+  </style>
 </head>
 <body>
 
-  <!-- ─── NAV ─── -->
-  <header class="nav" id="nav">
-    <div class="nav-inner">
-      <a class="brand" href="index.html">
-        <span class="brand-b">B</span><span class="brand-urse">urse</span>
-      </a>
-      <div class="nav-ctas">
-        <a class="btn-cta-orange" href="dashboard.html">Get Started</a>
+  <!-- ══════════ SCREEN 1 — HOMEPAGE ══════════ -->
+  <div class="screen" id="screen-home">
+
+    <!-- NAV -->
+    <header class="nav" id="nav">
+      <div class="nav-inner">
+        <a class="brand" href="#" onclick="return false;">
+          <span class="brand-b">B</span><span class="brand-urse">urse</span>
+        </a>
+        <div class="nav-ctas">
+          <button class="btn-cta-orange" onclick="showLogin()">Get Started</button>
+        </div>
+        <button class="nav-hamburger" id="hamburger" aria-label="Menu">
+          <span></span><span></span><span></span>
+        </button>
       </div>
-      <button class="nav-hamburger" id="hamburger" aria-label="Menu">
-        <span></span><span></span><span></span>
-      </button>
-    </div>
-    <div class="nav-mobile" id="navMobile">
-      <a href="index.html">Home</a>
-      <a href="employees.html">For Employees</a>
-      <a href="employers.html">For Employers</a>
-      <a href="#faq">FAQ</a>
-      <a href="login.html">Log In</a>
-      <a class="btn-primary" href="dashboard.html">Get Started</a>
-    </div>
-  </header>
+      <div class="nav-mobile" id="navMobile">
+        <a href="employees.html">For Employees</a>
+        <a href="employers.html">For Employers</a>
+        <a href="#" onclick="showLogin(); return false;">Log In</a>
+        <a class="btn-primary" href="#" onclick="showLogin(); return false;">Get Started</a>
+      </div>
+    </header>
 
-  <main>
-
-    <!-- ─── HERO ─── -->
-    <section class="hero" aria-labelledby="hero-title">
+    <!-- HERO -->
+    <section class="hero" style="min-height:100vh; display:flex; align-items:center;">
       <div class="hero-bg-grid" aria-hidden="true"></div>
       <div class="hero-glow" aria-hidden="true"></div>
-      <div class="container hero-inner">
+      <div class="container" style="position:relative;z-index:2;">
         <h1 id="hero-title">
           Earned wages.<br>
           Paid when you've<br>
@@ -51,679 +158,100 @@
           Burse connects to your employer's payroll and lets you withdraw your already-earned wages instantly — any day of the month. No interest. No loans. No debt traps.
         </p>
         <div class="hero-actions">
-          <a class="btn-primary btn-lg" href="dashboard.html">Access My Wages</a>
-          <a class="btn-outline btn-lg" href="#employers">I'm an Employer</a>
+          <button class="btn-cta-orange btn-lg" onclick="showLogin()">Access My Wages</button>
+          <a class="btn-outline btn-lg" href="employers.html">I'm an Employer</a>
         </div>
         <div class="hero-trust">
-          <div class="trust-item">
-            <strong>R0</strong>
-            <span>Interest charged</span>
-          </div>
-          <div class="trust-divider" aria-hidden="true"></div>
-          <div class="trust-item">
-            <strong>2 min</strong>
-            <span>To set up</span>
-          </div>
-          <div class="trust-divider" aria-hidden="true"></div>
-          <div class="trust-item">
-            <strong>Instant</strong>
-            <span>Disbursements</span>
-          </div>
-        </div>
-      </div>
-
-      <!-- floating card mockup -->
-      <div class="hero-card" aria-hidden="true">
-        <div class="hero-card-inner">
-          <div class="hc-label">Available to withdraw</div>
-          <div class="hc-amount">R 4,260.00</div>
-          <div class="hc-progress-wrap">
-            <div class="hc-progress-bar">
-              <div class="hc-progress-fill" style="width:68%"></div>
-            </div>
-            <span class="hc-progress-label">18 of 26 workdays earned</span>
-          </div>
-          <button class="hc-btn">Withdraw Now</button>
-          <div class="hc-badges">
-            <span>✓ NCR compliant</span>
-            <span>✓ POPIA protected</span>
-          </div>
+          <div class="trust-item"><strong>R0</strong><span>Interest charged</span></div>
+          <div class="trust-divider"></div>
+          <div class="trust-item"><strong>2 min</strong><span>To set up</span></div>
+          <div class="trust-divider"></div>
+          <div class="trust-item"><strong>Instant</strong><span>Disbursements</span></div>
         </div>
       </div>
     </section>
 
+  </div>
 
-    <!-- ─── LOGOS BAR ─── -->
-    <div class="logos-bar">
-      <div class="container logos-bar-inner">
-        <span class="logos-bar-label">Trusted integrations</span>
-        <div class="logos-list">
-          <span class="logo-chip">Sage Payroll</span>
-          <span class="logo-chip">PaySpace</span>
-          <span class="logo-chip">Deel</span>
-          <span class="logo-chip">Ozow</span>
-          <span class="logo-chip">Peach Payments</span>
-          <span class="logo-chip">Stitch</span>
-          <span class="logo-chip">Netcash</span>
-          <span class="logo-chip">Capitec</span>
-          <span class="logo-chip">FNB</span>
+  <!-- ══════════ SCREEN 2 — LOGIN ══════════ -->
+  <div class="screen" id="screen-login">
+
+    <div class="login-logo">
+      <span onclick="showHome()">
+        <span class="brand-b">B</span><span class="brand-urse">urse</span>
+      </span>
+    </div>
+
+    <div class="login-card">
+      <h2>Welcome back</h2>
+      <p>Log in to access your earned wages.</p>
+
+      <div class="error-msg" id="errorMsg">Incorrect email or password. Please try again.</div>
+
+      <form id="loginForm" onsubmit="handleLogin(event)">
+        <div class="form-group">
+          <label for="email">Email address</label>
+          <input type="email" id="email" placeholder="you@example.com" required autocomplete="email">
         </div>
+        <div class="form-group">
+          <label for="password">Password</label>
+          <input type="password" id="password" placeholder="Enter your password" required autocomplete="current-password">
+        </div>
+        <div class="forgot"><a href="#">Forgot password?</a></div>
+        <button type="submit" class="btn-login" id="loginBtn">Log In</button>
+      </form>
+
+      <div class="signup-row">
+        Don't have an account? <a href="#" onclick="showLogin(); return false;">Get started free</a>
       </div>
     </div>
 
-    <!-- ─── HOW IT WORKS ─── -->
-    <section class="section section-alt" id="how" aria-labelledby="how-title">
-      <div class="container">
-        <div class="section-head">
-          <p class="eyebrow">Simple by design</p>
-          <h2 id="how-title">How Burse works</h2>
-          <p class="section-sub">Three steps between you and your money.</p>
-        </div>
+    <button class="back-btn" onclick="showHome()">← Back to Burse</button>
 
-        <div class="tab-toggle" role="tablist">
-          <button class="tab active" role="tab" aria-selected="true" data-tab="employee">For Employees</button>
-          <button class="tab" role="tab" aria-selected="false" data-tab="employer">For Employers</button>
-        </div>
-
-        <div class="steps" data-panel="employee">
-          <div class="step">
-            <div class="step-num">01</div>
-            <div class="step-icon">🔗</div>
-            <h3>Connect your employer</h3>
-            <p>Your employer is already on Burse or invites you. You verify your identity once (FICA-compliant) and you're live.</p>
-          </div>
-          <div class="step-arrow" aria-hidden="true">→</div>
-          <div class="step">
-            <div class="step-num">02</div>
-            <div class="step-icon">📊</div>
-            <h3>See what you've earned</h3>
-            <p>Burse reads your payroll data in real time. Your dashboard shows exactly how much of your current month's salary you've already worked for.</p>
-          </div>
-          <div class="step-arrow" aria-hidden="true">→</div>
-          <div class="step">
-            <div class="step-num">03</div>
-            <div class="step-icon">⚡</div>
-            <h3>Withdraw instantly</h3>
-            <p>Request any amount up to your earned balance. Funds arrive in your linked bank account within minutes via Ozow or Peach Payments.</p>
-          </div>
-        </div>
-
-        <div class="steps hidden" data-panel="employer">
-          <div class="step">
-            <div class="step-num">01</div>
-            <div class="step-icon">🏢</div>
-            <h3>Integrate your payroll</h3>
-            <p>Connect Burse to your existing payroll system — Sage, PaySpace, SimplePay, Deel, and more — in under 20 minutes via our secure API or no-code connectors.</p>
-          </div>
-          <div class="step-arrow" aria-hidden="true">→</div>
-          <div class="step">
-            <div class="step-num">02</div>
-            <div class="step-icon">👥</div>
-            <h3>Invite your workforce</h3>
-            <p>Send bulk onboarding invites by email or SMS. Employees self-onboard. You review and approve access levels per team or department.</p>
-          </div>
-          <div class="step-arrow" aria-hidden="true">→</div>
-          <div class="step">
-            <div class="step-num">03</div>
-            <div class="step-icon">💳</div>
-            <h3>Burse handles the rest</h3>
-            <p>We front the funds, manage disbursements, and recover the advanced amounts automatically at payroll run. Your cash flow is never affected.</p>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- ─── EMPLOYEE FEATURES ─── -->
-    <section class="section section-dark" aria-labelledby="features-title">
-      <div class="container">
-        <div class="section-head light">
-          <p class="eyebrow">Built for workers</p>
-          <h2 id="features-title">Everything an employee needs</h2>
-        </div>
-        <div class="features-grid">
-          <div class="feature-card">
-            <div class="feature-icon">⚡</div>
-            <h3>Instant transfers</h3>
-            <p>Money in your account in minutes, not days. Available 24/7 including weekends and public holidays.</p>
-          </div>
-          <div class="feature-card">
-            <div class="feature-icon">🚫</div>
-            <h3>Zero interest</h3>
-            <p>This is not a loan. You're accessing money you already earned. We charge a flat, transparent withdrawal fee — nothing more.</p>
-          </div>
-          <div class="feature-card">
-            <div class="feature-icon">📱</div>
-            <h3>Mobile-first</h3>
-            <p>Works on any smartphone. No app download required — the full experience lives in your browser.</p>
-          </div>
-          <div class="feature-card">
-            <div class="feature-icon">🔒</div>
-            <h3>Bank-grade security</h3>
-            <p>256-bit encryption, biometric login support, and POPIA-compliant data handling throughout.</p>
-          </div>
-          <div class="feature-card">
-            <div class="feature-icon">📈</div>
-            <h3>Financial wellness</h3>
-            <p>Track your spending patterns, set withdrawal limits for yourself, and build healthier money habits over time.</p>
-          </div>
-          <div class="feature-card">
-            <div class="feature-icon">🏦</div>
-            <h3>Any SA bank</h3>
-            <p>Link any South African bank account — FNB, Standard Bank, Capitec, Nedbank, Absa, TymeBank, and more.</p>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- ─── INTEGRATIONS ─── -->
-    <section class="section" id="integrations" aria-labelledby="integrations-title">
-      <div class="container">
-        <div class="section-head">
-          <p class="eyebrow">Works with your stack</p>
-          <h2 id="integrations-title">Payroll & payment integrations</h2>
-          <p class="section-sub">Burse connects to the tools South African businesses already use. No rip-and-replace required.</p>
-        </div>
-
-        <div class="integrations-layout">
-          <div class="int-category">
-            <h3 class="int-cat-label">Payroll Providers</h3>
-            <div class="int-cards">
-
-              <div class="int-card" data-provider="deel">
-                <div class="int-logo int-logo-deel">Deel</div>
-                <div class="int-info">
-                  <h4>Deel</h4>
-                  <p>Global payroll & contractor management. Burse connects via Deel's REST API to pull real-time payroll cycle data for both employees and contractors.</p>
-                  <a class="int-link" href="https://developer.deel.com/docs/getting-started" target="_blank" rel="noopener">Deel API Docs →</a>
-                </div>
-                <span class="int-badge int-badge-live">Live</span>
-              </div>
-
-              <div class="int-card" data-provider="sage">
-                <div class="int-logo int-logo-sage">Sage</div>
-                <div class="int-info">
-                  <h4>Sage Payroll</h4>
-                  <p>South Africa's most widely used payroll suite. Burse integrates with Sage Business Cloud Payroll via the Sage Network API to sync pay periods and earned amounts.</p>
-                  <a class="int-link" href="https://developer.sage.com/sage-business-cloud/payroll/" target="_blank" rel="noopener">Sage Developer Docs →</a>
-                </div>
-                <span class="int-badge int-badge-live">Live</span>
-              </div>
-
-              <div class="int-card" data-provider="payspace">
-                <div class="int-logo int-logo-payspace">PaySpace</div>
-                <div class="int-info">
-                  <h4>PaySpace</h4>
-                  <p>South African cloud payroll platform. Burse uses PaySpace's RESTful API to access employee pay schedules, leave balances, and gross earnings in real time.</p>
-                  <a class="int-link" href="https://developer.payspace.com" target="_blank" rel="noopener">PaySpace API →</a>
-                </div>
-                <span class="int-badge int-badge-live">Live</span>
-              </div>
-
-              <div class="int-card" data-provider="simplypay">
-                <div class="int-logo int-logo-simplypay">SimplePay</div>
-                <div class="int-info">
-                  <h4>SimplePay</h4>
-                  <p>Popular SA payroll for SMEs. Burse syncs with SimplePay via webhook events and their REST API to track daily accruals and deduction limits automatically.</p>
-                  <a class="int-link" href="https://www.simplepay.co.za/help/api-integration" target="_blank" rel="noopener">SimplePay API →</a>
-                </div>
-                <span class="int-badge int-badge-beta">Beta</span>
-              </div>
-
-              <div class="int-card" data-provider="paymaster">
-                <div class="int-logo int-logo-paymaster">Paymaster</div>
-                <div class="int-info">
-                  <h4>Paymaster</h4>
-                  <p>Trusted SA payroll bureau software. Burse integrates with Paymaster via secure SFTP export + API ingestion for payroll cycle synchronisation.</p>
-                  <a class="int-link" href="https://paymaster.co.za/support/api" target="_blank" rel="noopener">Paymaster Docs →</a>
-                </div>
-                <span class="int-badge int-badge-beta">Beta</span>
-              </div>
-
-              <div class="int-card" data-provider="pastel">
-                <div class="int-logo int-logo-pastel">Pastel</div>
-                <div class="int-info">
-                  <h4>Pastel Payroll (Sage 200)</h4>
-                  <p>Legacy SA enterprise payroll. Burse supports flat-file CSV integration and the Sage 200 connector for organisations still on the desktop suite.</p>
-                  <a class="int-link" href="https://developer.sage.com/sage-200/overview/" target="_blank" rel="noopener">Sage 200 API →</a>
-                </div>
-                <span class="int-badge int-badge-soon">Coming Soon</span>
-              </div>
-
-            </div>
-          </div>
-
-          <div class="int-category">
-            <h3 class="int-cat-label">Disbursement & Payments</h3>
-            <div class="int-cards">
-
-              <div class="int-card" data-provider="ozow">
-                <div class="int-logo int-logo-ozow">Ozow</div>
-                <div class="int-info">
-                  <h4>Ozow</h4>
-                  <p>SA-based instant EFT and pay-out provider. Burse uses Ozow's Payout API to send funds to employees' bank accounts in real time, any time of day.</p>
-                  <a class="int-link" href="https://docs.ozow.com" target="_blank" rel="noopener">Ozow Developer Portal →</a>
-                </div>
-                <span class="int-badge int-badge-live">Live</span>
-              </div>
-
-              <div class="int-card" data-provider="peach">
-                <div class="int-logo int-logo-peach">Peach</div>
-                <div class="int-info">
-                  <h4>Peach Payments</h4>
-                  <p>Leading SA payment gateway. Burse integrates Peach Payments for card-based top-ups and disbursements via their Disbursements API.</p>
-                  <a class="int-link" href="https://developer.peachpayments.com/docs" target="_blank" rel="noopener">Peach Developer Docs →</a>
-                </div>
-                <span class="int-badge int-badge-live">Live</span>
-              </div>
-
-              <div class="int-card" data-provider="stitch">
-                <div class="int-logo int-logo-stitch">Stitch</div>
-                <div class="int-info">
-                  <h4>Stitch</h4>
-                  <p>SA open-banking and pay-out infrastructure. Burse uses Stitch's LinkPay and Payouts product for instant bank-to-bank transfers and account verification.</p>
-                  <a class="int-link" href="https://docs.stitch.money" target="_blank" rel="noopener">Stitch Docs →</a>
-                </div>
-                <span class="int-badge int-badge-live">Live</span>
-              </div>
-
-              <div class="int-card" data-provider="netcash">
-                <div class="int-logo int-logo-netcash">Netcash</div>
-                <div class="int-info">
-                  <h4>Netcash</h4>
-                  <p>SA's largest debit-order and payment bureau. Burse uses Netcash for salary deduction reconciliation at month-end — recovering advanced amounts automatically.</p>
-                  <a class="int-link" href="https://netcash.co.za/support/developer-documentation/" target="_blank" rel="noopener">Netcash API →</a>
-                </div>
-                <span class="int-badge int-badge-live">Live</span>
-              </div>
-
-            </div>
-          </div>
-
-          <div class="int-category">
-            <h3 class="int-cat-label">Banking & Identity</h3>
-            <div class="int-cards int-cards-3col">
-
-              <div class="int-card int-card-sm">
-                <div class="int-logo int-logo-capitec">Capitec</div>
-                <h4>Capitec Connect API</h4>
-                <p>Real-time bank verification and pay-out routing.</p>
-                <a class="int-link" href="https://www.capitecbank.co.za/business/business-solutions/capitec-connect/" target="_blank" rel="noopener">Capitec Connect →</a>
-                <span class="int-badge int-badge-live">Live</span>
-              </div>
-
-              <div class="int-card int-card-sm">
-                <div class="int-logo int-logo-fnb">FNB</div>
-                <h4>FNB Open Banking</h4>
-                <p>Account lookup, verification and instant disbursement.</p>
-                <a class="int-link" href="https://developer.fnb.co.za" target="_blank" rel="noopener">FNB Developer Portal →</a>
-                <span class="int-badge int-badge-live">Live</span>
-              </div>
-
-              <div class="int-card int-card-sm">
-                <div class="int-logo int-logo-std">STD</div>
-                <h4>Standard Bank API</h4>
-                <p>BizConnect and retail open-banking connectivity.</p>
-                <a class="int-link" href="https://developer.standardbank.co.za" target="_blank" rel="noopener">Standard Bank Developers →</a>
-                <span class="int-badge int-badge-live">Live</span>
-              </div>
-
-              <div class="int-card int-card-sm">
-                <div class="int-logo int-logo-absa">Absa</div>
-                <h4>Absa Open API</h4>
-                <p>Account number verification and real-time payments.</p>
-                <a class="int-link" href="https://developer.absa.africa" target="_blank" rel="noopener">Absa Developer Hub →</a>
-                <span class="int-badge int-badge-beta">Beta</span>
-              </div>
-
-              <div class="int-card int-card-sm">
-                <div class="int-logo int-logo-fica">DHA</div>
-                <h4>Home Affairs / FICA</h4>
-                <p>South African ID verification via DHA Biometric API.</p>
-                <a class="int-link" href="https://www.dha.gov.za/index.php/services/verification-services" target="_blank" rel="noopener">DHA Verification Services →</a>
-                <span class="int-badge int-badge-live">Live</span>
-              </div>
-
-              <div class="int-card int-card-sm">
-                <div class="int-logo int-logo-sars">SARS</div>
-                <h4>SARS e@syFile</h4>
-                <p>PAYE and IRP5 data cross-reference for earnings validation.</p>
-                <a class="int-link" href="https://www.sars.gov.za/businesses-and-employers/payroll/" target="_blank" rel="noopener">SARS Payroll Info →</a>
-                <span class="int-badge int-badge-soon">Coming Soon</span>
-              </div>
-
-            </div>
-          </div>
-        </div>
-
-        <div class="int-cta">
-          <p>Using a payroll system not listed here?</p>
-          <a class="btn-outline" href="mailto:integrations@burse.co.za">Request an integration →</a>
-        </div>
-      </div>
-    </section>
-
-    <!-- ─── EMPLOYERS ─── -->
-    <section class="section section-dark" id="employers" aria-labelledby="employers-title">
-      <div class="container">
-        <div class="employers-layout">
-          <div class="employers-text">
-            <p class="eyebrow">For HR &amp; Finance teams</p>
-            <h2 id="employers-title">Retain talent. Reduce financial stress. Cost nothing.</h2>
-            <p>Burse is fully funded by a small per-transaction fee paid by the employee. There are no costs to the employer — ever.</p>
-            <ul class="employer-list">
-              <li>✓ No impact on your cash flow — Burse fronts all funds</li>
-              <li>✓ Automatic deduction recovery at payroll run</li>
-              <li>✓ POPIA-compliant data processing agreement included</li>
-              <li>✓ NCR-registered credit provider — fully regulated</li>
-              <li>✓ Dedicated employer dashboard with usage analytics</li>
-              <li>✓ 20-minute payroll integration setup</li>
-              <li>✓ SETA / B-BBEE reportable employee benefit</li>
-            </ul>
-            <a class="btn-primary" href="mailto:employers@burse.co.za">Talk to our team →</a>
-          </div>
-          <div class="employers-metrics">
-            <div class="metric-card">
-              <div class="metric-val">34%</div>
-              <div class="metric-label">reduction in financial-stress leave after 6 months</div>
-            </div>
-            <div class="metric-card">
-              <div class="metric-val">2.1×</div>
-              <div class="metric-label">higher retention vs. non-Burse employers in the same sector</div>
-            </div>
-            <div class="metric-card">
-              <div class="metric-val">R0</div>
-              <div class="metric-label">cost to employer — ever</div>
-            </div>
-            <div class="metric-card">
-              <div class="metric-val">20 min</div>
-              <div class="metric-label">average time to go live from first API call</div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- ─── PRICING ─── -->
-    <section class="section section-alt" id="pricing" aria-labelledby="pricing-title">
-      <div class="container">
-        <div class="section-head">
-          <p class="eyebrow">Transparent pricing</p>
-          <h2 id="pricing-title">Simple, honest fees</h2>
-          <p class="section-sub">One flat fee per withdrawal. No hidden charges, no interest, no subscription.</p>
-        </div>
-        <div class="pricing-grid">
-          <div class="price-card">
-            <div class="price-tier">Employee</div>
-            <div class="price-amount">R10 <span>per withdrawal</span></div>
-            <p class="price-desc">Flat fee regardless of amount withdrawn. No interest. No credit check. No subscription.</p>
-            <ul class="price-list">
-              <li>✓ Instant bank transfer</li>
-              <li>✓ Up to 50% of earned wages</li>
-              <li>✓ Max 3 withdrawals per pay cycle</li>
-              <li>✓ Full transaction history</li>
-              <li>✓ Financial wellness tools</li>
-            </ul>
-            <a class="btn-primary" href="dashboard.html">Get Started Free</a>
-          </div>
-          <div class="price-card price-card-featured">
-            <div class="price-tier">Employer — SME</div>
-            <div class="price-amount">R0 <span>/ month</span></div>
-            <p class="price-desc">Completely free for employers. All revenue comes from the per-withdrawal employee fee.</p>
-            <ul class="price-list">
-              <li>✓ Unlimited employees</li>
-              <li>✓ All payroll integrations</li>
-              <li>✓ Employer analytics dashboard</li>
-              <li>✓ Dedicated account manager</li>
-              <li>✓ POPIA DPA included</li>
-            </ul>
-            <a class="btn-outline-dark" href="mailto:employers@burse.co.za">Book a Demo</a>
-          </div>
-          <div class="price-card">
-            <div class="price-tier">Enterprise</div>
-            <div class="price-amount">Custom <span>pricing</span></div>
-            <p class="price-desc">For large employers (1 000+ employees) wanting white-label or custom fee structures.</p>
-            <ul class="price-list">
-              <li>✓ White-label Burse under your brand</li>
-              <li>✓ Custom withdrawal limits</li>
-              <li>✓ Bespoke API integration</li>
-              <li>✓ SLA-backed uptime guarantee</li>
-              <li>✓ Priority support</li>
-            </ul>
-            <a class="btn-primary" href="mailto:enterprise@burse.co.za">Contact Sales</a>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- ─── TESTIMONIALS ─── -->
-    <section class="section section-teal" aria-labelledby="testi-title">
-      <div class="container">
-        <div class="section-head light">
-          <p class="eyebrow">Real stories</p>
-          <h2 id="testi-title">What people say</h2>
-        </div>
-        <div class="testi-grid">
-          <div class="testi-card">
-            <div class="testi-stars">★★★★★</div>
-            <p>"My car broke down two weeks before payday. I used Burse, got R1,500 in 3 minutes, and made it to work the next day. No loan sharks, no stress."</p>
-            <div class="testi-author">
-              <div class="testi-avatar">NM</div>
-              <div>
-                <strong>Nandi M.</strong>
-                <span>Warehouse Supervisor, Johannesburg</span>
-              </div>
-            </div>
-          </div>
-          <div class="testi-card">
-            <div class="testi-stars">★★★★★</div>
-            <p>"As an HR manager I was sceptical. But the onboarding took 15 minutes and our staff turnover dropped noticeably in Q1. Zero cost to us."</p>
-            <div class="testi-author">
-              <div class="testi-avatar">TK</div>
-              <div>
-                <strong>Thabo K.</strong>
-                <span>HR Manager, Cape Town</span>
-              </div>
-            </div>
-          </div>
-          <div class="testi-card">
-            <div class="testi-stars">★★★★★</div>
-            <p>"I used to take payday loans at 40% interest. Burse charges me R10 flat. I've saved hundreds of rands just this year."</p>
-            <div class="testi-author">
-              <div class="testi-avatar">LV</div>
-              <div>
-                <strong>Lerato V.</strong>
-                <span>Call Centre Agent, Durban</span>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- ─── FAQ ─── -->
-    <section class="section" id="faq" aria-labelledby="faq-title">
-      <div class="container">
-        <div class="section-head">
-          <p class="eyebrow">Got questions</p>
-          <h2 id="faq-title">Frequently asked questions</h2>
-        </div>
-        <div class="faq-list" role="list">
-
-          <div class="faq-item" role="listitem">
-            <button class="faq-q" aria-expanded="false">Is Burse a loan?</button>
-            <div class="faq-a" hidden>
-              <p>No. Burse is an Earned Wage Access (EWA) product. You are accessing wages you have already worked for — not borrowing money. We are registered with the NCR as a payment service, not a credit provider, and we charge a flat transaction fee, not interest.</p>
-            </div>
-          </div>
-
-          <div class="faq-item" role="listitem">
-            <button class="faq-q" aria-expanded="false">How does Burse make money if it's free for employers?</button>
-            <div class="faq-a" hidden>
-              <p>We charge employees a flat R10 fee per withdrawal. There are no charges for employers. Enterprise clients can negotiate alternative fee structures with our sales team.</p>
-            </div>
-          </div>
-
-          <div class="faq-item" role="listitem">
-            <button class="faq-q" aria-expanded="false">Does using Burse affect my credit score?</button>
-            <div class="faq-a" hidden>
-              <p>No. EWA is not a credit product. We do not run a credit check, we do not report to credit bureaus, and using Burse will have no impact whatsoever on your credit score.</p>
-            </div>
-          </div>
-
-          <div class="faq-item" role="listitem">
-            <button class="faq-q" aria-expanded="false">How much can I withdraw?</button>
-            <div class="faq-a" hidden>
-              <p>You can withdraw up to 50% of the wages you have earned so far in the current pay cycle, with a maximum of 3 withdrawals per cycle. Your employer may set a lower limit. Unused earned wages are always paid in full at your normal payday.</p>
-            </div>
-          </div>
-
-          <div class="faq-item" role="listitem">
-            <button class="faq-q" aria-expanded="false">What happens at payday?</button>
-            <div class="faq-a" hidden>
-              <p>Any amounts you withdrew via Burse during the month are deducted from your normal salary before it is paid to you. Your payslip will reflect the Burse deduction as a line item. You always receive the remainder of your full salary.</p>
-            </div>
-          </div>
-
-          <div class="faq-item" role="listitem">
-            <button class="faq-q" aria-expanded="false">Is Burse POPIA compliant?</button>
-            <div class="faq-a" hidden>
-              <p>Yes. All personal data is processed in accordance with the Protection of Personal Information Act (POPIA). We have a registered Information Officer, maintain a POPIA record of processing, and sign a Data Processing Agreement with every employer we work with. Data is stored on AWS servers in the Cape Town region (af-south-1).</p>
-            </div>
-          </div>
-
-          <div class="faq-item" role="listitem">
-            <button class="faq-q" aria-expanded="false">Which banks can I receive funds into?</button>
-            <div class="faq-a" hidden>
-              <p>Any South African bank: Capitec, FNB, Standard Bank, Absa, Nedbank, TymeBank, African Bank, Bidvest Bank, Discovery Bank, and more. Transfers use the RTC (Real-Time Clearing) or IMPS rail depending on the bank.</p>
-            </div>
-          </div>
-
-        </div>
-      </div>
-    </section>
-
-    <!-- ─── CTA STRIP ─── -->
-    <section class="cta-strip" aria-label="Call to action">
-      <div class="container cta-strip-inner">
-        <div>
-          <h2>Start accessing your wages today.</h2>
-          <p>Set up takes 2 minutes. Your first withdrawal is on us — fee waived.</p>
-        </div>
-        <div class="cta-strip-btns">
-          <a class="btn-primary btn-lg" href="dashboard.html">Get Started</a>
-          <a class="btn-ghost-dark btn-lg" href="mailto:hello@burse.co.za">Chat to Us</a>
-        </div>
-      </div>
-    </section>
-
-  </main>
-
-  <!-- ─── FOOTER ─── -->
-  <footer class="footer" aria-label="Site footer">
-    <div class="container footer-inner">
-      <div class="footer-brand">
-        <a class="brand" href="index.html">
-          <span class="brand-b">B</span><span class="brand-urse">urse</span>
-        </a>
-        <p>Earned Wage Access for South Africa.<br>Get paid when you've earned it.</p>
-        <div class="footer-legal-badges">
-          <span>NCR Registered</span>
-          <span>POPIA Compliant</span>
-          <span>FSCA Authorised</span>
-        </div>
-      </div>
-      <div class="footer-cols">
-        <div class="footer-col">
-          <h4>Product</h4>
-          <a href="#how">How It Works</a>
-          <a href="#integrations">Integrations</a>
-          <a href="#pricing">Pricing</a>
-          <a href="dashboard.html">Employee Dashboard</a>
-        </div>
-        <div class="footer-col">
-          <h4>Company</h4>
-          <a href="#">About Burse</a>
-          <a href="#">Blog</a>
-          <a href="#">Careers</a>
-          <a href="mailto:hello@burse.co.za">Contact</a>
-        </div>
-        <div class="footer-col">
-          <h4>Legal</h4>
-          <a href="#">Terms of Service</a>
-          <a href="#">Privacy Policy</a>
-          <a href="#">POPIA Notice</a>
-          <a href="#">NCR Disclosure</a>
-        </div>
-        <div class="footer-col">
-          <h4>For Employers</h4>
-          <a href="#employers">Why Burse</a>
-          <a href="#integrations">Payroll Integrations</a>
-          <a href="mailto:employers@burse.co.za">Book a Demo</a>
-          <a href="mailto:enterprise@burse.co.za">Enterprise Sales</a>
-        </div>
-      </div>
-    </div>
-    <div class="footer-bottom">
-      <div class="container footer-bottom-inner">
-        <p>© 2026 Burse (Pty) Ltd. Registered in South Africa. NCR Reg. No. NCRCP XXXX. All rights reserved.</p>
-        <div class="footer-social">
-          <a href="#" aria-label="LinkedIn">in</a>
-          <a href="#" aria-label="X / Twitter">𝕏</a>
-          <a href="#" aria-label="Instagram">ig</a>
-        </div>
-      </div>
-    </div>
-  </footer>
+  </div>
 
   <script>
-    // ── Nav scroll effect
+    // Nav scroll
     const nav = document.getElementById('nav');
-    window.addEventListener('scroll', () => {
-      nav.classList.toggle('scrolled', window.scrollY > 20);
-    });
+    window.addEventListener('scroll', () => nav.classList.toggle('scrolled', window.scrollY > 20));
 
-    // ── Mobile hamburger
+    // Hamburger
     const hamburger = document.getElementById('hamburger');
     const navMobile = document.getElementById('navMobile');
     hamburger.addEventListener('click', () => {
       const open = navMobile.classList.toggle('open');
       hamburger.classList.toggle('open', open);
-      hamburger.setAttribute('aria-expanded', open);
     });
 
-    // ── Tab toggle (How It Works)
-    document.querySelectorAll('.tab').forEach(tab => {
-      tab.addEventListener('click', () => {
-        document.querySelectorAll('.tab').forEach(t => {
-          t.classList.remove('active');
-          t.setAttribute('aria-selected', 'false');
-        });
-        tab.classList.add('active');
-        tab.setAttribute('aria-selected', 'true');
-        const target = tab.dataset.tab;
-        document.querySelectorAll('[data-panel]').forEach(panel => {
-          panel.classList.toggle('hidden', panel.dataset.panel !== target);
-        });
-      });
-    });
+    // Show login screen
+    function showLogin() {
+      document.getElementById('screen-home').classList.add('slide-out');
+      document.getElementById('screen-login').classList.add('slide-in');
+    }
 
-    // ── FAQ accordion
-    document.querySelectorAll('.faq-q').forEach(btn => {
-      btn.addEventListener('click', () => {
-        const expanded = btn.getAttribute('aria-expanded') === 'true';
-        // close all
-        document.querySelectorAll('.faq-q').forEach(b => {
-          b.setAttribute('aria-expanded', 'false');
-          b.nextElementSibling.hidden = true;
-          b.closest('.faq-item').classList.remove('open');
-        });
-        if (!expanded) {
-          btn.setAttribute('aria-expanded', 'true');
-          btn.nextElementSibling.hidden = false;
-          btn.closest('.faq-item').classList.add('open');
-        }
-      });
-    });
+    // Show home screen
+    function showHome() {
+      document.getElementById('screen-home').classList.remove('slide-out');
+      document.getElementById('screen-login').classList.remove('slide-in');
+    }
+
+    // Handle login
+    function handleLogin(e) {
+      e.preventDefault();
+      const password = document.getElementById('password').value;
+      const errorMsg = document.getElementById('errorMsg');
+      const btn = document.getElementById('loginBtn');
+
+      if (password === 'demo123') {
+        btn.textContent = 'Logging in...';
+        setTimeout(() => { window.location.href = 'dashboard.html'; }, 800);
+      } else {
+        errorMsg.style.display = 'block';
+        document.getElementById('password').value = '';
+        document.getElementById('password').focus();
+      }
+    }
   </script>
+
 </body>
 </html>
