@@ -473,12 +473,19 @@
     'sb_publishable_DOXudlz8DvPusUsTWZezkQ_bryvuzg-'
   );
 
-  // Auth check
+  // Auth check — admin only
+  const ADMIN_EMAIL = 'samuelhyera.hyera7@gmail.com';
+
   sb.auth.getSession().then(({ data }) => {
     if (!data.session) {
       window.location.href = 'index.html';
     } else {
       const email = data.session.user.email;
+      if (email !== ADMIN_EMAIL) {
+        // Not admin — redirect to dashboard
+        window.location.href = 'dashboard.html';
+        return;
+      }
       document.getElementById('adminAvatar').textContent = email[0].toUpperCase();
       loadStats();
       loadUsers();
