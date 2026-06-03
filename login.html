@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en-ZA">
 <head>
   <meta charset="UTF-8">
@@ -144,7 +144,7 @@
   <div class="login-wrap">
 
     <div class="login-logo">
-      <a href="index.html">
+      <a href="/">
         <span class="brand-b">B</span><span class="brand-urse">urse</span>
       </a>
     </div>
@@ -173,11 +173,11 @@
       </form>
 
       <div class="signup-row">
-        Don't have an account? <a href="dashboard.html">Get started free</a>
+        Don't have an account? <a href="/dashboard">Get started free</a>
       </div>
     </div>
 
-    <button onclick="window.location.href='index.html'" style="margin-top:16px;font-size:0.85rem;color:rgba(255,255,255,0.7);cursor:pointer;background:none;border:none;font-weight:600;font-family:'Inter',sans-serif;">← Back to Burse</button>
+    <button onclick="window.location.href='/'" style="margin-top:16px;font-size:0.85rem;color:rgba(255,255,255,0.7);cursor:pointer;background:none;border:none;font-weight:600;font-family:'Inter',sans-serif;">← Back to Burse</button>
 
   </div>
 
@@ -194,7 +194,7 @@
     // Redirect if already logged in
     sb.auth.getSession().then(({ data }) => {
       if (data.session) {
-        window.location.href = data.session.user.email === ADMIN_EMAIL ? 'admin.html' : 'dashboard.html';
+        window.location.href = data.session.user.email === ADMIN_EMAIL ? '/admin' : '/dashboard';
       }
     });
 
@@ -221,14 +221,14 @@
         return;
       }
 
-      window.location.href = email === ADMIN_EMAIL ? 'admin.html' : 'dashboard.html';
+      window.location.href = email === ADMIN_EMAIL ? '/admin' : '/dashboard';
     }
 
     async function handleForgotPassword(e) {
       e.preventDefault();
       const email = document.getElementById('email').value;
       if (!email) { alert('Enter your email address first.'); return; }
-      await sb.auth.resetPasswordForEmail(email, { redirectTo: window.location.origin + '/login.html' });
+      await sb.auth.resetPasswordForEmail(email, { redirectTo: window.location.origin + '/login' });
       alert('Password reset email sent — check your inbox.');
     }
   </script>

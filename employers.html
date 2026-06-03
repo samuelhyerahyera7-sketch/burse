@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en-ZA">
 <head>
   <meta charset="UTF-8">
@@ -21,7 +21,7 @@
   <!-- NAV -->
   <header class="nav" id="nav">
     <div class="nav-inner">
-      <a class="brand" href="index.html">
+      <a class="brand" href="/">
         <span class="brand-b">B</span><span class="brand-urse">urse</span>
       </a>
       <button class="nav-hamburger" id="hamburger" aria-label="Menu">
@@ -29,10 +29,10 @@
       </button>
     </div>
     <div class="nav-mobile" id="navMobile">
-      <a href="index.html">Home</a>
-      <a href="employees.html">For Employees</a>
-      <a href="employers.html">For Employers</a>
-      <a href="login.html">Log In</a>
+      <a href="/">Home</a>
+      <a href="/employees">For Employees</a>
+      <a href="/employers">For Employers</a>
+      <a href="/login">Log In</a>
       <a class="btn-primary" href="mailto:employers@burse.co.za">Book a Demo</a>
     </div>
   </header>
@@ -76,7 +76,7 @@
     sb.auth.getSession().then(({ data }) => {
       if (data.session) {
         const cta = document.querySelector('.nav-mobile .btn-primary');
-        if (cta) { cta.textContent = 'My Dashboard'; cta.href = 'dashboard.html'; }
+        if (cta) { cta.textContent = 'My Dashboard'; cta.href = '/dashboard'; }
       }
     });
   </script>

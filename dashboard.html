@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en-ZA">
 <head>
   <meta charset="UTF-8">
@@ -17,7 +17,7 @@
 
   <!-- ─── DASH NAV ─── -->
   <nav class="dash-nav" aria-label="Dashboard navigation">
-    <a class="brand" href="index.html">
+    <a class="brand" href="/">
       <span class="brand-b">B</span><span class="brand-urse">urse</span>
     </a>
     <div class="dash-user">
@@ -30,13 +30,13 @@
 
     <!-- ─── SIDEBAR ─── -->
     <aside class="dash-sidebar" aria-label="Sidebar navigation">
-      <a href="dashboard.html" class="active"><span>💳</span> Dashboard</a>
+      <a href="/dashboard" class="active"><span>💳</span> Dashboard</a>
       <a href="#"><span>📤</span> Withdraw</a>
       <a href="#"><span>📋</span> Transactions</a>
       <a href="#"><span>🏦</span> Bank Account</a>
       <a href="#"><span>📊</span> Wellness</a>
       <a href="#"><span>⚙️</span> Settings</a>
-      <a href="index.html" style="margin-top:auto"><span>←</span> Back to site</a>
+      <a href="/" style="margin-top:auto"><span>←</span> Back to site</a>
       <a href="#" onclick="signOut()" style="color:#f87171;"><span>🚪</span> Sign out</a>
     </aside>
 
@@ -351,9 +351,9 @@
 
     // Auth check on load
     sb.auth.getSession().then(async ({ data }) => {
-      if (!data.session) { window.location.href = 'login.html'; return; }
+      if (!data.session) { window.location.href = '/login'; return; }
       const user = data.session.user;
-      if (user.email === ADMIN_EMAIL) { window.location.href = 'admin.html'; return; }
+      if (user.email === ADMIN_EMAIL) { window.location.href = '/admin'; return; }
       await loadProfile(user);
       await loadTransactions(user.id);
     });
@@ -434,7 +434,7 @@
 
     async function signOut() {
       await sb.auth.signOut();
-      window.location.href = 'index.html';
+      window.location.href = '/';
     }
 
     // Modal functions
@@ -458,7 +458,7 @@
       if (amt > availableBalance) { alert('Amount exceeds your available balance.'); return; }
 
       const { data: session } = await sb.auth.getSession();
-      if (!session.session) { window.location.href = 'login.html'; return; }
+      if (!session.session) { window.location.href = '/login'; return; }
 
       const btn = document.querySelector('.modal-confirm-btn');
       btn.textContent = 'Processing...';

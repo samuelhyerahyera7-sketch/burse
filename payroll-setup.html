@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en-ZA">
 <head>
   <meta charset="UTF-8">
@@ -148,8 +148,8 @@
 <body>
 
   <div class="topbar">
-    <a class="brand" href="index.html"><span class="b">B</span><span class="u">urse</span></a>
-    <a class="topbar-back" href="admin.html">← Back to Admin</a>
+    <a class="brand" href="/"><span class="b">B</span><span class="u">urse</span></a>
+    <a class="topbar-back" href="/admin">← Back to Admin</a>
   </div>
 
   <div class="page">
@@ -351,7 +351,7 @@ EMP002,Thabo Khumalo,thabo@company.co.za,32000,24600,Finance,Accountant,88031250
 
     // Auth check
     sb.auth.getSession().then(({ data }) => {
-      if (!data.session) { window.location.href = 'login.html'; return; }
+      if (!data.session) { window.location.href = '/login'; return; }
       // Allow admin or employer roles
       const email = data.session.user.email;
       const params = new URLSearchParams(location.search);
@@ -414,7 +414,7 @@ EMP002,Thabo Khumalo,thabo@company.co.za,32000,24600,Finance,Accountant,88031250
 
     async function saveConnection(provider) {
       const { data: session } = await sb.auth.getSession();
-      if (!session.session) { window.location.href = 'login.html'; return; }
+      if (!session.session) { window.location.href = '/login'; return; }
 
       const btn = document.querySelector(`#form-${provider} .btn-save`);
       btn.textContent = 'Saving...';
@@ -492,7 +492,7 @@ EMP002,Thabo Khumalo,thabo@company.co.za,32000,24600,Finance,Accountant,88031250
           showStatus(provider, 'success', 'Connection saved. Redirecting...');
         }
 
-        setTimeout(() => { window.location.href = 'admin.html'; }, 1800);
+        setTimeout(() => { window.location.href = '/admin'; }, 1800);
 
       } catch (e) {
         showStatus(provider, 'error', e.message || 'Something went wrong.');

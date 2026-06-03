@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en-ZA">
 <head>
   <meta charset="UTF-8">
@@ -137,10 +137,10 @@
         </button>
       </div>
       <div class="nav-mobile" id="navMobile">
-        <a href="employees.html">For Employees</a>
-        <a href="employers.html">For Employers</a>
+        <a href="/employees">For Employees</a>
+        <a href="/employers">For Employers</a>
         <a href="#" onclick="showLogin(); return false;">Log In</a>
-        <a href="admin.html" style="color:rgba(42,179,179,0.9);">Admin Dashboard</a>
+        <a href="/admin" style="color:rgba(42,179,179,0.9);">Admin Dashboard</a>
         <a class="btn-primary" href="#" onclick="showLogin(); return false;">Get Started</a>
       </div>
     </header>
@@ -160,7 +160,7 @@
         </p>
         <div class="hero-actions">
           <button class="btn-outline btn-lg" onclick="showLogin()">Access My Wages</button>
-          <a class="btn-outline btn-lg" href="employers.html">I'm an Employer</a>
+          <a class="btn-outline btn-lg" href="/employers">I'm an Employer</a>
         </div>
         <div class="hero-trust">
           <div class="trust-item"><strong style="color:#fff">R0</strong><span style="color:rgba(255,255,255,0.6)">Interest</span></div>
@@ -301,7 +301,7 @@
           btn.textContent = 'Log In';
           btn.disabled = false;
         } else {
-          window.location.href = 'dashboard.html';
+          window.location.href = '/dashboard';
         }
       } else {
         const { data, error } = await sb.auth.signUp({ email, password });
@@ -322,7 +322,7 @@
     sb.auth.getSession().then(({ data }) => {
       if (data.session) {
         const cta = document.querySelector('.nav-cta');
-        if (cta) { cta.textContent = 'My Dashboard'; cta.href = 'dashboard.html'; }
+        if (cta) { cta.textContent = 'My Dashboard'; cta.href = '/dashboard'; }
       }
     });
   </script>

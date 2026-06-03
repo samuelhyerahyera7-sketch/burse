@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en-ZA">
 <head>
   <meta charset="UTF-8">
@@ -21,7 +21,7 @@
   <!-- NAV -->
   <header class="nav" id="nav">
     <div class="nav-inner">
-      <a class="brand" href="index.html">
+      <a class="brand" href="/">
         <span class="brand-b">B</span><span class="brand-urse">urse</span>
       </a>
       <button class="nav-hamburger" id="hamburger" aria-label="Menu">
@@ -29,11 +29,11 @@
       </button>
     </div>
     <div class="nav-mobile" id="navMobile">
-      <a href="index.html">Home</a>
-      <a href="employees.html">For Employees</a>
-      <a href="employers.html">For Employers</a>
-      <a href="login.html">Log In</a>
-      <a class="btn-primary" href="dashboard.html">Get Started</a>
+      <a href="/">Home</a>
+      <a href="/employees">For Employees</a>
+      <a href="/employers">For Employers</a>
+      <a href="/login">Log In</a>
+      <a class="btn-primary" href="/dashboard">Get Started</a>
     </div>
   </header>
 
@@ -49,7 +49,7 @@
           </h1>
           <p class="hero-sub" style="color:rgba(255,255,255,0.8);">You've worked for it — now access it. Burse lets you withdraw your already-earned wages any day of the month. No interest. No loans. No stress.</p>
           <div class="hero-actions">
-            <a class="btn-outline btn-lg" href="index.html">Access My Wages</a>
+            <a class="btn-outline btn-lg" href="/">Access My Wages</a>
             <a class="btn-outline btn-lg" href="index.html#how">How It Works</a>
           </div>
           <div class="hero-trust">
@@ -82,7 +82,7 @@
     sb.auth.getSession().then(({ data }) => {
       if (data.session) {
         const cta = document.querySelector('.nav-mobile .btn-primary');
-        if (cta) { cta.textContent = 'My Dashboard'; cta.href = 'dashboard.html'; }
+        if (cta) { cta.textContent = 'My Dashboard'; cta.href = '/dashboard'; }
       }
     });
   </script>

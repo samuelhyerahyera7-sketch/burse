@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en-ZA">
 <head>
   <meta charset="UTF-8">
@@ -263,7 +263,7 @@
       </a>
     </nav>
     <div class="sidebar-footer">
-      <a class="nav-item" href="index.html" style="text-decoration:none;">
+      <a class="nav-item" href="/" style="text-decoration:none;">
         <span class="icon">←</span> Back to site
       </a>
       <a class="nav-item" onclick="signOut()" href="#" style="color:#f87171;">
@@ -437,7 +437,7 @@
           <p>Manage employer payroll integrations — Sage, PaySpace, SimplePay, and CSV.</p>
         </div>
         <div style="display:flex;gap:12px;margin-bottom:20px;flex-wrap:wrap;">
-          <a href="payroll-setup.html" class="btn-primary" style="text-decoration:none;padding:9px 20px;font-size:0.85rem;">+ Add Payroll Connection</a>
+          <a href="/payroll-setup" class="btn-primary" style="text-decoration:none;padding:9px 20px;font-size:0.85rem;">+ Add Payroll Connection</a>
           <button class="filter-btn" onclick="loadPayrollConnections()">↺ Refresh</button>
         </div>
         <div id="payroll-connections-wrap">
@@ -522,7 +522,7 @@
 
     if (!session || session.user.email !== ADMIN_EMAIL) {
       await sb.auth.signOut();
-      window.location.replace('login.html');
+      window.location.replace('/login');
       return;
     }
 
@@ -538,7 +538,7 @@
   // Sign out
   async function signOut() {
     await sb.auth.signOut();
-    window.location.href = 'index.html';
+    window.location.href = '/';
   }
 
   // Section navigation
@@ -615,7 +615,7 @@
 
     if (!conns || conns.length === 0) {
       wrap.innerHTML = `<div class="card" style="text-align:center;padding:40px;color:var(--soft);">
-        No payroll connections yet. <a href="payroll-setup.html" style="color:var(--teal);font-weight:600;">Add the first one →</a>
+        No payroll connections yet. <a href="/payroll-setup" style="color:var(--teal);font-weight:600;">Add the first one →</a>
       </div>`;
       return;
     }
@@ -639,7 +639,7 @@
           <div style="font-size:0.72rem;color:var(--soft);margin-top:4px;">${c.last_synced_at ? 'Synced ' + new Date(c.last_synced_at).toLocaleDateString('en-ZA') : 'Never synced'}</div>
         </div>
         <button onclick="triggerSync('${c.id}')" class="btn-primary" style="padding:7px 16px;font-size:0.8rem;">↺ Sync Now</button>
-        <a href="payroll-setup.html?edit=${c.id}" class="filter-btn" style="text-decoration:none;padding:7px 14px;font-size:0.8rem;">Edit</a>
+        <a href="/payroll-setup?edit=${c.id}" class="filter-btn" style="text-decoration:none;padding:7px 14px;font-size:0.8rem;">Edit</a>
       </div>`).join('') + `</div>`;
   }
 
