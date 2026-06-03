@@ -21,8 +21,8 @@
       <span class="brand-b">B</span><span class="brand-urse">urse</span>
     </a>
     <div class="dash-user">
-      <div class="dash-avatar">NM</div>
-      <span class="dash-user-name">Nandi Mokoena</span>
+      <div class="dash-avatar" id="dashAvatar">—</div>
+      <span class="dash-user-name" id="dashUserName">Loading...</span>
     </div>
   </nav>
 
@@ -37,14 +37,15 @@
       <a href="#"><span>📊</span> Wellness</a>
       <a href="#"><span>⚙️</span> Settings</a>
       <a href="index.html" style="margin-top:auto"><span>←</span> Back to site</a>
+      <a href="#" onclick="signOut()" style="color:#f87171;"><span>🚪</span> Sign out</a>
     </aside>
 
     <!-- ─── MAIN ─── -->
     <main class="dash-main">
 
       <div class="dash-greeting">
-        <h2>Good morning, Nandi 👋</h2>
-        <p>Monday, 2 June 2026 · June pay cycle · 2 of 3 withdrawals used</p>
+        <h2 id="greetingText">Welcome back 👋</h2>
+        <p id="greetingSub">Loading your pay cycle...</p>
       </div>
 
       <!-- Top cards -->
@@ -337,7 +338,106 @@
     }
   </style>
 
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script>
+    const { createClient } = supabase;
+    const sb = createClient(
+      'https://lhrdunranqragptqouan.supabase.co',
+      'sb_publishable_DOXudlz8DvPusUsTWZezkQ_bryvuzg-'
+    );
+
+    const ADMIN_EMAIL = 'samuelhyera.hyera7@gmail.com';
+    let availableBalance = 4260;
+
+    // Auth check on load
+    sb.auth.getSession().then(async ({ data }) => {
+      if (!data.session) { window.location.href = 'login.html'; return; }
+      const user = data.session.user;
+      if (user.email === ADMIN_EMAIL) { window.location.href = 'admin.html'; return; }
+      await loadProfile(user);
+      await loadTransactions(user.id);
+    });
+
+    async function loadProfile(user) {
+      const { data: p } = await sb.from('profiles').select('*').eq('id', user.id).single();
+
+      // Name + avatar
+      const name = p?.full_name || user.email;
+      const firstName = name.includes('@') ? name.split('@')[0] : name.split(' ')[0];
+      const initial = firstName[0].toUpperCase();
+      document.getElementById('dashAvatar').textContent = initial;
+      document.getElementById('dashUserName').textContent = name;
+
+      // Greeting
+      const hour = new Date().getHours();
+      const timeOfDay = hour < 12 ? 'morning' : hour < 17 ? 'afternoon' : 'evening';
+      document.getElementById('greetingText').textContent = `Good ${timeOfDay}, ${firstName} 👋`;
+
+      // Pay cycle sub-line
+      const today = new Date();
+      const monthName = today.toLocaleString('en-ZA', { month: 'long' });
+      const payday = p?.payday_of_month || 25;
+      document.getElementById('greetingSub').textContent =
+        `${today.toLocaleDateString('en-ZA', { weekday:'long', day:'numeric', month:'long', year:'numeric' })} · ${monthName} pay cycle · payday ${payday} ${monthName}`;
+
+      if (p?.gross_salary) {
+        const daysInMonth = new Date(today.getFullYear(), today.getMonth() + 1, 0).getDate();
+        const earned = (p.gross_salary / daysInMonth) * today.getDate();
+        availableBalance = Math.floor(earned * 0.5);
+
+        document.querySelectorAll('.dc-val')[0].textContent = fmt(availableBalance);
+        document.querySelectorAll('.dc-val')[1].textContent = fmt(p.gross_salary);
+        document.querySelector('.modal-sub').innerHTML =
+          `Available: <strong>${fmt(availableBalance)}</strong> · Fee: R10 flat`;
+        document.getElementById('withdrawAmount').max = availableBalance;
+        document.querySelector('.modal-quick-btns button:last-child').onclick = () => setAmount(availableBalance);
+      } else {
+        document.querySelectorAll('.dc-val')[0].textContent = 'R —';
+        document.querySelectorAll('.dc-val')[1].textContent = 'R —';
+      }
+
+      if (p?.bank_last4) {
+        document.querySelector('.bank-card-num').textContent = `**** **** **** ${p.bank_last4}`;
+        if (p.bank_name) document.querySelector('.bank-card-bank').textContent = p.bank_name;
+        document.querySelector('.bank-card-acc').textContent = `${p.account_type || 'Savings'} · Verified`;
+        document.querySelector('.modal-to span:last-child').textContent = `${p.bank_name || 'Bank'} ····${p.bank_last4}`;
+      }
+    }
+
+    async function loadTransactions(userId) {
+      const { data: txns } = await sb
+        .from('transactions')
+        .select('*')
+        .eq('user_id', userId)
+        .order('created_at', { ascending: false })
+        .limit(10);
+
+      if (!txns || txns.length === 0) return;
+
+      const icons = { withdrawal: '💸', fee: '🏷️', salary: '🏢' };
+      const list = document.querySelector('.tx-list');
+      list.innerHTML = txns.map(t => `
+        <div class="tx-item">
+          <div class="tx-icon tx-icon-${t.type}">${icons[t.type] || '💳'}</div>
+          <div class="tx-detail">
+            <strong>${t.description}</strong>
+            <span>${new Date(t.created_at).toLocaleDateString('en-ZA', { day:'2-digit', month:'short', year:'numeric' })}</span>
+          </div>
+          <div class="tx-amount ${t.amount > 0 ? 'credit' : 'debit'}">${t.amount > 0 ? '+' : '−'}R ${Math.abs(t.amount).toLocaleString('en-ZA', { minimumFractionDigits: 2 })}</div>
+        </div>
+      `).join('');
+    }
+
+    function fmt(n) {
+      return 'R ' + Number(n).toLocaleString('en-ZA', { minimumFractionDigits: 2 });
+    }
+
+    async function signOut() {
+      await sb.auth.signOut();
+      window.location.href = 'index.html';
+    }
+
+    // Modal functions
     function openWithdrawModal() {
       document.getElementById('withdrawModal').hidden = false;
       document.getElementById('withdrawAmount').focus();
@@ -351,14 +451,34 @@
     function setAmount(val) {
       document.getElementById('withdrawAmount').value = val;
     }
-    function confirmWithdraw() {
+
+    async function confirmWithdraw() {
       const amt = parseFloat(document.getElementById('withdrawAmount').value);
       if (!amt || amt < 50) { alert('Please enter at least R50.'); return; }
-      if (amt > 4260)       { alert('Amount exceeds your available balance.'); return; }
+      if (amt > availableBalance) { alert('Amount exceeds your available balance.'); return; }
+
+      const { data: session } = await sb.auth.getSession();
+      if (!session.session) { window.location.href = 'login.html'; return; }
+
+      const btn = document.querySelector('.modal-confirm-btn');
+      btn.textContent = 'Processing...';
+      btn.disabled = true;
+
+      const { error } = await sb.from('withdrawals').insert({
+        user_id: session.session.user.id,
+        amount: amt,
+        fee: 10,
+        status: 'pending'
+      });
+
+      btn.textContent = 'Confirm Withdrawal';
+      btn.disabled = false;
+
+      if (error) { alert('Withdrawal failed: ' + error.message); return; }
+
       closeWithdrawModal();
-      const toast = document.getElementById('successToast');
-      toast.hidden = false;
-      setTimeout(() => { toast.hidden = true; }, 4000);
+      document.getElementById('successToast').hidden = false;
+      setTimeout(() => { document.getElementById('successToast').hidden = true; }, 4000);
     }
   </script>
 </body>

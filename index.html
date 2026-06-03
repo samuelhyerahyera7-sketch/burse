@@ -318,9 +318,12 @@
       }
     }
 
-    // Check if already logged in
+    // If logged in, update nav CTA to go to dashboard instead of sign up
     sb.auth.getSession().then(({ data }) => {
-      if (data.session) window.location.href = 'dashboard.html';
+      if (data.session) {
+        const cta = document.querySelector('.nav-cta');
+        if (cta) { cta.textContent = 'My Dashboard'; cta.href = 'dashboard.html'; }
+      }
     });
   </script>
 

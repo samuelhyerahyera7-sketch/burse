@@ -167,7 +167,7 @@
           <input type="password" id="password" placeholder="Enter your password" required autocomplete="current-password">
         </div>
         <div class="forgot">
-          <a href="#">Forgot password?</a>
+          <a href="#" onclick="handleForgotPassword(event)">Forgot password?</a>
         </div>
         <button type="submit" class="btn-login">Log In</button>
       </form>
@@ -181,24 +181,55 @@
 
   </div>
 
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script>
-    function handleLogin(e) {
+    const { createClient } = supabase;
+    const sb = createClient(
+      'https://lhrdunranqragptqouan.supabase.co',
+      'sb_publishable_DOXudlz8DvPusUsTWZezkQ_bryvuzg-'
+    );
+
+    const ADMIN_EMAIL = 'samuelhyera.hyera7@gmail.com';
+
+    // Redirect if already logged in
+    sb.auth.getSession().then(({ data }) => {
+      if (data.session) {
+        window.location.href = data.session.user.email === ADMIN_EMAIL ? 'admin.html' : 'dashboard.html';
+      }
+    });
+
+    async function handleLogin(e) {
       e.preventDefault();
       const email = document.getElementById('email').value;
       const password = document.getElementById('password').value;
+      const btn = document.querySelector('.btn-login');
       const errorMsg = document.getElementById('errorMsg');
 
-      // Demo: accept any email with password "demo123"
-      if (password === 'demo123') {
-        document.querySelector('.btn-login').textContent = 'Logging in...';
-        setTimeout(() => {
-          window.location.href = 'dashboard.html';
-        }, 800);
-      } else {
+      errorMsg.style.display = 'none';
+      btn.textContent = 'Logging in...';
+      btn.disabled = true;
+
+      const { data, error } = await sb.auth.signInWithPassword({ email, password });
+
+      if (error) {
+        errorMsg.textContent = error.message || 'Incorrect email or password. Please try again.';
         errorMsg.style.display = 'block';
         document.getElementById('password').value = '';
         document.getElementById('password').focus();
+        btn.textContent = 'Log In';
+        btn.disabled = false;
+        return;
       }
+
+      window.location.href = email === ADMIN_EMAIL ? 'admin.html' : 'dashboard.html';
+    }
+
+    async function handleForgotPassword(e) {
+      e.preventDefault();
+      const email = document.getElementById('email').value;
+      if (!email) { alert('Enter your email address first.'); return; }
+      await sb.auth.resetPasswordForEmail(email, { redirectTo: window.location.origin + '/login.html' });
+      alert('Password reset email sent — check your inbox.');
     }
   </script>
 

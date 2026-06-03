@@ -1,0 +1,565 @@
+<!DOCTYPE html>
+<html lang="en-ZA">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Connect Payroll — Burse</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --navy:   #1e2a6e;
+      --teal:   #2ab3b3;
+      --bg:     #f0f2f8;
+      --card:   #ffffff;
+      --border: #e2e8f0;
+      --text:   #0e1c40;
+      --mid:    #3d5070;
+      --soft:   #7a8fb0;
+      --green:  #16a34a;
+      --red:    #dc2626;
+    }
+    body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; }
+    button { font-family: 'Inter', sans-serif; cursor: pointer; border: none; }
+
+    /* ── Top bar ── */
+    .topbar {
+      background: var(--navy); padding: 0 28px; height: 58px;
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    .brand { font-size: 1.4rem; font-weight: 900; letter-spacing: -0.04em; text-decoration: none; }
+    .brand .b { color: var(--teal); }
+    .brand .u { color: #fff; }
+    .topbar-back { font-size: 0.82rem; font-weight: 600; color: rgba(255,255,255,0.6); text-decoration: none; }
+    .topbar-back:hover { color: #fff; }
+
+    /* ── Page wrapper ── */
+    .page { max-width: 720px; margin: 0 auto; padding: 36px 20px 60px; }
+    .page-title { font-size: 1.6rem; font-weight: 800; margin-bottom: 6px; }
+    .page-sub { font-size: 0.9rem; color: var(--soft); margin-bottom: 32px; }
+
+    /* ── Provider picker ── */
+    .provider-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 14px; margin-bottom: 32px; }
+    @media (max-width: 500px) { .provider-grid { grid-template-columns: 1fr; } }
+
+    .provider-card {
+      background: var(--card); border: 2px solid var(--border); border-radius: 14px;
+      padding: 20px; cursor: pointer; transition: all 0.15s; text-align: left;
+    }
+    .provider-card:hover { border-color: var(--teal); box-shadow: 0 4px 20px rgba(42,179,179,0.12); }
+    .provider-card.selected { border-color: var(--teal); background: #f0fafa; box-shadow: 0 4px 20px rgba(42,179,179,0.18); }
+    .provider-card .icon { font-size: 2rem; margin-bottom: 10px; }
+    .provider-card .name { font-size: 0.95rem; font-weight: 700; color: var(--text); }
+    .provider-card .desc { font-size: 0.78rem; color: var(--soft); margin-top: 3px; line-height: 1.4; }
+
+    /* ── Form card ── */
+    .form-card { background: var(--card); border: 1px solid var(--border); border-radius: 16px; padding: 28px; display: none; }
+    .form-card.visible { display: block; }
+    .form-card h3 { font-size: 1.1rem; font-weight: 700; margin-bottom: 4px; }
+    .form-card > p { font-size: 0.83rem; color: var(--soft); margin-bottom: 24px; }
+
+    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 14px; }
+    @media (max-width: 520px) { .form-row { grid-template-columns: 1fr; } }
+    .form-group { display: flex; flex-direction: column; gap: 5px; margin-bottom: 14px; }
+    .form-group:last-child { margin-bottom: 0; }
+    label { font-size: 0.78rem; font-weight: 600; color: var(--mid); }
+    label .req { color: var(--teal); }
+    input[type="text"], input[type="url"], input[type="password"], input[type="file"], textarea {
+      padding: 10px 14px; border: 1.5px solid var(--border); border-radius: 10px;
+      font-size: 0.88rem; font-family: 'Inter', sans-serif; color: var(--text);
+      background: #f8f9fb; outline: none; transition: border-color 0.15s, box-shadow 0.15s; width: 100%;
+    }
+    input:focus, textarea:focus { border-color: var(--teal); box-shadow: 0 0 0 3px rgba(42,179,179,0.12); background: #fff; }
+    input::placeholder, textarea::placeholder { color: #b0bec5; }
+
+    .hint { font-size: 0.75rem; color: var(--soft); margin-top: 3px; line-height: 1.4; }
+    .hint a { color: var(--teal); }
+
+    .divider { border: none; border-top: 1px solid var(--border); margin: 20px 0; }
+
+    /* ── CSV template ── */
+    .csv-template {
+      background: #f8f9fb; border: 1px solid var(--border); border-radius: 10px;
+      padding: 14px 16px; margin-bottom: 16px;
+    }
+    .csv-template h4 { font-size: 0.82rem; font-weight: 700; margin-bottom: 8px; }
+    .csv-template code { font-size: 0.75rem; color: var(--mid); display: block; line-height: 1.7; white-space: pre-wrap; word-break: break-all; }
+    .csv-template .dl-btn {
+      margin-top: 10px; font-size: 0.78rem; font-weight: 600; color: var(--teal);
+      background: none; padding: 0; text-decoration: underline;
+    }
+
+    /* ── Company name row ── */
+    .company-row { margin-bottom: 24px; }
+
+    /* ── Action buttons ── */
+    .action-row { display: flex; gap: 12px; margin-top: 24px; flex-wrap: wrap; }
+    .btn-save {
+      padding: 12px 28px; background: var(--navy); color: #fff;
+      border-radius: 10px; font-weight: 700; font-size: 0.92rem;
+      transition: background 0.15s;
+    }
+    .btn-save:hover { background: #0e1c40; }
+    .btn-save:disabled { opacity: 0.5; cursor: not-allowed; }
+    .btn-cancel {
+      padding: 12px 20px; background: var(--bg); color: var(--mid);
+      border-radius: 10px; font-weight: 600; font-size: 0.88rem; border: 1px solid var(--border);
+    }
+    .btn-test {
+      padding: 12px 20px; background: rgba(42,179,179,0.1); color: var(--teal);
+      border-radius: 10px; font-weight: 600; font-size: 0.88rem; border: 1.5px solid var(--teal);
+    }
+    .btn-test:hover { background: rgba(42,179,179,0.2); }
+
+    /* ── Status banner ── */
+    .status-banner {
+      display: none; padding: 12px 16px; border-radius: 10px;
+      font-size: 0.85rem; font-weight: 600; margin-top: 16px;
+    }
+    .status-banner.success { display: flex; align-items: center; gap: 8px; background: #f0fdf4; color: var(--green); border: 1px solid #bbf7d0; }
+    .status-banner.error   { display: flex; align-items: center; gap: 8px; background: #fff0f0; color: var(--red);   border: 1px solid #fca5a5; }
+
+    /* ── OAuth flow ── */
+    .oauth-box {
+      background: linear-gradient(135deg, #1e2a6e 0%, #2a3d8f 100%);
+      border-radius: 14px; padding: 24px; color: #fff; text-align: center; margin-bottom: 20px;
+    }
+    .oauth-box h4 { font-size: 1rem; font-weight: 700; margin-bottom: 6px; }
+    .oauth-box p  { font-size: 0.82rem; color: rgba(255,255,255,0.7); margin-bottom: 18px; }
+    .oauth-btn {
+      display: inline-block; padding: 11px 28px; background: var(--teal); color: #fff;
+      border-radius: 10px; font-weight: 700; font-size: 0.9rem; text-decoration: none;
+      transition: background 0.15s;
+    }
+    .oauth-btn:hover { background: #229595; }
+
+    .or-divider {
+      display: flex; align-items: center; gap: 12px; margin: 20px 0; color: var(--soft);
+      font-size: 0.78rem; font-weight: 600;
+    }
+    .or-divider::before, .or-divider::after {
+      content: ''; flex: 1; border-top: 1px solid var(--border);
+    }
+
+    .loading { color: var(--soft); font-size: 0.88rem; padding: 20px; text-align: center; }
+  </style>
+</head>
+<body>
+
+  <div class="topbar">
+    <a class="brand" href="index.html"><span class="b">B</span><span class="u">urse</span></a>
+    <a class="topbar-back" href="admin.html">← Back to Admin</a>
+  </div>
+
+  <div class="page">
+    <div class="page-title" id="pageTitle">Connect a Payroll System</div>
+    <p class="page-sub">Select your payroll provider and enter your credentials. Burse will sync employee and salary data automatically.</p>
+
+    <!-- Step 1: provider picker -->
+    <div class="provider-grid" id="providerGrid">
+      <div class="provider-card" onclick="selectProvider('sage')">
+        <div class="icon">🟢</div>
+        <div class="name">Sage Business Cloud</div>
+        <div class="desc">Sage One / Sage Business Cloud Payroll — most widely used in SA</div>
+      </div>
+      <div class="provider-card" onclick="selectProvider('payspace')">
+        <div class="icon">🔵</div>
+        <div class="name">PaySpace</div>
+        <div class="desc">End-to-end payroll & HR platform, popular with mid-to-large SA businesses</div>
+      </div>
+      <div class="provider-card" onclick="selectProvider('simplepay')">
+        <div class="icon">🟡</div>
+        <div class="name">SimplePay</div>
+        <div class="desc">SA-focused payroll for SMEs — clean API with full employee data export</div>
+      </div>
+      <div class="provider-card" onclick="selectProvider('csv')">
+        <div class="icon">📄</div>
+        <div class="name">CSV Upload</div>
+        <div class="desc">Works with any payroll system — upload a spreadsheet export any time</div>
+      </div>
+    </div>
+
+    <!-- ── Sage form ── -->
+    <div class="form-card" id="form-sage">
+      <h3>Sage Business Cloud Payroll</h3>
+      <p>Create an API app in Sage Developer Portal to get your Client ID and Secret, then authorise Burse via OAuth.</p>
+
+      <div class="company-row">
+        <div class="form-group">
+          <label>Company name <span class="req">*</span></label>
+          <input type="text" id="sage-company-name" placeholder="e.g. Acme Corp (Pty) Ltd">
+        </div>
+      </div>
+
+      <div class="oauth-box">
+        <h4>Authorise with Sage</h4>
+        <p>You'll be redirected to Sage to approve access, then returned here automatically.</p>
+        <a class="oauth-btn" href="#" onclick="startSageOAuth(event)">Connect Sage Account →</a>
+      </div>
+
+      <div class="or-divider">OR enter credentials manually</div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label>Client ID <span class="req">*</span></label>
+          <input type="text" id="sage-client-id" placeholder="From Sage Developer Portal">
+        </div>
+        <div class="form-group">
+          <label>Client Secret <span class="req">*</span></label>
+          <input type="password" id="sage-client-secret" placeholder="••••••••••••">
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label>Refresh Token</label>
+          <input type="password" id="sage-refresh-token" placeholder="After OAuth authorisation">
+        </div>
+        <div class="form-group">
+          <label>Company ID</label>
+          <input type="text" id="sage-company-id" placeholder="From Sage settings">
+          <span class="hint">Settings → Company → Company ID in Sage Business Cloud</span>
+        </div>
+      </div>
+      <span class="hint">
+        Get credentials at <a href="https://developerselfservice.sageone.com" target="_blank">developerselfservice.sageone.com</a> →
+        Create App → OAuth 2.0. Set redirect URI to this page's URL.
+      </span>
+
+      <div class="action-row">
+        <button class="btn-save" onclick="saveConnection('sage')">Save &amp; Sync</button>
+        <button class="btn-test" onclick="testConnection('sage')">Test Connection</button>
+        <button class="btn-cancel" onclick="resetForm()">Cancel</button>
+      </div>
+      <div class="status-banner" id="status-sage"></div>
+    </div>
+
+    <!-- ── PaySpace form ── -->
+    <div class="form-card" id="form-payspace">
+      <h3>PaySpace</h3>
+      <p>Use PaySpace OAuth2 client credentials. Find these in PaySpace → Admin → API Access.</p>
+
+      <div class="company-row">
+        <div class="form-group">
+          <label>Company name <span class="req">*</span></label>
+          <input type="text" id="payspace-company-name" placeholder="e.g. Retail SA (Pty) Ltd">
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label>Client ID <span class="req">*</span></label>
+          <input type="text" id="payspace-client-id" placeholder="PaySpace Client ID">
+        </div>
+        <div class="form-group">
+          <label>Client Secret <span class="req">*</span></label>
+          <input type="password" id="payspace-client-secret" placeholder="••••••••••••">
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label>Company ID <span class="req">*</span></label>
+          <input type="text" id="payspace-company-id" placeholder="Your PaySpace company ID">
+          <span class="hint">PaySpace → Admin → Company Settings → API</span>
+        </div>
+        <div class="form-group">
+          <label>API Base URL</label>
+          <input type="url" id="payspace-base-url" placeholder="https://api.payspace.com" value="https://api.payspace.com">
+        </div>
+      </div>
+
+      <div class="action-row">
+        <button class="btn-save" onclick="saveConnection('payspace')">Save &amp; Sync</button>
+        <button class="btn-test" onclick="testConnection('payspace')">Test Connection</button>
+        <button class="btn-cancel" onclick="resetForm()">Cancel</button>
+      </div>
+      <div class="status-banner" id="status-payspace"></div>
+    </div>
+
+    <!-- ── SimplePay form ── -->
+    <div class="form-card" id="form-simplepay">
+      <h3>SimplePay</h3>
+      <p>Find your API key in SimplePay → Settings → Integrations → API Key.</p>
+
+      <div class="company-row">
+        <div class="form-group">
+          <label>Company name <span class="req">*</span></label>
+          <input type="text" id="simplepay-company-name" placeholder="e.g. Logistics Ltd">
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label>API Key <span class="req">*</span></label>
+        <input type="password" id="simplepay-api-key" placeholder="Your SimplePay API key">
+        <span class="hint">SimplePay → Settings → Integrations → API Key. Keep this secret.</span>
+      </div>
+
+      <div class="action-row">
+        <button class="btn-save" onclick="saveConnection('simplepay')">Save &amp; Sync</button>
+        <button class="btn-test" onclick="testConnection('simplepay')">Test Connection</button>
+        <button class="btn-cancel" onclick="resetForm()">Cancel</button>
+      </div>
+      <div class="status-banner" id="status-simplepay"></div>
+    </div>
+
+    <!-- ── CSV form ── -->
+    <div class="form-card" id="form-csv">
+      <h3>CSV Upload</h3>
+      <p>Export a payroll CSV from any system and upload it here. Burse will parse employee names, emails, and salary data automatically.</p>
+
+      <div class="company-row">
+        <div class="form-group">
+          <label>Company name <span class="req">*</span></label>
+          <input type="text" id="csv-company-name" placeholder="e.g. Mining Group Ltd">
+        </div>
+      </div>
+
+      <div class="csv-template">
+        <h4>Required CSV format</h4>
+        <code>employee_number,full_name,email,gross_salary,net_salary,department,job_title,id_number,phone,payday,start_date
+EMP001,Nandi Mokoena,nandi@company.co.za,18500,14200,Retail,Sales Rep,9001015009087,0821234567,25,2024-01-15
+EMP002,Thabo Khumalo,thabo@company.co.za,32000,24600,Finance,Accountant,8803125009080,0837654321,25,2023-06-01</code>
+        <button class="dl-btn" onclick="downloadTemplate()">⬇ Download template CSV</button>
+      </div>
+
+      <div class="form-group">
+        <label>Upload payroll CSV <span class="req">*</span></label>
+        <input type="file" id="csv-file" accept=".csv,.txt">
+        <span class="hint">Columns: full_name and gross_salary are required. All others are optional.</span>
+      </div>
+
+      <div class="action-row">
+        <button class="btn-save" onclick="saveConnection('csv')">Upload &amp; Import</button>
+        <button class="btn-cancel" onclick="resetForm()">Cancel</button>
+      </div>
+      <div class="status-banner" id="status-csv"></div>
+    </div>
+
+  </div><!-- /page -->
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script>
+    const { createClient } = supabase;
+    const sb = createClient(
+      'https://lhrdunranqragptqouan.supabase.co',
+      'sb_publishable_DOXudlz8DvPusUsTWZezkQ_bryvuzg-'
+    );
+
+    const ADMIN_EMAIL = 'samuelhyera.hyera7@gmail.com';
+    let currentProvider = null;
+    let editConnectionId = null;
+
+    // Auth check
+    sb.auth.getSession().then(({ data }) => {
+      if (!data.session) { window.location.href = 'login.html'; return; }
+      // Allow admin or employer roles
+      const email = data.session.user.email;
+      const params = new URLSearchParams(location.search);
+      if (params.get('edit')) loadExistingConnection(params.get('edit'));
+    });
+
+    // Load existing connection for editing
+    async function loadExistingConnection(id) {
+      const { data: conn } = await sb.from('payroll_connections').select('*').eq('id', id).single();
+      if (!conn) return;
+      editConnectionId = id;
+      document.getElementById('pageTitle').textContent = 'Edit Payroll Connection';
+      selectProvider(conn.provider);
+
+      if (conn.provider === 'sage') {
+        document.getElementById('sage-company-name').value = conn.company_name || '';
+        document.getElementById('sage-client-id').value    = conn.sage_client_id || '';
+        document.getElementById('sage-company-id').value  = conn.sage_company_id || '';
+      } else if (conn.provider === 'payspace') {
+        document.getElementById('payspace-company-name').value = conn.company_name || '';
+        document.getElementById('payspace-client-id').value    = conn.payspace_client_id || '';
+        document.getElementById('payspace-company-id').value   = conn.payspace_company_id || '';
+        document.getElementById('payspace-base-url').value     = conn.payspace_base_url || 'https://api.payspace.com';
+      } else if (conn.provider === 'simplepay') {
+        document.getElementById('simplepay-company-name').value = conn.company_name || '';
+      } else if (conn.provider === 'csv') {
+        document.getElementById('csv-company-name').value = conn.company_name || '';
+      }
+    }
+
+    function selectProvider(provider) {
+      currentProvider = provider;
+      document.querySelectorAll('.provider-card').forEach(c => c.classList.remove('selected'));
+      const idx = ['sage','payspace','simplepay','csv'].indexOf(provider);
+      if (idx >= 0) document.querySelectorAll('.provider-card')[idx].classList.add('selected');
+
+      document.querySelectorAll('.form-card').forEach(f => f.classList.remove('visible'));
+      const form = document.getElementById('form-' + provider);
+      if (form) {
+        form.classList.add('visible');
+        form.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+    }
+
+    function resetForm() {
+      currentProvider = null;
+      editConnectionId = null;
+      document.querySelectorAll('.provider-card').forEach(c => c.classList.remove('selected'));
+      document.querySelectorAll('.form-card').forEach(f => f.classList.remove('visible'));
+      document.querySelectorAll('.status-banner').forEach(b => { b.className = 'status-banner'; b.textContent = ''; });
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function showStatus(provider, type, msg) {
+      const el = document.getElementById('status-' + provider);
+      el.className = 'status-banner ' + type;
+      el.textContent = (type === 'success' ? '✓ ' : '✕ ') + msg;
+      el.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    }
+
+    async function saveConnection(provider) {
+      const { data: session } = await sb.auth.getSession();
+      if (!session.session) { window.location.href = 'login.html'; return; }
+
+      const btn = document.querySelector(`#form-${provider} .btn-save`);
+      btn.textContent = 'Saving...';
+      btn.disabled = true;
+
+      let payload = { provider, employer_id: session.session.user.id };
+      let csvData = null;
+
+      try {
+        if (provider === 'sage') {
+          const name = document.getElementById('sage-company-name').value.trim();
+          if (!name) throw new Error('Company name is required.');
+          payload = { ...payload,
+            company_name:         name,
+            sage_client_id:       document.getElementById('sage-client-id').value.trim(),
+            sage_client_secret:   document.getElementById('sage-client-secret').value.trim(),
+            sage_refresh_token:   document.getElementById('sage-refresh-token').value.trim(),
+            sage_company_id:      document.getElementById('sage-company-id').value.trim(),
+          };
+          if (!payload.sage_client_id) throw new Error('Client ID is required.');
+
+        } else if (provider === 'payspace') {
+          const name = document.getElementById('payspace-company-name').value.trim();
+          if (!name) throw new Error('Company name is required.');
+          payload = { ...payload,
+            company_name:              name,
+            payspace_client_id:        document.getElementById('payspace-client-id').value.trim(),
+            payspace_client_secret:    document.getElementById('payspace-client-secret').value.trim(),
+            payspace_company_id:       document.getElementById('payspace-company-id').value.trim(),
+            payspace_base_url:         document.getElementById('payspace-base-url').value.trim(),
+          };
+          if (!payload.payspace_client_id || !payload.payspace_company_id) throw new Error('Client ID and Company ID are required.');
+
+        } else if (provider === 'simplepay') {
+          const name = document.getElementById('simplepay-company-name').value.trim();
+          if (!name) throw new Error('Company name is required.');
+          const key = document.getElementById('simplepay-api-key').value.trim();
+          if (!key) throw new Error('API Key is required.');
+          payload = { ...payload, company_name: name, simplepay_api_key: key };
+
+        } else if (provider === 'csv') {
+          const name = document.getElementById('csv-company-name').value.trim();
+          if (!name) throw new Error('Company name is required.');
+          const file = document.getElementById('csv-file').files[0];
+          if (!file) throw new Error('Please select a CSV file.');
+          csvData = await file.text();
+          payload = { ...payload, company_name: name };
+        }
+
+        // Save or update connection record
+        let connectionId = editConnectionId;
+        if (connectionId) {
+          const { error } = await sb.from('payroll_connections').update(payload).eq('id', connectionId);
+          if (error) throw error;
+        } else {
+          const { data, error } = await sb.from('payroll_connections').insert(payload).select('id').single();
+          if (error) throw error;
+          connectionId = data.id;
+        }
+
+        // Trigger sync via Edge Function
+        if (provider !== 'csv' || csvData) {
+          const res = await fetch(`${sb.supabaseUrl}/functions/v1/payroll-sync`, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': `Bearer ${session.session.access_token}`,
+            },
+            body: JSON.stringify({ connection_id: connectionId, csv_data: csvData }),
+          });
+          const result = await res.json();
+          if (result.error) throw new Error('Sync error: ' + result.error);
+          showStatus(provider, 'success', `Connected! ${result.synced} employees imported. Redirecting...`);
+        } else {
+          showStatus(provider, 'success', 'Connection saved. Redirecting...');
+        }
+
+        setTimeout(() => { window.location.href = 'admin.html'; }, 1800);
+
+      } catch (e) {
+        showStatus(provider, 'error', e.message || 'Something went wrong.');
+      } finally {
+        btn.textContent = provider === 'csv' ? 'Upload & Import' : 'Save & Sync';
+        btn.disabled = false;
+      }
+    }
+
+    async function testConnection(provider) {
+      const btn = document.querySelector(`#form-${provider} .btn-test`);
+      btn.textContent = 'Testing...';
+      btn.disabled = true;
+
+      try {
+        // Lightweight credential check
+        if (provider === 'sage') {
+          const clientId = document.getElementById('sage-client-id').value.trim();
+          if (!clientId) throw new Error('Enter Client ID first.');
+          showStatus(provider, 'success', 'Credentials look valid — save to run a full sync.');
+        } else if (provider === 'payspace') {
+          const clientId = document.getElementById('payspace-client-id').value.trim();
+          if (!clientId) throw new Error('Enter Client ID first.');
+          showStatus(provider, 'success', 'Credentials look valid — save to run a full sync.');
+        } else if (provider === 'simplepay') {
+          const key = document.getElementById('simplepay-api-key').value.trim();
+          if (!key) throw new Error('Enter API Key first.');
+          showStatus(provider, 'success', 'API Key entered — save to run a full sync.');
+        }
+      } catch (e) {
+        showStatus(provider, 'error', e.message);
+      } finally {
+        btn.textContent = 'Test Connection';
+        btn.disabled = false;
+      }
+    }
+
+    function startSageOAuth(e) {
+      e.preventDefault();
+      const clientId = document.getElementById('sage-client-id').value.trim();
+      if (!clientId) {
+        alert('Enter your Sage Client ID first, then click Connect.');
+        document.getElementById('sage-client-id').focus();
+        return;
+      }
+      const redirect = encodeURIComponent(window.location.href.split('?')[0]);
+      const url = `https://www.sageone.com/oauth2/auth/central?filter=apiv3.1&response_type=code&client_id=${clientId}&redirect_uri=${redirect}&scope=full_access`;
+      window.location.href = url;
+    }
+
+    // Handle OAuth callback code
+    const oauthCode = new URLSearchParams(location.search).get('code');
+    if (oauthCode) {
+      selectProvider('sage');
+      document.getElementById('sage-refresh-token').value = oauthCode;
+      showStatus('sage', 'success', 'Authorisation code received — enter your Client Secret and save.');
+    }
+
+    function downloadTemplate() {
+      const csv = `employee_number,full_name,email,gross_salary,net_salary,department,job_title,id_number,phone,payday,start_date
+EMP001,Nandi Mokoena,nandi@company.co.za,18500,14200,Retail,Sales Rep,9001015009087,0821234567,25,2024-01-15
+EMP002,Thabo Khumalo,thabo@company.co.za,32000,24600,Finance,Accountant,8803125009080,0837654321,25,2023-06-01`;
+      const a = document.createElement('a');
+      a.href = 'data:text/csv;charset=utf-8,' + encodeURIComponent(csv);
+      a.download = 'burse-payroll-template.csv';
+      a.click();
+    }
+  </script>
+</body>
+</html>

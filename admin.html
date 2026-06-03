@@ -203,9 +203,33 @@
       .main { margin-left: 0; }
       .kpi-grid { grid-template-columns: 1fr 1fr; }
     }
+
+  /* ── Auth gate: hide everything until verified ── */
+  .admin-layout { visibility: hidden; }
+  #auth-gate {
+    position: fixed; inset: 0; z-index: 9999;
+    background: #1e2a6e;
+    display: flex; align-items: center; justify-content: center;
+    flex-direction: column; gap: 14px;
+  }
+  #auth-gate.hidden { display: none; }
+  .gate-spinner {
+    width: 36px; height: 36px; border-radius: 50%;
+    border: 3px solid rgba(42,179,179,0.3);
+    border-top-color: #2ab3b3;
+    animation: spin 0.7s linear infinite;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  #auth-gate p { color: rgba(255,255,255,0.5); font-size: 0.82rem; font-family: 'Inter', sans-serif; }
   </style>
 </head>
 <body>
+
+<!-- Covers the page until auth is confirmed -->
+<div id="auth-gate">
+  <div class="gate-spinner"></div>
+  <p>Verifying access…</p>
+</div>
 
 <div class="admin-layout">
 
@@ -227,6 +251,9 @@
       </a>
       <a class="nav-item" onclick="showSection('employers')" href="#">
         <span class="icon">🏢</span> Employers
+      </a>
+      <a class="nav-item" onclick="showSection('payroll')" href="#">
+        <span class="icon">🔗</span> Payroll
       </a>
       <a class="nav-item" onclick="showSection('withdrawals')" href="#">
         <span class="icon">⚡</span> Withdrawals
@@ -403,6 +430,21 @@
         </div>
       </div>
 
+      <!-- ══ PAYROLL ══ -->
+      <div class="section" id="section-payroll">
+        <div class="page-header">
+          <h1>Payroll Connections</h1>
+          <p>Manage employer payroll integrations — Sage, PaySpace, SimplePay, and CSV.</p>
+        </div>
+        <div style="display:flex;gap:12px;margin-bottom:20px;flex-wrap:wrap;">
+          <a href="payroll-setup.html" class="btn-primary" style="text-decoration:none;padding:9px 20px;font-size:0.85rem;">+ Add Payroll Connection</a>
+          <button class="filter-btn" onclick="loadPayrollConnections()">↺ Refresh</button>
+        </div>
+        <div id="payroll-connections-wrap">
+          <div class="loading">Loading connections...</div>
+        </div>
+      </div>
+
       <!-- ══ WITHDRAWALS ══ -->
       <div class="section" id="section-withdrawals">
         <div class="page-header">
@@ -473,24 +515,25 @@
     'sb_publishable_DOXudlz8DvPusUsTWZezkQ_bryvuzg-'
   );
 
-  // Auth check — admin only
   const ADMIN_EMAIL = 'samuelhyera.hyera7@gmail.com';
 
-  sb.auth.getSession().then(({ data }) => {
-    if (!data.session) {
-      window.location.href = 'index.html';
-    } else {
-      const email = data.session.user.email;
-      if (email !== ADMIN_EMAIL) {
-        // Not admin — redirect to dashboard
-        window.location.href = 'dashboard.html';
-        return;
-      }
-      document.getElementById('adminAvatar').textContent = email[0].toUpperCase();
-      loadStats();
-      loadUsers();
+  async function checkAdminAccess() {
+    const { data: { session } } = await sb.auth.getSession();
+
+    if (!session || session.user.email !== ADMIN_EMAIL) {
+      await sb.auth.signOut();
+      window.location.replace('login.html');
+      return;
     }
-  });
+
+    // Granted — reveal the dashboard
+    document.getElementById('auth-gate').classList.add('hidden');
+    document.querySelector('.admin-layout').style.visibility = 'visible';
+    document.getElementById('adminAvatar').textContent = 'S';
+    loadStats();
+  }
+
+  checkAdminAccess();
 
   // Sign out
   async function signOut() {
@@ -504,44 +547,53 @@
     document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
     document.getElementById('section-' + name).classList.add('active');
     event.currentTarget.classList.add('active');
-    const titles = { overview:'Overview', users:'Users', transactions:'Transactions', employers:'Employers', withdrawals:'Withdrawals', settings:'Settings' };
+    const titles = { overview:'Overview', users:'Users', transactions:'Transactions', employers:'Employers', payroll:'Payroll Connections', withdrawals:'Withdrawals', settings:'Settings' };
     document.getElementById('topbarTitle').textContent = titles[name] || name;
+    if (name === 'payroll') loadPayrollConnections();
+    if (name === 'users')   loadUsers();
   }
 
   // Load stats from Supabase
   async function loadStats() {
-    const { data: users } = await sb.from('profiles').select('id', { count: 'exact', head: true });
-    const count = users ? Object.keys(users).length : '—';
-    // Update KPIs with live data when tables exist
-    document.getElementById('stat-users').textContent = '—';
-    document.getElementById('stat-withdrawn').textContent = 'R —';
-    document.getElementById('stat-employers').textContent = '—';
-    document.getElementById('stat-revenue').textContent = 'R —';
+    const [usersRes, employersRes, withdrawalsRes] = await Promise.all([
+      sb.from('profiles').select('*', { count: 'exact', head: true }),
+      sb.from('payroll_connections').select('*', { count: 'exact', head: true }).eq('status', 'active'),
+      sb.from('withdrawals').select('amount, fee').eq('status', 'paid'),
+    ]);
+
+    document.getElementById('stat-users').textContent = usersRes.count ?? '—';
+    document.getElementById('stat-employers').textContent = employersRes.count ?? '—';
+
+    if (withdrawalsRes.data?.length) {
+      const total = withdrawalsRes.data.reduce((s, w) => s + Number(w.amount), 0);
+      const fees  = withdrawalsRes.data.reduce((s, w) => s + Number(w.fee), 0);
+      document.getElementById('stat-withdrawn').textContent = 'R ' + total.toLocaleString('en-ZA');
+      document.getElementById('stat-revenue').textContent   = 'R ' + fees.toLocaleString('en-ZA');
+    } else {
+      document.getElementById('stat-withdrawn').textContent = 'R 0';
+      document.getElementById('stat-revenue').textContent   = 'R 0';
+    }
   }
 
-  // Load users from Supabase auth
+  // Load users from profiles table
   async function loadUsers() {
     const wrap = document.getElementById('users-table-wrap');
-    try {
-      const { data: { users }, error } = await sb.auth.admin?.listUsers?.() || { data: { users: null } };
-      if (!users || users.length === 0) {
-        wrap.innerHTML = `
-          <table>
-            <thead><tr><th>Email</th><th>Created</th><th>Last Sign In</th><th>Status</th></tr></thead>
-            <tbody>
-              <tr><td colspan="4" style="text-align:center;color:var(--soft);padding:30px;">No users yet — they'll appear here once people sign up.</td></tr>
-            </tbody>
-          </table>`;
-      }
-    } catch(e) {
-      wrap.innerHTML = `
-        <table>
-          <thead><tr><th>Email</th><th>Created</th><th>Last Sign In</th><th>Status</th></tr></thead>
-          <tbody id="users-tbody">
-            <tr><td colspan="4" style="text-align:center;color:var(--soft);padding:30px;">Users will appear here once they register.</td></tr>
-          </tbody>
-        </table>`;
+    const { data: users } = await sb.from('profiles').select('id, full_name, created_at').order('created_at', { ascending: false });
+
+    if (!users || users.length === 0) {
+      wrap.innerHTML = `<table><thead><tr><th>Name</th><th>Joined</th><th>Status</th></tr></thead>
+        <tbody><tr><td colspan="3" style="text-align:center;color:var(--soft);padding:30px;">No users yet.</td></tr></tbody></table>`;
+      return;
     }
+
+    wrap.innerHTML = `<table><thead><tr><th>Name</th><th>Joined</th><th>Status</th></tr></thead>
+      <tbody id="users-tbody">${users.map(u => `
+        <tr>
+          <td>${u.full_name || '(no name)'}</td>
+          <td>${new Date(u.created_at).toLocaleDateString('en-ZA')}</td>
+          <td><span class="badge badge-green">Active</span></td>
+        </tr>`).join('')}
+      </tbody></table>`;
   }
 
   function filterUsers() {
@@ -549,6 +601,71 @@
     document.querySelectorAll('#users-tbody tr').forEach(row => {
       row.style.display = row.textContent.toLowerCase().includes(q) ? '' : 'none';
     });
+  }
+
+  // Load payroll connections
+  async function loadPayrollConnections() {
+    const wrap = document.getElementById('payroll-connections-wrap');
+    wrap.innerHTML = '<div class="loading">Loading...</div>';
+
+    const { data: conns } = await sb
+      .from('payroll_connections')
+      .select('*')
+      .order('created_at', { ascending: false });
+
+    if (!conns || conns.length === 0) {
+      wrap.innerHTML = `<div class="card" style="text-align:center;padding:40px;color:var(--soft);">
+        No payroll connections yet. <a href="payroll-setup.html" style="color:var(--teal);font-weight:600;">Add the first one →</a>
+      </div>`;
+      return;
+    }
+
+    const providerIcons = { sage:'🟢', payspace:'🔵', simplepay:'🟡', csv:'📄' };
+    const providerNames = { sage:'Sage Business Cloud', payspace:'PaySpace', simplepay:'SimplePay', csv:'CSV Upload' };
+
+    wrap.innerHTML = `<div style="display:grid;gap:14px;">` + conns.map(c => `
+      <div class="card" style="display:flex;align-items:center;gap:20px;flex-wrap:wrap;">
+        <div style="font-size:2rem;">${providerIcons[c.provider] || '🔗'}</div>
+        <div style="flex:1;min-width:160px;">
+          <div style="font-weight:700;font-size:0.95rem;">${c.company_name || 'Unnamed Company'}</div>
+          <div style="font-size:0.82rem;color:var(--soft);">${providerNames[c.provider] || c.provider}</div>
+        </div>
+        <div style="text-align:center;min-width:80px;">
+          <div style="font-size:1.3rem;font-weight:800;">${c.employee_count ?? 0}</div>
+          <div style="font-size:0.75rem;color:var(--soft);">employees</div>
+        </div>
+        <div style="text-align:center;min-width:120px;">
+          <span class="badge ${c.status === 'active' ? 'badge-green' : c.status === 'error' ? 'badge-red' : 'badge-yellow'}">${c.status}</span>
+          <div style="font-size:0.72rem;color:var(--soft);margin-top:4px;">${c.last_synced_at ? 'Synced ' + new Date(c.last_synced_at).toLocaleDateString('en-ZA') : 'Never synced'}</div>
+        </div>
+        <button onclick="triggerSync('${c.id}')" class="btn-primary" style="padding:7px 16px;font-size:0.8rem;">↺ Sync Now</button>
+        <a href="payroll-setup.html?edit=${c.id}" class="filter-btn" style="text-decoration:none;padding:7px 14px;font-size:0.8rem;">Edit</a>
+      </div>`).join('') + `</div>`;
+  }
+
+  async function triggerSync(connectionId) {
+    const btn = event.currentTarget;
+    btn.textContent = 'Syncing...';
+    btn.disabled = true;
+    try {
+      const res = await fetch(`${sb.supabaseUrl}/functions/v1/payroll-sync`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${(await sb.auth.getSession()).data.session?.access_token}`,
+        },
+        body: JSON.stringify({ connection_id: connectionId }),
+      });
+      const result = await res.json();
+      if (result.error) throw new Error(result.error);
+      alert(`Sync complete — ${result.synced} employees updated.`);
+      loadPayrollConnections();
+    } catch (e) {
+      alert('Sync failed: ' + e.message);
+    } finally {
+      btn.textContent = '↺ Sync Now';
+      btn.disabled = false;
+    }
   }
 </script>
 </body>

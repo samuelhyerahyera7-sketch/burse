@@ -48,7 +48,7 @@
             Retain talent.<br>
             <span class="grad-text">Cost you nothing.</span>
           </h1>
-          <p class="hero-sub" style="color:rgba(255,255,255,0.8);">Give your employees access to their earned wages before payday — fully funded by Burse. Zero cost to your business, zero impact on your cash flow.</p>
+          <p class="hero-sub" style="color:rgba(255,255,255,0.8);">Give your employees access to their earned wages before payday. Zero cost to your business, zero impact on your cash flow.</p>
           <div class="hero-actions">
             <a class="btn-outline btn-lg" href="mailto:hello@burse.co.za">Talk to Us</a>
             <a class="btn-outline btn-lg" href="mailto:employers@burse.co.za">Book a Demo</a>
@@ -58,13 +58,26 @@
     </section>
   </main>
 
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script>
-    const nav = document.getElementById('nav');
     const hamburger = document.getElementById('hamburger');
     const navMobile = document.getElementById('navMobile');
     hamburger.addEventListener('click', () => {
       const open = navMobile.classList.toggle('open');
       hamburger.classList.toggle('open', open);
+    });
+
+    const { createClient } = supabase;
+    const sb = createClient(
+      'https://lhrdunranqragptqouan.supabase.co',
+      'sb_publishable_DOXudlz8DvPusUsTWZezkQ_bryvuzg-'
+    );
+
+    sb.auth.getSession().then(({ data }) => {
+      if (data.session) {
+        const cta = document.querySelector('.nav-mobile .btn-primary');
+        if (cta) { cta.textContent = 'My Dashboard'; cta.href = 'dashboard.html'; }
+      }
     });
   </script>
 </body>

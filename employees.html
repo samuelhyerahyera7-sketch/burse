@@ -64,13 +64,26 @@
     </section>
   </main>
 
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script>
-    const nav = document.getElementById('nav');
     const hamburger = document.getElementById('hamburger');
     const navMobile = document.getElementById('navMobile');
     hamburger.addEventListener('click', () => {
       const open = navMobile.classList.toggle('open');
       hamburger.classList.toggle('open', open);
+    });
+
+    const { createClient } = supabase;
+    const sb = createClient(
+      'https://lhrdunranqragptqouan.supabase.co',
+      'sb_publishable_DOXudlz8DvPusUsTWZezkQ_bryvuzg-'
+    );
+
+    sb.auth.getSession().then(({ data }) => {
+      if (data.session) {
+        const cta = document.querySelector('.nav-mobile .btn-primary');
+        if (cta) { cta.textContent = 'My Dashboard'; cta.href = 'dashboard.html'; }
+      }
     });
   </script>
 </body>
