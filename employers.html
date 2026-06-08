@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en-ZA">
 <head>
   <meta charset="UTF-8">
@@ -14,6 +14,109 @@
     .hero { min-height: 100vh; display: flex; align-items: center; padding: 0; }
     .hero-inner { grid-template-columns: 1fr; }
     .hero-card { display: none; }
+
+    /* ── Demo modal ── */
+    .demo-overlay {
+      position: fixed; inset: 0; z-index: 300;
+      background: rgba(10,20,50,0.75);
+      backdrop-filter: blur(6px);
+      display: flex; align-items: center; justify-content: center;
+      padding: 20px;
+      animation: fadeIn 0.2s ease;
+    }
+    .demo-overlay[hidden] { display: none; }
+    @keyframes fadeIn { from { opacity:0 } to { opacity:1 } }
+
+    .demo-box {
+      background: #fff;
+      border-radius: 24px;
+      padding: 36px 32px 32px;
+      max-width: 480px;
+      width: 100%;
+      max-height: 90vh;
+      overflow-y: auto;
+      position: relative;
+      box-shadow: 0 32px 80px rgba(0,0,0,0.35);
+      animation: slideUp 0.25s ease;
+    }
+    @keyframes slideUp { from { transform:translateY(24px); opacity:0 } to { transform:translateY(0); opacity:1 } }
+
+    .demo-close {
+      position: absolute; top: 16px; right: 16px;
+      width: 32px; height: 32px; border-radius: 50%;
+      background: #f0f4f8; border: none; font-size: 0.85rem;
+      color: #4a5e72; cursor: pointer; display: flex;
+      align-items: center; justify-content: center;
+      transition: background 0.15s;
+    }
+    .demo-close:hover { background: #e2e8f0; }
+
+    .demo-tag {
+      display: inline-block; font-size: 0.7rem; font-weight: 700;
+      letter-spacing: 0.08em; text-transform: uppercase;
+      color: #2ab3b3; background: rgba(42,179,179,0.1);
+      padding: 3px 10px; border-radius: 20px; margin-bottom: 10px;
+    }
+    .demo-box h2 {
+      font-size: 1.6rem; font-weight: 900; color: #0e1c40;
+      letter-spacing: -0.02em; margin-bottom: 4px;
+    }
+    .demo-box > p {
+      font-size: 0.85rem; color: #7a8fb0; margin-bottom: 24px;
+    }
+
+    .demo-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 12px; }
+    @media (max-width: 480px) { .demo-row { grid-template-columns: 1fr; } }
+
+    .demo-field { margin-bottom: 12px; }
+    .demo-field label {
+      display: block; font-size: 0.75rem; font-weight: 600;
+      color: #3d5070; margin-bottom: 5px;
+    }
+    .demo-field input,
+    .demo-field select,
+    .demo-field textarea {
+      width: 100%; padding: 10px 14px;
+      border: 1.5px solid #e2e8f0; border-radius: 10px;
+      font-size: 0.88rem; font-family: 'Inter', sans-serif;
+      color: #0e1c40; background: #f8f9fb; outline: none;
+      transition: border-color 0.15s, box-shadow 0.15s;
+    }
+    .demo-field input:focus,
+    .demo-field select:focus,
+    .demo-field textarea:focus {
+      border-color: #2ab3b3;
+      box-shadow: 0 0 0 3px rgba(42,179,179,0.12);
+      background: #fff;
+    }
+    .demo-field input::placeholder,
+    .demo-field textarea::placeholder { color: #b0bec5; }
+    .demo-field textarea { resize: vertical; min-height: 80px; }
+
+    .demo-submit {
+      width: 100%; padding: 14px;
+      background: #1a2f72; color: #fff;
+      border: none; border-radius: 12px;
+      font-size: 0.95rem; font-weight: 700;
+      font-family: 'Inter', sans-serif;
+      cursor: pointer; margin-top: 8px;
+      transition: background 0.15s, transform 0.15s;
+    }
+    .demo-submit:hover { background: #0e1c40; transform: translateY(-1px); }
+    .demo-submit:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
+
+    .demo-error {
+      display: none; background: #fff0f0; border: 1px solid #fca5a5;
+      color: #dc2626; font-size: 0.78rem; padding: 8px 12px;
+      border-radius: 8px; margin-bottom: 12px; font-weight: 500;
+    }
+
+    .demo-success {
+      text-align: center; padding: 20px 0 8px;
+    }
+    .demo-success .tick { font-size: 3rem; margin-bottom: 12px; }
+    .demo-success h3 { font-size: 1.3rem; font-weight: 800; color: #0e1c40; margin-bottom: 8px; }
+    .demo-success p { font-size: 0.88rem; color: #7a8fb0; line-height: 1.6; }
   </style>
 </head>
 <body>
@@ -33,7 +136,7 @@
       <a href="/employees">For Employees</a>
       <a href="/employers">For Employers</a>
       <a href="/login">Log In</a>
-      <a class="btn-primary" href="mailto:employers@burse.co.za">Book a Demo</a>
+      <a class="btn-primary" href="#" onclick="openDemo(event,'demo')">Book a Demo</a>
     </div>
   </header>
 
@@ -50,13 +153,79 @@
           </h1>
           <p class="hero-sub" style="color:rgba(255,255,255,0.8);">Give your employees access to their earned wages before payday. Zero cost to your business, zero impact on your cash flow.</p>
           <div class="hero-actions">
-            <a class="btn-outline btn-lg" href="mailto:hello@burse.co.za">Talk to Us</a>
-            <a class="btn-outline btn-lg" href="mailto:employers@burse.co.za">Book a Demo</a>
+            <a class="btn-outline btn-lg" href="#" onclick="openDemo(event,'contact')">Talk to Us</a>
+            <a class="btn-outline btn-lg" href="#" onclick="openDemo(event,'demo')">Book a Demo</a>
           </div>
         </div>
       </div>
     </section>
   </main>
+
+  <!-- ── DEMO / CONTACT MODAL ── -->
+  <div id="demoOverlay" class="demo-overlay" hidden onclick="closeDemoIfOutside(event)">
+    <div class="demo-box" id="demoBox">
+      <button class="demo-close" onclick="closeDemo()" aria-label="Close">✕</button>
+
+      <!-- Form view -->
+      <div id="demoForm">
+        <div class="demo-tag" id="demoTag">For Employers Only</div>
+        <h2 id="demoTitle">Book a demo</h2>
+        <p id="demoSubtitle">Tell us about your business and we'll be in touch within one business day.</p>
+
+        <div class="demo-error" id="demoError"></div>
+
+        <form onsubmit="submitDemo(event)">
+          <div class="demo-row">
+            <div class="demo-field">
+              <label>Name</label>
+              <input type="text" id="df-first" placeholder="e.g. Thabo" required>
+            </div>
+            <div class="demo-field">
+              <label>Surname</label>
+              <input type="text" id="df-last" placeholder="e.g. Nkosi" required>
+            </div>
+          </div>
+          <div class="demo-field">
+            <label>Email address</label>
+            <input type="email" id="df-email" placeholder="e.g. thabo@company.co.za" required>
+          </div>
+          <div class="demo-field">
+            <label>Phone number</label>
+            <input type="tel" id="df-phone" placeholder="e.g. 082 345 6789">
+          </div>
+          <div class="demo-field">
+            <label>Company name</label>
+            <input type="text" id="df-company" placeholder="e.g. Acme Holdings (Pty) Ltd">
+          </div>
+          <div class="demo-field">
+            <label>Number of employees</label>
+            <select id="df-empcount">
+              <option value="" disabled selected>Select a range</option>
+              <option value="1-10">1 – 10</option>
+              <option value="11-50">11 – 50</option>
+              <option value="51-200">51 – 200</option>
+              <option value="201-500">201 – 500</option>
+              <option value="500+">500+</option>
+            </select>
+          </div>
+          <div class="demo-field">
+            <label>Anything else you'd like us to know? <span style="color:#b0bec5;font-weight:400">(optional)</span></label>
+            <textarea id="df-message" placeholder="e.g. We currently use Sage payroll and have 3 branches…"></textarea>
+          </div>
+          <button type="submit" class="demo-submit" id="demoSubmitBtn">Send Request</button>
+        </form>
+      </div>
+
+      <!-- Success view -->
+      <div id="demoSuccess" style="display:none">
+        <div class="demo-success">
+          <div class="tick">✅</div>
+          <h3>We've got your request!</h3>
+          <p>Thanks — someone from the Burse team will reach out to you within one business day to get things moving.</p>
+        </div>
+      </div>
+    </div>
+  </div>
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script>
@@ -79,6 +248,66 @@
         if (cta) { cta.textContent = 'My Dashboard'; cta.href = '/dashboard'; }
       }
     });
+
+    let demoType = 'demo';
+
+    function openDemo(e, type) {
+      e.preventDefault();
+      demoType = type;
+      const isDemo = type === 'demo';
+      document.getElementById('demoTag').textContent = 'For Employers Only';
+      document.getElementById('demoTitle').textContent = isDemo ? 'Book a demo' : 'Talk to us';
+      document.getElementById('demoSubtitle').textContent = isDemo
+        ? 'Tell us about your business and we\'ll schedule a demo within one business day.'
+        : 'Have a question or want to learn more? Fill in your details and we\'ll be in touch.';
+      document.getElementById('demoSubmitBtn').textContent = isDemo ? 'Book Demo' : 'Send Message';
+      document.getElementById('demoForm').style.display = 'block';
+      document.getElementById('demoSuccess').style.display = 'none';
+      document.getElementById('demoError').style.display = 'none';
+      document.getElementById('demoOverlay').hidden = false;
+    }
+
+    function closeDemo() {
+      document.getElementById('demoOverlay').hidden = true;
+    }
+    function closeDemoIfOutside(e) {
+      if (e.target === document.getElementById('demoOverlay')) closeDemo();
+    }
+
+    async function submitDemo(e) {
+      e.preventDefault();
+      const btn = document.getElementById('demoSubmitBtn');
+      const errEl = document.getElementById('demoError');
+      errEl.style.display = 'none';
+      btn.textContent = 'Sending…';
+      btn.disabled = true;
+
+      const empRaw = document.getElementById('df-empcount').value;
+      const empNum = empRaw ? parseInt(empRaw.split('-')[0].replace('+','')) : null;
+
+      const { error } = await sb.from('demo_requests').insert({
+        type:           demoType,
+        first_name:     document.getElementById('df-first').value.trim(),
+        last_name:      document.getElementById('df-last').value.trim(),
+        email:          document.getElementById('df-email').value.trim().toLowerCase(),
+        phone:          document.getElementById('df-phone').value.trim() || null,
+        company_name:   document.getElementById('df-company').value.trim() || null,
+        employee_count: empNum,
+        message:        document.getElementById('df-message').value.trim() || null,
+      });
+
+      btn.disabled = false;
+      btn.textContent = demoType === 'demo' ? 'Book Demo' : 'Send Message';
+
+      if (error) {
+        errEl.textContent = 'Something went wrong — please try again.';
+        errEl.style.display = 'block';
+        return;
+      }
+
+      document.getElementById('demoForm').style.display = 'none';
+      document.getElementById('demoSuccess').style.display = 'block';
+    }
   </script>
 
   <script>
