@@ -285,7 +285,7 @@
       const empRaw = document.getElementById('df-empcount').value;
       const empNum = empRaw ? parseInt(empRaw.split('-')[0].replace('+','')) : null;
 
-      const { error } = await sb.from('demo_requests').insert({
+      const payload = {
         type:           demoType,
         first_name:     document.getElementById('df-first').value.trim(),
         last_name:      document.getElementById('df-last').value.trim(),
@@ -294,7 +294,9 @@
         company_name:   document.getElementById('df-company').value.trim() || null,
         employee_count: empNum,
         message:        document.getElementById('df-message').value.trim() || null,
-      });
+      };
+
+      const { error } = await sb.from('demo_requests').insert(payload);
 
       btn.disabled = false;
       btn.textContent = demoType === 'demo' ? 'Book Demo' : 'Send Message';
@@ -304,6 +306,13 @@
         errEl.style.display = 'block';
         return;
       }
+
+      // Fire email notification (non-blocking — don't let email failure block the UX)
+      fetch('https://lhrdunranqragptqouan.supabase.co/functions/v1/notify-demo', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'apikey': 'sb_publishable_DOXudlz8DvPusUsTWZezkQ_bryvuzg-' },
+        body: JSON.stringify(payload),
+      }).catch(() => {});
 
       document.getElementById('demoForm').style.display = 'none';
       document.getElementById('demoSuccess').style.display = 'block';
