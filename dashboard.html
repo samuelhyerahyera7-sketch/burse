@@ -112,12 +112,12 @@
                 </div>
               </div>
               <div style="padding:0 20px 20px">
-                <a href="#" style="font-size:0.82rem;font-weight:600;color:var(--green)">Change bank account →</a>
+                <a href="#" onclick="openBankModal(event)" style="font-size:0.82rem;font-weight:600;color:var(--green)">Change bank account →</a>
               </div>
             </div>
             <div id="bankEmpty" style="padding:20px 24px 24px;display:block">
               <p style="font-size:0.85rem;color:#8099b0;margin-bottom:12px">No bank account linked yet. Add one to enable withdrawals.</p>
-              <a href="#" style="font-size:0.82rem;font-weight:600;color:var(--teal, #2ab3b3)">+ Add bank account →</a>
+              <a href="#" onclick="openBankModal(event)" style="font-size:0.82rem;font-weight:600;color:var(--teal, #2ab3b3)">+ Add bank account →</a>
             </div>
           </div>
 
@@ -203,6 +203,51 @@
       </div>
 
       <button class="modal-confirm-btn" onclick="confirmWithdraw()">Confirm Withdrawal</button>
+    </div>
+  </div>
+
+  <!-- ─── BANK ACCOUNT MODAL ─── -->
+  <div id="bankModal" class="modal-overlay" hidden onclick="closeBankIfOutside(event)">
+    <div class="modal-box" role="dialog" aria-modal="true" aria-labelledby="bank-modal-title">
+      <button class="modal-close" onclick="closeBankModal()" aria-label="Close">✕</button>
+      <div class="modal-icon">🏦</div>
+      <h2 id="bank-modal-title">Add bank account</h2>
+      <p class="modal-sub" style="margin-bottom:20px">Your withdrawal funds will be sent here.</p>
+
+      <form id="bankForm" onsubmit="saveBankAccount(event)" style="text-align:left">
+        <div style="margin-bottom:14px">
+          <label style="display:block;font-size:0.78rem;font-weight:600;color:#3d5070;margin-bottom:5px">Bank</label>
+          <select id="bankSelect" required style="width:100%;padding:10px 14px;border:1.5px solid #e2e8f0;border-radius:10px;font-size:0.88rem;font-family:'Inter',sans-serif;color:#0e1c40;background:#f8f9fb;outline:none">
+            <option value="" disabled selected>Select your bank</option>
+            <option>ABSA Bank</option>
+            <option>Capitec Bank</option>
+            <option>FNB</option>
+            <option>Nedbank</option>
+            <option>Standard Bank</option>
+            <option>Discovery Bank</option>
+            <option>TymeBank</option>
+            <option>African Bank</option>
+            <option>Investec</option>
+            <option>Bidvest Bank</option>
+          </select>
+        </div>
+        <div style="margin-bottom:14px">
+          <label style="display:block;font-size:0.78rem;font-weight:600;color:#3d5070;margin-bottom:5px">Account number</label>
+          <input type="text" id="bankAccNum" inputmode="numeric" pattern="[0-9]{6,16}" placeholder="e.g. 1234567890" required
+            style="width:100%;padding:10px 14px;border:1.5px solid #e2e8f0;border-radius:10px;font-size:0.88rem;font-family:'Inter',sans-serif;color:#0e1c40;background:#f8f9fb;outline:none">
+        </div>
+        <div style="margin-bottom:24px">
+          <label style="display:block;font-size:0.78rem;font-weight:600;color:#3d5070;margin-bottom:5px">Account type</label>
+          <select id="bankAccType" required style="width:100%;padding:10px 14px;border:1.5px solid #e2e8f0;border-radius:10px;font-size:0.88rem;font-family:'Inter',sans-serif;color:#0e1c40;background:#f8f9fb;outline:none">
+            <option value="" disabled selected>Select type</option>
+            <option>Savings</option>
+            <option>Current / Cheque</option>
+            <option>Transmission</option>
+          </select>
+        </div>
+        <div class="error-msg" id="bankError" style="display:none;background:#fff0f0;border:1px solid #fca5a5;color:#dc2626;font-size:0.78rem;padding:8px 12px;border-radius:8px;margin-bottom:12px;font-weight:500"></div>
+        <button type="submit" class="modal-confirm-btn" id="bankSaveBtn">Save Bank Account</button>
+      </form>
     </div>
   </div>
 
@@ -479,6 +524,70 @@
     }
     function setAmount(val) {
       document.getElementById('withdrawAmount').value = val;
+    }
+
+    function openBankModal(e) {
+      if (e) e.preventDefault();
+      document.getElementById('bankModal').hidden = false;
+      document.getElementById('bankError').style.display = 'none';
+    }
+    function closeBankModal() {
+      document.getElementById('bankModal').hidden = true;
+    }
+    function closeBankIfOutside(e) {
+      if (e.target === document.getElementById('bankModal')) closeBankModal();
+    }
+
+    async function saveBankAccount(e) {
+      e.preventDefault();
+      const bank = document.getElementById('bankSelect').value;
+      const accNum = document.getElementById('bankAccNum').value.replace(/\s/g, '');
+      const accType = document.getElementById('bankAccType').value;
+      const errEl = document.getElementById('bankError');
+      const btn = document.getElementById('bankSaveBtn');
+
+      errEl.style.display = 'none';
+      if (!/^\d{6,16}$/.test(accNum)) {
+        errEl.textContent = 'Account number must be 6–16 digits.';
+        errEl.style.display = 'block';
+        return;
+      }
+
+      btn.textContent = 'Saving...';
+      btn.disabled = true;
+
+      const { data: session } = await sb.auth.getSession();
+      const last4 = accNum.slice(-4);
+
+      const { error } = await sb.from('profiles').upsert({
+        id: session.session.user.id,
+        bank_name: bank,
+        bank_last4: last4,
+        account_type: accType,
+      }, { onConflict: 'id' });
+
+      btn.textContent = 'Save Bank Account';
+      btn.disabled = false;
+
+      if (error) {
+        errEl.textContent = 'Failed to save: ' + error.message;
+        errEl.style.display = 'block';
+        return;
+      }
+
+      // Update UI immediately
+      document.getElementById('bankLinked').style.display = 'block';
+      document.getElementById('bankEmpty').style.display = 'none';
+      document.getElementById('bankNum').textContent = `**** **** **** ${last4}`;
+      document.getElementById('bankName').textContent = bank;
+      document.getElementById('bankAcc').textContent = `${accType} · Verified`;
+      document.getElementById('modalBankLabel').textContent = `${bank} ····${last4}`;
+      closeBankModal();
+
+      const toast = document.getElementById('successToast');
+      toast.textContent = '✅ Bank account saved successfully.';
+      toast.hidden = false;
+      setTimeout(() => { toast.hidden = true; }, 4000);
     }
 
     async function confirmWithdraw() {
