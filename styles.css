@@ -53,15 +53,15 @@ button { font-family: var(--font); cursor: pointer; border: none; background: no
 .btn-primary {
   display: inline-flex; align-items: center; gap: 6px;
   padding: 12px 22px;
-  background: var(--navy);
+  background: var(--teal);
   color: var(--white);
   border-radius: 8px;
   font-weight: 600; font-size: 0.9rem;
   transition: background var(--transition), box-shadow var(--transition), transform var(--transition);
 }
 .btn-primary:hover {
-  background: var(--navy-dark);
-  box-shadow: 0 4px 16px rgba(26,47,114,0.35);
+  background: #239a9a;
+  box-shadow: 0 4px 16px rgba(42,179,179,0.35);
   transform: translateY(-1px);
 }
 .btn-lg { padding: 14px 28px; font-size: 0.95rem; border-radius: 10px; }
