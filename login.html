@@ -150,30 +150,53 @@
     </div>
 
     <div class="login-card">
-      <h2>Welcome back</h2>
-      <p>Log in to access your earned wages.</p>
+      <!-- LOGIN FORM (default) -->
+      <div id="viewLogin">
+        <h2>Welcome back</h2>
+        <p>Log in to access your earned wages.</p>
 
-      <div class="error-msg" id="errorMsg">
-        Incorrect email or password. Please try again.
+        <div class="error-msg" id="errorMsg">
+          Incorrect email or password. Please try again.
+        </div>
+
+        <form id="loginForm" onsubmit="handleLogin(event)">
+          <div class="form-group">
+            <label for="email">Email address</label>
+            <input type="email" id="email" placeholder="you@example.com" required autocomplete="email">
+          </div>
+          <div class="form-group">
+            <label for="password">Password</label>
+            <input type="password" id="password" placeholder="Enter your password" required autocomplete="current-password">
+          </div>
+          <div class="forgot">
+            <a href="#" onclick="handleForgotPassword(event)">Forgot password?</a>
+          </div>
+          <button type="submit" class="btn-login">Log In</button>
+        </form>
+
+        <div class="signup-row">
+          Don't have an account? <a href="/dashboard">Get started free</a>
+        </div>
       </div>
 
-      <form id="loginForm" onsubmit="handleLogin(event)">
-        <div class="form-group">
-          <label for="email">Email address</label>
-          <input type="email" id="email" placeholder="you@example.com" required autocomplete="email">
-        </div>
-        <div class="form-group">
-          <label for="password">Password</label>
-          <input type="password" id="password" placeholder="Enter your password" required autocomplete="current-password">
-        </div>
-        <div class="forgot">
-          <a href="#" onclick="handleForgotPassword(event)">Forgot password?</a>
-        </div>
-        <button type="submit" class="btn-login">Log In</button>
-      </form>
+      <!-- RESET PASSWORD FORM (shown after clicking email link) -->
+      <div id="viewReset" style="display:none;">
+        <h2>Set new password</h2>
+        <p>Choose a new password for your account.</p>
 
-      <div class="signup-row">
-        Don't have an account? <a href="/dashboard">Get started free</a>
+        <div class="error-msg" id="resetErrorMsg"></div>
+
+        <form id="resetForm" onsubmit="handleResetPassword(event)">
+          <div class="form-group">
+            <label for="newPassword">New password</label>
+            <input type="password" id="newPassword" placeholder="At least 8 characters" required autocomplete="new-password">
+          </div>
+          <div class="form-group">
+            <label for="confirmPassword">Confirm password</label>
+            <input type="password" id="confirmPassword" placeholder="Repeat your new password" required autocomplete="new-password">
+          </div>
+          <button type="submit" class="btn-login">Update Password</button>
+        </form>
       </div>
     </div>
 
@@ -233,9 +256,17 @@
 
     const ADMIN_EMAIL = 'samuelhyera.hyera7@gmail.com';
 
-    // Redirect if already logged in
+    // Handle password recovery link from email
+    sb.auth.onAuthStateChange((event, session) => {
+      if (event === 'PASSWORD_RECOVERY') {
+        document.getElementById('viewLogin').style.display = 'none';
+        document.getElementById('viewReset').style.display = 'block';
+      }
+    });
+
+    // Redirect if already logged in (skip if recovery flow)
     sb.auth.getSession().then(({ data }) => {
-      if (data.session) {
+      if (data.session && !window.location.hash.includes('type=recovery')) {
         window.location.href = data.session.user.email === ADMIN_EMAIL ? '/admin' : '/dashboard';
       }
     });
@@ -272,6 +303,41 @@
       if (!email) { alert('Enter your email address first.'); return; }
       await sb.auth.resetPasswordForEmail(email, { redirectTo: window.location.origin + '/login' });
       alert('Password reset email sent — check your inbox.');
+    }
+
+    async function handleResetPassword(e) {
+      e.preventDefault();
+      const newPw = document.getElementById('newPassword').value;
+      const confirmPw = document.getElementById('confirmPassword').value;
+      const errEl = document.getElementById('resetErrorMsg');
+      const btn = document.querySelector('#resetForm .btn-login');
+
+      errEl.style.display = 'none';
+      if (newPw !== confirmPw) {
+        errEl.textContent = 'Passwords do not match.';
+        errEl.style.display = 'block';
+        return;
+      }
+      if (newPw.length < 8) {
+        errEl.textContent = 'Password must be at least 8 characters.';
+        errEl.style.display = 'block';
+        return;
+      }
+
+      btn.textContent = 'Updating...';
+      btn.disabled = true;
+
+      const { error } = await sb.auth.updateUser({ password: newPw });
+      if (error) {
+        errEl.textContent = error.message;
+        errEl.style.display = 'block';
+        btn.textContent = 'Update Password';
+        btn.disabled = false;
+        return;
+      }
+
+      alert('Password updated! You can now log in.');
+      window.location.href = '/login';
     }
   </script>
 
