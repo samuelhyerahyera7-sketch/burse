@@ -75,8 +75,8 @@
         <!-- Withdrawn this cycle -->
         <div class="dc">
           <div class="dc-label">Withdrawn this cycle</div>
-          <div class="dc-val">R 1,500</div>
-          <div class="dc-sub">1 withdrawal · R10 fee paid</div>
+          <div class="dc-val" id="cycleWithdrawnVal">R 0.00</div>
+          <div class="dc-sub" id="cycleWithdrawnSub">No withdrawals yet this cycle</div>
         </div>
 
       </div>
@@ -87,62 +87,10 @@
         <!-- Transactions -->
         <div class="dc">
           <div class="dash-section-title">Recent transactions</div>
-          <div class="tx-list">
-
-            <div class="tx-item">
-              <div class="tx-icon tx-icon-withdraw">💸</div>
-              <div class="tx-detail">
-                <strong>Wage withdrawal</strong>
-                <span>28 May 2026 · Capitec Bank ····4821</span>
-              </div>
-              <div class="tx-amount credit">+R 1,500.00</div>
+          <div class="tx-list" id="txList">
+            <div class="tx-empty" style="padding:32px 0;text-align:center;color:#8099b0;font-size:0.88rem;">
+              No transactions yet
             </div>
-
-            <div class="tx-item">
-              <div class="tx-icon tx-icon-fee">🏷️</div>
-              <div class="tx-detail">
-                <strong>Burse withdrawal fee</strong>
-                <span>28 May 2026</span>
-              </div>
-              <div class="tx-amount debit">−R 10.00</div>
-            </div>
-
-            <div class="tx-item">
-              <div class="tx-icon tx-icon-payday">🏢</div>
-              <div class="tx-detail">
-                <strong>Salary — Retail Group (Pty) Ltd</strong>
-                <span>25 May 2026 · Full salary minus Burse deduction</span>
-              </div>
-              <div class="tx-amount credit">+R 16,990.00</div>
-            </div>
-
-            <div class="tx-item">
-              <div class="tx-icon tx-icon-withdraw">💸</div>
-              <div class="tx-detail">
-                <strong>Wage withdrawal</strong>
-                <span>12 May 2026 · Capitec Bank ····4821</span>
-              </div>
-              <div class="tx-amount credit">+R 2,000.00</div>
-            </div>
-
-            <div class="tx-item">
-              <div class="tx-icon tx-icon-fee">🏷️</div>
-              <div class="tx-detail">
-                <strong>Burse withdrawal fee</strong>
-                <span>12 May 2026</span>
-              </div>
-              <div class="tx-amount debit">−R 10.00</div>
-            </div>
-
-            <div class="tx-item">
-              <div class="tx-icon tx-icon-payday">🏢</div>
-              <div class="tx-detail">
-                <strong>Salary — Retail Group (Pty) Ltd</strong>
-                <span>26 Apr 2026 · Full salary minus Burse deductions</span>
-              </div>
-              <div class="tx-amount credit">+R 14,490.00</div>
-            </div>
-
           </div>
         </div>
 
@@ -154,16 +102,22 @@
             <div style="padding:20px 24px 0">
               <div class="dash-section-title">Linked bank account</div>
             </div>
-            <div class="bank-card" style="margin:0 20px 16px;border-radius:12px">
-              <div class="bank-card-label">Primary account</div>
-              <div class="bank-card-num">**** **** **** 4821</div>
-              <div class="bank-card-footer">
-                <span class="bank-card-bank">Capitec Bank</span>
-                <span class="bank-card-acc">Savings · Verified</span>
+            <div id="bankLinked" style="display:none">
+              <div class="bank-card" style="margin:0 20px 16px;border-radius:12px">
+                <div class="bank-card-label">Primary account</div>
+                <div class="bank-card-num" id="bankNum">**** **** **** ——</div>
+                <div class="bank-card-footer">
+                  <span class="bank-card-bank" id="bankName">—</span>
+                  <span class="bank-card-acc" id="bankAcc">Savings · Verified</span>
+                </div>
+              </div>
+              <div style="padding:0 20px 20px">
+                <a href="#" style="font-size:0.82rem;font-weight:600;color:var(--green)">Change bank account →</a>
               </div>
             </div>
-            <div style="padding:0 20px 20px">
-              <a href="#" style="font-size:0.82rem;font-weight:600;color:var(--green)">Change bank account →</a>
+            <div id="bankEmpty" style="padding:20px 24px 24px;display:block">
+              <p style="font-size:0.85rem;color:#8099b0;margin-bottom:12px">No bank account linked yet. Add one to enable withdrawals.</p>
+              <a href="#" style="font-size:0.82rem;font-weight:600;color:var(--teal, #2ab3b3)">+ Add bank account →</a>
             </div>
           </div>
 
@@ -173,19 +127,23 @@
             <div class="limits-info">
               <div class="limit-row">
                 <strong>Max per withdrawal</strong>
-                <span>R 6,250 <span class="limit-badge">50% of earned</span></span>
+                <span id="limitMax">50% of earned wages</span>
               </div>
               <div class="limit-row">
-                <strong>Withdrawals remaining</strong>
-                <span>1 of 3</span>
+                <strong>Withdrawals this cycle</strong>
+                <span id="limitUsed">0</span>
               </div>
               <div class="limit-row">
-                <strong>Payroll provider</strong>
-                <span>Sage Payroll ✓</span>
+                <strong>Standard fee</strong>
+                <span>R25 flat</span>
+              </div>
+              <div class="limit-row">
+                <strong>Instant fee</strong>
+                <span>R50 flat</span>
               </div>
               <div class="limit-row">
                 <strong>Next payday</strong>
-                <span>25 June 2026</span>
+                <span id="limitPayday">—</span>
               </div>
             </div>
           </div>
@@ -201,7 +159,18 @@
       <button class="modal-close" onclick="closeWithdrawModal()" aria-label="Close">✕</button>
       <div class="modal-icon">💸</div>
       <h2 id="modal-title">Withdraw wages</h2>
-      <p class="modal-sub">Available: <strong>R 4,260.00</strong> · Fee: R10 flat</p>
+      <p class="modal-sub" id="modalSub">Available: <strong>R —</strong></p>
+
+      <div class="modal-speed">
+        <button class="speed-opt speed-opt-active" id="speedStandard" onclick="selectSpeed('standard')">
+          <span class="speed-label">Standard</span>
+          <span class="speed-detail">~2 min · R25 fee</span>
+        </button>
+        <button class="speed-opt" id="speedInstant" onclick="selectSpeed('instant')">
+          <span class="speed-label">Instant</span>
+          <span class="speed-detail">Seconds · R50 fee</span>
+        </button>
+      </div>
 
       <div class="modal-amount-wrap">
         <span class="modal-currency">R</span>
@@ -211,7 +180,7 @@
           class="modal-amount-input"
           placeholder="0.00"
           min="50"
-          max="4260"
+          max="0"
           step="50"
           aria-label="Amount to withdraw"
         >
@@ -221,16 +190,16 @@
         <button onclick="setAmount(500)">R500</button>
         <button onclick="setAmount(1000)">R1,000</button>
         <button onclick="setAmount(2000)">R2,000</button>
-        <button onclick="setAmount(4260)">Max</button>
+        <button id="maxBtn" onclick="setAmount(0)">Max</button>
       </div>
 
       <div class="modal-to">
         <span>To:</span>
-        <span>Capitec ····4821</span>
+        <span id="modalBankLabel">No bank linked</span>
       </div>
 
-      <div class="modal-disclaimer">
-        Funds arrive within 2 minutes. A flat R10 fee will be deducted. This is not a loan.
+      <div class="modal-disclaimer" id="modalDisclaimer">
+        Funds arrive within 2 minutes. A flat R25 fee will be deducted. This is not a loan.
       </div>
 
       <button class="modal-confirm-btn" onclick="confirmWithdraw()">Confirm Withdrawal</button>
@@ -310,6 +279,22 @@
     }
     .modal-to span:first-child { color: #8099b0; }
     .modal-to span:last-child { font-weight: 600; color: #1e2d3d; }
+    .modal-speed {
+      display: flex; gap: 10px; margin-bottom: 20px;
+    }
+    .speed-opt {
+      flex: 1; padding: 10px 12px; border-radius: 10px;
+      border: 2px solid #e2e8f0; background: #f8f9fb;
+      display: flex; flex-direction: column; gap: 2px;
+      text-align: center; cursor: pointer; transition: all 0.15s;
+    }
+    .speed-opt-active {
+      border-color: #00c264; background: #f0fdf6;
+    }
+    .speed-label { font-size: 0.85rem; font-weight: 700; color: #0a1628; }
+    .speed-detail { font-size: 0.72rem; color: #8099b0; }
+    .speed-opt-active .speed-detail { color: #00a050; }
+
     .modal-disclaimer {
       font-size: 0.78rem; color: #8099b0; text-align: center;
       margin-bottom: 24px; line-height: 1.5;
@@ -347,9 +332,9 @@
     );
 
     const ADMIN_EMAIL = 'samuelhyera.hyera7@gmail.com';
-    let availableBalance = 4260;
+    let availableBalance = 0;
+    let selectedSpeed = 'standard'; // 'standard' (R25) or 'instant' (R50)
 
-    // Auth check on load
     sb.auth.getSession().then(async ({ data }) => {
       if (!data.session) { window.location.href = '/login'; return; }
       const user = data.session.user;
@@ -364,8 +349,7 @@
       // Name + avatar
       const name = p?.full_name || user.email;
       const firstName = name.includes('@') ? name.split('@')[0] : name.split(' ')[0];
-      const initial = firstName[0].toUpperCase();
-      document.getElementById('dashAvatar').textContent = initial;
+      document.getElementById('dashAvatar').textContent = firstName[0].toUpperCase();
       document.getElementById('dashUserName').textContent = name;
 
       // Greeting
@@ -373,59 +357,95 @@
       const timeOfDay = hour < 12 ? 'morning' : hour < 17 ? 'afternoon' : 'evening';
       document.getElementById('greetingText').textContent = `Good ${timeOfDay}, ${firstName} 👋`;
 
-      // Pay cycle sub-line
+      // Pay cycle line
       const today = new Date();
       const monthName = today.toLocaleString('en-ZA', { month: 'long' });
       const payday = p?.payday_of_month || 25;
       document.getElementById('greetingSub').textContent =
         `${today.toLocaleDateString('en-ZA', { weekday:'long', day:'numeric', month:'long', year:'numeric' })} · ${monthName} pay cycle · payday ${payday} ${monthName}`;
 
+      // Payday display in limits
+      document.getElementById('limitPayday').textContent = `${payday} ${monthName} ${today.getFullYear()}`;
+
       if (p?.gross_salary) {
         const daysInMonth = new Date(today.getFullYear(), today.getMonth() + 1, 0).getDate();
-        const earned = (p.gross_salary / daysInMonth) * today.getDate();
+        const daysSoFar = today.getDate();
+        const earned = (p.gross_salary / daysInMonth) * daysSoFar;
         availableBalance = Math.floor(earned * 0.5);
 
         document.querySelectorAll('.dc-val')[0].textContent = fmt(availableBalance);
         document.querySelectorAll('.dc-val')[1].textContent = fmt(p.gross_salary);
-        document.querySelector('.modal-sub').innerHTML =
-          `Available: <strong>${fmt(availableBalance)}</strong> · Fee: R10 flat`;
+        document.getElementById('limitMax').textContent = fmt(availableBalance);
+        document.getElementById('modalSub').innerHTML = `Available: <strong>${fmt(availableBalance)}</strong>`;
         document.getElementById('withdrawAmount').max = availableBalance;
-        document.querySelector('.modal-quick-btns button:last-child').onclick = () => setAmount(availableBalance);
+        document.getElementById('maxBtn').onclick = () => setAmount(availableBalance);
       } else {
         document.querySelectorAll('.dc-val')[0].textContent = 'R —';
         document.querySelectorAll('.dc-val')[1].textContent = 'R —';
       }
 
+      // Bank account
       if (p?.bank_last4) {
-        document.querySelector('.bank-card-num').textContent = `**** **** **** ${p.bank_last4}`;
-        if (p.bank_name) document.querySelector('.bank-card-bank').textContent = p.bank_name;
-        document.querySelector('.bank-card-acc').textContent = `${p.account_type || 'Savings'} · Verified`;
-        document.querySelector('.modal-to span:last-child').textContent = `${p.bank_name || 'Bank'} ····${p.bank_last4}`;
+        document.getElementById('bankLinked').style.display = 'block';
+        document.getElementById('bankEmpty').style.display = 'none';
+        document.getElementById('bankNum').textContent = `**** **** **** ${p.bank_last4}`;
+        document.getElementById('bankName').textContent = p.bank_name || 'Bank';
+        document.getElementById('bankAcc').textContent = `${p.account_type || 'Savings'} · Verified`;
+        document.getElementById('modalBankLabel').textContent = `${p.bank_name || 'Bank'} ····${p.bank_last4}`;
       }
     }
 
     async function loadTransactions(userId) {
-      const { data: txns } = await sb
-        .from('transactions')
+      // Load withdrawals for this cycle and recent activity
+      const today = new Date();
+      const cycleStart = new Date(today.getFullYear(), today.getMonth(), 1).toISOString();
+
+      const { data: withdrawals } = await sb
+        .from('withdrawals')
         .select('*')
         .eq('user_id', userId)
-        .order('created_at', { ascending: false })
-        .limit(10);
+        .order('created_at', { ascending: false });
 
-      if (!txns || txns.length === 0) return;
+      // Update cycle stats
+      const thisMonth = (withdrawals || []).filter(w => w.created_at >= cycleStart);
+      const totalWithdrawn = thisMonth.reduce((s, w) => s + (w.amount || 0), 0);
+      const totalFees = thisMonth.reduce((s, w) => s + (w.fee || 0), 0);
+      document.getElementById('cycleWithdrawnVal').textContent = fmt(totalWithdrawn);
+      document.getElementById('cycleWithdrawnSub').textContent = thisMonth.length === 0
+        ? 'No withdrawals yet this cycle'
+        : `${thisMonth.length} withdrawal${thisMonth.length > 1 ? 's' : ''} · R${totalFees} fees paid`;
+      document.getElementById('limitUsed').textContent = thisMonth.length;
 
-      const icons = { withdrawal: '💸', fee: '🏷️', salary: '🏢' };
-      const list = document.querySelector('.tx-list');
-      list.innerHTML = txns.map(t => `
-        <div class="tx-item">
-          <div class="tx-icon tx-icon-${t.type}">${icons[t.type] || '💳'}</div>
-          <div class="tx-detail">
-            <strong>${t.description}</strong>
-            <span>${new Date(t.created_at).toLocaleDateString('en-ZA', { day:'2-digit', month:'short', year:'numeric' })}</span>
+      // Render transaction list
+      const list = document.getElementById('txList');
+      if (!withdrawals || withdrawals.length === 0) {
+        list.innerHTML = `<div class="tx-empty" style="padding:32px 0;text-align:center;color:#8099b0;font-size:0.88rem;">No transactions yet</div>`;
+        return;
+      }
+
+      list.innerHTML = withdrawals.map(w => {
+        const date = new Date(w.created_at).toLocaleDateString('en-ZA', { day:'2-digit', month:'short', year:'numeric' });
+        const statusBadge = w.status === 'pending' ? ' <span style="font-size:0.7rem;background:#fef3c7;color:#d97706;padding:1px 6px;border-radius:4px;font-weight:600;">Pending</span>'
+                          : w.status === 'declined' ? ' <span style="font-size:0.7rem;background:#fee2e2;color:#dc2626;padding:1px 6px;border-radius:4px;font-weight:600;">Declined</span>' : '';
+        return `
+          <div class="tx-item">
+            <div class="tx-icon tx-icon-withdraw">💸</div>
+            <div class="tx-detail">
+              <strong>Wage withdrawal${statusBadge}</strong>
+              <span>${date}</span>
+            </div>
+            <div class="tx-amount credit">+${fmt(w.amount)}</div>
           </div>
-          <div class="tx-amount ${t.amount > 0 ? 'credit' : 'debit'}">${t.amount > 0 ? '+' : '−'}R ${Math.abs(t.amount).toLocaleString('en-ZA', { minimumFractionDigits: 2 })}</div>
-        </div>
-      `).join('');
+          <div class="tx-item">
+            <div class="tx-icon tx-icon-fee">🏷️</div>
+            <div class="tx-detail">
+              <strong>Burse ${w.fee >= 50 ? 'instant' : 'standard'} withdrawal fee</strong>
+              <span>${date}</span>
+            </div>
+            <div class="tx-amount debit">−${fmt(w.fee)}</div>
+          </div>
+        `;
+      }).join('');
     }
 
     function fmt(n) {
@@ -437,7 +457,16 @@
       window.location.href = '/';
     }
 
-    // Modal functions
+    function selectSpeed(speed) {
+      selectedSpeed = speed;
+      document.getElementById('speedStandard').classList.toggle('speed-opt-active', speed === 'standard');
+      document.getElementById('speedInstant').classList.toggle('speed-opt-active', speed === 'instant');
+      const fee = speed === 'instant' ? 50 : 25;
+      const time = speed === 'instant' ? 'seconds' : '~2 minutes';
+      document.getElementById('modalDisclaimer').textContent =
+        `Funds arrive in ${time}. A flat R${fee} fee will be deducted. This is not a loan.`;
+    }
+
     function openWithdrawModal() {
       document.getElementById('withdrawModal').hidden = false;
       document.getElementById('withdrawAmount').focus();
@@ -460,6 +489,7 @@
       const { data: session } = await sb.auth.getSession();
       if (!session.session) { window.location.href = '/login'; return; }
 
+      const fee = selectedSpeed === 'instant' ? 50 : 25;
       const btn = document.querySelector('.modal-confirm-btn');
       btn.textContent = 'Processing...';
       btn.disabled = true;
@@ -467,7 +497,7 @@
       const { error } = await sb.from('withdrawals').insert({
         user_id: session.session.user.id,
         amount: amt,
-        fee: 10,
+        fee,
         status: 'pending'
       });
 
@@ -479,6 +509,9 @@
       closeWithdrawModal();
       document.getElementById('successToast').hidden = false;
       setTimeout(() => { document.getElementById('successToast').hidden = true; }, 4000);
+      await sb.auth.getSession().then(async ({ data }) => {
+        if (data.session) await loadTransactions(data.session.user.id);
+      });
     }
   </script>
 </body>
