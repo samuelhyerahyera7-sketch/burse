@@ -256,17 +256,22 @@
 
     const ADMIN_EMAIL = 'samuelhyera.hyera7@gmail.com';
 
-    // Handle password recovery link from email
-    sb.auth.onAuthStateChange((event, session) => {
+    // Supabase v2 sends recovery links with ?code= (PKCE) or #type=recovery (implicit)
+    // Detect either format immediately so we never redirect away from the reset form
+    const _isRecovery = new URLSearchParams(window.location.search).has('code')
+                     || window.location.hash.includes('type=recovery');
+
+    // Show reset form when Supabase processes the recovery token
+    sb.auth.onAuthStateChange((event) => {
       if (event === 'PASSWORD_RECOVERY') {
         document.getElementById('viewLogin').style.display = 'none';
         document.getElementById('viewReset').style.display = 'block';
       }
     });
 
-    // Redirect if already logged in (skip if recovery flow)
+    // Redirect if already logged in — but never during a recovery flow
     sb.auth.getSession().then(({ data }) => {
-      if (data.session && !window.location.hash.includes('type=recovery')) {
+      if (data.session && !_isRecovery) {
         window.location.href = data.session.user.email === ADMIN_EMAIL ? '/admin' : '/dashboard';
       }
     });
