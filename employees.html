@@ -94,8 +94,8 @@
       const SPACING = 26, BASE_R = 1.5;
       let dots = [], t = 0;
       function resize() {
-        canvas.width  = canvas.parentElement.offsetWidth;
-        canvas.height = canvas.parentElement.offsetHeight;
+        canvas.width  = window.innerWidth;
+        canvas.height = window.innerHeight;
         dots = [];
         for (let y = 0; y <= canvas.height + SPACING; y += SPACING)
           for (let x = 0; x <= canvas.width + SPACING; x += SPACING)
@@ -120,7 +120,7 @@
         requestAnimationFrame(frame);
       }
       window.addEventListener('resize', resize);
-      resize(); frame();
+      window.addEventListener('load', function(){ resize(); frame(); });
     })();
   </script>
 </body>
