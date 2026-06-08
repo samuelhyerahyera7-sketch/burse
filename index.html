@@ -202,7 +202,7 @@
           <label for="password">Password</label>
           <input type="password" id="password" placeholder="Enter your password" required autocomplete="current-password">
         </div>
-        <div class="forgot"><a href="#">Forgot password?</a></div>
+        <div class="forgot"><a href="#" onclick="handleForgotPassword(event)">Forgot password?</a></div>
         <button type="submit" class="btn-login" id="loginBtn">Log In</button>
       </form>
 
@@ -369,6 +369,15 @@
           btn.disabled = false;
         }
       }
+    }
+
+    async function handleForgotPassword(e) {
+      e.preventDefault();
+      const email = document.getElementById('email').value;
+      if (!email) { alert('Enter your email address first.'); return; }
+      const { error } = await sb.auth.resetPasswordForEmail(email, { redirectTo: window.location.origin + '/login' });
+      if (error) { alert('Error: ' + error.message); return; }
+      alert('Password reset email sent — check your inbox.');
     }
 
     const ADMIN_EMAIL = 'samuelhyera.hyera7@gmail.com';
