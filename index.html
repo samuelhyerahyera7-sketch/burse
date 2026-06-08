@@ -140,14 +140,14 @@
         <a href="/employees">For Employees</a>
         <a href="/employers">For Employers</a>
         <a href="#" onclick="showLogin(); return false;">Log In</a>
-        <a href="/admin" style="color:rgba(42,179,179,0.9);">Admin Dashboard</a>
+        <a href="/admin" id="adminNavLink" style="display:none;color:rgba(42,179,179,0.9);">Admin Dashboard</a>
         <a class="btn-primary" href="#" onclick="showLogin(); return false;">Get Started</a>
       </div>
     </header>
 
     <!-- HERO -->
     <section class="hero" style="min-height:100vh; display:flex; align-items:center; background:#1e2a6e;">
-      <div class="hero-bg-grid" aria-hidden="true"></div>
+      <canvas id="heroCanvas" class="hero-bg-grid" aria-hidden="true"></canvas>
       <div class="hero-glow" aria-hidden="true"></div>
       <div class="container" style="position:relative;z-index:2;">
         <h1 id="hero-title" style="color:#ffffff;">
@@ -176,6 +176,7 @@
 
   <!-- ══════════ SCREEN 2 — LOGIN ══════════ -->
   <div class="screen" id="screen-login">
+    <canvas id="loginCanvas" style="position:absolute;inset:0;width:100%;height:100%;pointer-events:none;" aria-hidden="true"></canvas>
 
     <div class="login-logo">
       <span onclick="showHome()">
@@ -214,6 +215,58 @@
     <button class="back-btn" onclick="showHome()">← Back to Burse</button>
 
   </div>
+
+  <script>
+    function animateDots(canvas, container) {
+      const ctx = canvas.getContext('2d');
+      const SPACING = 26, BASE_R = 1.5;
+      let dots = [], t = 0, raf;
+
+      function resize() {
+        canvas.width  = container.offsetWidth  || window.innerWidth;
+        canvas.height = container.offsetHeight || window.innerHeight;
+        dots = [];
+        for (let y = 0; y <= canvas.height + SPACING; y += SPACING)
+          for (let x = 0; x <= canvas.width + SPACING; x += SPACING)
+            dots.push({
+              x, y,
+              ph: Math.random() * 6.283,
+              sp: 0.6 + Math.random() * 0.8,
+              glow: 0, glowDir: 0,
+              glowSpd: 0.008 + Math.random() * 0.007,
+            });
+      }
+
+      function frame() {
+        t += 0.012;
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+        for (const d of dots) {
+          if (d.glowDir === 0 && Math.random() < 0.0003) d.glowDir = 1;
+          if (d.glowDir !== 0) {
+            d.glow += d.glowDir * d.glowSpd;
+            if (d.glow >= 1) { d.glow = 1; d.glowDir = -1; }
+            else if (d.glow <= 0) { d.glow = 0; d.glowDir = 0; }
+          }
+
+          const cy = d.y + Math.sin(t * d.sp + d.ph + d.x * 0.025) * 3;
+          ctx.beginPath();
+          ctx.arc(d.x, cy, BASE_R + d.glow * 2.5, 0, 6.283);
+          ctx.fillStyle = `rgba(255,255,255,${Math.min(0.18 + d.glow * 0.7, 1)})`;
+          ctx.fill();
+        }
+
+        raf = requestAnimationFrame(frame);
+      }
+
+      window.addEventListener('resize', () => { cancelAnimationFrame(raf); resize(); frame(); });
+      resize();
+      frame();
+    }
+
+    animateDots(document.getElementById('heroCanvas'),  document.querySelector('.hero'));
+    animateDots(document.getElementById('loginCanvas'), document.getElementById('screen-login'));
+  </script>
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script>
@@ -301,7 +354,7 @@
           btn.textContent = 'Log In';
           btn.disabled = false;
         } else {
-          window.location.href = '/dashboard';
+          window.location.href = data.user.email === ADMIN_EMAIL ? '/admin' : '/dashboard';
         }
       } else {
         const { data, error } = await sb.auth.signUp({ email, password });
@@ -318,11 +371,16 @@
       }
     }
 
-    // If logged in, update nav CTA to go to dashboard instead of sign up
+    const ADMIN_EMAIL = 'samuelhyera.hyera7@gmail.com';
+
+    // If logged in, show admin link if admin
     sb.auth.getSession().then(({ data }) => {
       if (data.session) {
         const cta = document.querySelector('.nav-cta');
         if (cta) { cta.textContent = 'My Dashboard'; cta.href = '/dashboard'; }
+        if (data.session.user.email === ADMIN_EMAIL) {
+          document.getElementById('adminNavLink').style.display = '';
+        }
       }
     });
   </script>

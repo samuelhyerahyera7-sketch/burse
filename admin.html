@@ -323,11 +323,7 @@
               <span class="card-action" onclick="showSection('transactions')">View all →</span>
             </div>
             <div id="recent-activity">
-              <div class="activity-item"><div class="activity-dot"></div><div><div class="activity-text">New user registered</div><div class="activity-time">Just now</div></div></div>
-              <div class="activity-item"><div class="activity-dot" style="background:#f97316"></div><div><div class="activity-text">Withdrawal of R1,200 processed</div><div class="activity-time">2 min ago</div></div></div>
-              <div class="activity-item"><div class="activity-dot" style="background:#16a34a"></div><div><div class="activity-text">New employer onboarded — Acme Corp</div><div class="activity-time">15 min ago</div></div></div>
-              <div class="activity-item"><div class="activity-dot"></div><div><div class="activity-text">Withdrawal of R800 processed</div><div class="activity-time">1 hr ago</div></div></div>
-              <div class="activity-item"><div class="activity-dot" style="background:#f97316"></div><div><div class="activity-text">Withdrawal of R3,500 processed</div><div class="activity-time">2 hrs ago</div></div></div>
+              <div class="loading">Loading activity...</div>
             </div>
           </div>
 
@@ -371,7 +367,7 @@
             <button class="filter-btn" style="background:var(--navy);color:white;border-color:var(--navy);">Export</button>
           </div>
           <div id="users-table-wrap">
-            <div class="loading">Loading users...</div>
+            <div class="loading">Loading users…</div>
           </div>
         </div>
       </div>
@@ -388,19 +384,7 @@
             <button class="filter-btn">This Month</button>
             <button class="filter-btn">Export CSV</button>
           </div>
-          <table>
-            <thead>
-              <tr><th>ID</th><th>Employee</th><th>Amount</th><th>Fee</th><th>Bank</th><th>Date</th><th>Status</th></tr>
-            </thead>
-            <tbody>
-              <tr><td>#TXN-001</td><td>Nandi Mokoena</td><td>R 1,500</td><td>R 10</td><td>Capitec</td><td>02 Jun 2026</td><td><span class="badge badge-green">Completed</span></td></tr>
-              <tr><td>#TXN-002</td><td>Thabo Khumalo</td><td>R 3,200</td><td>R 10</td><td>FNB</td><td>02 Jun 2026</td><td><span class="badge badge-green">Completed</span></td></tr>
-              <tr><td>#TXN-003</td><td>Lerato Venter</td><td>R 800</td><td>R 10</td><td>Standard Bank</td><td>01 Jun 2026</td><td><span class="badge badge-green">Completed</span></td></tr>
-              <tr><td>#TXN-004</td><td>Kagiso Sithole</td><td>R 2,100</td><td>R 10</td><td>Nedbank</td><td>01 Jun 2026</td><td><span class="badge badge-yellow">Pending</span></td></tr>
-              <tr><td>#TXN-005</td><td>Sipho Dlamini</td><td>R 500</td><td>R 10</td><td>TymeBank</td><td>31 May 2026</td><td><span class="badge badge-green">Completed</span></td></tr>
-              <tr><td>#TXN-006</td><td>Nomsa Zulu</td><td>R 4,000</td><td>R 10</td><td>Absa</td><td>30 May 2026</td><td><span class="badge badge-red">Failed</span></td></tr>
-            </tbody>
-          </table>
+          <div id="txn-table-wrap"><div class="loading">Loading transactions…</div></div>
         </div>
       </div>
 
@@ -415,18 +399,7 @@
             <input class="search-input" placeholder="Search employers...">
             <button class="filter-btn">Add Employer</button>
           </div>
-          <table>
-            <thead>
-              <tr><th>Company</th><th>Payroll</th><th>Employees</th><th>Withdrawals</th><th>Joined</th><th>Status</th></tr>
-            </thead>
-            <tbody>
-              <tr><td><strong>Acme Corp</strong></td><td>Sage Payroll</td><td>245</td><td>87</td><td>Jan 2026</td><td><span class="badge badge-green">Active</span></td></tr>
-              <tr><td><strong>Retail SA</strong></td><td>PaySpace</td><td>1,204</td><td>432</td><td>Feb 2026</td><td><span class="badge badge-green">Active</span></td></tr>
-              <tr><td><strong>Logistics Ltd</strong></td><td>SimplePay</td><td>88</td><td>21</td><td>Mar 2026</td><td><span class="badge badge-green">Active</span></td></tr>
-              <tr><td><strong>FinTech Co</strong></td><td>Deel</td><td>32</td><td>9</td><td>Apr 2026</td><td><span class="badge badge-yellow">Pending</span></td></tr>
-              <tr><td><strong>Mining Group</strong></td><td>Paymaster</td><td>560</td><td>0</td><td>May 2026</td><td><span class="badge badge-gray">Inactive</span></td></tr>
-            </tbody>
-          </table>
+          <div id="employers-table-wrap"><div class="loading">Loading employers…</div></div>
         </div>
       </div>
 
@@ -452,23 +425,13 @@
           <p>Pending and processed withdrawal requests.</p>
         </div>
         <div class="kpi-grid" style="grid-template-columns:repeat(3,1fr)">
-          <div class="kpi-card"><div class="kpi-label">Pending</div><div class="kpi-val">4</div><div class="kpi-sub">Awaiting processing</div></div>
-          <div class="kpi-card accent"><div class="kpi-label">Today's Volume</div><div class="kpi-val">R 18,400</div><div class="kpi-sub">12 withdrawals</div></div>
-          <div class="kpi-card"><div class="kpi-label">This Month</div><div class="kpi-val">R 284,500</div><div class="kpi-sub">192 withdrawals</div></div>
+          <div class="kpi-card"><div class="kpi-label">Pending</div><div class="kpi-val" id="wd-pending">—</div><div class="kpi-sub">Awaiting processing</div></div>
+          <div class="kpi-card accent"><div class="kpi-label">Today's Volume</div><div class="kpi-val" id="wd-today">—</div><div class="kpi-sub" id="wd-today-count">0 withdrawals</div></div>
+          <div class="kpi-card"><div class="kpi-label">This Month</div><div class="kpi-val" id="wd-month">—</div><div class="kpi-sub" id="wd-month-count">0 withdrawals</div></div>
         </div>
         <div class="card">
           <div class="card-header"><span class="card-title">Pending Approvals</span></div>
-          <table>
-            <thead>
-              <tr><th>Employee</th><th>Employer</th><th>Amount</th><th>Requested</th><th>Action</th></tr>
-            </thead>
-            <tbody>
-              <tr><td>Kagiso Sithole</td><td>Acme Corp</td><td>R 2,100</td><td>02 Jun, 14:32</td><td><button class="btn-primary" style="padding:5px 12px;font-size:0.75rem;margin-right:6px;">Approve</button><button class="btn-danger">Decline</button></td></tr>
-              <tr><td>Bongani Ndlovu</td><td>Retail SA</td><td>R 900</td><td>02 Jun, 13:10</td><td><button class="btn-primary" style="padding:5px 12px;font-size:0.75rem;margin-right:6px;">Approve</button><button class="btn-danger">Decline</button></td></tr>
-              <tr><td>Zanele Moyo</td><td>Retail SA</td><td>R 1,750</td><td>02 Jun, 11:55</td><td><button class="btn-primary" style="padding:5px 12px;font-size:0.75rem;margin-right:6px;">Approve</button><button class="btn-danger">Decline</button></td></tr>
-              <tr><td>Tebogo Lekgoa</td><td>Logistics Ltd</td><td>R 600</td><td>02 Jun, 09:20</td><td><button class="btn-primary" style="padding:5px 12px;font-size:0.75rem;margin-right:6px;">Approve</button><button class="btn-danger">Decline</button></td></tr>
-            </tbody>
-          </table>
+          <div id="pending-approvals-wrap"><div class="loading">Loading…</div></div>
         </div>
       </div>
 
@@ -522,7 +485,7 @@
 
     if (!session || session.user.email !== ADMIN_EMAIL) {
       await sb.auth.signOut();
-      window.location.replace('/login');
+      window.location.replace('/');
       return;
     }
 
@@ -549,8 +512,11 @@
     event.currentTarget.classList.add('active');
     const titles = { overview:'Overview', users:'Users', transactions:'Transactions', employers:'Employers', payroll:'Payroll Connections', withdrawals:'Withdrawals', settings:'Settings' };
     document.getElementById('topbarTitle').textContent = titles[name] || name;
-    if (name === 'payroll') loadPayrollConnections();
-    if (name === 'users')   loadUsers();
+    if (name === 'payroll')       loadPayrollConnections();
+    if (name === 'users')         loadUsers();
+    if (name === 'transactions')  loadAdminTransactions();
+    if (name === 'employers')     loadAdminEmployers();
+    if (name === 'withdrawals')   loadWithdrawals();
   }
 
   // Load stats from Supabase
@@ -561,8 +527,9 @@
       sb.from('withdrawals').select('amount, fee').eq('status', 'paid'),
     ]);
 
-    document.getElementById('stat-users').textContent = usersRes.count ?? '—';
-    document.getElementById('stat-employers').textContent = employersRes.count ?? '—';
+    document.getElementById('stat-users').textContent = usersRes.count ?? '0';
+    document.getElementById('stat-employers').textContent = employersRes.count ?? '0';
+    loadRecentActivity();
 
     if (withdrawalsRes.data?.length) {
       const total = withdrawalsRes.data.reduce((s, w) => s + Number(w.amount), 0);
@@ -573,6 +540,7 @@
       document.getElementById('stat-withdrawn').textContent = 'R 0';
       document.getElementById('stat-revenue').textContent   = 'R 0';
     }
+
   }
 
   // Load users from profiles table
@@ -641,6 +609,121 @@
         <button onclick="triggerSync('${c.id}')" class="btn-primary" style="padding:7px 16px;font-size:0.8rem;">↺ Sync Now</button>
         <a href="/payroll-setup?edit=${c.id}" class="filter-btn" style="text-decoration:none;padding:7px 14px;font-size:0.8rem;">Edit</a>
       </div>`).join('') + `</div>`;
+  }
+
+  // Load recent activity from real withdrawals
+  async function loadRecentActivity() {
+    const wrap = document.getElementById('recent-activity');
+    const { data } = await sb.from('withdrawals').select('amount, status, created_at').order('created_at', { ascending: false }).limit(5);
+    if (!data || data.length === 0) {
+      wrap.innerHTML = '<div style="font-size:0.83rem;color:var(--soft);padding:12px 0;">No activity yet.</div>';
+      return;
+    }
+    const colors = { paid:'#16a34a', pending:'#f97316', failed:'#dc2626' };
+    wrap.innerHTML = data.map(w => {
+      const ago = timeSince(new Date(w.created_at));
+      return `<div class="activity-item">
+        <div class="activity-dot" style="background:${colors[w.status] || 'var(--teal)'}"></div>
+        <div><div class="activity-text">Withdrawal of R ${Number(w.amount).toLocaleString('en-ZA')} — ${w.status}</div><div class="activity-time">${ago}</div></div>
+      </div>`;
+    }).join('');
+  }
+
+  function timeSince(date) {
+    const s = Math.floor((Date.now() - date) / 1000);
+    if (s < 60) return 'Just now';
+    if (s < 3600) return Math.floor(s/60) + ' min ago';
+    if (s < 86400) return Math.floor(s/3600) + ' hr ago';
+    return Math.floor(s/86400) + ' day(s) ago';
+  }
+
+  // Load all transactions (withdrawals) for admin
+  async function loadAdminTransactions() {
+    const wrap = document.getElementById('txn-table-wrap');
+    const { data } = await sb.from('withdrawals').select('id, user_id, amount, fee, status, created_at').order('created_at', { ascending: false }).limit(50);
+    if (!data || data.length === 0) {
+      wrap.innerHTML = '<div style="text-align:center;padding:30px;color:var(--soft);font-size:0.85rem;">No transactions yet.</div>';
+      return;
+    }
+    const statusBadge = { paid:'badge-green', pending:'badge-yellow', failed:'badge-red' };
+    wrap.innerHTML = `<table><thead><tr><th>ID</th><th>User</th><th>Amount</th><th>Fee</th><th>Date</th><th>Status</th></tr></thead>
+      <tbody>${data.map((w,i) => `<tr>
+        <td>#TXN-${String(i+1).padStart(3,'0')}</td>
+        <td style="font-size:0.75rem;color:var(--soft);">${w.user_id.slice(0,8)}…</td>
+        <td>R ${Number(w.amount).toLocaleString('en-ZA')}</td>
+        <td>R ${Number(w.fee||10).toLocaleString('en-ZA')}</td>
+        <td>${new Date(w.created_at).toLocaleDateString('en-ZA')}</td>
+        <td><span class="badge ${statusBadge[w.status]||'badge-gray'}">${w.status}</span></td>
+      </tr>`).join('')}</tbody></table>`;
+  }
+
+  // Load employers from payroll_connections
+  async function loadAdminEmployers() {
+    const wrap = document.getElementById('employers-table-wrap');
+    const { data } = await sb.from('payroll_connections').select('*').order('created_at', { ascending: false });
+    if (!data || data.length === 0) {
+      wrap.innerHTML = '<div style="text-align:center;padding:30px;color:var(--soft);font-size:0.85rem;">No employers connected yet. <a href="/payroll-setup" style="color:var(--teal);font-weight:600;">Add the first one →</a></div>';
+      return;
+    }
+    const providerNames = { sage:'Sage Business Cloud', payspace:'PaySpace', simplepay:'SimplePay', csv:'CSV Upload' };
+    const statusBadge = { active:'badge-green', pending:'badge-yellow', error:'badge-red', inactive:'badge-gray' };
+    wrap.innerHTML = `<table><thead><tr><th>Company</th><th>Payroll</th><th>Employees</th><th>Joined</th><th>Status</th></tr></thead>
+      <tbody>${data.map(c => `<tr>
+        <td><strong>${c.company_name||'—'}</strong></td>
+        <td>${providerNames[c.provider]||c.provider||'—'}</td>
+        <td>${c.employee_count||0}</td>
+        <td>${new Date(c.created_at).toLocaleDateString('en-ZA')}</td>
+        <td><span class="badge ${statusBadge[c.status]||'badge-gray'}">${c.status||'unknown'}</span></td>
+      </tr>`).join('')}</tbody></table>`;
+  }
+
+  // Load withdrawals section
+  async function loadWithdrawals() {
+    const today = new Date(); today.setHours(0,0,0,0);
+    const monthStart = new Date(today.getFullYear(), today.getMonth(), 1).toISOString();
+
+    const [pendingRes, monthRes] = await Promise.all([
+      sb.from('withdrawals').select('id, user_id, amount, created_at').eq('status','pending').order('created_at', { ascending: false }),
+      sb.from('withdrawals').select('amount, created_at').eq('status','paid').gte('created_at', monthStart),
+    ]);
+
+    const pending = pendingRes.data || [];
+    const monthData = monthRes.data || [];
+    const todayData = monthData.filter(w => new Date(w.created_at) >= today);
+
+    document.getElementById('wd-pending').textContent = pending.length;
+    document.getElementById('wd-today').textContent = 'R ' + todayData.reduce((s,w)=>s+Number(w.amount),0).toLocaleString('en-ZA');
+    document.getElementById('wd-today-count').textContent = todayData.length + ' withdrawal' + (todayData.length !== 1 ? 's' : '');
+    document.getElementById('wd-month').textContent = 'R ' + monthData.reduce((s,w)=>s+Number(w.amount),0).toLocaleString('en-ZA');
+    document.getElementById('wd-month-count').textContent = monthData.length + ' withdrawal' + (monthData.length !== 1 ? 's' : '');
+
+    const wrap = document.getElementById('pending-approvals-wrap');
+    if (pending.length === 0) {
+      wrap.innerHTML = '<div style="text-align:center;padding:24px;color:var(--soft);font-size:0.85rem;">No pending approvals.</div>';
+      return;
+    }
+    wrap.innerHTML = `<table><thead><tr><th>User</th><th>Amount</th><th>Requested</th><th>Action</th></tr></thead>
+      <tbody>${pending.map(w => `<tr>
+        <td style="font-size:0.78rem;color:var(--soft);">${w.user_id.slice(0,8)}…</td>
+        <td>R ${Number(w.amount).toLocaleString('en-ZA')}</td>
+        <td>${new Date(w.created_at).toLocaleString('en-ZA',{day:'2-digit',month:'short',hour:'2-digit',minute:'2-digit'})}</td>
+        <td>
+          <button class="btn-primary" style="padding:5px 12px;font-size:0.75rem;margin-right:6px;" onclick="approveWithdrawal('${w.id}',this)">Approve</button>
+          <button class="btn-danger" onclick="declineWithdrawal('${w.id}',this)">Decline</button>
+        </td>
+      </tr>`).join('')}</tbody></table>`;
+  }
+
+  async function approveWithdrawal(id, btn) {
+    btn.disabled = true; btn.textContent = '…';
+    await sb.from('withdrawals').update({ status:'paid' }).eq('id', id);
+    loadWithdrawals();
+  }
+
+  async function declineWithdrawal(id, btn) {
+    btn.disabled = true; btn.textContent = '…';
+    await sb.from('withdrawals').update({ status:'failed' }).eq('id', id);
+    loadWithdrawals();
   }
 
   async function triggerSync(connectionId) {

@@ -227,9 +227,6 @@ button { font-family: var(--font); cursor: pointer; border: none; background: no
 /* Stitch-style bubble/dot texture */
 .hero-bg-grid {
   position: absolute; inset: 0; pointer-events: none;
-  background-image: radial-gradient(circle, rgba(255,255,255,0.18) 1.5px, transparent 1.5px);
-  background-size: 26px 26px;
-  background-position: 0 0;
   mask-image: radial-gradient(ellipse 90% 100% at 60% 50%, black 30%, transparent 80%);
   -webkit-mask-image: radial-gradient(ellipse 90% 100% at 60% 50%, black 30%, transparent 80%);
 }
