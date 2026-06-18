@@ -1,0 +1,876 @@
+<!DOCTYPE html>
+<html lang="en-ZA">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Student Perks — Save More as a Student</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --lime: #d4ff00;
+  --lime-d: #b8e000;
+  --bg: #0c0c0c;
+  --bg2: #111;
+  --bg3: #1a1a1a;
+  --card: #171717;
+  --border: rgba(255,255,255,.07);
+  --white: #fff;
+  --ink: rgba(255,255,255,.92);
+  --ink2: rgba(255,255,255,.45);
+  --ink3: rgba(255,255,255,.25);
+  --font: 'Inter', sans-serif;
+  --display: 'Bebas Neue', sans-serif;
+}
+html { scroll-behavior: smooth; }
+body { font-family: var(--font); color: var(--ink); background: var(--bg); -webkit-font-smoothing: antialiased; overflow-x: hidden; }
+a { text-decoration: none; color: inherit; }
+button { cursor: pointer; border: none; font-family: var(--font); }
+.wrap { max-width: 480px; margin: 0 auto; padding: 0 18px; }
+@media(min-width:860px){ .wrap { max-width: 1100px; } }
+
+/* ── NAV ── */
+nav {
+  background: var(--bg);
+  border-bottom: 1px solid var(--border);
+  position: sticky;
+  top: 0;
+  z-index: 200;
+}
+.nav-inner {
+  display: flex;
+  align-items: center;
+  height: 60px;
+  gap: 10px;
+}
+.nav-logo {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+}
+.nav-diamond {
+  width: 32px;
+  height: 32px;
+  background: var(--lime);
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+.logo-word {
+  font-family: var(--font);
+  font-size: 21px;
+  font-weight: 900;
+  letter-spacing: -.03em;
+  color: var(--white);
+  white-space: nowrap;
+}
+.logo-word span { color: var(--lime); }
+.nav-spacer { flex: 1; }
+.nav-desktop { display: none; align-items: center; gap: 24px; }
+.nav-desktop a { font-size: 13px; font-weight: 500; color: var(--ink2); transition: color .12s; }
+.nav-desktop a:hover { color: var(--white); }
+.nav-verify {
+  background: var(--white);
+  color: var(--bg);
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: .06em;
+  padding: 10px 22px;
+  border-radius: 50px;
+  border: none;
+  cursor: pointer;
+  font-family: var(--font);
+  transition: background .15s;
+  white-space: nowrap;
+}
+.nav-verify:hover { background: var(--lime); }
+.nav-burger { background: none; border: none; cursor: pointer; color: var(--white); display: flex; align-items: center; padding: 4px; }
+@media(min-width:860px){
+  .nav-desktop { display: flex; }
+  .nav-burger { display: none; }
+}
+
+/* ── MOBILE MENU ── */
+.menu-overlay { display: none; position: fixed; inset: 0; background: var(--bg); z-index: 400; flex-direction: column; overflow-y: auto; }
+.menu-overlay.open { display: flex; }
+.menu-head { display: flex; align-items: center; justify-content: space-between; padding: 18px 20px; border-bottom: 1px solid var(--border); }
+.menu-logo { display: flex; align-items: center; gap: 8px; }
+.menu-logo-text { font-size: 16px; font-weight: 900; color: var(--white); letter-spacing: -.01em; text-transform: uppercase; }
+.menu-logo-text span { color: var(--lime); }
+.menu-close { background: none; border: none; color: var(--white); cursor: pointer; }
+.menu-verify { display: block; margin: 20px; background: var(--white); color: var(--bg); font-size: 14px; font-weight: 800; letter-spacing: .05em; padding: 16px; text-align: center; border-radius: 50px; text-transform: uppercase; }
+.menu-items { padding: 0 20px; }
+.menu-item { display: block; padding: 18px 0; font-size: 18px; font-weight: 600; color: var(--ink2); border-bottom: 1px solid var(--border); cursor: pointer; transition: color .12s; }
+.menu-item:hover { color: var(--lime); }
+.menu-foot { padding: 24px 20px; margin-top: auto; }
+.menu-contact-row { display: flex; align-items: center; gap: 10px; font-size: 13px; color: var(--ink3); margin-bottom: 10px; }
+.menu-contact-ico { width: 34px; height: 34px; border-radius: 8px; background: var(--bg3); display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+.menu-social { display: flex; gap: 16px; margin: 16px 0 12px; }
+.menu-soc { color: var(--lime); }
+.menu-copy { font-size: 11px; color: var(--ink3); }
+
+/* ── HERO ── */
+.hero { background: var(--bg); padding: 36px 0 28px; }
+.hero h1 {
+  font-family: var(--display);
+  font-size: 68px;
+  font-weight: 400;
+  line-height: .92;
+  letter-spacing: .01em;
+  color: var(--white);
+  text-transform: uppercase;
+  margin-bottom: 16px;
+}
+@media(min-width:480px){ .hero h1 { font-size: 80px; } }
+@media(min-width:860px){ .hero h1 { font-size: 110px; } }
+.hero h1 em { font-style: normal; color: var(--lime); display: block; }
+.hero-sub { font-size: 15px; color: var(--ink2); margin-bottom: 24px; line-height: 1.5; }
+
+/* ── STATS ROW ── */
+.stats-row { display: flex; gap: 0; margin-bottom: 28px; }
+.stat-item { flex: 1; padding: 14px 0; border-right: 1px solid var(--border); }
+.stat-item:last-child { border-right: none; }
+.stat-val { font-family: var(--display); font-size: 28px; color: var(--lime); letter-spacing: .02em; line-height: 1; }
+.stat-lbl { font-size: 10px; font-weight: 600; color: var(--ink3); text-transform: uppercase; letter-spacing: .08em; margin-top: 3px; }
+
+/* ── SCROLL FADE ── */
+.fade-in { opacity: 0; transform: translateY(18px); transition: opacity .5s ease, transform .5s ease; }
+.fade-in.visible { opacity: 1; transform: none; }
+
+/* ── SEARCH ── */
+.search-wrap {
+  background: #1e1e1e;
+  border-radius: 14px;
+  display: flex;
+  align-items: center;
+  padding: 0 18px;
+  height: 56px;
+  gap: 12px;
+  margin-bottom: 20px;
+  border: 1px solid var(--border);
+}
+.search-wrap svg { color: var(--ink3); flex-shrink: 0; }
+.search-wrap input {
+  flex: 1;
+  background: none;
+  border: none;
+  outline: none;
+  font-size: 15px;
+  font-family: var(--font);
+  color: var(--white);
+}
+.search-wrap input::placeholder { color: var(--ink3); }
+.deal-badge {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--lime);
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+/* ── CATEGORY PILLS ── */
+.pills-row {
+  display: flex;
+  gap: 8px;
+  overflow-x: auto;
+  scrollbar-width: none;
+  padding-bottom: 2px;
+}
+.pills-row::-webkit-scrollbar { display: none; }
+.pill {
+  flex-shrink: 0;
+  background: transparent;
+  color: var(--white);
+  border: 1.5px solid rgba(255,255,255,.18);
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: .03em;
+  text-transform: uppercase;
+  padding: 9px 20px;
+  border-radius: 50px;
+  cursor: pointer;
+  transition: all .15s;
+  font-family: var(--font);
+}
+.pill:hover { border-color: rgba(255,255,255,.4); }
+.pill.active { background: var(--lime); color: var(--bg); border-color: var(--lime); }
+
+/* ── SECTION LABEL ── */
+.sec-row { display: flex; align-items: center; gap: 14px; margin-bottom: 16px; }
+.sec-lbl { font-size: 11px; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; color: var(--ink3); white-space: nowrap; }
+.sec-divider { flex: 1; height: 1px; background: var(--border); }
+.sec-view { font-size: 12px; font-weight: 700; color: var(--ink3); white-space: nowrap; transition: color .12s; }
+.sec-view:hover { color: var(--lime); }
+
+/* ── TRENDING CARDS ── */
+.trending-sec { padding: 36px 0; border-top: 1px solid var(--border); }
+.trend-scroll { display: flex; gap: 10px; overflow-x: auto; scrollbar-width: none; padding-right: 18px; }
+.trend-scroll::-webkit-scrollbar { display: none; }
+.trend-card {
+  flex-shrink: 0;
+  width: 72vw;
+  max-width: 320px;
+  height: 170px;
+  border-radius: 18px;
+  position: relative;
+  overflow: hidden;
+  cursor: pointer;
+}
+.trend-card.small { width: 42vw; max-width: 180px; }
+.trend-img {
+  position: absolute;
+  inset: 0;
+  background-size: cover;
+  background-position: center;
+}
+.trend-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to top, rgba(0,0,0,.88) 35%, rgba(0,0,0,.15) 100%);
+}
+.trend-content {
+  position: relative;
+  z-index: 2;
+  padding: 14px;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+}
+.trend-tag { font-size: 9px; font-weight: 800; letter-spacing: .12em; text-transform: uppercase; color: var(--lime); margin-bottom: 4px; }
+.trend-title { font-size: 13px; font-weight: 700; color: var(--white); line-height: 1.3; }
+
+/* ── PERK CARDS ── */
+.perks-sec { padding: 36px 0; border-top: 1px solid var(--border); }
+.perk-card {
+  background: var(--card);
+  border-radius: 20px;
+  padding: 20px;
+  margin-bottom: 12px;
+  cursor: pointer;
+  transition: transform .2s, box-shadow .2s;
+  border: 1px solid transparent;
+}
+.perk-card:hover {
+  transform: translateY(-3px);
+  border-color: rgba(212,255,0,.2);
+  box-shadow: 0 8px 32px rgba(212,255,0,.06);
+}
+.perk-top-row {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  margin-bottom: 16px;
+}
+.perk-logo-box {
+  width: 54px;
+  height: 54px;
+  border-radius: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 22px;
+  font-weight: 900;
+  color: var(--white);
+  flex-shrink: 0;
+  font-family: var(--font);
+}
+.perk-disc-col { text-align: right; }
+.perk-disc-val {
+  font-family: var(--display);
+  font-size: 42px;
+  line-height: 1;
+  color: var(--lime);
+  letter-spacing: .02em;
+}
+.perk-disc-type {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  color: var(--ink3);
+  margin-top: 2px;
+}
+.perk-name-row { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; }
+.perk-name {
+  font-family: var(--display);
+  font-size: 28px;
+  letter-spacing: .03em;
+  color: var(--white);
+  line-height: 1;
+}
+.perk-badge {
+  font-size: 9px;
+  font-weight: 800;
+  letter-spacing: .07em;
+  text-transform: uppercase;
+  background: var(--lime);
+  color: var(--bg);
+  padding: 3px 9px;
+  border-radius: 4px;
+}
+.perk-desc {
+  font-size: 14px;
+  color: var(--ink2);
+  line-height: 1.6;
+  margin-bottom: 18px;
+}
+.perk-cta {
+  display: block;
+  width: 100%;
+  background: var(--white);
+  color: var(--bg);
+  font-size: 13px;
+  font-weight: 800;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+  padding: 15px;
+  text-align: center;
+  border-radius: 50px;
+  border: none;
+  cursor: pointer;
+  font-family: var(--font);
+  transition: background .15s;
+}
+.perk-cta:hover { background: var(--lime); }
+.perk-cta.dark { background: #222; color: var(--white); }
+.perk-cta.dark:hover { background: var(--lime); color: var(--bg); }
+
+/* ── BURSARIES ── */
+.burs-sec { padding: 36px 0; border-top: 1px solid var(--border); }
+.burs-list { border-radius: 16px; overflow: hidden; }
+.burs-row { background: var(--card); padding: 16px 18px; display: flex; align-items: center; gap: 14px; border-bottom: 1px solid var(--border); cursor: pointer; transition: background .15s; }
+.burs-row:last-child { border-bottom: none; }
+.burs-row:hover { background: var(--bg3); }
+.burs-ico { width: 42px; height: 42px; border-radius: 10px; background: var(--bg3); display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+.burs-info { flex: 1; min-width: 0; }
+.burs-funder { font-size: 9.5px; font-weight: 700; text-transform: uppercase; letter-spacing: .09em; color: var(--lime); margin-bottom: 2px; }
+.burs-name { font-size: 14px; font-weight: 700; color: var(--white); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.burs-field { font-size: 11.5px; color: var(--ink3); }
+.burs-right { flex-shrink: 0; text-align: right; }
+.burs-amount { font-size: 14px; font-weight: 800; color: var(--white); }
+.burs-dl { font-size: 11px; color: var(--ink3); margin-top: 2px; }
+.burs-dl.hot { color: #ff4444; font-weight: 600; }
+.burs-arr { width: 32px; height: 32px; background: var(--bg3); border-radius: 8px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; color: var(--ink3); margin-left: 6px; transition: all .15s; }
+.burs-row:hover .burs-arr { background: var(--lime); color: var(--bg); }
+
+/* ── EVENTS ── */
+.events-sec { padding: 36px 0; border-top: 1px solid var(--border); }
+.ev-row { background: var(--card); border-radius: 14px; padding: 14px 16px; display: flex; align-items: center; gap: 14px; cursor: pointer; transition: background .15s; margin-bottom: 8px; }
+.ev-row:hover { background: var(--bg3); }
+.ev-date { background: var(--bg3); border-radius: 10px; padding: 9px 13px; text-align: center; flex-shrink: 0; }
+.ev-day { font-family: var(--display); font-size: 24px; color: var(--white); line-height: 1; }
+.ev-mon { font-size: 9px; font-weight: 600; text-transform: uppercase; letter-spacing: .05em; color: var(--ink3); }
+.ev-info { flex: 1; min-width: 0; }
+.ev-type { font-size: 9.5px; font-weight: 700; text-transform: uppercase; letter-spacing: .08em; color: var(--lime); margin-bottom: 2px; }
+.ev-name { font-size: 14px; font-weight: 700; color: var(--white); margin-bottom: 2px; }
+.ev-loc { font-size: 12px; color: var(--ink3); }
+.ev-badge { font-size: 10px; font-weight: 700; padding: 4px 11px; border-radius: 20px; flex-shrink: 0; }
+.free { background: rgba(212,255,0,.12); color: var(--lime); }
+.paid { background: rgba(255,200,0,.1); color: #ffc800; }
+
+/* ── JOBS ── */
+.jobs-sec { padding: 36px 0; border-top: 1px solid var(--border); }
+.job-card { background: var(--card); border-radius: 14px; padding: 16px 18px; display: flex; align-items: center; gap: 14px; cursor: pointer; transition: background .15s; margin-bottom: 8px; }
+.job-card:hover { background: var(--bg3); }
+.job-ico { width: 42px; height: 42px; border-radius: 12px; background: var(--bg3); display: flex; align-items: center; justify-content: center; flex-shrink: 0; color: var(--ink2); }
+.job-info { flex: 1; min-width: 0; }
+.job-title { font-size: 14px; font-weight: 700; color: var(--white); margin-bottom: 2px; }
+.job-co { font-size: 12px; color: var(--ink3); margin-bottom: 6px; }
+.job-tags { display: flex; gap: 5px; }
+.job-tag { font-size: 10px; padding: 2px 8px; border-radius: 4px; background: var(--bg3); color: var(--ink3); font-weight: 500; }
+.job-salary { font-family: var(--display); font-size: 20px; color: var(--lime); flex-shrink: 0; letter-spacing: .02em; }
+.job-arr { width: 32px; height: 32px; background: var(--bg3); border-radius: 9px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; color: var(--ink3); margin-left: 4px; transition: all .15s; }
+.job-card:hover .job-arr { background: var(--lime); color: var(--bg); }
+
+/* ── UTILITY BUTTON ── */
+.outline-btn { display: block; width: 100%; background: transparent; color: var(--ink2); font-size: 13px; font-weight: 700; letter-spacing: .04em; padding: 15px; text-align: center; border-radius: 14px; border: 1px solid var(--border); cursor: pointer; font-family: var(--font); transition: all .15s; margin-top: 14px; text-transform: uppercase; }
+.outline-btn:hover { border-color: var(--lime); color: var(--lime); }
+
+/* ── FINAL CTA ── */
+.final-cta { background: var(--bg2); border-top: 1px solid var(--border); padding: 72px 0; text-align: center; }
+.final-cta h2 {
+  font-family: var(--display);
+  font-size: clamp(64px, 18vw, 110px);
+  font-weight: 400;
+  color: var(--white);
+  text-transform: uppercase;
+  line-height: .9;
+  margin-bottom: 20px;
+  letter-spacing: .02em;
+}
+.final-cta h2 em { font-style: normal; color: var(--lime); display: block; }
+.final-cta p { font-size: 15px; color: var(--ink2); max-width: 380px; margin: 0 auto 32px; line-height: 1.65; }
+.lime-btn { display: inline-block; background: var(--lime); color: var(--bg); font-size: 14px; font-weight: 800; padding: 17px 44px; border-radius: 50px; border: none; cursor: pointer; font-family: var(--font); letter-spacing: .04em; text-transform: uppercase; transition: background .15s, transform .1s; }
+.lime-btn:hover { background: var(--white); transform: translateY(-2px); }
+
+/* ── FOOTER ── */
+footer { background: var(--bg); border-top: 1px solid var(--border); padding: 48px 0 28px; }
+.footer-grid { display: grid; grid-template-columns: 1fr; gap: 36px; margin-bottom: 36px; }
+@media(min-width:700px){ .footer-grid { grid-template-columns: 200px 1fr; } }
+.footer-desc { font-size: 13px; color: var(--ink3); line-height: 1.65; margin: 10px 0 18px; }
+.footer-social { display: flex; gap: 12px; }
+.f-soc { color: var(--lime); }
+.footer-cols { display: grid; grid-template-columns: repeat(2,1fr); gap: 16px; }
+@media(min-width:700px){ .footer-cols { grid-template-columns: repeat(3,1fr); } }
+.footer-col h4 { font-size: 9px; font-weight: 700; text-transform: uppercase; letter-spacing: .12em; color: var(--ink3); margin-bottom: 14px; }
+.footer-col a { display: block; font-size: 13px; color: var(--ink3); margin-bottom: 9px; cursor: pointer; transition: color .12s; }
+.footer-col a:hover { color: var(--white); }
+.footer-bottom { border-top: 1px solid var(--border); padding-top: 20px; display: flex; justify-content: space-between; font-size: 11px; color: var(--ink3); flex-wrap: wrap; gap: 8px; }
+.fbl { display: flex; gap: 14px; }
+.fbl a { color: var(--ink3); cursor: pointer; }
+.fbl a:hover { color: var(--white); }
+
+/* ── MODAL ── */
+.modal-back { display: none; position: fixed; inset: 0; background: rgba(0,0,0,.75); z-index: 999; align-items: center; justify-content: center; backdrop-filter: blur(8px); }
+.modal-back.open { display: flex; }
+.modal { background: #141414; border: 1px solid rgba(255,255,255,.09); border-radius: 24px; padding: 30px 24px; width: 100%; max-width: 370px; margin: 16px; position: relative; }
+.modal-x { position: absolute; top: 14px; right: 14px; background: var(--bg3); border: none; border-radius: 50%; width: 30px; height: 30px; display: flex; align-items: center; justify-content: center; cursor: pointer; color: var(--ink2); font-size: 18px; }
+.modal-logo { display: flex; align-items: center; gap: 7px; margin-bottom: 20px; }
+.modal-tabs { display: flex; border-bottom: 1px solid var(--border); margin-bottom: 20px; }
+.modal-tab { flex: 1; padding: 11px; text-align: center; font-size: 15px; font-weight: 600; color: var(--ink3); cursor: pointer; border-bottom: 2px solid transparent; transition: all .15s; }
+.modal-tab.active { color: var(--white); border-bottom-color: var(--lime); }
+.field { margin-bottom: 10px; }
+.field input, .field select { width: 100%; padding: 12px 14px; border: 1.5px solid var(--border); border-radius: 12px; font-size: 14px; font-family: var(--font); color: var(--white); background: var(--bg3); outline: none; transition: border-color .15s; }
+.field input:focus, .field select:focus { border-color: var(--lime); }
+.field input::placeholder { color: var(--ink3); }
+.field select option { background: var(--bg3); }
+.modal-submit { display: block; width: 100%; background: var(--lime); color: var(--bg); font-size: 14px; font-weight: 800; letter-spacing: .04em; text-transform: uppercase; padding: 15px; text-align: center; border-radius: 50px; border: none; cursor: pointer; font-family: var(--font); margin-top: 6px; transition: background .15s; }
+.modal-submit:hover { background: var(--white); }
+.modal-form-head { margin-bottom: 18px; }
+.modal-form-title { font-size: 18px; font-weight: 800; color: var(--white); margin-bottom: 4px; letter-spacing: -.02em; }
+.modal-form-sub { font-size: 13px; color: var(--ink3); line-height: 1.5; }
+.modal-terms { display: flex; align-items: flex-start; gap: 10px; font-size: 12px; color: var(--ink3); line-height: 1.5; margin: 12px 0; cursor: pointer; }
+.modal-terms input[type="checkbox"] { margin-top: 2px; accent-color: var(--lime); flex-shrink: 0; width: 14px; height: 14px; }
+.modal-switch { text-align: center; font-size: 13px; color: var(--ink3); margin-top: 14px; }
+.modal-switch span { color: var(--lime); cursor: pointer; font-weight: 600; }
+
+#no-results { display: none; text-align: center; padding: 48px 0; color: var(--ink3); font-size: 15px; }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="wrap">
+    <div class="nav-inner">
+      <div class="nav-logo">
+        <div class="logo-word">Student<span>Perks.</span></div>
+      </div>
+      <div class="nav-spacer"></div>
+      <div class="nav-desktop">
+        <a href="#perks">Deals</a>
+        <a href="#events">Events</a>
+        <a href="#jobs">Jobs</a>
+        <button class="nav-verify" onclick="openModal('jn')">VERIFY</button>
+      </div>
+      <button class="nav-verify" onclick="openModal('jn')" style="display:flex" id="mobile-verify">VERIFY</button>
+      <button class="nav-burger" onclick="openMenu()" style="margin-left:8px">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+      </button>
+    </div>
+  </div>
+</nav>
+
+<style>
+@media(min-width:860px){ #mobile-verify { display:none !important; } .nav-burger { display:none !important; } }
+</style>
+
+<!-- MOBILE MENU -->
+<div class="menu-overlay" id="menu-overlay">
+  <div class="menu-head">
+    <div class="menu-logo">
+      <div class="logo-word" style="font-size:18px">Student<span>Perks.</span></div>
+    </div>
+    <button class="menu-close" onclick="closeMenu()">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+    </button>
+  </div>
+  <button class="menu-verify" onclick="openModal('jn');closeMenu()">Verify Student Status</button>
+  <div class="menu-items">
+    <a class="menu-item" href="#perks" onclick="closeMenu()">Deals</a>
+    <a class="menu-item" href="#events" onclick="closeMenu()">Events</a>
+    <a class="menu-item" href="#jobs" onclick="closeMenu()">Jobs</a>
+    <a class="menu-item" onclick="closeMenu();openPartner()">Become a partner</a>
+    <a class="menu-item" onclick="closeMenu()">Recruit and earn</a>
+  </div>
+  <div class="menu-foot">
+    <div class="menu-contact-row">
+      <div class="menu-contact-ico"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,.4)" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg></div>
+      Whatsapp <span style="color:var(--lime);margin-left:6px">+27 81 696 1623</span>
+    </div>
+    <div class="menu-contact-row">
+      <div class="menu-contact-ico"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,.4)" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg></div>
+      Email <span style="color:var(--lime);margin-left:6px">support@studentperks.co.za</span>
+    </div>
+    <div class="menu-social">
+      <svg class="menu-soc" width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.744l7.737-8.835L1.254 2.25H8.08l4.253 5.622zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+      <svg class="menu-soc" width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg>
+      <svg class="menu-soc" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="2" width="20" height="20" rx="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg>
+    </div>
+    <p class="menu-copy">© 2025 Student Perks. All Rights Reserved.</p>
+  </div>
+</div>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="wrap">
+    <h1>SPEND LESS.<em>LIVE MORE.</em></h1>
+    <p class="hero-sub">Exclusive student deals, verified instantly. Always free.</p>
+    <div class="stats-row">
+      <div class="stat-item"><div class="stat-val">500+</div><div class="stat-lbl">Deals</div></div>
+      <div class="stat-item"><div class="stat-val">Free</div><div class="stat-lbl">Forever</div></div>
+      <div class="stat-item"><div class="stat-val">SA</div><div class="stat-lbl">Students only</div></div>
+    </div>
+    <div class="search-wrap">
+      <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+      <input type="text" placeholder="Search brands or deals..." id="search-input" oninput="filterPerks()">
+      <span class="deal-badge" id="deal-count">8 deals</span>
+    </div>
+    <div class="pills-row">
+      <button class="pill active" onclick="setCat(this,'all')">All</button>
+      <button class="pill" onclick="setCat(this,'fashion')">Fashion</button>
+      <button class="pill" onclick="setCat(this,'tech')">Tech</button>
+      <button class="pill" onclick="setCat(this,'food')">Food</button>
+      <button class="pill" onclick="setCat(this,'travel')">Travel</button>
+      <button class="pill" onclick="setCat(this,'software')">Software</button>
+      <button class="pill" onclick="setCat(this,'fitness')">Fitness</button>
+      <button class="pill" onclick="setCat(this,'entertainment')">Entertainment</button>
+    </div>
+  </div>
+</section>
+
+<!-- TRENDING NOW -->
+<section class="trending-sec">
+  <div class="wrap">
+    <div class="sec-row">
+      <span class="sec-lbl">Trending Now</span>
+      <div class="sec-divider"></div>
+    </div>
+    <div class="trend-scroll">
+      <div class="trend-card" onclick="openModal('jn')">
+        <div class="trend-img" style="background-image:url('https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=600&q=80')"></div>
+        <div class="trend-overlay"></div>
+        <div class="trend-content">
+          <div class="trend-tag">Hot Drop</div>
+          <div class="trend-title">Nike Store: Extra 20% off clearance</div>
+        </div>
+      </div>
+      <div class="trend-card small" onclick="openModal('jn')">
+        <div class="trend-img" style="background-image:url('https://images.unsplash.com/photo-1593640495253-23196b27a87f?w=400&q=80')"></div>
+        <div class="trend-overlay"></div>
+        <div class="trend-content">
+          <div class="trend-tag">Tech Flash</div>
+          <div class="trend-title">Razer: 15% off</div>
+        </div>
+      </div>
+      <div class="trend-card" onclick="openModal('jn')">
+        <div class="trend-img" style="background-image:url('https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=600&q=80')"></div>
+        <div class="trend-overlay"></div>
+        <div class="trend-content">
+          <div class="trend-tag">Most Claimed</div>
+          <div class="trend-title">ASOS: 25% off everything</div>
+        </div>
+      </div>
+      <div class="trend-card small" onclick="openModal('jn')">
+        <div class="trend-img" style="background-image:url('https://images.unsplash.com/photo-1611532736597-de2d4265fba3?w=500&q=80')"></div>
+        <div class="trend-overlay"></div>
+        <div class="trend-content">
+          <div class="trend-tag">Limited</div>
+          <div class="trend-title">Spotify: 3 months R1</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ALL PERKS -->
+<section class="perks-sec" id="perks">
+  <div class="wrap">
+    <div class="sec-row">
+      <span class="sec-lbl">All Perks</span>
+      <div class="sec-divider"></div>
+    </div>
+
+    <div class="perk-card fade-in" data-cat="fashion">
+      <div class="perk-top-row">
+        <div class="perk-logo-box" style="background:#fff;color:#000">A</div>
+        <div class="perk-disc-col"><div class="perk-disc-val">-25%</div><div class="perk-disc-type">Site Wide</div></div>
+      </div>
+      <div class="perk-name-row">
+        <div class="perk-name">ASOS</div>
+        <span class="perk-badge">POPULAR</span>
+      </div>
+      <div class="perk-desc">Get the latest fits with an exclusive student discount on everything.</div>
+      <button class="perk-cta" onclick="openModal('jn')">Claim Perk &nbsp;→</button>
+    </div>
+
+    <div class="perk-card fade-in" data-cat="entertainment">
+      <div class="perk-top-row">
+        <div class="perk-logo-box" style="background:#1DB954">S</div>
+        <div class="perk-disc-col"><div class="perk-disc-val">R1</div><div class="perk-disc-type">Premium</div></div>
+      </div>
+      <div class="perk-name-row">
+        <div class="perk-name">Spotify</div>
+      </div>
+      <div class="perk-desc">3 months of premium music and podcasts for just a rand. No ads.</div>
+      <button class="perk-cta dark" onclick="openModal('jn')">Redeem Deal &nbsp;→</button>
+    </div>
+
+    <div class="perk-card fade-in" data-cat="tech">
+      <div class="perk-top-row">
+        <div class="perk-logo-box" style="background:#1c1c1e;border:1px solid rgba(255,255,255,.1);font-size:15px;letter-spacing:0">A</div>
+        <div class="perk-disc-col"><div class="perk-disc-val">-20%</div><div class="perk-disc-type">Hardware</div></div>
+      </div>
+      <div class="perk-name-row">
+        <div class="perk-name">Apple</div>
+        <span class="perk-badge">EDUCATION</span>
+      </div>
+      <div class="perk-desc">Save on Mac, iPad and more with Apple's student education pricing.</div>
+      <button class="perk-cta" onclick="openModal('jn')">Claim Perk &nbsp;→</button>
+    </div>
+
+    <div class="perk-card fade-in" data-cat="food">
+      <div class="perk-top-row">
+        <div class="perk-logo-box" style="background:#000;border:1px solid rgba(255,255,255,.1)">U</div>
+        <div class="perk-disc-col"><div class="perk-disc-val">-30%</div><div class="perk-disc-type">First 3 Orders</div></div>
+      </div>
+      <div class="perk-name-row">
+        <div class="perk-name">Uber Eats</div>
+        <span class="perk-badge">NEW</span>
+      </div>
+      <div class="perk-desc">30% off your first 3 Uber Eats orders when you verify your student account.</div>
+      <button class="perk-cta" onclick="openModal('jn')">Claim Perk &nbsp;→</button>
+    </div>
+
+    <div class="perk-card fade-in" data-cat="software">
+      <div class="perk-top-row">
+        <div class="perk-logo-box" style="background:#fff;color:#000">N</div>
+        <div class="perk-disc-col"><div class="perk-disc-val">FREE</div><div class="perk-disc-type">Pro Plan</div></div>
+      </div>
+      <div class="perk-name-row">
+        <div class="perk-name">Notion</div>
+      </div>
+      <div class="perk-desc">Notion Pro is completely free for students and educators. Forever.</div>
+      <button class="perk-cta" onclick="openModal('jn')">Claim Perk &nbsp;→</button>
+    </div>
+
+    <div class="perk-card fade-in" data-cat="travel">
+      <div class="perk-top-row">
+        <div class="perk-logo-box" style="background:#003087">G</div>
+        <div class="perk-disc-col"><div class="perk-disc-val">-15%</div><div class="perk-disc-type">Bus Travel</div></div>
+      </div>
+      <div class="perk-name-row">
+        <div class="perk-name">Greyhound</div>
+      </div>
+      <div class="perk-desc">15% off intercity bus travel for verified students across South Africa.</div>
+      <button class="perk-cta" onclick="openModal('jn')">Claim Perk &nbsp;→</button>
+    </div>
+
+    <div class="perk-card fade-in" data-cat="fitness">
+      <div class="perk-top-row">
+        <div class="perk-logo-box" style="background:#6600cc">P</div>
+        <div class="perk-disc-col"><div class="perk-disc-val">-50%</div><div class="perk-disc-type">Membership</div></div>
+      </div>
+      <div class="perk-name-row">
+        <div class="perk-name">Planet Fitness</div>
+      </div>
+      <div class="perk-desc">Half-price gym membership for students. No joining fee, no contract.</div>
+      <button class="perk-cta" onclick="openModal('jn')">Claim Perk &nbsp;→</button>
+    </div>
+
+    <div class="perk-card fade-in" data-cat="tech">
+      <div class="perk-top-row">
+        <div class="perk-logo-box" style="background:#00cc44;color:#000">R</div>
+        <div class="perk-disc-col"><div class="perk-disc-val">-15%</div><div class="perk-disc-type">Sitewide</div></div>
+      </div>
+      <div class="perk-name-row">
+        <div class="perk-name">Razer</div>
+      </div>
+      <div class="perk-desc">15% off gaming peripherals, laptops and accessories for verified students.</div>
+      <button class="perk-cta" onclick="openModal('jn')">Claim Perk &nbsp;→</button>
+    </div>
+
+    <div id="no-results">No perks match your search.</div>
+    <button class="outline-btn" onclick="openModal('jn')">View all perks →</button>
+  </div>
+</section>
+
+<!-- EVENTS -->
+<section class="events-sec" id="events">
+  <div class="wrap">
+    <div class="sec-row">
+      <span class="sec-lbl">Events</span>
+      <div class="sec-divider"></div>
+      <a class="sec-view" href="#">View all →</a>
+    </div>
+    <div class="ev-row"><div class="ev-date"><div class="ev-day">18</div><div class="ev-mon">Jul</div></div><div class="ev-info"><div class="ev-type">Career Fair</div><div class="ev-name">UCT Engineering & Commerce Career Fair 2025</div><div class="ev-loc">Upper Campus, UCT · 09:00–17:00</div></div><span class="ev-badge free">Free</span></div>
+    <div class="ev-row"><div class="ev-date"><div class="ev-day">25</div><div class="ev-mon">Jul</div></div><div class="ev-info"><div class="ev-type">Social</div><div class="ev-name">Wits Semester 2 Kickoff Party</div><div class="ev-loc">Matrix, Braamfontein · 21:00–02:00</div></div><span class="ev-badge paid">R80</span></div>
+    <div class="ev-row"><div class="ev-date"><div class="ev-day">02</div><div class="ev-mon">Aug</div></div><div class="ev-info"><div class="ev-type">Workshop</div><div class="ev-name">CV Writing & LinkedIn Workshop — Stellenbosch</div><div class="ev-loc">Neelsie Student Centre · 10:00–13:00</div></div><span class="ev-badge free">Free</span></div>
+    <button class="outline-btn" onclick="openModal('jn')">View all events →</button>
+  </div>
+</section>
+
+<!-- JOBS -->
+<section class="jobs-sec" id="jobs">
+  <div class="wrap">
+    <div class="sec-row">
+      <span class="sec-lbl">Jobs</span>
+      <div class="sec-divider"></div>
+      <a class="sec-view" href="#">View all →</a>
+    </div>
+    <div class="job-card"><div class="job-ico"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg></div><div class="job-info"><div class="job-title">Student Brand Ambassador</div><div class="job-co">Hustle SA · Remote</div><div class="job-tags"><span class="job-tag">Part-time</span><span class="job-tag">Marketing</span></div></div><div class="job-salary">R5K/MO</div><div class="job-arr"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M7 17L17 7M17 7H7M17 7v10"/></svg></div></div>
+    <div class="job-card"><div class="job-ico"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg></div><div class="job-info"><div class="job-title">Junior Web Developer Intern</div><div class="job-co">CodeCraft Labs · Cape Town</div><div class="job-tags"><span class="job-tag">Internship</span><span class="job-tag">Tech</span></div></div><div class="job-salary">R8K/MO</div><div class="job-arr"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M7 17L17 7M17 7H7M17 7v10"/></svg></div></div>
+    <div class="job-card"><div class="job-ico"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg></div><div class="job-info"><div class="job-title">Finance Internship — BCom</div><div class="job-co">CapitoGroup · Sandton</div><div class="job-tags"><span class="job-tag">Internship</span><span class="job-tag">Finance</span></div></div><div class="job-salary">R10K/MO</div><div class="job-arr"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M7 17L17 7M17 7H7M17 7v10"/></svg></div></div>
+    <button class="outline-btn" onclick="openModal('jn')">View all jobs →</button>
+  </div>
+</section>
+
+<!-- FINAL CTA -->
+<section class="final-cta">
+  <div class="wrap">
+    <h2>START<em>SAVING NOW.</em></h2>
+    <p>Join thousands of SA students already unlocking exclusive deals and more. Free forever.</p>
+    <button class="lime-btn" onclick="openModal('jn')">Get started — it's free</button>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="wrap">
+    <div class="footer-grid">
+      <div>
+        <div class="logo-word" style="font-size:17px">Student<span>Perks.</span></div>
+        <p class="footer-desc">Exclusive student deals, events and jobs — built for SA students. Free forever.</p>
+        <div class="footer-social">
+          <svg class="f-soc" width="19" height="19" viewBox="0 0 24 24" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.744l7.737-8.835L1.254 2.25H8.08l4.253 5.622zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+          <svg class="f-soc" width="19" height="19" viewBox="0 0 24 24" fill="currentColor"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg>
+          <svg class="f-soc" width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="2" width="20" height="20" rx="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg>
+        </div>
+      </div>
+      <div class="footer-cols">
+        <div class="footer-col"><h4>Platform</h4><a>Deals</a><a>Events</a><a>Jobs</a></div>
+        <div class="footer-col"><h4>Company</h4><a>About</a><a>News</a><a>Become a partner</a><a>Recruit and earn</a><a>Contact</a></div>
+        <div class="footer-col"><h4>Contact</h4><a>+27 81 696 1623</a><a>support@studentperks.co.za</a></div>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>© 2025 Student Perks. All Rights Reserved.</span>
+      <div class="fbl"><a>Terms & conditions</a><a>Privacy Policy</a></div>
+    </div>
+  </div>
+</footer>
+
+<!-- PARTNER MODAL -->
+<div class="modal-back" id="partner-back">
+  <div class="modal">
+    <button class="modal-x" onclick="closePartner()">×</button>
+    <div class="modal-logo">
+      <div class="logo-word" style="font-size:17px">Student<span>Perks.</span></div>
+    </div>
+    <div class="modal-form-head">
+      <div class="modal-form-title">Become a partner</div>
+      <div class="modal-form-sub">List your brand's deals and reach thousands of SA students.</div>
+    </div>
+    <form onsubmit="return false">
+      <div class="field"><input type="text" placeholder="Business name"></div>
+      <div class="field"><input type="text" placeholder="Your name"></div>
+      <div class="field"><input type="email" placeholder="Email address"></div>
+      <div class="field"><input type="tel" placeholder="Phone number"></div>
+      <div class="field"><textarea placeholder="Tell us about your offer..." style="width:100%;padding:12px 14px;border:1.5px solid var(--border);border-radius:12px;font-size:14px;font-family:var(--font);color:var(--white);background:var(--bg3);outline:none;resize:none;height:90px;transition:border-color .15s;" onfocus="this.style.borderColor='var(--lime)'" onblur="this.style.borderColor='var(--border)'"></textarea></div>
+      <button type="submit" class="modal-submit" onclick="closePartner()">Send enquiry</button>
+    </form>
+  </div>
+</div>
+
+<!-- MODAL -->
+<div class="modal-back" id="modal-back">
+  <div class="modal">
+    <button class="modal-x" onclick="closeModal()">×</button>
+    <div class="modal-logo">
+      <div class="logo-word" style="font-size:17px">Student<span>Perks.</span></div>
+    </div>
+    <div class="modal-tabs">
+      <div class="modal-tab active" id="t-si" onclick="switchTab('si')">Sign in</div>
+      <div class="modal-tab" id="t-jn" onclick="switchTab('jn')">Join now</div>
+    </div>
+
+    <!-- SIGN IN -->
+    <form id="form-si" onsubmit="return false">
+      <div class="field"><input type="email" placeholder="Email address"></div>
+      <div class="field"><input type="password" placeholder="Password"></div>
+      <button type="submit" class="modal-submit" onclick="closeModal()">Sign in</button>
+      <p class="modal-switch">Not a member? <span onclick="switchTab('jn')">Join now</span></p>
+    </form>
+
+    <!-- JOIN NOW -->
+    <form id="form-jn" style="display:none" onsubmit="return false">
+      <div class="modal-form-head">
+        <div class="modal-form-title">Create an account</div>
+        <div class="modal-form-sub">Fill in the details below to create your very own StudentPerks account.</div>
+      </div>
+      <div class="field"><input type="email" placeholder="Email address"></div>
+      <div class="field"><input type="text" placeholder="Name & Surname"></div>
+      <div class="field"><input type="password" placeholder="Password"></div>
+      <div class="field"><input type="password" placeholder="Confirm Password"></div>
+      <div class="field"><input type="text" placeholder="Referral Code (optional)" style="font-size:13px"></div>
+      <label class="modal-terms">
+        <input type="checkbox" id="terms-check">
+        <span>I agree to the <a href="#" style="color:var(--lime)">terms & conditions</a> and <a href="#" style="color:var(--lime)">privacy statement</a>.</span>
+      </label>
+      <button type="submit" class="modal-submit" onclick="closeModal()">Create account</button>
+      <p class="modal-switch">Already a member? <span onclick="switchTab('si')">Sign in</span></p>
+    </form>
+  </div>
+</div>
+
+<script>
+function openMenu(){ document.getElementById('menu-overlay').classList.add('open'); document.body.style.overflow='hidden'; }
+function closeMenu(){ document.getElementById('menu-overlay').classList.remove('open'); document.body.style.overflow=''; }
+function openPartner(){ document.getElementById('partner-back').classList.add('open'); document.body.style.overflow='hidden'; }
+function closePartner(){ document.getElementById('partner-back').classList.remove('open'); document.body.style.overflow=''; }
+document.getElementById('partner-back').addEventListener('click',e=>{ if(e.target===e.currentTarget) closePartner(); });
+function openModal(t){ document.getElementById('modal-back').classList.add('open'); document.body.style.overflow='hidden'; switchTab(t); }
+function closeModal(){ document.getElementById('modal-back').classList.remove('open'); document.body.style.overflow=''; }
+function switchTab(t){
+  const jn = t==='jn';
+  document.getElementById('t-si').classList.toggle('active',!jn);
+  document.getElementById('t-jn').classList.toggle('active',jn);
+  document.getElementById('form-si').style.display = jn?'none':'';
+  document.getElementById('form-jn').style.display = jn?'':'none';
+}
+document.getElementById('modal-back').addEventListener('click',e=>{ if(e.target===e.currentTarget) closeModal(); });
+document.addEventListener('keydown',e=>{ if(e.key==='Escape'){ closeModal(); closeMenu(); } });
+
+let activeCat = 'all';
+function setCat(el, cat){
+  document.querySelectorAll('.pill').forEach(p=>p.classList.remove('active'));
+  el.classList.add('active');
+  activeCat = cat;
+  filterPerks();
+}
+const observer = new IntersectionObserver(entries => {
+  entries.forEach(e => { if(e.isIntersecting){ e.target.classList.add('visible'); observer.unobserve(e.target); } });
+}, { threshold: 0.1 });
+document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
+
+function filterPerks(){
+  const q = document.getElementById('search-input').value.toLowerCase();
+  const cards = document.querySelectorAll('.perk-card');
+  let visible = 0;
+  cards.forEach(card => {
+    const catMatch = activeCat === 'all' || card.dataset.cat === activeCat;
+    const textMatch = !q || card.innerText.toLowerCase().includes(q);
+    const show = catMatch && textMatch;
+    card.style.display = show ? '' : 'none';
+    if(show) visible++;
+  });
+  document.getElementById('deal-count').textContent = visible + ' deals';
+  document.getElementById('no-results').style.display = visible === 0 ? '' : 'none';
+}
+</script>
+</body>
+</html>
