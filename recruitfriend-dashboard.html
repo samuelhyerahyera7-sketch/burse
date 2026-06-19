@@ -1,0 +1,737 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>RecruitFriend — User Analytics</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      background: #0f1117;
+      color: #e2e8f0;
+      min-height: 100vh;
+      padding: 32px 24px;
+    }
+    header {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      margin-bottom: 32px;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+    header h1 { font-size: 28px; font-weight: 700; color: #fff; letter-spacing: -0.5px; }
+    header p { color: #94a3b8; margin-top: 4px; font-size: 14px; }
+
+    .header-actions {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+    .action-btn {
+      background: #1e2130;
+      border: 1px solid #2d3348;
+      color: #94a3b8;
+      padding: 8px 14px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 13px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      transition: border-color 0.2s, color 0.2s;
+      white-space: nowrap;
+    }
+    .action-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+    .action-btn:not(:disabled):hover { border-color: #60a5fa; color: #60a5fa; }
+    .action-btn.word:not(:disabled):hover { border-color: #a78bfa; color: #a78bfa; }
+    .action-btn.refresh:not(:disabled):hover { border-color: #4ade80; color: #4ade80; }
+    .action-btn.spinning svg { animation: spin 1s linear infinite; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    #loading {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 300px;
+      flex-direction: column;
+      gap: 16px;
+      color: #64748b;
+    }
+    .spinner {
+      width: 40px; height: 40px;
+      border: 3px solid #2d3348;
+      border-top-color: #4ade80;
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+    }
+    #error-msg {
+      display: none;
+      background: #2d1b1b;
+      border: 1px solid #7f1d1d;
+      color: #fca5a5;
+      padding: 16px 20px;
+      border-radius: 10px;
+      margin-bottom: 24px;
+    }
+    #dashboard { display: none; }
+
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 16px;
+      margin-bottom: 32px;
+    }
+    .stat-card {
+      background: #1e2130;
+      border: 1px solid #2d3348;
+      border-radius: 12px;
+      padding: 20px 24px;
+    }
+    .stat-card .label { font-size: 12px; text-transform: uppercase; letter-spacing: 0.8px; color: #64748b; margin-bottom: 8px; }
+    .stat-card .value { font-size: 32px; font-weight: 700; color: #fff; line-height: 1; }
+    .stat-card .sub { font-size: 12px; color: #64748b; margin-top: 6px; }
+    .stat-card.green .value { color: #4ade80; }
+    .stat-card.blue .value  { color: #60a5fa; }
+    .stat-card.purple .value { color: #a78bfa; }
+    .stat-card.amber .value { color: #fbbf24; }
+
+    .charts-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+    }
+    .chart-card {
+      background: #1e2130;
+      border: 1px solid #2d3348;
+      border-radius: 12px;
+      padding: 24px;
+    }
+    .chart-card.full { grid-column: 1 / -1; }
+    .chart-card h2 { font-size: 15px; font-weight: 600; color: #cbd5e1; margin-bottom: 20px; }
+    .chart-card h2 span { float: right; font-size: 12px; font-weight: 400; color: #64748b; }
+    canvas { display: block; }
+    #last-updated { font-size: 12px; color: #475569; margin-top: 24px; text-align: right; }
+
+    @media (max-width: 768px) {
+      .charts-grid { grid-template-columns: 1fr; }
+      .chart-card.full { grid-column: 1; }
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <div>
+    <h1>RecruitFriend — User Analytics</h1>
+    <p>Live data from Supabase auth</p>
+  </div>
+  <div class="header-actions">
+    <button class="action-btn" id="pdfBtn" onclick="downloadPDF()" disabled>
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+      Download PDF
+    </button>
+    <button class="action-btn word" id="wordBtn" onclick="downloadWord()" disabled>
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+      Download Word
+    </button>
+    <button class="action-btn refresh" id="refreshBtn" onclick="loadData()">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M23 4v6h-6"/><path d="M1 20v-6h6"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/>
+      </svg>
+      Refresh
+    </button>
+  </div>
+</header>
+
+<div id="error-msg"></div>
+
+<div id="loading">
+  <div class="spinner"></div>
+  <span>Loading live data…</span>
+</div>
+
+<div id="dashboard">
+  <div class="stats-grid">
+    <div class="stat-card green">
+      <div class="label">Total Users</div>
+      <div class="value" id="s-total">—</div>
+      <div class="sub" id="s-since">—</div>
+    </div>
+    <div class="stat-card blue">
+      <div class="label">Email Confirmed</div>
+      <div class="value" id="s-confirmed">—</div>
+      <div class="sub" id="s-confirm-rate">—</div>
+    </div>
+    <div class="stat-card amber">
+      <div class="label">Unconfirmed</div>
+      <div class="value" id="s-unconfirmed">—</div>
+      <div class="sub" id="s-unconfirm-rate">—</div>
+    </div>
+    <div class="stat-card purple">
+      <div class="label">Google Sign-ins</div>
+      <div class="value" id="s-google">—</div>
+      <div class="sub" id="s-google-pct">—</div>
+    </div>
+    <div class="stat-card">
+      <div class="label">Peak Day</div>
+      <div class="value" id="s-peak-day" style="font-size:22px; color:#f472b6;">—</div>
+      <div class="sub" id="s-peak-val">—</div>
+    </div>
+    <div class="stat-card">
+      <div class="label">Last 7 Days</div>
+      <div class="value" id="s-last7" style="font-size:22px; color:#34d399;">—</div>
+      <div class="sub">New signups</div>
+    </div>
+  </div>
+
+  <div class="charts-grid">
+    <div class="chart-card full">
+      <h2>Daily Signups <span>New users per day</span></h2>
+      <canvas id="dailySignups" height="80"></canvas>
+    </div>
+    <div class="chart-card full">
+      <h2>Daily Active Logins <span>Users by last sign-in date</span></h2>
+      <canvas id="dailyLogins" height="80"></canvas>
+    </div>
+    <div class="chart-card">
+      <h2>Weekly Signups <span>By week starting date</span></h2>
+      <canvas id="weeklySignups" height="160"></canvas>
+    </div>
+    <div class="chart-card">
+      <h2>Signups by Day of Week <span>All-time totals</span></h2>
+      <canvas id="dayOfWeek" height="160"></canvas>
+    </div>
+    <div class="chart-card">
+      <h2>Auth Provider Split <span>Email vs Google</span></h2>
+      <canvas id="providerPie" height="200"></canvas>
+    </div>
+    <div class="chart-card">
+      <h2>Email Confirmation Status</h2>
+      <canvas id="confirmPie" height="200"></canvas>
+    </div>
+  </div>
+
+  <div id="last-updated"></div>
+</div>
+
+<script>
+  const SUPABASE_URL  = 'https://cymjloyfvckczmluqqct.supabase.co';
+  const SUPABASE_ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImN5bWpsb3lmdmNrY3ptbHVxcWN0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI5OTEyMDMsImV4cCI6MjA4ODU2NzIwM30.PSiutIUe0LFw8m1C8Uwhs6CfPJ8qcC9anIb3yMGlMcw';
+
+  Chart.defaults.color = '#94a3b8';
+  Chart.defaults.borderColor = '#2d3348';
+
+  const palette = {
+    green:  'rgba(74,222,128,1)',
+    greenA: 'rgba(74,222,128,0.15)',
+    blue:   'rgba(96,165,250,1)',
+    blueA:  'rgba(96,165,250,0.15)',
+    purple: 'rgba(167,139,250,1)',
+    amber:  'rgba(251,191,36,1)',
+    pink:   'rgba(244,114,182,1)',
+  };
+
+  let charts = {};
+  let liveData = null;
+
+  // ── Lazy script loader ─────────────────────────────────────────
+  function loadScript(src) {
+    return new Promise((resolve, reject) => {
+      if (document.querySelector(`script[src="${src}"]`)) { resolve(); return; }
+      const s = document.createElement('script');
+      s.src = src; s.onload = resolve; s.onerror = reject;
+      document.head.appendChild(s);
+    });
+  }
+
+  function destroyCharts() {
+    Object.values(charts).forEach(c => c.destroy());
+    charts = {};
+  }
+
+  function fmtDate(iso) {
+    return new Date(iso + 'T00:00:00').toLocaleDateString('en-GB', { day: 'numeric', month: 'short' });
+  }
+
+  function fmtDateLong(iso) {
+    return new Date(iso + 'T00:00:00').toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' });
+  }
+
+  // ── Canvas → base64 bytes helper ──────────────────────────────
+  function canvasToBytes(id) {
+    const c = document.getElementById(id);
+    const b64 = c.toDataURL('image/png').split(',')[1];
+    const bin = atob(b64);
+    const arr = new Uint8Array(bin.length);
+    for (let i = 0; i < bin.length; i++) arr[i] = bin.charCodeAt(i);
+    return arr.buffer;
+  }
+
+  function canvasDims(id) {
+    const c = document.getElementById(id);
+    return { w: c.width, h: c.height };
+  }
+
+  // ── PDF Download ───────────────────────────────────────────────
+  async function downloadPDF() {
+    const btn = document.getElementById('pdfBtn');
+    btn.disabled = true;
+    btn.innerHTML = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="animation:spin 1s linear infinite"><path d="M23 4v6h-6"/><path d="M1 20v-6h6"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg> Generating…';
+
+    try {
+      await loadScript('https://html2canvas.hertzen.com/dist/html2canvas.min.js');
+      await loadScript('https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js');
+
+      const { jsPDF } = window.jspdf;
+      const dashboard = document.getElementById('dashboard');
+
+      const canvas = await html2canvas(dashboard, {
+        scale: 1.5,
+        backgroundColor: '#0f1117',
+        useCORS: true,
+        logging: false,
+      });
+
+      const pdf = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
+      const pageW = pdf.internal.pageSize.getWidth();
+      const pageH = pdf.internal.pageSize.getHeight();
+      const imgW = pageW;
+      const imgH = (canvas.height * imgW) / canvas.width;
+      const imgData = canvas.toDataURL('image/jpeg', 0.92);
+
+      let y = 0;
+      let page = 0;
+      while (y < imgH) {
+        if (page > 0) pdf.addPage();
+        pdf.addImage(imgData, 'JPEG', 0, -y, imgW, imgH);
+        y += pageH;
+        page++;
+      }
+
+      const date = new Date().toISOString().split('T')[0];
+      pdf.save(`recruitfriend-analytics-${date}.pdf`);
+    } catch (e) {
+      alert('PDF generation failed: ' + e.message);
+      console.error(e);
+    } finally {
+      btn.disabled = false;
+      btn.innerHTML = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg> Download PDF';
+    }
+  }
+
+  // ── Word Download ─────────────────────────────────────────────
+  async function downloadWord() {
+    if (!liveData) return;
+    const btn = document.getElementById('wordBtn');
+    btn.disabled = true;
+    btn.innerHTML = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="animation:spin 1s linear infinite"><path d="M23 4v6h-6"/><path d="M1 20v-6h6"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg> Generating…';
+
+    try {
+      await loadScript('https://unpkg.com/docx@8.5.0/build/index.js');
+      await loadScript('https://cdn.jsdelivr.net/npm/file-saver@2.0.5/dist/FileSaver.min.js');
+
+      const {
+        Document, Packer, Paragraph, TextRun, Table, TableRow, TableCell,
+        HeadingLevel, AlignmentType, WidthType, BorderStyle,
+        ImageRun, ShadingType, PageBreak,
+      } = window.docx;
+
+      const d = liveData;
+      const total = d.total_users;
+      const googleCount = (d.providers.find(p => p.provider === 'google') || {}).count || 0;
+      const peak = d.daily_signups.reduce((a, b) => b.signups > a.signups ? b : a);
+      const today = new Date();
+      const sevenDaysAgo = new Date(today); sevenDaysAgo.setDate(today.getDate() - 7);
+      const last7 = d.daily_signups.filter(x => new Date(x.date) >= sevenDaysAgo).reduce((s, x) => s + x.signups, 0);
+
+      const noBorder = { style: BorderStyle.NONE, size: 0, color: 'FFFFFF' };
+      const cellBorders = { top: noBorder, bottom: noBorder, left: noBorder, right: noBorder };
+
+      function heading(text, level = HeadingLevel.HEADING_1) {
+        return new Paragraph({ text, heading: level, spacing: { before: 300, after: 120 } });
+      }
+
+      function para(text, opts = {}) {
+        return new Paragraph({ children: [new TextRun({ text, ...opts })], spacing: { after: 80 } });
+      }
+
+      function spacer() {
+        return new Paragraph({ text: '', spacing: { after: 160 } });
+      }
+
+      function statsTable(rows) {
+        return new Table({
+          width: { size: 100, type: WidthType.PERCENTAGE },
+          rows: rows.map(([label, value]) =>
+            new TableRow({
+              children: [
+                new TableCell({
+                  borders: cellBorders,
+                  shading: { type: ShadingType.SOLID, color: 'F3F4F6' },
+                  width: { size: 50, type: WidthType.PERCENTAGE },
+                  children: [new Paragraph({ children: [new TextRun({ text: label, bold: true, size: 20 })], spacing: { before: 60, after: 60 } })],
+                }),
+                new TableCell({
+                  borders: cellBorders,
+                  width: { size: 50, type: WidthType.PERCENTAGE },
+                  children: [new Paragraph({ children: [new TextRun({ text: String(value), size: 20 })], spacing: { before: 60, after: 60 } })],
+                }),
+              ],
+            })
+          ),
+        });
+      }
+
+      function dataTable(headers, rows) {
+        const headerRow = new TableRow({
+          tableHeader: true,
+          children: headers.map(h =>
+            new TableCell({
+              borders: cellBorders,
+              shading: { type: ShadingType.SOLID, color: '1E3A5F' },
+              children: [new Paragraph({ children: [new TextRun({ text: h, bold: true, color: 'FFFFFF', size: 18 })], spacing: { before: 60, after: 60 } })],
+            })
+          ),
+        });
+        const dataRows = rows.map(cells =>
+          new TableRow({
+            children: cells.map(cell =>
+              new TableCell({
+                borders: cellBorders,
+                children: [new Paragraph({ children: [new TextRun({ text: String(cell), size: 18 })], spacing: { before: 40, after: 40 } })],
+              })
+            ),
+          })
+        );
+        return new Table({
+          width: { size: 100, type: WidthType.PERCENTAGE },
+          rows: [headerRow, ...dataRows],
+        });
+      }
+
+      function chartImage(canvasId, widthPx, heightPx) {
+        const dims = canvasDims(canvasId);
+        const aspect = dims.h / dims.w;
+        const displayW = widthPx;
+        const displayH = Math.round(displayW * aspect);
+        return new Paragraph({
+          children: [
+            new ImageRun({
+              data: canvasToBytes(canvasId),
+              transformation: { width: displayW, height: displayH },
+              type: 'png',
+            }),
+          ],
+          spacing: { after: 160 },
+        });
+      }
+
+      const dow = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+      const sortedDow = [...d.day_of_week].sort((a, b) => a.dow - b.dow);
+
+      const doc = new Document({
+        creator: 'RecruitFriend Analytics',
+        title: 'RecruitFriend User Analytics Report',
+        description: 'Live analytics report generated from Supabase auth data',
+        sections: [{
+          children: [
+            // ── Title ──
+            new Paragraph({
+              children: [new TextRun({ text: 'RecruitFriend', bold: true, size: 56, color: '1E3A5F' })],
+              spacing: { after: 80 },
+            }),
+            new Paragraph({
+              children: [new TextRun({ text: 'User Analytics Report', size: 36, color: '64748B' })],
+              spacing: { after: 80 },
+            }),
+            new Paragraph({
+              children: [new TextRun({ text: `Generated: ${new Date().toLocaleString('en-GB')}`, size: 20, color: '94A3B8' })],
+              spacing: { after: 400 },
+            }),
+
+            // ── Summary ──
+            heading('Summary Statistics'),
+            statsTable([
+              ['Total Users',          total.toLocaleString()],
+              ['Email Confirmed',       `${d.confirmed.toLocaleString()} (${((d.confirmed/total)*100).toFixed(1)}%)`],
+              ['Unconfirmed',           `${d.unconfirmed.toLocaleString()} (${((d.unconfirmed/total)*100).toFixed(1)}%)`],
+              ['Google Sign-ins',       `${googleCount.toLocaleString()} (${((googleCount/total)*100).toFixed(1)}%)`],
+              ['Email / Password',      `${(total-googleCount).toLocaleString()} (${(((total-googleCount)/total)*100).toFixed(1)}%)`],
+              ['Peak Day',              `${fmtDateLong(peak.date)} — ${peak.signups} signups`],
+              ['Last 7 Days Signups',   last7.toLocaleString()],
+              ['First User',            fmtDateLong(d.daily_signups[0]?.date)],
+            ]),
+            spacer(),
+
+            // ── Daily Signups ──
+            heading('Daily Signups', HeadingLevel.HEADING_2),
+            para('New user registrations per calendar day.'),
+            chartImage('dailySignups', 580, 200),
+            dataTable(
+              ['Date', 'New Signups'],
+              [...d.daily_signups].reverse().slice(0, 30).map(r => [fmtDateLong(r.date), r.signups])
+            ),
+            spacer(),
+
+            // ── Daily Logins ──
+            heading('Daily Active Logins', HeadingLevel.HEADING_2),
+            para('Users by their most recent sign-in date.'),
+            chartImage('dailyLogins', 580, 200),
+            dataTable(
+              ['Date', 'Active Users'],
+              [...d.daily_logins].reverse().slice(0, 30).map(r => [fmtDateLong(r.date), r.logins])
+            ),
+            spacer(),
+
+            // ── Weekly ──
+            heading('Weekly Signups', HeadingLevel.HEADING_2),
+            para('Signup totals grouped by week.'),
+            chartImage('weeklySignups', 480, 260),
+            dataTable(
+              ['Week Starting', 'Signups'],
+              [...d.weekly_signups].reverse().map(r => [fmtDateLong(r.week_start), r.signups])
+            ),
+            spacer(),
+
+            // ── Day of Week ──
+            heading('Signups by Day of Week', HeadingLevel.HEADING_2),
+            para('All-time signup distribution across days of the week.'),
+            chartImage('dayOfWeek', 400, 260),
+            dataTable(
+              ['Day', 'Total Signups'],
+              sortedDow.map(r => [dow[r.dow] || r.name, r.signups])
+            ),
+            spacer(),
+
+            // ── Auth Provider ──
+            heading('Auth Provider Breakdown', HeadingLevel.HEADING_2),
+            para('How users are signing in — email/password vs Google OAuth.'),
+            chartImage('providerPie', 320, 260),
+            dataTable(
+              ['Provider', 'Users', 'Percentage'],
+              d.providers.map(r => [
+                r.provider === 'google' ? 'Google OAuth' : 'Email / Password',
+                r.count.toLocaleString(),
+                `${((r.count/total)*100).toFixed(1)}%`,
+              ])
+            ),
+            spacer(),
+
+            // ── Confirmation ──
+            heading('Email Confirmation Status', HeadingLevel.HEADING_2),
+            para('Breakdown of users who have confirmed their email address.'),
+            chartImage('confirmPie', 320, 260),
+            dataTable(
+              ['Status', 'Users', 'Percentage'],
+              [
+                ['Confirmed',   d.confirmed.toLocaleString(),   `${((d.confirmed/total)*100).toFixed(1)}%`],
+                ['Unconfirmed', d.unconfirmed.toLocaleString(), `${((d.unconfirmed/total)*100).toFixed(1)}%`],
+              ]
+            ),
+            spacer(),
+
+            // ── Footer ──
+            new Paragraph({
+              children: [new TextRun({ text: '— End of Report —', size: 18, color: '94A3B8', italics: true })],
+              alignment: AlignmentType.CENTER,
+              spacing: { before: 400 },
+            }),
+          ],
+        }],
+      });
+
+      const blob = await Packer.toBlob(doc);
+      const date = new Date().toISOString().split('T')[0];
+      saveAs(blob, `recruitfriend-analytics-${date}.docx`);
+
+    } catch (e) {
+      alert('Word generation failed: ' + e.message);
+      console.error(e);
+    } finally {
+      btn.disabled = false;
+      btn.innerHTML = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg> Download Word';
+    }
+  }
+
+  // ── Chart rendering ───────────────────────────────────────────
+  function render(data) {
+    liveData = data;
+    destroyCharts();
+
+    const total = data.total_users;
+    const googleCount = (data.providers.find(p => p.provider === 'google') || {}).count || 0;
+
+    document.getElementById('s-total').textContent = total.toLocaleString();
+    document.getElementById('s-since').textContent = `Since ${fmtDate(data.daily_signups[0]?.date)}`;
+    document.getElementById('s-confirmed').textContent = data.confirmed.toLocaleString();
+    document.getElementById('s-confirm-rate').textContent = `${((data.confirmed / total) * 100).toFixed(1)}% confirmation rate`;
+    document.getElementById('s-unconfirmed').textContent = data.unconfirmed.toLocaleString();
+    document.getElementById('s-unconfirm-rate').textContent = `${((data.unconfirmed / total) * 100).toFixed(1)}% pending`;
+    document.getElementById('s-google').textContent = googleCount.toLocaleString();
+    document.getElementById('s-google-pct').textContent = `${((googleCount / total) * 100).toFixed(1)}% of all users`;
+
+    const peak = data.daily_signups.reduce((a, b) => b.signups > a.signups ? b : a);
+    document.getElementById('s-peak-day').textContent = fmtDate(peak.date);
+    document.getElementById('s-peak-val').textContent = `${peak.signups} signups in one day`;
+
+    const today = new Date();
+    const sevenDaysAgo = new Date(today); sevenDaysAgo.setDate(today.getDate() - 7);
+    const last7 = data.daily_signups.filter(d => new Date(d.date) >= sevenDaysAgo).reduce((s, d) => s + d.signups, 0);
+    document.getElementById('s-last7').textContent = last7.toLocaleString();
+
+    charts.dailySignups = new Chart(document.getElementById('dailySignups'), {
+      type: 'line',
+      data: {
+        labels: data.daily_signups.map(d => d.date),
+        datasets: [{ label: 'Signups', data: data.daily_signups.map(d => d.signups),
+          borderColor: palette.green, backgroundColor: palette.greenA,
+          borderWidth: 2, pointRadius: 3, pointHoverRadius: 6, fill: true, tension: 0.3 }]
+      },
+      options: lineOpts()
+    });
+
+    charts.dailyLogins = new Chart(document.getElementById('dailyLogins'), {
+      type: 'line',
+      data: {
+        labels: data.daily_logins.map(d => d.date),
+        datasets: [{ label: 'Logins', data: data.daily_logins.map(d => d.logins),
+          borderColor: palette.blue, backgroundColor: palette.blueA,
+          borderWidth: 2, pointRadius: 3, pointHoverRadius: 6, fill: true, tension: 0.3 }]
+      },
+      options: lineOpts()
+    });
+
+    charts.weeklySignups = new Chart(document.getElementById('weeklySignups'), {
+      type: 'bar',
+      data: {
+        labels: data.weekly_signups.map(d => fmtDate(d.week_start)),
+        datasets: [{ label: 'Signups', data: data.weekly_signups.map(d => d.signups),
+          backgroundColor: 'rgba(167,139,250,0.7)', borderColor: palette.purple,
+          borderWidth: 1, borderRadius: 4 }]
+      },
+      options: barOpts()
+    });
+
+    const dow = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+    const sorted = [...data.day_of_week].sort((a, b) => a.dow - b.dow);
+    const dowVals = sorted.map(d => d.signups);
+    const maxDow = Math.max(...dowVals);
+    charts.dayOfWeek = new Chart(document.getElementById('dayOfWeek'), {
+      type: 'bar',
+      data: {
+        labels: sorted.map(d => dow[d.dow] || d.name),
+        datasets: [{ label: 'Signups', data: dowVals,
+          backgroundColor: dowVals.map(v => v === maxDow ? 'rgba(251,191,36,0.85)' : 'rgba(251,191,36,0.35)'),
+          borderColor: palette.amber, borderWidth: 1, borderRadius: 4 }]
+      },
+      options: barOpts()
+    });
+
+    charts.providerPie = new Chart(document.getElementById('providerPie'), {
+      type: 'doughnut',
+      data: {
+        labels: data.providers.map(p => p.provider === 'google' ? 'Google OAuth' : 'Email / Password'),
+        datasets: [{ data: data.providers.map(p => p.count),
+          backgroundColor: ['rgba(96,165,250,0.8)', 'rgba(244,114,182,0.8)'],
+          borderColor: ['#60a5fa', '#f472b6'], borderWidth: 2, hoverOffset: 8 }]
+      },
+      options: pieOpts(total)
+    });
+
+    charts.confirmPie = new Chart(document.getElementById('confirmPie'), {
+      type: 'doughnut',
+      data: {
+        labels: ['Confirmed', 'Unconfirmed'],
+        datasets: [{ data: [data.confirmed, data.unconfirmed],
+          backgroundColor: ['rgba(74,222,128,0.8)', 'rgba(251,191,36,0.8)'],
+          borderColor: ['#4ade80', '#fbbf24'], borderWidth: 2, hoverOffset: 8 }]
+      },
+      options: pieOpts(total)
+    });
+
+    document.getElementById('last-updated').textContent = `Last updated: ${new Date().toLocaleString()}`;
+
+    document.getElementById('pdfBtn').disabled = false;
+    document.getElementById('wordBtn').disabled = false;
+  }
+
+  function lineOpts() {
+    return {
+      responsive: true,
+      animation: false,
+      plugins: { legend: { display: false }, tooltip: { mode: 'index', intersect: false } },
+      scales: {
+        x: { grid: { color: '#1a1f2e' }, ticks: { maxTicksLimit: 12, maxRotation: 45 } },
+        y: { grid: { color: '#1a1f2e' }, beginAtZero: true }
+      }
+    };
+  }
+
+  function barOpts() {
+    return {
+      responsive: true,
+      animation: false,
+      plugins: { legend: { display: false }, tooltip: { mode: 'index', intersect: false } },
+      scales: {
+        x: { grid: { color: '#1a1f2e' }, ticks: { maxRotation: 45 } },
+        y: { grid: { color: '#1a1f2e' }, beginAtZero: true }
+      }
+    };
+  }
+
+  function pieOpts(total) {
+    return {
+      responsive: true,
+      animation: false,
+      plugins: {
+        legend: { position: 'bottom', labels: { padding: 16, font: { size: 13 } } },
+        tooltip: {
+          callbacks: { label: ctx => ` ${ctx.label}: ${ctx.parsed} (${((ctx.parsed/total)*100).toFixed(1)}%)` }
+        }
+      }
+    };
+  }
+
+  // ── Data fetcher ──────────────────────────────────────────────
+  async function loadData() {
+    const btn = document.getElementById('refreshBtn');
+    btn.classList.add('spinning');
+    document.getElementById('error-msg').style.display = 'none';
+
+    try {
+      const res = await fetch(`${SUPABASE_URL}/rest/v1/rpc/get_auth_stats`, {
+        method: 'POST',
+        headers: {
+          'apikey': SUPABASE_ANON,
+          'Authorization': `Bearer ${SUPABASE_ANON}`,
+          'Content-Type': 'application/json',
+        },
+        body: '{}',
+      });
+
+      if (!res.ok) throw new Error(`HTTP ${res.status}: ${await res.text()}`);
+
+      const data = await res.json();
+      document.getElementById('loading').style.display = 'none';
+      document.getElementById('dashboard').style.display = 'block';
+      render(data);
+    } catch (e) {
+      document.getElementById('loading').style.display = 'none';
+      const errEl = document.getElementById('error-msg');
+      errEl.style.display = 'block';
+      errEl.textContent = `Failed to load data: ${e.message}`;
+      console.error(e);
+    } finally {
+      btn.classList.remove('spinning');
+    }
+  }
+
+  loadData();
+  setInterval(loadData, 5 * 60 * 1000);
+</script>
+</body>
+</html>

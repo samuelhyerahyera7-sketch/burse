@@ -172,6 +172,17 @@ nav {
 }
 
 /* ── CATEGORY PILLS ── */
+.pills-wrap {
+  position: relative;
+}
+.pills-wrap::after {
+  content: '';
+  position: absolute;
+  right: 0; top: 0; bottom: 0;
+  width: 48px;
+  background: linear-gradient(to right, transparent, var(--bg));
+  pointer-events: none;
+}
 .pills-row {
   display: flex;
   gap: 8px;
@@ -495,7 +506,7 @@ footer { background: var(--bg); border-top: 1px solid var(--border); padding: 48
     <a class="menu-item" href="#events" onclick="closeMenu()">Events</a>
     <a class="menu-item" href="#jobs" onclick="closeMenu()">Jobs</a>
     <a class="menu-item" onclick="closeMenu();openPartner()">Become a partner</a>
-    <a class="menu-item" onclick="closeMenu()">Recruit and earn</a>
+    <a class="menu-item" onclick="closeMenu();openModal('jn')">Recruit and earn</a>
   </div>
   <div class="menu-foot">
     <div class="menu-contact-row">
@@ -519,18 +530,13 @@ footer { background: var(--bg); border-top: 1px solid var(--border); padding: 48
 <section class="hero">
   <div class="wrap">
     <h1>SPEND LESS.<em>LIVE MORE.</em></h1>
-    <p class="hero-sub">Exclusive student deals, verified instantly. Always free.</p>
-    <div class="stats-row">
-      <div class="stat-item"><div class="stat-val">500+</div><div class="stat-lbl">Deals</div></div>
-      <div class="stat-item"><div class="stat-val">Free</div><div class="stat-lbl">Forever</div></div>
-      <div class="stat-item"><div class="stat-val">SA</div><div class="stat-lbl">Students only</div></div>
-    </div>
+    <p class="hero-sub">Exclusive student deals, verified instantly.</p>
     <div class="search-wrap">
       <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
       <input type="text" placeholder="Search brands or deals..." id="search-input" oninput="filterPerks()">
       <span class="deal-badge" id="deal-count">8 deals</span>
     </div>
-    <div class="pills-row">
+    <div class="pills-wrap"><div class="pills-row">
       <button class="pill active" onclick="setCat(this,'all')">All</button>
       <button class="pill" onclick="setCat(this,'fashion')">Fashion</button>
       <button class="pill" onclick="setCat(this,'tech')">Tech</button>
@@ -539,7 +545,7 @@ footer { background: var(--bg); border-top: 1px solid var(--border); padding: 48
       <button class="pill" onclick="setCat(this,'software')">Software</button>
       <button class="pill" onclick="setCat(this,'fitness')">Fitness</button>
       <button class="pill" onclick="setCat(this,'entertainment')">Entertainment</button>
-    </div>
+    </div></div>
   </div>
 </section>
 
@@ -733,8 +739,8 @@ footer { background: var(--bg); border-top: 1px solid var(--border); padding: 48
 <section class="final-cta">
   <div class="wrap">
     <h2>START<em>SAVING NOW.</em></h2>
-    <p>Join thousands of SA students already unlocking exclusive deals and more. Free forever.</p>
-    <button class="lime-btn" onclick="openModal('jn')">Get started — it's free</button>
+    <p>Join thousands of SA students already unlocking exclusive deals and more.</p>
+    <button class="lime-btn" onclick="openModal('jn')">Get started</button>
   </div>
 </section>
 
@@ -744,7 +750,7 @@ footer { background: var(--bg); border-top: 1px solid var(--border); padding: 48
     <div class="footer-grid">
       <div>
         <div class="logo-word" style="font-size:17px">Student<span>Perks.</span></div>
-        <p class="footer-desc">Exclusive student deals, events and jobs — built for SA students. Free forever.</p>
+        <p class="footer-desc">Exclusive student deals, events and jobs — built for SA students.</p>
         <div class="footer-social">
           <svg class="f-soc" width="19" height="19" viewBox="0 0 24 24" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.744l7.737-8.835L1.254 2.25H8.08l4.253 5.622zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
           <svg class="f-soc" width="19" height="19" viewBox="0 0 24 24" fill="currentColor"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg>
@@ -753,7 +759,7 @@ footer { background: var(--bg); border-top: 1px solid var(--border); padding: 48
       </div>
       <div class="footer-cols">
         <div class="footer-col"><h4>Platform</h4><a>Deals</a><a>Events</a><a>Jobs</a></div>
-        <div class="footer-col"><h4>Company</h4><a>About</a><a>News</a><a>Become a partner</a><a>Recruit and earn</a><a>Contact</a></div>
+        <div class="footer-col"><h4>Company</h4><a>About</a><a>News</a><a>Become a partner</a><a onclick="openModal('jn')" style="cursor:pointer">Recruit and earn</a><a>Contact</a></div>
         <div class="footer-col"><h4>Contact</h4><a>+27 81 696 1623</a><a>support@studentperks.co.za</a></div>
       </div>
     </div>

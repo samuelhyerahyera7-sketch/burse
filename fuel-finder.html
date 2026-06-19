@@ -1,0 +1,870 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Diesel Near Me SA</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:ital,wght@0,400;0,500;0,600;0,700;0,800;0,900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+  <style>
+    :root {
+      --bg:     #080808;
+      --s1:     #111;
+      --s2:     #191919;
+      --s3:     #222;
+      --line:   rgba(255,255,255,0.06);
+      --line2:  rgba(255,255,255,0.11);
+      --or:     #FF5500;
+      --or2:    #FF7A33;
+      --og:     rgba(255,85,0,0.16);
+      --ob:     rgba(255,85,0,0.28);
+      --gr:     #00D077;
+      --grs:    rgba(0,208,119,0.15);
+      --rd:     #FF3B3B;
+      --rds:    rgba(255,59,59,0.15);
+      --am:     #FFB800;
+      --w1:     #FFFFFF;
+      --w2:     rgba(255,255,255,0.5);
+      --w3:     rgba(255,255,255,0.22);
+      --w4:     rgba(255,255,255,0.08);
+      --f:      'Inter', system-ui, sans-serif;
+      --r:      14px;
+    }
+    *,*::before,*::after { box-sizing:border-box; margin:0; padding:0; -webkit-tap-highlight-color:transparent; }
+    html,body { height:100%; font-family:var(--f); background:var(--bg); color:var(--w1); overflow:hidden; -webkit-font-smoothing:antialiased; }
+
+    /* ─── WELCOME ──────────────────────────────────────────────── */
+    #welcome {
+      position:fixed; inset:0; z-index:900;
+      background:var(--bg);
+      display:flex; flex-direction:column; align-items:center;
+      overflow:hidden;
+    }
+    .w-glow {
+      position:absolute; width:560px; height:560px; border-radius:50%;
+      background:radial-gradient(circle,rgba(255,85,0,.2) 0%,transparent 65%);
+      top:-180px; left:50%; transform:translateX(-50%);
+      animation:breathe 5s ease-in-out infinite;
+      pointer-events:none;
+    }
+    @keyframes breathe {
+      0%,100% { opacity:.7; transform:translateX(-50%) scale(1); }
+      50%      { opacity:1;  transform:translateX(-50%) scale(1.1); }
+    }
+    .w-body {
+      flex:1; display:flex; flex-direction:column;
+      align-items:center; justify-content:center;
+      padding:32px 28px 0; position:relative; z-index:1; text-align:center;
+    }
+    .w-icon {
+      width:96px; height:96px; border-radius:30px;
+      background:var(--og); border:1.5px solid var(--ob);
+      display:flex; align-items:center; justify-content:center;
+      margin-bottom:30px;
+    }
+    .w-icon svg { width:50px; height:50px; }
+    .w-h { font-size:36px; font-weight:900; letter-spacing:-1px; line-height:1.1; margin-bottom:12px; }
+    .w-h em { color:var(--or); font-style:normal; }
+    .w-p { font-size:14px; color:var(--w2); line-height:1.65; max-width:260px; }
+    .w-pills {
+      display:flex; gap:8px; margin-top:28px;
+    }
+    .w-pill {
+      flex:1; background:var(--s1); border:1px solid var(--line2);
+      border-radius:12px; padding:10px 0; text-align:center;
+    }
+    .w-pill .pn { font-size:16px; font-weight:800; color:var(--or); }
+    .w-pill .pl { font-size:9px; font-weight:600; text-transform:uppercase; letter-spacing:.07em; color:var(--w3); margin-top:2px; }
+
+    .w-foot {
+      width:100%; padding:20px 24px 40px; position:relative; z-index:1;
+    }
+    .btn-or {
+      width:100%; padding:15px; border-radius:15px;
+      background:var(--or); border:none; color:#fff;
+      font-family:var(--f); font-size:15px; font-weight:700;
+      cursor:pointer; transition:opacity .15s, transform .1s;
+      letter-spacing:-.1px;
+    }
+    .btn-or:active { opacity:.85; transform:scale(.98); }
+    .btn-or:disabled { opacity:.4; cursor:default; transform:none; }
+    .btn-gh {
+      width:100%; padding:13px; margin-top:10px;
+      background:transparent; border:1px solid var(--line2);
+      border-radius:15px; color:var(--w2); font-family:var(--f);
+      font-size:14px; font-weight:500; cursor:pointer;
+      transition:background .15s;
+    }
+    .btn-gh:active { background:var(--s1); }
+
+    /* ─── HEADER ───────────────────────────────────────────────── */
+    #hdr {
+      position:fixed; top:0; left:0; right:0; z-index:700;
+      height:62px; display:none; align-items:center; gap:10px;
+      padding:0 14px;
+      background:rgba(8,8,8,.88);
+      backdrop-filter:blur(22px); -webkit-backdrop-filter:blur(22px);
+      border-bottom:1px solid var(--line);
+    }
+    .hlogo {
+      width:38px; height:38px; border-radius:11px;
+      background:var(--og); border:1px solid var(--ob);
+      display:flex; align-items:center; justify-content:center; flex-shrink:0;
+    }
+    .hlogo svg { width:20px; height:20px; color:var(--or); }
+    .hinfo { flex:1; min-width:0; }
+    .htitle { font-size:14px; font-weight:700; line-height:1; }
+    .hloc   { font-size:11px; color:var(--w2); margin-top:3px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; display:flex; align-items:center; gap:3px; }
+    .hloc svg { width:9px; height:9px; flex-shrink:0; color:var(--or); }
+    .hbtns { display:flex; gap:6px; }
+    .hbtn {
+      height:36px; padding:0 12px; border-radius:10px;
+      background:var(--s2); border:1px solid var(--line2);
+      color:var(--w1); font-family:var(--f); font-size:12px; font-weight:600;
+      cursor:pointer; display:flex; align-items:center; gap:5px;
+      transition:background .15s;
+    }
+    .hbtn svg { width:13px; height:13px; }
+    .hbtn:active { background:var(--s3); }
+
+    /* ─── MAP ──────────────────────────────────────────────────── */
+    #map { position:fixed; top:62px; left:0; right:0; bottom:0; display:none; }
+    #vig {
+      position:fixed; top:62px; left:0; right:0; bottom:0;
+      pointer-events:none; z-index:300;
+      background:radial-gradient(ellipse at 50% 40%,transparent 40%,rgba(8,8,8,.45) 100%);
+    }
+
+    /* price label on map */
+    .plabel {
+      display:inline-flex; align-items:center;
+      padding:3px 8px 3px 6px; border-radius:20px;
+      font-family:var(--f); font-size:11px; font-weight:700;
+      white-space:nowrap; cursor:pointer; line-height:1;
+      box-shadow:0 2px 10px rgba(0,0,0,.55);
+      transition:transform .12s;
+      gap:4px;
+    }
+    .plabel:hover { transform:scale(1.06); }
+    .plabel .dot { width:6px; height:6px; border-radius:50%; flex-shrink:0; }
+    .plabel.g { background:#00D077; color:#003D22; }
+    .plabel.g .dot { background:rgba(0,0,0,.25); }
+    .plabel.o { background:#FF5500; color:#fff; }
+    .plabel.o .dot { background:rgba(255,255,255,.35); }
+    .plabel.r { background:#FF3B3B; color:#fff; }
+    .plabel.r .dot { background:rgba(255,255,255,.35); }
+
+    /* ─── SHEET ────────────────────────────────────────────────── */
+    #sheet {
+      position:fixed; left:0; right:0; bottom:0; z-index:500;
+      background:var(--s1);
+      border-top:1px solid var(--line);
+      border-radius:20px 20px 0 0;
+      display:none; flex-direction:column;
+      height:46%;
+      transition:height .32s cubic-bezier(.32,.72,0,1);
+    }
+    #sheet.peek { height:76px; }
+    #sheet.full  { height:86%; }
+
+    .sh-bar { padding:10px 0 4px; display:flex; justify-content:center; cursor:grab; flex-shrink:0; touch-action:none; }
+    .sh-nub { width:34px; height:3.5px; background:var(--s3); border-radius:2px; }
+
+    .sh-top { padding:0 16px 8px; display:flex; align-items:center; gap:8px; flex-shrink:0; }
+    .sh-cnt { font-size:13px; font-weight:600; flex:1; color:var(--w1); }
+    .stabs  { display:flex; background:var(--s2); border-radius:8px; padding:2px; }
+    .stab {
+      padding:5px 12px; border-radius:6px;
+      font-size:11px; font-weight:600; font-family:var(--f);
+      cursor:pointer; background:transparent; border:none; color:var(--w2);
+      transition:all .15s;
+    }
+    .stab.on { background:var(--s3); color:var(--w1); }
+
+    .sh-radii { display:flex; gap:6px; padding:0 14px 10px; overflow-x:auto; scrollbar-width:none; flex-shrink:0; }
+    .sh-radii::-webkit-scrollbar { display:none; }
+    .rchip {
+      padding:4px 12px; border-radius:20px; flex-shrink:0;
+      background:transparent; border:1px solid var(--line); color:var(--w2);
+      font-size:11px; font-weight:600; font-family:var(--f); cursor:pointer;
+      transition:all .15s; white-space:nowrap;
+    }
+    .rchip.on { background:var(--og); border-color:var(--ob); color:var(--or); }
+
+    .sh-list { overflow-y:auto; flex:1; padding:2px 10px 32px; display:flex; flex-direction:column; gap:6px; }
+
+    /* ─── CARD ─────────────────────────────────────────────────── */
+    .card {
+      position:relative;
+      background:var(--bg);
+      border:1px solid var(--line);
+      border-radius:var(--r);
+      padding:12px 12px 12px 14px;
+      display:flex; align-items:center; gap:12px;
+      cursor:pointer; transition:border-color .15s, background .12s;
+    }
+    .card:active    { background:var(--s2); }
+    .card.sel       { border-color:var(--ob); background:rgba(255,85,0,.04); }
+    .card.cheapest  { border-color:rgba(0,208,119,.3); }
+
+    .best-tag {
+      position:absolute; top:0; left:14px;
+      font-size:9px; font-weight:700; text-transform:uppercase; letter-spacing:.07em;
+      color:var(--gr); background:var(--grs);
+      border:1px solid rgba(0,208,119,.2); border-top:none;
+      padding:2px 8px; border-radius:0 0 6px 6px;
+    }
+
+    .avatar {
+      width:42px; height:42px; border-radius:11px;
+      display:flex; align-items:center; justify-content:center;
+      font-size:14px; font-weight:800; letter-spacing:-.5px;
+      flex-shrink:0; font-family:var(--f);
+    }
+
+    .cinfo { flex:1; min-width:0; }
+    .cname { font-size:13px; font-weight:600; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; line-height:1.3; }
+    .cmeta { font-size:11px; color:var(--w2); margin-top:2px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+
+    .cright { display:flex; align-items:center; gap:6px; flex-shrink:0; }
+
+    .cprice { text-align:right; }
+    .cpval  { font-size:16px; font-weight:800; letter-spacing:-.4px; line-height:1; }
+    .cpval.g { color:var(--gr); }
+    .cpval.o { color:var(--or); }
+    .cpval.r { color:var(--rd); }
+    .cpval.dim { font-size:11px; font-weight:500; color:var(--w3); line-height:1.5; }
+    .cpsub  { font-size:9.5px; color:var(--w3); margin-top:3px; }
+
+    .cbtn {
+      width:30px; height:30px; border-radius:8px;
+      background:var(--s2); border:1px solid var(--line2);
+      color:var(--w2); cursor:pointer; font-family:var(--f);
+      display:flex; align-items:center; justify-content:center;
+      transition:all .15s; flex-shrink:0;
+    }
+    .cbtn svg { width:14px; height:14px; }
+    .cbtn:active { background:var(--og); border-color:var(--ob); color:var(--or); }
+    .cbtn.add    { font-size:18px; font-weight:300; line-height:1; }
+
+    /* ─── STATES ───────────────────────────────────────────────── */
+    .empty { text-align:center; padding:40px 20px; }
+    .spin  { width:22px; height:22px; border-radius:50%; border:2px solid var(--s3); border-top-color:var(--or); animation:sp .7s linear infinite; margin:0 auto 14px; }
+    @keyframes sp { to { transform:rotate(360deg); } }
+    .empty p { font-size:13px; color:var(--w2); line-height:1.6; }
+
+    /* ─── MODAL ────────────────────────────────────────────────── */
+    #modal { position:fixed; inset:0; z-index:800; display:none; }
+    #modal.open { display:block; }
+    .mbg { position:absolute; inset:0; background:rgba(0,0,0,.75); }
+    .msheet {
+      position:absolute; bottom:0; left:0; right:0;
+      background:var(--s1); border-top:1px solid var(--line);
+      border-radius:20px 20px 0 0;
+      padding:0 18px 44px;
+      animation:slideup .26s cubic-bezier(.32,.72,0,1);
+    }
+    @keyframes slideup { from { transform:translateY(100%); } to { transform:translateY(0); } }
+
+    .mbar { padding:10px 0 6px; display:flex; justify-content:center; }
+    .mnub { width:34px; height:3.5px; background:var(--s3); border-radius:2px; }
+
+    .mhead {
+      display:flex; align-items:center; gap:12px;
+      padding-bottom:16px; border-bottom:1px solid var(--line); margin-bottom:18px;
+    }
+    .mavatar { width:46px; height:46px; border-radius:13px; display:flex; align-items:center; justify-content:center; font-size:16px; font-weight:800; flex-shrink:0; }
+    .mname { font-size:15px; font-weight:700; }
+    .msub  { font-size:12px; color:var(--w2); margin-top:2px; }
+
+    .mlabel { font-size:10px; font-weight:700; text-transform:uppercase; letter-spacing:.08em; color:var(--w3); display:block; margin-bottom:8px; }
+
+    .ftgrid { display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-bottom:18px; }
+    .ftbtn {
+      padding:11px 10px; border-radius:12px; text-align:left;
+      background:var(--bg); border:1px solid var(--line); color:var(--w1);
+      font-family:var(--f); font-size:12px; font-weight:600; cursor:pointer;
+      transition:all .14s;
+    }
+    .ftbtn b { display:block; font-weight:700; margin-bottom:2px; }
+    .ftbtn span { font-size:10px; color:var(--w3); font-weight:400; }
+    .ftbtn.on { background:var(--og); border-color:var(--ob); color:var(--or); }
+    .ftbtn.on span { color:rgba(255,85,0,.55); }
+
+    .pinp {
+      display:flex; align-items:center; background:var(--bg);
+      border:1.5px solid var(--line2); border-radius:14px;
+      padding:0 16px; margin-bottom:18px; transition:border-color .14s;
+    }
+    .pinp:focus-within { border-color:var(--ob); }
+    .pinp .pr  { font-size:18px; font-weight:800; color:var(--w2); margin-right:5px; }
+    .pinp input {
+      flex:1; background:none; border:none; outline:none;
+      color:var(--w1); font-family:var(--f); font-size:28px; font-weight:800;
+      padding:14px 0; letter-spacing:-.5px;
+    }
+    .pinp .pl { font-size:13px; color:var(--w3); }
+
+    /* ─── TOAST ────────────────────────────────────────────────── */
+    #toast {
+      position:fixed; bottom:28px; left:50%;
+      transform:translateX(-50%) translateY(70px);
+      background:var(--s2); border:1px solid var(--line2);
+      color:var(--w1); padding:10px 20px;
+      border-radius:50px; font-size:13px; font-weight:500;
+      z-index:9999; pointer-events:none;
+      transition:transform .22s ease; white-space:nowrap;
+    }
+    #toast.show { transform:translateX(-50%) translateY(0); }
+    #toast.ok   { border-color:rgba(0,208,119,.35); color:var(--gr); }
+    #toast.err  { border-color:rgba(255,59,59,.35);  color:var(--rd); }
+
+    /* ─── LEAFLET ──────────────────────────────────────────────── */
+    .leaflet-control-zoom a { background:var(--s1)!important; color:var(--w1)!important; border-color:var(--line)!important; }
+    .leaflet-control-zoom a:hover { background:var(--s2)!important; }
+    .leaflet-control-attribution { display:none!important; }
+  </style>
+</head>
+<body>
+
+<!-- ─── WELCOME ────────────────────────────────────────────── -->
+<div id="welcome">
+  <div class="w-glow"></div>
+  <div class="w-body">
+    <div class="w-icon">
+      <svg viewBox="0 0 50 50" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <rect x="6" y="12" width="24" height="30" rx="4.5" fill="var(--or)" opacity=".9"/>
+        <rect x="10" y="16" width="16" height="9" rx="2.5" fill="rgba(0,0,0,.3)"/>
+        <path d="M30 17 C40 17 41 23 41 30 L41 37" stroke="var(--or)" stroke-width="3.5" stroke-linecap="round"/>
+        <rect x="35" y="35" width="10" height="4.5" rx="2.25" fill="var(--or)"/>
+        <line x1="15" y1="30" x2="24" y2="30" stroke="rgba(255,255,255,.28)" stroke-width="2" stroke-linecap="round"/>
+        <line x1="15" y1="35" x2="20" y2="35" stroke="rgba(255,255,255,.18)" stroke-width="2" stroke-linecap="round"/>
+      </svg>
+    </div>
+    <h1 class="w-h">Find <em>cheap diesel</em><br>near you</h1>
+    <p class="w-p">Community-powered fuel prices for South African stations — always real, always fresh.</p>
+    <div class="w-pills">
+      <div class="w-pill"><div class="pn">Free</div><div class="pl">No signup</div></div>
+      <div class="w-pill"><div class="pn">Live</div><div class="pl">Real prices</div></div>
+      <div class="w-pill"><div class="pn">SA</div><div class="pl">All regions</div></div>
+    </div>
+  </div>
+  <div class="w-foot">
+    <button class="btn-or" id="loc-btn" onclick="requestLoc()">Find diesel near me</button>
+    <button class="btn-gh" onclick="manualLoc()">Enter a location manually</button>
+  </div>
+</div>
+
+<!-- ─── HEADER ─────────────────────────────────────────────── -->
+<div id="hdr">
+  <div class="hlogo">
+    <svg viewBox="0 0 20 20" fill="none">
+      <rect x="2" y="4" width="11" height="14" rx="2" fill="currentColor"/>
+      <rect x="4" y="6.5" width="7" height="3.5" rx="1" fill="rgba(0,0,0,.35)"/>
+      <path d="M13 7C17 7 17.5 10 17.5 13V16" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
+      <rect x="15" y="14.5" width="4.5" height="2" rx="1" fill="currentColor"/>
+    </svg>
+  </div>
+  <div class="hinfo">
+    <div class="htitle">Diesel Near Me</div>
+    <div class="hloc">
+      <svg viewBox="0 0 10 13" fill="currentColor"><path d="M5 0C2.24 0 0 2.24 0 5c0 3.75 5 8 5 8s5-4.25 5-8c0-2.76-2.24-5-5-5zm0 6.5A1.5 1.5 0 115 3.5 1.5 1.5 0 015 6.5z"/></svg>
+      <span id="loc-lbl">Locating…</span>
+    </div>
+  </div>
+  <div class="hbtns">
+    <button class="hbtn" id="rbtn" onclick="cycleR()">
+      <svg viewBox="0 0 13 13" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round">
+        <circle cx="6.5" cy="6.5" r="5"/><line x1="6.5" y1="1.5" x2="6.5" y2="3.5"/>
+        <line x1="6.5" y1="9.5" x2="6.5" y2="11.5"/><line x1="1.5" y1="6.5" x2="3.5" y2="6.5"/>
+        <line x1="9.5" y1="6.5" x2="11.5" y2="6.5"/>
+      </svg>
+      <span id="rlbl">5 km</span>
+    </button>
+    <button class="hbtn" onclick="go()" title="Refresh">
+      <svg viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M13 7A6 6 0 112 3.5"/><polyline points="1,1.5 2,3.5 4,2.5"/>
+      </svg>
+    </button>
+  </div>
+</div>
+
+<!-- ─── MAP ────────────────────────────────────────────────── -->
+<div id="map"></div>
+<div id="vig"></div>
+
+<!-- ─── SHEET ──────────────────────────────────────────────── -->
+<div id="sheet">
+  <div class="sh-bar" id="sh-bar"><div class="sh-nub"></div></div>
+  <div class="sh-top">
+    <span class="sh-cnt" id="sh-cnt">Loading…</span>
+    <div class="stabs">
+      <button class="stab on" id="stp" onclick="setSort('price')">Cheapest</button>
+      <button class="stab"    id="std" onclick="setSort('dist')">Nearest</button>
+    </div>
+  </div>
+  <div class="sh-radii">
+    <button class="rchip"    data-r="2"  onclick="setR(2)">2 km</button>
+    <button class="rchip on" data-r="5"  onclick="setR(5)">5 km</button>
+    <button class="rchip"    data-r="10" onclick="setR(10)">10 km</button>
+    <button class="rchip"    data-r="20" onclick="setR(20)">20 km</button>
+  </div>
+  <div class="sh-list" id="slist">
+    <div class="empty"><div class="spin"></div><p>Finding stations…</p></div>
+  </div>
+</div>
+
+<!-- ─── MODAL ──────────────────────────────────────────────── -->
+<div id="modal">
+  <div class="mbg" onclick="closeM()"></div>
+  <div class="msheet">
+    <div class="mbar"><div class="mnub"></div></div>
+    <div class="mhead">
+      <div class="mavatar" id="ma"></div>
+      <div><div class="mname" id="mn"></div><div class="msub" id="ms"></div></div>
+    </div>
+    <label class="mlabel">Fuel type</label>
+    <div class="ftgrid">
+      <button class="ftbtn on" data-t="diesel_50"  onclick="selF(this)"><b>Diesel 50ppm</b><span>Standard diesel</span></button>
+      <button class="ftbtn"    data-t="diesel_500" onclick="selF(this)"><b>Diesel 500ppm</b><span>Older spec</span></button>
+      <button class="ftbtn"    data-t="ulp_95"     onclick="selF(this)"><b>ULP 95</b><span>Unleaded petrol</span></button>
+      <button class="ftbtn"    data-t="ulp_93"     onclick="selF(this)"><b>ULP 93</b><span>Unleaded petrol</span></button>
+    </div>
+    <label class="mlabel">Price per litre (Rands)</label>
+    <div class="pinp">
+      <span class="pr">R</span>
+      <input type="number" id="pi" placeholder="0.00" step="0.01" min="5" max="99.99" inputmode="decimal">
+      <span class="pl">/L</span>
+    </div>
+    <button class="btn-or" id="sbtn" onclick="submit()">Report this price</button>
+  </div>
+</div>
+
+<!-- ─── TOAST ──────────────────────────────────────────────── -->
+<div id="toast"></div>
+
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+<script>
+// ── Config ─────────────────────────────────────────────────────
+const SB_URL  = 'https://qnibchdegjbyptynijmx.supabase.co';
+const SB_KEY  = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFuaWJjaGRlZ2pieXB0eW5pam14Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODE1NDM5OTIsImV4cCI6MjA5NzExOTk5Mn0.rEq9Ymb1lPdAqepYXS7TXntgVtEVr5x1_Iz-v6zJzPg';
+const RADII   = [2, 5, 10, 20];
+const OVERPASS = [
+  'https://overpass-api.de/api/interpreter',
+  'https://overpass.kumi.systems/api/interpreter',
+];
+
+const BRANDS = {
+  engen:         { c:'#22c55e', bg:'rgba(34,197,94,.13)'   },
+  shell:         { c:'#ef4444', bg:'rgba(239,68,68,.13)'   },
+  bp:            { c:'#16a34a', bg:'rgba(22,163,74,.13)'   },
+  'british':     { c:'#16a34a', bg:'rgba(22,163,74,.13)'   },
+  total:         { c:'#3b82f6', bg:'rgba(59,130,246,.13)'  },
+  sasol:         { c:'#a855f7', bg:'rgba(168,85,247,.13)'  },
+  puma:          { c:'#f97316', bg:'rgba(249,115,22,.13)'  },
+  caltex:        { c:'#ef4444', bg:'rgba(239,68,68,.13)'   },
+  astron:        { c:'#94a3b8', bg:'rgba(148,163,184,.13)' },
+};
+
+// ── State ──────────────────────────────────────────────────────
+let db, lmap, uDot, uLat=null, uLng=null;
+let stns=[], mks={}, selId=null, sort='price', km=5;
+let mStn=null, mFuel='diesel_50', busy=false;
+
+// ── Init ───────────────────────────────────────────────────────
+window.addEventListener('load', () => {
+  db = supabase.createClient(SB_URL, SB_KEY);
+  initMap();
+  initDrag();
+});
+
+// ── Map ────────────────────────────────────────────────────────
+function initMap() {
+  lmap = L.map('map', { zoomControl:false, attributionControl:false });
+  L.control.zoom({ position:'bottomright' }).addTo(lmap);
+  L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
+    maxZoom:19, subdomains:'abcd'
+  }).addTo(lmap);
+  lmap.setView([-29, 25], 5);
+}
+
+// ── Drag sheet ─────────────────────────────────────────────────
+function initDrag() {
+  const sh = $('sheet'), bar = $('sh-bar');
+  let y0=0, h0=0;
+  bar.addEventListener('touchstart', e => {
+    y0 = e.touches[0].clientY; h0 = sh.offsetHeight;
+    sh.style.transition = 'none';
+  }, { passive:true });
+  bar.addEventListener('touchmove', e => {
+    const h = Math.max(76, Math.min(window.innerHeight*.88, h0+(y0-e.touches[0].clientY)));
+    sh.style.height = h+'px';
+  }, { passive:true });
+  bar.addEventListener('touchend', () => {
+    sh.style.transition = '';
+    const h=sh.offsetHeight, vh=window.innerHeight;
+    sh.style.height = h<vh*.22 ? '76px' : h>vh*.65 ? '86%' : '46%';
+  });
+}
+
+// ── Location ───────────────────────────────────────────────────
+function requestLoc() {
+  if (!navigator.geolocation) { showT('Geolocation not supported','err'); return; }
+  $('loc-btn').textContent = 'Getting location…';
+  $('loc-btn').disabled = true;
+  navigator.geolocation.getCurrentPosition(onLocOK, onLocErr, { enableHighAccuracy:true, timeout:14000 });
+}
+
+function manualLoc() {
+  const q = prompt('Enter a suburb, city, or area in South Africa:');
+  if (!q) return;
+  showMain(); setLbl('Searching…');
+  fetch(`https://nominatim.openstreetmap.org/search?q=${enc(q+' South Africa')}&format=json&limit=1`)
+    .then(r => r.json())
+    .then(d => {
+      if (!d.length) { showT('Location not found — try a different name','err'); setLbl('Not found'); return; }
+      uLat=+d[0].lat; uLng=+d[0].lon;
+      setLbl(d[0].display_name.split(',')[0]);
+      placeUser(); lmap.setView([uLat,uLng],14);
+      loadStns();
+    })
+    .catch(() => showT('Search failed — check your connection','err'));
+}
+
+function onLocOK(pos) {
+  uLat=pos.coords.latitude; uLng=pos.coords.longitude;
+  showMain(); placeUser();
+  lmap.setView([uLat,uLng],14);
+  revGeo(); loadStns();
+}
+
+function onLocErr(e) {
+  $('loc-btn').textContent = 'Try again';
+  $('loc-btn').disabled = false;
+  const msg = e.code===1
+    ? 'Location access denied — try "Enter a location manually" instead'
+    : 'Could not get location — check GPS and try again';
+  showT(msg,'err');
+}
+
+function placeUser() {
+  if (uDot) lmap.removeLayer(uDot);
+  uDot = L.circleMarker([uLat,uLng],{
+    radius:9, fillColor:'#FF5500', color:'rgba(255,85,0,.4)', weight:8, fillOpacity:1, zIndexOffset:999
+  }).addTo(lmap);
+}
+
+function revGeo() {
+  fetch(`https://nominatim.openstreetmap.org/reverse?lat=${uLat}&lon=${uLng}&format=json`)
+    .then(r=>r.json())
+    .then(d => {
+      const a=d.address||{};
+      setLbl(a.suburb||a.neighbourhood||a.city_district||a.town||a.city||'Your location');
+    })
+    .catch(()=>setLbl('Your location'));
+}
+
+// ── Stations ───────────────────────────────────────────────────
+async function loadStns(attempt=0) {
+  if (busy||!uLat) return;
+  busy=true;
+  setCnt('Finding stations…');
+  setList('<div class="empty"><div class="spin"></div><p>Searching within '+km+' km…</p></div>');
+  clearMks(); stns=[];
+
+  const r=km*1000;
+  const q=`[out:json][timeout:25];(node["amenity"="fuel"](around:${r},${uLat},${uLng});way["amenity"="fuel"](around:${r},${uLat},${uLng}););out center;`;
+  const url=OVERPASS[attempt%OVERPASS.length];
+
+  try {
+    const res = await fetch(url+'?data='+enc(q));
+    if (!res.ok) throw new Error('HTTP '+res.status);
+    const js  = await res.json();
+
+    stns = js.elements
+      .filter(el=>el.lat!=null||el.center?.lat!=null)
+      .map(el=>{
+        const lat=el.lat??el.center.lat, lng=el.lon??el.center.lon;
+        return {
+          id:   String(el.id),
+          name: el.tags?.name||el.tags?.brand||el.tags?.operator||'Fuel Station',
+          brand:(el.tags?.brand||el.tags?.operator||'').toLowerCase(),
+          lat, lng,
+          addr: [el.tags?.['addr:street'],el.tags?.['addr:housenumber'],el.tags?.['addr:suburb'],el.tags?.['addr:city']].filter(Boolean).join(', '),
+          dist: hav(uLat,uLng,lat,lng),
+          px:   {}
+        };
+      })
+      .sort((a,b)=>a.dist-b.dist)
+      .slice(0,60);
+
+    stns.forEach(s=>addMk(s));
+    await loadPx();
+  } catch(e) {
+    console.error(e);
+    if (attempt<1) {
+      busy=false;
+      loadStns(attempt+1);
+      return;
+    }
+    setCnt('Error loading stations');
+    setList('<div class="empty"><p>⚠ Could not load stations.<br>Check your connection and try again.</p></div>');
+  } finally { busy=false; }
+}
+
+function addMk(s) {
+  const m = L.circleMarker([s.lat,s.lng],{
+    radius:6, fillColor:'#FF5500', color:'rgba(255,85,0,.3)', weight:1.5, fillOpacity:.55
+  }).addTo(lmap).on('click',()=>selStn(s.id));
+  mks[s.id]=m;
+}
+
+function clearMks() {
+  Object.values(mks).forEach(m=>lmap.removeLayer(m));
+  mks={};
+}
+
+// ── Prices ─────────────────────────────────────────────────────
+async function loadPx() {
+  if (!stns.length) { render(); return; }
+  try {
+    const { data, error } = await db
+      .from('fuel_prices')
+      .select('osm_id,fuel_type,price_per_litre,created_at')
+      .in('osm_id', stns.map(s=>s.id))
+      .order('created_at',{ascending:false});
+
+    if (!error && data) {
+      const seen=new Set();
+      for (const r of data) {
+        const k=r.osm_id+'|'+r.fuel_type;
+        if (seen.has(k)) continue;
+        seen.add(k);
+        const s=stns.find(x=>x.id===r.osm_id);
+        if (s) s.px[r.fuel_type]={ v:+r.price_per_litre, t:r.created_at };
+      }
+    }
+  } catch(e) { /* table may not exist yet — no crash */ }
+
+  refreshMks();
+  render();
+}
+
+function refreshMks() {
+  const priced=stns.filter(s=>s.px.diesel_50?.v);
+  const vals=priced.map(s=>s.px.diesel_50.v);
+  const mn=Math.min(...vals), mx=Math.max(...vals);
+
+  for (const s of stns) {
+    const p=s.px.diesel_50?.v;
+    if (mks[s.id]) lmap.removeLayer(mks[s.id]);
+
+    if (p) {
+      const t=(p-mn)/(mx-mn+.01);
+      const cls=t<.33?'g':t<.67?'o':'r';
+      const html=`<div class="plabel ${cls}" onclick="event.stopPropagation()"><div class="dot"></div>R ${p.toFixed(2)}</div>`;
+      const icon=L.divIcon({ html, className:'', iconAnchor:[24,12] });
+      mks[s.id]=L.marker([s.lat,s.lng],{icon}).addTo(lmap).on('click',()=>selStn(s.id));
+    } else {
+      mks[s.id]=L.circleMarker([s.lat,s.lng],{
+        radius:6, fillColor:'#FF5500', color:'rgba(255,85,0,.35)', weight:1.5, fillOpacity:.5
+      }).addTo(lmap).on('click',()=>selStn(s.id));
+    }
+  }
+}
+
+// ── Render ─────────────────────────────────────────────────────
+function render() {
+  const sorted=[...stns].sort((a,b)=>{
+    if (sort==='price'){
+      const ap=a.px.diesel_50?.v??9999, bp=b.px.diesel_50?.v??9999;
+      return ap!==bp?ap-bp:a.dist-b.dist;
+    }
+    return a.dist-b.dist;
+  });
+
+  setCnt(stns.length+' station'+(stns.length!==1?'s':'')+' within '+km+' km');
+
+  if (!sorted.length) {
+    setList('<div class="empty"><p>No fuel stations found here.<br>Try a larger radius.</p></div>');
+    return;
+  }
+
+  const priced=sorted.filter(s=>s.px.diesel_50?.v).map(s=>s.px.diesel_50.v);
+  const mn=priced.length?Math.min(...priced):null, mx=priced.length?Math.max(...priced):null;
+
+  setList(sorted.map((s,i)=>cardHTML(s,i,mn,mx)).join(''));
+}
+
+function cardHTML(s,i,mn,mx) {
+  const bd=brand(s.brand,s.name);
+  const d50=s.px.diesel_50;
+  const isBest=d50&&d50.v===mn&&mn!==mx&&i<5;
+  const dst=s.dist<1?Math.round(s.dist*1000)+' m':s.dist.toFixed(1)+' km';
+  const meta=[dst,s.addr?s.addr.split(',')[0]:''].filter(Boolean).join(' · ');
+
+  let pc;
+  if (d50){
+    const cls=d50.v===mn&&mn!==mx?'g':d50.v===mx&&mx!==mn?'r':'o';
+    pc=`<div class="cprice"><div class="cpval ${cls}">R ${d50.v.toFixed(2)}</div><div class="cpsub">50ppm · ${ago(d50.t)}</div></div>`;
+  } else {
+    pc=`<div class="cprice"><div class="cpval dim">No price<br>yet</div></div>`;
+  }
+
+  return `<div class="card${selId===s.id?' sel':''}${isBest?' cheapest':''}" onclick="selStn('${s.id}')">
+    ${isBest?'<div class="best-tag">Best price</div>':''}
+    <div class="avatar" style="background:${bd.bg};color:${bd.c}">${bd.i}</div>
+    <div class="cinfo">
+      <div class="cname">${esc(s.name)}</div>
+      <div class="cmeta">${esc(meta)}</div>
+    </div>
+    <div class="cright">
+      ${pc}
+      <button class="cbtn" onclick="event.stopPropagation();nav(${s.lat},${s.lng},'${esc(s.name)}')" title="Directions">
+        <svg viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M2 7l10 0M7 2l5 5-5 5"/>
+        </svg>
+      </button>
+      <button class="cbtn add" onclick="event.stopPropagation();openM('${s.id}')" title="Report price">+</button>
+    </div>
+  </div>`;
+}
+
+// ── Actions ────────────────────────────────────────────────────
+function selStn(id) {
+  selId=id;
+  const s=stns.find(x=>x.id===id);
+  if (!s) return;
+  lmap.flyTo([s.lat,s.lng],16,{duration:.8});
+  render();
+  setTimeout(()=>document.querySelector('.card.sel')?.scrollIntoView({behavior:'smooth',block:'nearest'}),100);
+}
+
+function nav(lat,lng,name) {
+  window.open(`https://www.google.com/maps/dir/?api=1&destination=${lat},${lng}&travelmode=driving`,'_blank');
+}
+
+function setSort(m) {
+  sort=m;
+  $('stp').classList.toggle('on',m==='price');
+  $('std').classList.toggle('on',m==='dist');
+  render();
+}
+
+function setR(r) {
+  km=r; $('rlbl').textContent=r+' km';
+  document.querySelectorAll('.rchip').forEach(c=>c.classList.toggle('on',+c.dataset.r===r));
+  if (uLat) loadStns();
+}
+
+function cycleR() { setR(RADII[(RADII.indexOf(km)+1)%RADII.length]); }
+function go()     { if (uLat) loadStns(); }
+
+// ── Modal ──────────────────────────────────────────────────────
+function openM(id) {
+  const s=stns.find(x=>x.id===id);
+  if (!s) return;
+  mStn=s; mFuel='diesel_50';
+  const bd=brand(s.brand,s.name);
+  $('ma').style.background=bd.bg; $('ma').style.color=bd.c; $('ma').textContent=bd.i;
+  $('mn').textContent=s.name;
+  $('ms').textContent=s.addr||fmtD(s.dist)+' from you';
+  $('pi').value='';
+  document.querySelectorAll('.ftbtn').forEach(b=>b.classList.toggle('on',b.dataset.t==='diesel_50'));
+  $('modal').classList.add('open');
+  setTimeout(()=>$('pi').focus(),320);
+}
+
+function closeM() { $('modal').classList.remove('open'); mStn=null; }
+
+function selF(btn) {
+  document.querySelectorAll('.ftbtn').forEach(b=>b.classList.remove('on'));
+  btn.classList.add('on'); mFuel=btn.dataset.t;
+}
+
+async function submit() {
+  const v=parseFloat($('pi').value);
+  if (!mStn) return;
+  if (isNaN(v)||v<5||v>99.99) { showT('Enter a price between R5 and R99.99','err'); return; }
+  const btn=$('sbtn');
+  btn.textContent='Saving…'; btn.disabled=true;
+
+  const { error } = await db.from('fuel_prices').insert({
+    osm_id:mStn.id, station_name:mStn.name,
+    station_lat:mStn.lat, station_lng:mStn.lng,
+    fuel_type:mFuel, price_per_litre:v
+  });
+
+  btn.textContent='Report this price'; btn.disabled=false;
+
+  if (error) {
+    if (error.code==='42P01') {
+      showT('Database table not set up yet — run the SQL in Supabase first','err');
+    } else {
+      showT('Failed to save — try again','err');
+    }
+    return;
+  }
+
+  const s=stns.find(x=>x.id===mStn.id);
+  if (s) { s.px[mFuel]={ v, t:new Date().toISOString() }; refreshMks(); render(); }
+  closeM();
+  showT('Price reported — thanks!', true);
+}
+
+// ── Helpers ────────────────────────────────────────────────────
+function showMain() {
+  $('welcome').style.display='none';
+  $('hdr').style.display='flex';
+  $('map').style.display='block';
+  $('sheet').style.display='flex';
+  lmap.invalidateSize();
+}
+
+function setLbl(t)  { $('loc-lbl').textContent=t; }
+function setCnt(t)  { $('sh-cnt').textContent=t; }
+function setList(h) { $('slist').innerHTML=h; }
+function $(id)      { return document.getElementById(id); }
+function enc(s)     { return encodeURIComponent(s); }
+
+function esc(s) {
+  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+function brand(b, name) {
+  b=(b||'').toLowerCase();
+  for (const [k,v] of Object.entries(BRANDS))
+    if (b.includes(k)) return { ...v, i:k[0].toUpperCase() };
+  return { c:'#6b7280', bg:'rgba(107,114,128,.14)', i:(name||'?')[0].toUpperCase() };
+}
+
+function hav(a,b,c,d) {
+  const R=6371, r=Math.PI/180;
+  const dlat=(c-a)*r, dlon=(d-b)*r;
+  const x=Math.sin(dlat/2)**2+Math.cos(a*r)*Math.cos(c*r)*Math.sin(dlon/2)**2;
+  return R*2*Math.atan2(Math.sqrt(x),Math.sqrt(1-x));
+}
+
+function ago(iso) {
+  const m=Math.floor((Date.now()-new Date(iso))/60000);
+  if (m<1)  return 'just now';
+  if (m<60) return m+'m ago';
+  const h=Math.floor(m/60);
+  if (h<24) return h+'h ago';
+  return Math.floor(h/24)+'d ago';
+}
+
+function fmtD(d) { return d<1?Math.round(d*1000)+' m':d.toFixed(1)+' km'; }
+
+let tt;
+function showT(msg, type='') {
+  const el=$('toast');
+  el.textContent=msg; el.className='show'+(type?' '+type:'');
+  clearTimeout(tt); tt=setTimeout(()=>el.className='',4000);
+}
+</script>
+</body>
+</html>

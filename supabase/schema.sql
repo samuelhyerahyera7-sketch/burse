@@ -219,3 +219,109 @@ begin
     and pe.gross_salary is not null;
 end;
 $$;
+
+-- ============================================================
+-- RECRUITFRIEND ANALYTICS — get_auth_stats()
+-- Called by the RecruitFriend dashboard via /rest/v1/rpc/get_auth_stats
+-- ============================================================
+create or replace function public.get_auth_stats()
+returns json
+language plpgsql
+security definer
+set search_path = public
+as $$
+declare
+  result json;
+begin
+  select json_build_object(
+    'total_users',   (select count(*)::int from auth.users),
+    'confirmed',     (select count(*)::int from auth.users where email_confirmed_at is not null),
+    'unconfirmed',   (select count(*)::int from auth.users where email_confirmed_at is null),
+
+    'daily_signups', (
+      select coalesce(json_agg(row_to_json(t) order by t.date), '[]'::json)
+      from (
+        select created_at::date as date, count(*)::int as signups
+        from auth.users
+        group by 1
+        order by 1
+      ) t
+    ),
+
+    'daily_logins',  (
+      select coalesce(json_agg(row_to_json(t) order by t.date), '[]'::json)
+      from (
+        select last_sign_in_at::date as date, count(*)::int as logins
+        from auth.users
+        where last_sign_in_at is not null
+        group by 1
+        order by 1
+      ) t
+    ),
+
+    'weekly_signups', (
+      select coalesce(json_agg(row_to_json(t) order by t.week_start), '[]'::json)
+      from (
+        select date_trunc('week', created_at)::date as week_start, count(*)::int as signups
+        from auth.users
+        group by 1
+        order by 1
+      ) t
+    ),
+
+    'day_of_week',   (
+      select coalesce(json_agg(row_to_json(t) order by t.dow), '[]'::json)
+      from (
+        select
+          extract(dow from created_at)::int as dow,
+          trim(to_char(created_at, 'Day')) as name,
+          count(*)::int as signups
+        from auth.users
+        group by 1, 2
+        order by 1
+      ) t
+    ),
+
+    'providers',     (
+      select coalesce(json_agg(row_to_json(t) order by t.count desc), '[]'::json)
+      from (
+        select
+          coalesce(raw_app_meta_data->>'provider', 'email') as provider,
+          count(*)::int as count
+        from auth.users
+        group by 1
+        order by 2 desc
+      ) t
+    )
+  ) into result;
+
+  return result;
+end;
+$$;
+
+-- Allow the dashboard (anon key) to call this function
+grant execute on function public.get_auth_stats() to anon, authenticated;
+
+-- ============================================================
+-- DIESEL NEAR ME — community fuel price reports
+-- ============================================================
+create table if not exists public.fuel_prices (
+  id               uuid primary key default gen_random_uuid(),
+  osm_id           text not null,
+  station_name     text not null,
+  station_lat      double precision not null,
+  station_lng      double precision not null,
+  fuel_type        text not null,   -- diesel_50 | diesel_500 | ulp_95 | ulp_93
+  price_per_litre  numeric(6,2) not null,
+  created_at       timestamptz default now()
+);
+
+create index if not exists fuel_prices_osm_idx on public.fuel_prices(osm_id);
+
+alter table public.fuel_prices enable row level security;
+
+-- Anyone (including anonymous visitors) can read and submit prices
+create policy "fuel_prices_read"   on public.fuel_prices for select using (true);
+create policy "fuel_prices_insert" on public.fuel_prices for insert with check (true);
+
+grant select, insert on public.fuel_prices to anon, authenticated;

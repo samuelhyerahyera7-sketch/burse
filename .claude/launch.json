@@ -2,10 +2,35 @@
   "version": "0.0.1",
   "configurations": [
     {
-      "name": "burse",
-      "runtimeExecutable": "python",
-      "runtimeArgs": ["-m", "http.server", "3000"],
-      "port": 3000
+      "name": "recruitfriend",
+      "runtimeExecutable": "powershell",
+      "runtimeArgs": ["-Command", "& 'C:\\Users\\samue\\AppData\\Local\\Programs\\Python\\Python38-32\\python.exe' -m http.server 3031 --directory 'C:\\Users\\samue\\Desktop\\recruitfriend\\Recruitafriend-main\\dist'"],
+      "port": 3031
+    },
+    {
+      "name": "lockshot",
+      "runtimeExecutable": "C:\\Users\\samue\\AppData\\Local\\Programs\\Python\\Python38-32\\python.exe",
+      "runtimeArgs": ["C:\\Users\\samue\\Documents\\Codex\\2026-05-26\\lets-continue-of-lockshot\\serve-dev.py", "4173"],
+      "port": 4173
+    }
+  ,
+    {
+      "name": "property-portal",
+      "runtimeExecutable": "powershell",
+      "runtimeArgs": ["-Command", "& 'C:\\Users\\samue\\AppData\\Local\\Programs\\Python\\Python38-32\\python.exe' -m http.server 5050 --directory 'C:\\Users\\samue\\Desktop\\burse'"],
+      "port": 5050
+    },
+    {
+      "name": "delivery-app",
+      "runtimeExecutable": "powershell",
+      "runtimeArgs": ["-Command", "& 'C:\\Users\\samue\\AppData\\Local\\Programs\\Python\\Python38-32\\python.exe' -m http.server 5071 --directory 'C:\\Users\\samue\\Desktop\\delivery-app'"],
+      "port": 5071
+    },
+    {
+      "name": "rent-and-buy",
+      "runtimeExecutable": "powershell",
+      "runtimeArgs": ["-Command", "& 'C:\\Users\\samue\\AppData\\Local\\Programs\\Python\\Python38-32\\python.exe' -m http.server 5052 --directory 'C:\\Users\\samue\\Desktop\\rent-and-buy-deploy'"],
+      "port": 5052
     }
   ]
 }
