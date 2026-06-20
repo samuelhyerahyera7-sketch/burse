@@ -1,0 +1,2222 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Linked</title>
+  <style>
+    * { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+
+    :root {
+      --bg:       #0B0B0B;
+      --surface:  #151515;
+      --surface2: #1C1C1C;
+      --surface3: #242424;
+      --text:     #F0EDE8;
+      --muted:    #777;
+      --border:   #252525;
+      --coral:    #FF6B47;
+      --coral2:   #FF8C6A;
+      --teal:     #00CDA8;
+      --teal-dim: rgba(0,205,168,0.12);
+      --pass:     #FF4C4C;
+      --pass-dim: rgba(255,76,76,0.12);
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      height: 100dvh;
+      overflow: hidden;
+      display: flex;
+      justify-content: center;
+    }
+
+    /* ─── SHARED UTILS ───────────────────────────────────── */
+    .gradient-text {
+      background: linear-gradient(135deg, var(--coral), var(--coral2));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .pill {
+      display: inline-flex; align-items: center; gap: 5px;
+      padding: 4px 10px; border-radius: 50px; font-size: 11px; font-weight: 700;
+    }
+    .pill-dating  { background: rgba(255,107,71,0.15); color: var(--coral); }
+    .pill-friends { background: rgba(0,205,168,0.15);  color: var(--teal); }
+    .pill-anything{ background: rgba(168,85,247,0.15); color: #C084FC; }
+
+    /* ─── AUTH ───────────────────────────────────────────── */
+    #auth {
+      position: fixed; inset: 0; z-index: 1000;
+      background: var(--bg);
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: flex-end;
+      padding: 0 0 48px;
+      overflow: hidden;
+    }
+    .auth-visual {
+      position: absolute; inset: 0;
+      display: grid; grid-template-columns: 1fr 1fr 1fr;
+      gap: 8px; padding: 0 8px;
+      opacity: 0.55;
+      mask-image: linear-gradient(to bottom, rgba(0,0,0,0.9) 0%, rgba(0,0,0,0) 100%);
+    }
+    .auth-col {
+      display: flex; flex-direction: column; gap: 8px; padding-top: 0;
+    }
+    .auth-col:nth-child(2) { margin-top: 40px; }
+    .auth-col:nth-child(3) { margin-top: 20px; }
+    .auth-face {
+      border-radius: 100px; overflow: hidden; flex-shrink: 0;
+    }
+    .auth-face img { width: 100%; height: 100%; object-fit: cover; display: block; }
+    .auth-face.tall { height: 170px; }
+    .auth-face.mid  { height: 130px; }
+    .auth-face.sm   { height: 100px; }
+
+    .auth-content {
+      position: relative; z-index: 1;
+      text-align: center; padding: 0 28px;
+      width: 100%;
+    }
+    .auth-wordmark {
+      font-size: 42px; font-weight: 900; letter-spacing: -1.5px;
+      line-height: 1; margin-bottom: 10px;
+    }
+    .auth-tagline {
+      font-size: 15px; color: var(--muted); margin-bottom: 36px; line-height: 1.5;
+    }
+    .auth-tagline strong { color: var(--text); font-weight: 600; }
+    .auth-btns { display: flex; flex-direction: column; gap: 12px; }
+    .btn-coral {
+      background: linear-gradient(135deg, var(--coral), var(--coral2));
+      color: white; border: none; border-radius: 16px;
+      padding: 17px; font-size: 16px; font-weight: 700; cursor: pointer;
+      letter-spacing: 0.2px;
+    }
+    .btn-ghost {
+      background: var(--surface2); color: var(--text);
+      border: 1px solid var(--border); border-radius: 16px;
+      padding: 16px; font-size: 15px; font-weight: 600; cursor: pointer;
+    }
+    .auth-fine {
+      margin-top: 16px; font-size: 11px; color: var(--muted); line-height: 1.6;
+    }
+
+    /* ─── SETUP ──────────────────────────────────────────── */
+    #setup {
+      position: fixed; inset: 0; z-index: 999;
+      background: var(--bg);
+      display: none; flex-direction: column;
+      overflow-y: auto;
+    }
+    .setup-inner {
+      padding: 56px 24px 40px;
+      display: flex; flex-direction: column;
+      min-height: 100%; gap: 0;
+    }
+    .progress-bar {
+      height: 3px; background: var(--border); border-radius: 2px;
+      margin-bottom: 36px; overflow: hidden;
+    }
+    .progress-fill {
+      height: 100%; border-radius: 2px;
+      background: linear-gradient(90deg, var(--coral), var(--coral2));
+      transition: width 0.4s ease;
+    }
+    .setup-step { display: none; flex-direction: column; gap: 20px; flex: 1; }
+    .setup-step.active { display: flex; }
+
+    .step-num { font-size: 12px; font-weight: 700; color: var(--coral); text-transform: uppercase; letter-spacing: 1px; }
+    .step-title { font-size: 28px; font-weight: 800; line-height: 1.2; margin-top: -6px; }
+    .step-sub { font-size: 14px; color: var(--muted); margin-top: -12px; line-height: 1.5; }
+
+    .field-label { font-size: 12px; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: -10px; }
+    .input-field {
+      background: var(--surface); border: 1.5px solid var(--border);
+      border-radius: 14px; padding: 14px 16px;
+      color: var(--text); font-size: 15px; outline: none; width: 100%;
+      transition: border-color 0.2s;
+    }
+    .input-field:focus { border-color: var(--coral); }
+    select.input-field { -webkit-appearance: none; }
+
+    textarea.input-field { resize: none; font-family: inherit; line-height: 1.5; }
+
+    .vibe-grid { display: flex; flex-wrap: wrap; gap: 8px; }
+    .vibe-btn {
+      padding: 10px 16px; border-radius: 50px;
+      border: 1.5px solid var(--border);
+      background: var(--surface); color: var(--text);
+      font-size: 13px; cursor: pointer; transition: all 0.15s;
+      user-select: none;
+    }
+    .vibe-btn.sel { background: var(--coral); border-color: var(--coral); color: white; }
+
+    .photo-pick {
+      align-self: center;
+      width: 130px; height: 130px; border-radius: 50%;
+      border: 2px dashed var(--border);
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      cursor: pointer; position: relative; overflow: hidden;
+      background: var(--surface);
+    }
+    .photo-pick img {
+      position: absolute; inset: 0; width: 100%; height: 100%;
+      object-fit: cover; display: none;
+    }
+    .photo-pick-label { text-align: center; color: var(--muted); font-size: 12px; }
+    .photo-pick-label .pi { font-size: 28px; margin-bottom: 4px; }
+
+    .looking-opts { display: flex; gap: 8px; }
+    .dating-sub {
+      display: none; flex-direction: column; gap: 8px;
+      overflow: hidden; max-height: 0;
+      transition: max-height 0.35s ease, opacity 0.3s ease;
+      opacity: 0;
+    }
+    .dating-sub.open {
+      display: flex; max-height: 300px; opacity: 1;
+    }
+    .dating-sub-label {
+      font-size: 12px; font-weight: 700; color: var(--muted);
+      text-transform: uppercase; letter-spacing: 0.5px;
+    }
+    .dating-sub-opts { display: flex; flex-direction: column; gap: 6px; }
+    .dating-sub-btn {
+      display: flex; align-items: center; gap: 12px;
+      padding: 13px 14px; border-radius: 14px;
+      background: var(--surface); border: 1.5px solid var(--border);
+      cursor: pointer; transition: all 0.15s; text-align: left;
+    }
+    .dating-sub-btn .ds-icon { font-size: 20px; flex-shrink: 0; }
+    .dating-sub-btn .ds-text .ds-title { font-size: 14px; font-weight: 600; }
+    .dating-sub-btn .ds-text .ds-sub   { font-size: 12px; color: var(--muted); margin-top: 1px; }
+    .dating-sub-btn.sel {
+      border-color: var(--coral); background: rgba(255,107,71,0.08);
+    }
+    .looking-card {
+      flex: 1; padding: 16px 10px; border-radius: 16px;
+      border: 2px solid var(--border); background: var(--surface);
+      text-align: center; cursor: pointer; transition: all 0.18s;
+    }
+    .looking-card .lc-icon { font-size: 26px; margin-bottom: 6px; }
+    .looking-card .lc-title { font-size: 13px; font-weight: 700; margin-bottom: 2px; }
+    .looking-card .lc-sub { font-size: 11px; color: var(--muted); }
+    .looking-card.sel-dating   { border-color: var(--coral); background: rgba(255,107,71,0.08); }
+    .looking-card.sel-friends  { border-color: var(--teal);  background: rgba(0,205,168,0.08); }
+    .looking-card.sel-anything { border-color: #A855F7;      background: rgba(168,85,247,0.08); }
+
+    .qa-field { display: flex; flex-direction: column; gap: 6px; }
+    .qa-q { font-size: 13px; color: var(--coral); font-weight: 600; }
+
+    .btn-next {
+      margin-top: auto;
+      background: linear-gradient(135deg, var(--coral), var(--coral2));
+      color: white; border: none; border-radius: 16px;
+      padding: 17px; font-size: 16px; font-weight: 700; cursor: pointer;
+    }
+
+    /* ─── APP SHELL ──────────────────────────────────────── */
+    #app {
+      display: none; flex-direction: column;
+      width: 100%; max-width: 430px; height: 100dvh;
+    }
+
+    /* ─── TOP BAR ────────────────────────────────────────── */
+    .top-bar {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 14px 20px 10px; flex-shrink: 0;
+    }
+    .wordmark {
+      font-size: 22px; font-weight: 900; letter-spacing: -0.5px;
+    }
+    .connects-pill {
+      display: flex; align-items: center; gap: 6px;
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: 50px; padding: 6px 12px;
+      font-size: 12px; font-weight: 700; color: var(--muted);
+    }
+    .connects-count { color: var(--coral); font-size: 14px; font-weight: 800; }
+    .icon-btn {
+      background: none; border: none; cursor: pointer;
+      padding: 6px; display: flex; align-items: center; justify-content: center;
+    }
+    .icon-btn svg { width: 22px; height: 22px; fill: var(--muted); }
+
+    /* ─── TABS ───────────────────────────────────────────── */
+    .tab-content { flex: 1; overflow: hidden; position: relative; }
+    .tab-panel { display: none; height: 100%; flex-direction: column; }
+    .tab-panel.active { display: flex; }
+
+    /* ─── DISCOVER ───────────────────────────────────────── */
+    #discover-tab { overflow: hidden; }
+
+    .profile-scroll {
+      flex: 1; overflow-y: auto; scrollbar-width: none;
+      scroll-snap-type: y mandatory;
+    }
+    .profile-scroll::-webkit-scrollbar { display: none; }
+
+    .profile-card-full {
+      scroll-snap-align: start;
+      min-height: 100%;
+      display: flex; flex-direction: column;
+      padding: 0 16px 16px;
+    }
+
+    .pc-photo {
+      border-radius: 20px; overflow: hidden;
+      height: 320px; flex-shrink: 0;
+      position: relative; background: var(--surface);
+      margin-bottom: 16px;
+    }
+    .pc-photo img { width: 100%; height: 100%; object-fit: cover; }
+    .pc-photo-bottom {
+      position: absolute; bottom: 0; left: 0; right: 0;
+      background: linear-gradient(transparent, rgba(11,11,11,0.95));
+      padding: 40px 16px 14px;
+    }
+    .pc-name-row {
+      display: flex; align-items: baseline; gap: 8px; margin-bottom: 6px;
+    }
+    .pc-name { font-size: 26px; font-weight: 800; }
+    .pc-age { font-size: 20px; font-weight: 400; color: rgba(240,237,232,0.75); }
+    .pc-meta { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+    .pc-city { font-size: 13px; color: var(--muted); }
+    .pc-dot { color: var(--border); }
+
+
+    .pc-voice {
+      background: var(--surface2); border-radius: 14px; padding: 12px 14px;
+      display: flex; align-items: center; gap: 10px; cursor: pointer;
+      margin-bottom: 14px;
+    }
+    .voice-play {
+      width: 34px; height: 34px; border-radius: 50%;
+      background: var(--coral); display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0; font-size: 14px;
+    }
+    .voice-wave {
+      flex: 1; display: flex; align-items: center; gap: 2px; height: 28px;
+    }
+    .wave-bar {
+      width: 3px; border-radius: 2px; background: var(--border);
+      transition: background 0.2s;
+    }
+    .wave-bar.active { background: var(--coral); }
+    .voice-dur { font-size: 11px; color: var(--muted); }
+
+    .pc-answers { display: flex; flex-direction: column; gap: 10px; margin-bottom: 14px; }
+    .answer-block {
+      background: var(--surface); border-radius: 14px; padding: 14px;
+    }
+    .ans-q { font-size: 11px; font-weight: 700; color: var(--coral); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 5px; }
+    .ans-a { font-size: 14px; color: var(--text); line-height: 1.5; }
+
+    .pc-interests { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 4px; }
+    .interest-chip {
+      padding: 6px 12px; border-radius: 50px;
+      background: var(--surface2); border: 1px solid var(--border);
+      font-size: 12px; color: var(--muted);
+    }
+    .interest-chip.shared { border-color: var(--teal); color: var(--teal); background: rgba(0,205,168,0.08); }
+
+    .pc-actions {
+      display: flex; gap: 10px;
+      padding: 12px 16px env(safe-area-inset-bottom, 16px);
+      flex-shrink: 0;
+      position: sticky; bottom: 0;
+      background: linear-gradient(transparent, var(--bg) 28%);
+      padding-top: 28px;
+    }
+    .btn-pass {
+      flex: 1; padding: 18px 12px; border-radius: 18px;
+      background: var(--surface2); color: var(--pass);
+      border: 1.5px solid rgba(255,76,76,0.3);
+      font-size: 17px; font-weight: 800; cursor: pointer;
+      transition: all 0.15s; letter-spacing: 0.2px;
+      box-shadow: 0 4px 20px rgba(255,76,76,0.12);
+    }
+    .btn-pass:active { background: rgba(255,76,76,0.18); transform: scale(0.96); }
+    .btn-connect {
+      flex: 2; padding: 18px 12px; border-radius: 18px;
+      background: linear-gradient(135deg, var(--coral), var(--coral2));
+      color: white; border: none;
+      font-size: 17px; font-weight: 800; cursor: pointer;
+      transition: all 0.15s; letter-spacing: 0.2px;
+      box-shadow: 0 6px 24px rgba(255,107,71,0.45);
+    }
+    .btn-connect:active { opacity: 0.88; transform: scale(0.96); }
+    .btn-connect:disabled {
+      background: var(--surface3); color: var(--muted);
+      cursor: default; transform: none; opacity: 1;
+      box-shadow: none;
+    }
+    .btn-spark {
+      width: 56px; height: 56px; border-radius: 18px; flex-shrink: 0;
+      background: var(--surface2); border: 1.5px solid rgba(250,204,21,0.3);
+      font-size: 20px; cursor: pointer; transition: all 0.15s;
+      display: flex; align-items: center; justify-content: center;
+      box-shadow: 0 4px 16px rgba(250,204,21,0.1);
+    }
+    .btn-spark:active { transform: scale(0.9); }
+    .btn-spark.used { opacity: 0.35; cursor: default; }
+
+    /* swipe overlays on photo */
+    .swipe-hint {
+      position: absolute; inset: 0; display: flex;
+      align-items: center; justify-content: center;
+      opacity: 0; pointer-events: none; transition: opacity 0.1s;
+      border-radius: 20px;
+    }
+    .swipe-hint-pass  { background: rgba(255,76,76,0.35); }
+    .swipe-hint-link  { background: rgba(255,107,71,0.35); }
+    .swipe-hint-spark { background: rgba(250,204,21,0.35); }
+    .swipe-label {
+      font-size: 28px; font-weight: 900; letter-spacing: 3px;
+      color: white; border: 3.5px solid white; border-radius: 10px;
+      padding: 8px 16px; transform: rotate(-15deg);
+      text-shadow: 0 2px 8px rgba(0,0,0,0.3);
+    }
+    .swipe-label.link-label { transform: rotate(15deg); }
+    .swipe-label.spark-label { transform: rotate(-8deg); font-size: 22px; letter-spacing: 1px; }
+
+    /* spotlight */
+    .spotlight-pill {
+      display: flex; align-items: center; gap: 6px;
+      background: linear-gradient(135deg, rgba(250,204,21,0.15), rgba(251,146,60,0.15));
+      border: 1px solid rgba(250,204,21,0.35);
+      border-radius: 50px; padding: 6px 12px;
+      font-size: 12px; font-weight: 700; color: #FBBF24;
+      cursor: pointer; transition: all 0.2s;
+    }
+    .spotlight-pill.active { background: linear-gradient(135deg, rgba(250,204,21,0.3), rgba(251,146,60,0.3)); }
+    .spotlight-timer { font-size: 11px; color: #FCD34D; }
+
+    /* photo fullscreen */
+    #photo-fs {
+      position: fixed; inset: 0; z-index: 800;
+      background: rgba(0,0,0,0.96);
+      display: none; flex-direction: column;
+      align-items: center; justify-content: center;
+    }
+    #photo-fs.open { display: flex; }
+    #photo-fs img {
+      max-width: 100%; max-height: 85dvh;
+      border-radius: 20px; object-fit: cover;
+    }
+    .photo-fs-info {
+      margin-top: 16px; text-align: center;
+    }
+    .photo-fs-name { font-size: 24px; font-weight: 800; }
+    .photo-fs-sub { font-size: 14px; color: var(--muted); margin-top: 4px; }
+    .photo-fs-close {
+      position: absolute; top: 16px; right: 16px;
+      background: rgba(255,255,255,0.1); border: none;
+      border-radius: 50%; width: 40px; height: 40px;
+      font-size: 18px; color: white; cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+    }
+
+    .empty-discover {
+      display: none; flex-direction: column;
+      align-items: center; justify-content: center;
+      height: 100%; text-align: center; gap: 12px;
+      padding: 32px;
+    }
+    .empty-discover.show { display: flex; }
+    .empty-big { font-size: 56px; margin-bottom: 4px; }
+    .empty-h { font-size: 22px; font-weight: 800; }
+    .empty-p { font-size: 14px; color: var(--muted); line-height: 1.6; max-width: 260px; }
+    .btn-refresh {
+      margin-top: 8px;
+      background: var(--surface2); border: 1px solid var(--border);
+      border-radius: 50px; padding: 12px 24px;
+      color: var(--text); font-size: 14px; font-weight: 600; cursor: pointer;
+    }
+
+    /* ─── LINKED (matches) ───────────────────────────────── */
+    #linked-tab { overflow: hidden; }
+    .linked-header {
+      padding: 20px 20px 0; flex-shrink: 0;
+    }
+    .linked-title { font-size: 22px; font-weight: 800; margin-bottom: 4px; }
+    .linked-sub { font-size: 13px; color: var(--muted); margin-bottom: 16px; }
+
+    .new-matches-row { flex-shrink: 0; padding: 0 16px 16px; }
+    .row-label {
+      font-size: 11px; font-weight: 700; color: var(--muted);
+      text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 12px;
+    }
+    .new-matches-scroll {
+      display: flex; gap: 12px; overflow-x: auto; padding-bottom: 2px;
+      scrollbar-width: none;
+    }
+    .new-matches-scroll::-webkit-scrollbar { display: none; }
+
+    .new-match-item {
+      display: flex; flex-direction: column;
+      align-items: center; gap: 5px;
+      cursor: pointer; flex-shrink: 0;
+    }
+    .nm-ring {
+      width: 60px; height: 60px; border-radius: 50%;
+      padding: 2px; flex-shrink: 0;
+      background: linear-gradient(135deg, var(--coral), var(--coral2));
+    }
+    .nm-ring img {
+      width: 100%; height: 100%; border-radius: 50%;
+      object-fit: cover; display: block;
+      background: var(--surface);
+    }
+    .nm-name { font-size: 11px; color: var(--muted); max-width: 60px; text-align: center; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+    .no-matches-hint {
+      font-size: 13px; color: var(--muted); padding: 8px 0;
+      font-style: italic;
+    }
+
+    .convo-list { flex: 1; overflow-y: auto; }
+    .convo-row {
+      display: flex; align-items: center; gap: 12px;
+      padding: 13px 20px; cursor: pointer; transition: background 0.1s;
+    }
+    .convo-row:active { background: var(--surface); }
+    .convo-ava { width: 52px; height: 52px; border-radius: 50%; overflow: hidden; flex-shrink: 0; }
+    .convo-ava img { width: 100%; height: 100%; object-fit: cover; }
+    .convo-body { flex: 1; min-width: 0; }
+    .convo-top { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 3px; }
+    .convo-name { font-size: 15px; font-weight: 700; }
+    .convo-time { font-size: 11px; color: var(--muted); }
+    .convo-preview { font-size: 13px; color: var(--muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .convo-preview.unread { color: var(--text); font-weight: 500; }
+    .unread-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--coral); flex-shrink: 0; }
+
+    .convo-empty {
+      display: flex; flex-direction: column; align-items: center;
+      justify-content: center; padding: 48px 32px; text-align: center; gap: 10px;
+    }
+    .convo-empty .ce-icon { font-size: 44px; }
+    .convo-empty p { font-size: 14px; color: var(--muted); line-height: 1.6; }
+
+    /* ─── SQUADS ─────────────────────────────────────────── */
+    #squads-tab { overflow-y: auto; }
+    .squads-header { padding: 20px 20px 16px; }
+    .squads-title { font-size: 22px; font-weight: 800; margin-bottom: 4px; }
+    .squads-sub { font-size: 13px; color: var(--muted); }
+
+    .squad-section-label {
+      font-size: 11px; font-weight: 700; color: var(--muted);
+      text-transform: uppercase; letter-spacing: 0.5px;
+      padding: 0 20px 10px;
+    }
+
+    .squad-card {
+      margin: 0 16px 12px; background: var(--surface);
+      border-radius: 18px; overflow: hidden; cursor: pointer;
+    }
+    .squad-banner {
+      height: 100px; position: relative; overflow: hidden;
+    }
+    .squad-banner-faces {
+      display: flex; height: 100%; align-items: center;
+      justify-content: center; gap: -10px; background: var(--surface2);
+    }
+    .squad-face {
+      width: 58px; height: 58px; border-radius: 50%;
+      border: 2.5px solid var(--surface); overflow: hidden;
+      margin-left: -10px; flex-shrink: 0;
+    }
+    .squad-face:first-child { margin-left: 0; }
+    .squad-face img { width: 100%; height: 100%; object-fit: cover; }
+    .squad-info { padding: 14px; }
+    .squad-top { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 6px; }
+    .squad-name { font-size: 16px; font-weight: 700; }
+    .squad-count { font-size: 12px; color: var(--muted); }
+    .squad-desc { font-size: 13px; color: var(--muted); margin-bottom: 12px; line-height: 1.5; }
+    .squad-footer { display: flex; justify-content: space-between; align-items: center; }
+    .squad-vibe-tags { display: flex; gap: 6px; }
+    .squad-vtag {
+      padding: 4px 10px; border-radius: 50px;
+      background: var(--surface2); font-size: 11px; color: var(--muted);
+    }
+    .btn-join {
+      padding: 8px 18px; border-radius: 50px;
+      background: var(--teal-dim); color: var(--teal);
+      border: 1px solid rgba(0,205,168,0.25);
+      font-size: 13px; font-weight: 700; cursor: pointer;
+    }
+    .btn-requested {
+      padding: 8px 18px; border-radius: 50px;
+      background: var(--surface3); color: var(--muted);
+      border: 1px solid var(--border);
+      font-size: 13px; font-weight: 600; cursor: default;
+    }
+
+    .create-squad-btn {
+      margin: 4px 16px 24px; padding: 16px;
+      border-radius: 16px; background: var(--surface);
+      border: 1.5px dashed var(--border); cursor: pointer;
+      display: flex; align-items: center; justify-content: center; gap: 8px;
+      font-size: 14px; font-weight: 600; color: var(--muted); width: calc(100% - 32px);
+    }
+
+    /* ─── CHAT VIEW ──────────────────────────────────────── */
+    #chat-view {
+      position: fixed; inset: 0; z-index: 600;
+      background: var(--bg);
+      display: none; flex-direction: column;
+      max-width: 430px; margin: 0 auto;
+    }
+    #chat-view.open { display: flex; }
+    .chat-top {
+      display: flex; align-items: center; gap: 12px;
+      padding: 14px 16px; border-bottom: 1px solid var(--border); flex-shrink: 0;
+    }
+    .chat-back {
+      background: none; border: none; cursor: pointer;
+      color: var(--text); display: flex; padding: 4px;
+    }
+    .chat-ava { width: 40px; height: 40px; border-radius: 50%; overflow: hidden; }
+    .chat-ava img { width: 100%; height: 100%; object-fit: cover; }
+    .chat-top-info { flex: 1; }
+    .chat-top-name { font-size: 16px; font-weight: 700; }
+    .chat-top-status { font-size: 11px; color: var(--teal); }
+    .chat-msgs {
+      flex: 1; overflow-y: auto; padding: 16px;
+      display: flex; flex-direction: column; gap: 8px;
+    }
+    .bubble {
+      max-width: 75%; padding: 11px 15px;
+      border-radius: 18px; font-size: 14px; line-height: 1.45;
+    }
+    .b-in {
+      background: var(--surface2); align-self: flex-start;
+      border-bottom-left-radius: 4px; color: var(--text);
+    }
+    .b-out {
+      background: linear-gradient(135deg, var(--coral), var(--coral2));
+      align-self: flex-end; border-bottom-right-radius: 4px;
+      color: white;
+    }
+    .chat-date-sep {
+      align-self: center; font-size: 11px; color: var(--muted); margin: 4px 0;
+    }
+    .chat-bar {
+      display: flex; align-items: center; gap: 10px;
+      padding: 10px 16px env(safe-area-inset-bottom, 20px);
+      border-top: 1px solid var(--border); flex-shrink: 0;
+    }
+    .chat-input {
+      flex: 1; background: var(--surface); border: 1px solid var(--border);
+      border-radius: 24px; padding: 11px 16px;
+      color: var(--text); font-size: 14px; outline: none; font-family: inherit;
+    }
+    .chat-input:focus { border-color: var(--coral); }
+    .chat-send {
+      background: linear-gradient(135deg, var(--coral), var(--coral2));
+      border: none; border-radius: 50%;
+      width: 40px; height: 40px; cursor: pointer;
+      display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+    }
+    .chat-send svg { width: 17px; height: 17px; fill: white; }
+
+    /* ─── ME (PROFILE) ───────────────────────────────────── */
+    #me-tab { overflow-y: auto; padding-bottom: 28px; }
+    #me-tab.active { display: block; }
+    #squads-tab { overflow-y: auto; }
+    #squads-tab.active { display: block; }
+    .me-header { display: flex; justify-content: space-between; align-items: center; padding: 20px 20px 0; }
+    .me-title { font-size: 22px; font-weight: 800; }
+
+    /* profile avatar + identity block */
+    .me-avatar-wrap {
+      display: flex; flex-direction: column; align-items: center;
+      padding: 8px 20px 20px; gap: 12px;
+    }
+    .me-avatar {
+      width: 96px; height: 96px; border-radius: 50%; overflow: hidden;
+      position: relative; flex-shrink: 0;
+      border: 3px solid var(--surface2);
+    }
+    .me-avatar img { width: 100%; height: 100%; object-fit: cover; display: block; }
+    .me-avatar-edit {
+      position: absolute; bottom: 0; right: 0;
+      background: var(--coral); border: 2px solid var(--bg);
+      border-radius: 50%; width: 28px; height: 28px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 13px; cursor: pointer;
+    }
+    .me-identity { text-align: center; }
+    .me-identity-name { font-size: 22px; font-weight: 800; }
+    .me-identity-sub  { font-size: 13px; color: var(--muted); margin-top: 3px; }
+
+    .stats-strip {
+      display: flex; margin: 0 16px 14px;
+      background: var(--surface); border-radius: 16px; overflow: hidden;
+      border: 1px solid var(--border);
+    }
+    .stat-box {
+      flex: 1; padding: 16px 8px; text-align: center;
+      border-right: 1px solid var(--border);
+    }
+    .stat-box:last-child { border-right: none; }
+    .stat-v { font-size: 22px; font-weight: 800; }
+    .stat-l { font-size: 11px; color: var(--muted); margin-top: 3px; }
+
+    .me-section {
+      margin: 0 16px 12px; background: var(--surface);
+      border-radius: 16px; overflow: hidden; border: 1px solid var(--border);
+    }
+    .me-sec-title {
+      font-size: 11px; font-weight: 700; color: var(--muted);
+      text-transform: uppercase; letter-spacing: 0.6px;
+      padding: 12px 16px 10px;
+    }
+    .me-row {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 13px 16px; border-top: 1px solid var(--border); cursor: pointer;
+    }
+    .me-row:first-of-type { border-top: none; }
+    .me-row-l { display: flex; align-items: center; gap: 12px; }
+    .me-icon {
+      width: 34px; height: 34px; border-radius: 9px;
+      display: flex; align-items: center; justify-content: center; font-size: 17px;
+    }
+    .me-row-label { font-size: 14px; font-weight: 600; color: var(--text); }
+    .me-row-val { font-size: 13px; color: var(--muted); }
+
+    .toggle {
+      width: 44px; height: 24px; border-radius: 12px;
+      background: var(--border); position: relative; cursor: pointer; transition: background 0.25s;
+    }
+    .toggle.on { background: var(--coral); }
+    .toggle::after {
+      content: ''; position: absolute; width: 20px; height: 20px;
+      border-radius: 50%; background: white; top: 2px; left: 2px; transition: left 0.25s;
+    }
+    .toggle.on::after { left: 22px; }
+
+    .me-logout {
+      display: flex; align-items: center; gap: 10px;
+      width: calc(100% - 32px); margin: 8px 16px;
+      background: var(--surface); border-radius: 16px;
+      padding: 15px 16px; border: none; cursor: pointer;
+      color: var(--pass); font-size: 14px; font-weight: 600;
+    }
+
+    /* ─── SUBSCRIPTION ──────────────────────────────────────*/
+    #sub-screen {
+      position: fixed; inset: 0; z-index: 950;
+      display: none; flex-direction: column;
+      background: var(--bg);
+      max-width: 430px; margin: 0 auto;
+      overflow-y: auto;
+    }
+    #sub-screen.open { display: flex; }
+
+    .sub-hero {
+      position: relative; padding: 56px 24px 32px;
+      background: linear-gradient(160deg, #1a0a06 0%, var(--bg) 60%);
+      text-align: center; flex-shrink: 0;
+    }
+    .sub-close {
+      position: absolute; top: 16px; left: 16px;
+      background: var(--surface2); border: none; border-radius: 50%;
+      width: 36px; height: 36px; cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      color: var(--muted); font-size: 18px;
+    }
+    .sub-badge {
+      display: inline-flex; align-items: center; gap: 6px;
+      background: linear-gradient(135deg, rgba(255,107,71,0.2), rgba(255,140,106,0.2));
+      border: 1px solid rgba(255,107,71,0.35);
+      border-radius: 50px; padding: 6px 14px;
+      font-size: 12px; font-weight: 700; color: var(--coral);
+      margin-bottom: 16px;
+    }
+    .sub-title { font-size: 30px; font-weight: 900; line-height: 1.15; margin-bottom: 10px; }
+    .sub-desc  { font-size: 14px; color: var(--muted); line-height: 1.6; max-width: 280px; margin: 0 auto; }
+
+    .sub-features {
+      padding: 0 20px 24px; flex-shrink: 0;
+    }
+    .sub-feat-row {
+      display: flex; align-items: flex-start; gap: 14px;
+      padding: 14px 0; border-bottom: 1px solid var(--border);
+    }
+    .sub-feat-row:last-child { border-bottom: none; }
+    .sub-feat-icon {
+      width: 40px; height: 40px; border-radius: 12px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 19px; flex-shrink: 0;
+    }
+    .sub-feat-text .sf-title { font-size: 14px; font-weight: 700; margin-bottom: 2px; }
+    .sub-feat-text .sf-sub   { font-size: 12px; color: var(--muted); line-height: 1.4; }
+    .sub-feat-badge {
+      margin-left: auto; padding: 3px 8px; border-radius: 50px;
+      font-size: 10px; font-weight: 700; flex-shrink: 0;
+      background: rgba(255,107,71,0.12); color: var(--coral);
+    }
+    .sub-feat-badge.gold { background: rgba(251,191,36,0.15); color: #FBBF24; }
+
+    .sub-plans {
+      padding: 0 20px 24px; display: flex; flex-direction: column; gap: 10px; flex-shrink: 0;
+    }
+    .sub-plan {
+      border: 1.5px solid var(--border); border-radius: 18px;
+      padding: 16px; cursor: pointer; transition: all 0.18s;
+      position: relative; background: var(--surface);
+    }
+    .sub-plan.selected { border-color: var(--coral); background: rgba(255,107,71,0.06); }
+    .sub-plan-top { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 4px; }
+    .sub-plan-name { font-size: 15px; font-weight: 700; }
+    .sub-plan-price { text-align: right; }
+    .sub-plan-amount { font-size: 18px; font-weight: 800; }
+    .sub-plan-period { font-size: 11px; color: var(--muted); }
+    .sub-plan-desc { font-size: 12px; color: var(--muted); }
+    .sub-plan-save {
+      position: absolute; top: -10px; right: 14px;
+      background: var(--coral); color: white;
+      font-size: 10px; font-weight: 700; border-radius: 50px;
+      padding: 3px 10px;
+    }
+    .sub-radio {
+      width: 18px; height: 18px; border-radius: 50%;
+      border: 2px solid var(--border); flex-shrink: 0;
+      display: flex; align-items: center; justify-content: center;
+      margin-left: 8px; transition: all 0.15s;
+    }
+    .sub-plan.selected .sub-radio { border-color: var(--coral); background: var(--coral); }
+    .sub-radio::after {
+      content: ''; width: 7px; height: 7px; border-radius: 50%;
+      background: white; display: none;
+    }
+    .sub-plan.selected .sub-radio::after { display: block; }
+
+    .sub-cta-wrap {
+      padding: 8px 20px 40px; flex-shrink: 0;
+    }
+    .sub-cta {
+      width: 100%; padding: 17px;
+      background: linear-gradient(135deg, var(--coral), var(--coral2));
+      color: white; border: none; border-radius: 16px;
+      font-size: 16px; font-weight: 700; cursor: pointer;
+      margin-bottom: 10px;
+    }
+    .sub-cta.active-plan {
+      background: var(--teal); box-shadow: 0 6px 20px rgba(0,205,168,0.3);
+    }
+    .sub-fine {
+      text-align: center; font-size: 11px; color: var(--muted); line-height: 1.6;
+    }
+
+    /* premium banner in Me tab */
+    .premium-banner {
+      margin: 0 16px 14px; border-radius: 18px; overflow: hidden;
+      cursor: pointer; position: relative;
+      background: linear-gradient(135deg, #1a0905, #0f0a00);
+      border: 1px solid rgba(255,107,71,0.25);
+      padding: 18px 16px;
+    }
+    .premium-banner.active-premium {
+      background: linear-gradient(135deg, #001a12, #000f0a);
+      border-color: rgba(0,205,168,0.3);
+    }
+    .pb-top { display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; }
+    .pb-title { font-size: 16px; font-weight: 800; }
+    .pb-crown { font-size: 22px; }
+    .pb-perks { display: flex; flex-direction: column; gap: 4px; margin-bottom: 14px; }
+    .pb-perk { font-size: 12px; color: rgba(240,237,232,0.65); display: flex; align-items: center; gap: 6px; }
+    .pb-perk::before { content: '✓'; color: var(--coral); font-weight: 700; }
+    .premium-banner.active-premium .pb-perk::before { color: var(--teal); }
+    .pb-btn {
+      display: inline-block; background: linear-gradient(135deg, var(--coral), var(--coral2));
+      color: white; border: none; border-radius: 50px;
+      padding: 10px 20px; font-size: 13px; font-weight: 700; cursor: pointer;
+    }
+    .premium-banner.active-premium .pb-btn {
+      background: var(--teal);
+    }
+
+    /* ─── BOTTOM NAV ─────────────────────────────────────── */
+    .bottom-nav {
+      display: flex; background: var(--bg);
+      border-top: 1px solid var(--border);
+      padding: 6px 0 env(safe-area-inset-bottom, 16px);
+      flex-shrink: 0;
+    }
+    .nav-btn {
+      flex: 1; display: flex; flex-direction: column;
+      align-items: center; gap: 3px;
+      background: none; border: none; cursor: pointer;
+      padding: 8px 0 4px; color: var(--muted); position: relative;
+    }
+    .nav-btn.active { color: var(--coral); }
+    .nav-btn svg { width: 22px; height: 22px; fill: currentColor; }
+    .nav-lbl { font-size: 10px; font-weight: 600; }
+    .nav-badge {
+      position: absolute; top: 5px; right: calc(50% - 18px);
+      background: var(--coral); border-radius: 10px;
+      min-width: 16px; height: 16px; font-size: 10px; font-weight: 700;
+      color: white; display: none; align-items: center; justify-content: center;
+      padding: 0 4px;
+    }
+    .nav-badge.show { display: flex; }
+
+    /* ─── MATCH OVERLAY ──────────────────────────────────── */
+    #match-overlay {
+      position: fixed; inset: 0; z-index: 900;
+      display: none; flex-direction: column;
+      align-items: center; justify-content: center;
+    }
+    #match-overlay.show { display: flex; }
+    .match-bg {
+      position: absolute; inset: 0;
+      background: radial-gradient(ellipse at 50% 40%, rgba(255,107,71,0.3) 0%, rgba(11,11,11,0.94) 65%);
+      backdrop-filter: blur(12px);
+    }
+    .match-body {
+      position: relative; text-align: center;
+      display: flex; flex-direction: column;
+      align-items: center; gap: 16px; padding: 32px 28px;
+      animation: popIn 0.45s cubic-bezier(0.34,1.56,0.64,1) both;
+    }
+    .match-eyebrow { font-size: 12px; font-weight: 700; color: rgba(240,237,232,0.6); text-transform: uppercase; letter-spacing: 2px; }
+    .match-headline { font-size: 44px; font-weight: 900; line-height: 1; }
+    .match-avs { display: flex; align-items: center; }
+    .m-av {
+      width: 106px; height: 106px; border-radius: 50%;
+      overflow: hidden; border: 4px solid var(--coral);
+    }
+    .m-av:first-child { margin-right: -18px; z-index: 1; }
+    .m-av img { width: 100%; height: 100%; object-fit: cover; }
+    .m-spark {
+      z-index: 2; width: 38px; height: 38px; border-radius: 50%;
+      background: var(--coral); display: flex; align-items: center;
+      justify-content: center; font-size: 17px;
+      border: 3px solid var(--bg); margin: 0 -5px; position: relative;
+    }
+    .match-txt { color: rgba(240,237,232,0.65); font-size: 14px; line-height: 1.5; }
+    .match-ctas { display: flex; flex-direction: column; gap: 10px; width: 100%; max-width: 280px; }
+    .btn-match-msg {
+      background: linear-gradient(135deg, var(--coral), var(--coral2));
+      color: white; border: none; border-radius: 16px;
+      padding: 16px; font-size: 15px; font-weight: 700; cursor: pointer;
+    }
+    .btn-match-later {
+      background: transparent; color: rgba(240,237,232,0.5);
+      border: 1.5px solid rgba(255,255,255,0.15);
+      border-radius: 16px; padding: 13px;
+      font-size: 14px; cursor: pointer;
+    }
+
+    /* ─── ANIMATIONS ─────────────────────────────────────── */
+    @keyframes popIn {
+      0%   { opacity:0; transform:scale(0.7); }
+      100% { opacity:1; transform:scale(1); }
+    }
+    @keyframes fadeSlideUp {
+      from { opacity:0; transform:translateY(20px); }
+      to   { opacity:1; transform:translateY(0); }
+    }
+    .fade-in { animation: fadeSlideUp 0.35s ease both; }
+
+    @keyframes waveAnim {
+      0%,100% { transform: scaleY(0.4); }
+      50%      { transform: scaleY(1); }
+    }
+    .wave-bar.playing {
+      background: var(--coral);
+      animation: waveAnim 0.6s ease-in-out infinite;
+    }
+  </style>
+</head>
+<body>
+
+<!-- ═══ AUTH ════════════════════════════════════════════ -->
+<div id="auth">
+  <div class="auth-visual">
+    <div class="auth-col">
+      <div class="auth-face tall"><img src="https://randomuser.me/api/portraits/women/44.jpg" alt=""></div>
+      <div class="auth-face mid"><img src="https://randomuser.me/api/portraits/men/22.jpg" alt=""></div>
+      <div class="auth-face sm"><img src="https://randomuser.me/api/portraits/women/62.jpg" alt=""></div>
+    </div>
+    <div class="auth-col">
+      <div class="auth-face sm"><img src="https://randomuser.me/api/portraits/men/48.jpg" alt=""></div>
+      <div class="auth-face tall"><img src="https://randomuser.me/api/portraits/women/25.jpg" alt=""></div>
+      <div class="auth-face mid"><img src="https://randomuser.me/api/portraits/men/36.jpg" alt=""></div>
+    </div>
+    <div class="auth-col">
+      <div class="auth-face mid"><img src="https://randomuser.me/api/portraits/women/77.jpg" alt=""></div>
+      <div class="auth-face sm"><img src="https://randomuser.me/api/portraits/men/54.jpg" alt=""></div>
+      <div class="auth-face tall"><img src="https://randomuser.me/api/portraits/women/91.jpg" alt=""></div>
+    </div>
+  </div>
+
+  <div class="auth-content">
+    <div class="auth-wordmark gradient-text">linked.</div>
+    <div class="auth-tagline">
+      <strong>Real people. Real vibes.</strong><br>
+      Connections that actually mean something.
+    </div>
+    <div class="auth-btns">
+      <button class="btn-coral" onclick="showSetup()">Create my profile</button>
+      <button class="btn-ghost" onclick="quickLogin()">Already have an account</button>
+    </div>
+    <p class="auth-fine">By joining you agree to our Terms &amp; Privacy Policy.</p>
+  </div>
+</div>
+
+<!-- ═══ SETUP ════════════════════════════════════════════ -->
+<div id="setup">
+  <div class="setup-inner">
+    <div class="progress-bar"><div class="progress-fill" id="progress-fill" style="width:20%"></div></div>
+
+    <!-- Step 0: Name + Gender -->
+    <div class="setup-step active" id="step-0">
+      <div class="step-num">Step 1 of 5</div>
+      <div class="step-title">What do we call you?</div>
+      <p class="step-sub">You're about to meet someone amazing. Let's start with the basics.</p>
+      <label class="field-label">First name</label>
+      <input class="input-field" id="s-name" placeholder="Your first name" type="text">
+      <label class="field-label">Age</label>
+      <input class="input-field" id="s-age" placeholder="Must be 18+" type="number" min="18">
+      <label class="field-label">I identify as</label>
+      <select class="input-field" id="s-gender">
+        <option value="woman">Woman</option>
+        <option value="man">Man</option>
+        <option value="non-binary">Non-binary</option>
+        <option value="other">Other / Prefer not to say</option>
+      </select>
+      <button class="btn-next" onclick="go(0)">Continue →</button>
+    </div>
+
+    <!-- Step 1: Location + Looking for -->
+    <div class="setup-step" id="step-1">
+      <div class="step-num">Step 2 of 5</div>
+      <div class="step-title">Where are you based?</div>
+      <label class="field-label">City</label>
+      <select class="input-field" id="s-city">
+        <option>Cape Town</option><option>Johannesburg</option>
+        <option>Durban</option><option>Pretoria</option>
+        <option>Port Elizabeth</option><option>East London</option>
+        <option>Bloemfontein</option><option>Stellenbosch</option>
+        <option>Other</option>
+      </select>
+      <div class="step-title" style="font-size:20px;margin-top:8px">What are you looking for?</div>
+      <div class="looking-opts">
+        <div class="looking-card" id="lc-dating" onclick="setLooking('dating')">
+          <div class="lc-icon">💕</div>
+          <div class="lc-title">Dating</div>
+          <div class="lc-sub">Something real</div>
+        </div>
+        <div class="looking-card" id="lc-friends" onclick="setLooking('friends')">
+          <div class="lc-icon">🤝</div>
+          <div class="lc-title">Friends</div>
+          <div class="lc-sub">Good company</div>
+        </div>
+        <div class="looking-card" id="lc-anything" onclick="setLooking('anything')">
+          <div class="lc-icon">✨</div>
+          <div class="lc-title">Whatever</div>
+          <div class="lc-sub">See where it goes</div>
+        </div>
+      </div>
+
+      <div class="dating-sub" id="dating-sub">
+        <div class="dating-sub-label">What kind of relationship?</div>
+        <div class="dating-sub-opts">
+          <div class="dating-sub-btn" id="ds-longterm" onclick="setDatingSub('longterm')">
+            <span class="ds-icon">💍</span>
+            <div class="ds-text">
+              <div class="ds-title">Long term</div>
+              <div class="ds-sub">Looking for something serious and committed</div>
+            </div>
+          </div>
+          <div class="dating-sub-btn" id="ds-shortterm" onclick="setDatingSub('shortterm')">
+            <span class="ds-icon">🌱</span>
+            <div class="ds-text">
+              <div class="ds-title">Short term / casual</div>
+              <div class="ds-sub">Taking it easy, no pressure</div>
+            </div>
+          </div>
+          <div class="dating-sub-btn" id="ds-opentoboth" onclick="setDatingSub('opentoboth')">
+            <span class="ds-icon">🌊</span>
+            <div class="ds-text">
+              <div class="ds-title">Open to both</div>
+              <div class="ds-sub">Happy to see where things go naturally</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <button class="btn-next" onclick="go(1)">Continue →</button>
+    </div>
+
+    <!-- Step 2: Photo -->
+    <div class="setup-step" id="step-2">
+      <div class="step-num">Step 3 of 5</div>
+      <div class="step-title">Add your main photo</div>
+      <p class="step-sub">Your first impression. Make it count.</p>
+      <div class="photo-pick" id="photo-pick" onclick="document.getElementById('photo-file').click()">
+        <img id="photo-preview" src="" alt="">
+        <div class="photo-pick-label" id="photo-ph">
+          <div class="pi">📸</div>
+          <div>Tap to upload</div>
+        </div>
+      </div>
+      <input type="file" id="photo-file" accept="image/*" style="display:none" onchange="handlePhoto(this)">
+      <button class="btn-next" onclick="go(2)">Continue →</button>
+    </div>
+
+    <!-- Step 3: Interests -->
+    <div class="setup-step" id="step-3">
+      <div class="step-num">Step 4 of 5</div>
+      <div class="step-title">Your vibe check</div>
+      <p class="step-sub">Pick up to 5 things that are so you.</p>
+      <div class="vibe-grid" id="vibe-grid"></div>
+      <button class="btn-next" onclick="go(3)">Continue →</button>
+    </div>
+
+    <!-- Step 4: Personality Qs -->
+    <div class="setup-step" id="step-4">
+      <div class="step-num">Step 5 of 5</div>
+      <div class="step-title">Let them know you 👀</div>
+      <p class="step-sub">Personality &gt; photos. Answer a few quick ones.</p>
+      <div class="qa-field">
+        <div class="qa-q">☀️ My ideal Sunday looks like...</div>
+        <input class="input-field" id="q-sunday" placeholder="e.g. Beach braai with good music" type="text">
+      </div>
+      <div class="qa-field">
+        <div class="qa-q">🔥 Unpopular opinion / hot take:</div>
+        <input class="input-field" id="q-hottake" placeholder="e.g. Cape Town > everywhere" type="text">
+      </div>
+      <div class="qa-field">
+        <div class="qa-q">🎯 Currently obsessed with:</div>
+        <input class="input-field" id="q-obsessed" placeholder="e.g. Amapiano & overpriced coffee" type="text">
+      </div>
+      <div class="qa-field">
+        <div class="qa-q">😂 Most random fact about me:</div>
+        <input class="input-field" id="q-random" placeholder="e.g. I can name every F1 driver" type="text">
+      </div>
+      <button class="btn-next" onclick="finishSetup()">Find my people 🔥</button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ APP ══════════════════════════════════════════════ -->
+<div id="app">
+  <div class="top-bar">
+    <div class="wordmark gradient-text">linked.</div>
+    <div class="spotlight-pill" id="spotlight-pill" onclick="doSpotlight()">
+      <span>🔦</span>
+      <span id="spotlight-label">Spotlight</span>
+    </div>
+  </div>
+
+  <div class="tab-content">
+
+    <!-- DISCOVER -->
+    <div class="tab-panel active" id="discover-tab">
+      <div class="profile-scroll" id="profile-scroll"></div>
+      <div class="empty-discover" id="empty-discover">
+        <div class="empty-big">🌙</div>
+        <div class="empty-h">You're all caught up</div>
+        <div class="empty-p">New profiles drop daily. Come back tomorrow for fresh connections in your area.</div>
+        <button class="btn-refresh" onclick="resetQueue()">Refresh for now</button>
+      </div>
+    </div>
+
+    <!-- LINKED (matches) -->
+    <div class="tab-panel" id="linked-tab">
+      <div class="linked-header">
+        <div class="linked-title">Linked</div>
+        <div class="linked-sub">Your connections are waiting for you.</div>
+      </div>
+      <div class="new-matches-row">
+        <div class="row-label">New — say hi first ✨</div>
+        <div class="new-matches-scroll" id="new-matches-scroll">
+          <div class="no-matches-hint">No links yet. Keep connecting!</div>
+        </div>
+      </div>
+      <div class="row-label" style="padding:0 20px 8px">Conversations</div>
+      <div class="convo-list" id="convo-list">
+        <div class="convo-empty">
+          <div class="ce-icon">💬</div>
+          <p>When you link with someone, your conversation threads show up here.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- SQUADS -->
+    <div class="tab-panel" id="squads-tab">
+      <div class="squads-header">
+        <div class="squads-title">Squads</div>
+        <div class="squads-sub">Hang out with groups. Less pressure, more fun.</div>
+      </div>
+      <div class="squad-section-label">Active near you</div>
+      <div id="squads-list"></div>
+      <button class="create-squad-btn" onclick="showToast('Squad creation coming soon 👀')">
+        <span style="font-size:18px">+</span> Create a squad
+      </button>
+    </div>
+
+    <!-- ME -->
+    <div class="tab-panel" id="me-tab">
+      <div class="me-header">
+        <div class="me-title">My Profile</div>
+        <button class="icon-btn" onclick="showToast('Settings coming soon!')">
+          <svg viewBox="0 0 24 24"><path d="M19.14,12.94c0.04-0.3,0.06-0.61,0.06-0.94c0-0.32-0.02-0.64-0.07-0.94l2.03-1.58c0.18-0.14,0.23-0.41,0.12-0.61l-1.92-3.32c-0.12-0.22-0.37-0.29-0.59-0.22l-2.39,0.96c-0.5-0.38-1.03-0.7-1.62-0.94L14.4,2.81c-0.04-0.24-0.24-0.41-0.48-0.41h-3.84c-0.24,0-0.43,0.17-0.47,0.41L9.25,5.35C8.66,5.59,8.12,5.92,7.63,6.29L5.24,5.33c-0.22-0.08-0.47,0-0.59,0.22L2.74,8.87C2.62,9.08,2.66,9.34,2.86,9.48l2.03,1.58C4.84,11.36,4.8,11.69,4.8,12s0.02,0.64,0.07,0.94l-2.03,1.58c-0.18,0.14-0.23,0.41-0.12,0.61l1.92,3.32c0.12,0.22,0.37,0.29,0.59,0.22l2.39-0.96c0.5,0.38,1.03,0.7,1.62,0.94l0.36,2.54c0.05,0.24,0.24,0.41,0.48,0.41h3.84c0.24,0,0.44-0.17,0.47-0.41l0.36-2.54c0.59-0.24,1.13-0.56,1.62-0.94l2.39,0.96c0.22,0.08,0.47,0,0.59-0.22l1.92-3.32c0.12-0.22,0.07-0.47-0.12-0.61L19.14,12.94z M12,15.6c-1.98,0-3.6-1.62-3.6-3.6s1.62-3.6,3.6-3.6s3.6,1.62,3.6,3.6S13.98,15.6,12,15.6z"/></svg>
+        </button>
+      </div>
+      <div class="me-avatar-wrap">
+        <div class="me-avatar">
+          <img id="me-photo" src="https://randomuser.me/api/portraits/lego/1.jpg" alt="">
+          <div class="me-avatar-edit" onclick="document.getElementById('me-photo-input').click()">✏️</div>
+          <input type="file" id="me-photo-input" accept="image/*" style="display:none" onchange="updateMePhoto(this)">
+        </div>
+        <div class="me-identity">
+          <div class="me-identity-name" id="me-name">You</div>
+          <div class="me-identity-sub" id="me-sub">Cape Town · Anything</div>
+        </div>
+      </div>
+
+      <div class="premium-banner" id="premium-banner" onclick="openSub()">
+        <div class="pb-top">
+          <div class="pb-title gradient-text" id="pb-title">Upgrade to Premium</div>
+          <div class="pb-crown">✦</div>
+        </div>
+        <div class="pb-perks" id="pb-perks">
+          <div class="pb-perk">See everyone who liked you</div>
+          <div class="pb-perk">Unlimited connects per day</div>
+          <div class="pb-perk">5 Sparks daily + weekly Spotlight</div>
+        </div>
+        <button class="pb-btn" id="pb-btn">Get Premium →</button>
+      </div>
+
+      <div class="stats-strip">
+        <div class="stat-box">
+          <div class="stat-v gradient-text" id="s-connects">0</div>
+          <div class="stat-l">Connects</div>
+        </div>
+        <div class="stat-box">
+          <div class="stat-v gradient-text" id="s-matches">0</div>
+          <div class="stat-l">Linked</div>
+        </div>
+        <div class="stat-box">
+          <div class="stat-v gradient-text" id="s-passes">0</div>
+          <div class="stat-l">Passed</div>
+        </div>
+      </div>
+
+      <div class="me-section">
+        <div class="me-sec-title">Discovery</div>
+        <div class="me-row">
+          <div class="me-row-l">
+            <div class="me-icon" style="background:#1A1000">📍</div>
+            <div class="me-row-label">Location</div>
+          </div>
+          <div class="me-row-val" id="me-city-val">Cape Town ›</div>
+        </div>
+        <div class="me-row">
+          <div class="me-row-l">
+            <div class="me-icon" style="background:#0A1A14">🎯</div>
+            <div class="me-row-label">Looking for</div>
+          </div>
+          <div class="me-row-val" id="me-looking-val">Dating ›</div>
+        </div>
+        <div class="me-row">
+          <div class="me-row-l">
+            <div class="me-icon" style="background:#100A1A">📏</div>
+            <div class="me-row-label">Distance</div>
+          </div>
+          <div class="me-row-val">50 km ›</div>
+        </div>
+        <div class="me-row">
+          <div class="me-row-l">
+            <div class="me-icon" style="background:#1A100A">🎂</div>
+            <div class="me-row-label">Age range</div>
+          </div>
+          <div class="me-row-val">18 – 35 ›</div>
+        </div>
+      </div>
+
+      <div class="me-section">
+        <div class="me-sec-title">Notifications</div>
+        <div class="me-row">
+          <div class="me-row-l">
+            <div class="me-icon" style="background:#1A0A00">🔔</div>
+            <div class="me-row-label">New links</div>
+          </div>
+          <div class="toggle on" onclick="this.classList.toggle('on')"></div>
+        </div>
+        <div class="me-row">
+          <div class="me-row-l">
+            <div class="me-icon" style="background:#0A0A1A">💬</div>
+            <div class="me-row-label">Messages</div>
+          </div>
+          <div class="toggle on" onclick="this.classList.toggle('on')"></div>
+        </div>
+        <div class="me-row">
+          <div class="me-row-l">
+            <div class="me-icon" style="background:#001A14">🌐</div>
+            <div class="me-row-label">Show online status</div>
+          </div>
+          <div class="toggle" onclick="this.classList.toggle('on')"></div>
+        </div>
+      </div>
+
+      <button class="me-logout" onclick="logout()">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="var(--pass)"><path d="M17 7l-1.41 1.41L18.17 11H8v2h10.17l-2.58 2.58L17 17l5-5zM4 5h8V3H4c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h8v-2H4V5z"/></svg>
+        Log out
+      </button>
+    </div>
+  </div>
+
+  <!-- Bottom Nav -->
+  <nav class="bottom-nav">
+    <button class="nav-btn active" id="nav-discover" onclick="switchTab('discover')">
+      <svg viewBox="0 0 24 24"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg>
+      <span class="nav-lbl">Discover</span>
+    </button>
+    <button class="nav-btn" id="nav-linked" onclick="switchTab('linked')">
+      <svg viewBox="0 0 24 24"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
+      <span class="nav-lbl">Linked</span>
+      <div class="nav-badge" id="badge-linked"></div>
+    </button>
+    <button class="nav-btn" id="nav-squads" onclick="switchTab('squads')">
+      <svg viewBox="0 0 24 24"><path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z"/></svg>
+      <span class="nav-lbl">Squads</span>
+    </button>
+    <button class="nav-btn" id="nav-me" onclick="switchTab('me')">
+      <svg viewBox="0 0 24 24"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>
+      <span class="nav-lbl">Me</span>
+    </button>
+  </nav>
+</div>
+
+<!-- ═══ SUBSCRIPTION ══════════════════════════════════════ -->
+<div id="sub-screen">
+  <div class="sub-hero">
+    <button class="sub-close" onclick="closeSub()">✕</button>
+    <div class="sub-badge">✦ Linked Premium</div>
+    <div class="sub-title">Unlock every<br>connection.</div>
+    <div class="sub-desc">More sparks, more visibility, and the full picture of who wants to meet you.</div>
+  </div>
+
+  <div class="sub-features">
+    <div class="sub-feat-row">
+      <div class="sub-feat-icon" style="background:#1a0a06">❤️</div>
+      <div class="sub-feat-text">
+        <div class="sf-title">See who liked you</div>
+        <div class="sf-sub">Know before you swipe — no more guessing games</div>
+      </div>
+      <div class="sub-feat-badge">Plus</div>
+    </div>
+    <div class="sub-feat-row">
+      <div class="sub-feat-icon" style="background:#0a1a14">🔗</div>
+      <div class="sub-feat-text">
+        <div class="sf-title">Unlimited connects</div>
+        <div class="sf-sub">No daily limits, connect with as many people as you want</div>
+      </div>
+      <div class="sub-feat-badge">Plus</div>
+    </div>
+    <div class="sub-feat-row">
+      <div class="sub-feat-icon" style="background:#100a1a">🔦</div>
+      <div class="sub-feat-text">
+        <div class="sf-title">Weekly Spotlight</div>
+        <div class="sf-sub">Get pushed to the top of Discover once a week</div>
+      </div>
+      <div class="sub-feat-badge">Plus</div>
+    </div>
+    <div class="sub-feat-row">
+      <div class="sub-feat-icon" style="background:#1a1000">⚡</div>
+      <div class="sub-feat-text">
+        <div class="sf-title">5 Sparks per day</div>
+        <div class="sf-sub">Send guaranteed connections to the people you really like</div>
+      </div>
+      <div class="sub-feat-badge gold">Gold</div>
+    </div>
+    <div class="sub-feat-row">
+      <div class="sub-feat-icon" style="background:#001a10">💬</div>
+      <div class="sub-feat-text">
+        <div class="sf-title">Read receipts</div>
+        <div class="sf-sub">See when your messages have been read</div>
+      </div>
+      <div class="sub-feat-badge gold">Gold</div>
+    </div>
+  </div>
+
+  <div class="sub-plans">
+    <div class="sub-plan" id="plan-gold" onclick="selectPlan('gold')">
+      <div class="sub-plan-save">Most popular</div>
+      <div class="sub-plan-top">
+        <div>
+          <div class="sub-plan-name">Linked Gold</div>
+          <div class="sub-plan-desc">All features included</div>
+        </div>
+        <div style="display:flex;align-items:center;gap:8px">
+          <div class="sub-plan-price">
+            <div class="sub-plan-amount">R149</div>
+            <div class="sub-plan-period">/month</div>
+          </div>
+          <div class="sub-radio"></div>
+        </div>
+      </div>
+    </div>
+    <div class="sub-plan" id="plan-plus" onclick="selectPlan('plus')">
+      <div class="sub-plan-top">
+        <div>
+          <div class="sub-plan-name">Linked Plus</div>
+          <div class="sub-plan-desc">Unlimited connects + see likes</div>
+        </div>
+        <div style="display:flex;align-items:center;gap:8px">
+          <div class="sub-plan-price">
+            <div class="sub-plan-amount">R99</div>
+            <div class="sub-plan-period">/month</div>
+          </div>
+          <div class="sub-radio"></div>
+        </div>
+      </div>
+    </div>
+    <div class="sub-plan" id="plan-annual" onclick="selectPlan('annual')">
+      <div class="sub-plan-save">Save 40%</div>
+      <div class="sub-plan-top">
+        <div>
+          <div class="sub-plan-name">Gold Annual</div>
+          <div class="sub-plan-desc">Best value — R75/month billed yearly</div>
+        </div>
+        <div style="display:flex;align-items:center;gap:8px">
+          <div class="sub-plan-price">
+            <div class="sub-plan-amount">R899</div>
+            <div class="sub-plan-period">/year</div>
+          </div>
+          <div class="sub-radio"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="sub-cta-wrap">
+    <button class="sub-cta" id="sub-cta-btn" onclick="subscribeToPlan()">Continue</button>
+    <div class="sub-fine">Billed automatically. Cancel anytime. Prices in ZAR.</div>
+  </div>
+</div>
+
+<!-- ═══ PHOTO FULLSCREEN ══════════════════════════════════ -->
+<div id="photo-fs">
+  <button class="photo-fs-close" onclick="closePhoto()">✕</button>
+  <img id="photo-fs-img" src="" alt="">
+  <div class="photo-fs-info">
+    <div class="photo-fs-name" id="photo-fs-name"></div>
+    <div class="photo-fs-sub" id="photo-fs-sub"></div>
+  </div>
+</div>
+
+<!-- ═══ MATCH OVERLAY ════════════════════════════════════ -->
+<div id="match-overlay">
+  <div class="match-bg"></div>
+  <div class="match-body">
+    <div class="match-eyebrow">It's a connection!</div>
+    <div class="match-headline gradient-text">You're Linked 🔗</div>
+    <div class="match-avs">
+      <div class="m-av"><img id="match-my-av" src="" alt=""></div>
+      <div class="m-spark">🔗</div>
+      <div class="m-av"><img id="match-their-av" src="" alt=""></div>
+    </div>
+    <div class="match-txt">You and <strong id="match-name">someone</strong> both connected.<br>Don't leave them waiting!</div>
+    <div class="match-ctas">
+      <button class="btn-match-msg" onclick="openMatchChat()">Send a message</button>
+      <button class="btn-match-later" onclick="closeMatch()">Maybe later</button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ CHAT ══════════════════════════════════════════════ -->
+<div id="chat-view">
+  <div class="chat-top">
+    <button class="chat-back" onclick="closeChat()">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="var(--text)"><path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"/></svg>
+    </button>
+    <div class="chat-ava"><img id="chat-ava-img" src="" alt=""></div>
+    <div class="chat-top-info">
+      <div class="chat-top-name" id="chat-name"></div>
+      <div class="chat-top-status">Online now</div>
+    </div>
+    <button class="icon-btn" onclick="showToast('Video call coming soon 📹')">
+      <svg viewBox="0 0 24 24" fill="var(--muted)"><path d="M17 10.5V7c0-.55-.45-1-1-1H4c-.55 0-1 .45-1 1v10c0 .55.45 1 1 1h12c.55 0 1-.45 1-1v-3.5l4 4v-11l-4 4z"/></svg>
+    </button>
+  </div>
+  <div class="chat-msgs" id="chat-msgs"></div>
+  <div class="chat-bar">
+    <input class="chat-input" id="chat-input" placeholder="Say something real..." onkeydown="if(event.key==='Enter')sendMsg()">
+    <button class="chat-send" onclick="sendMsg()">
+      <svg viewBox="0 0 24 24"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/></svg>
+    </button>
+  </div>
+</div>
+
+<script>
+// ── DATA ─────────────────────────────────────────────────
+const PROFILES = [
+  { id:1, name:'Aisha', age:23, city:'Cape Town', looking:'dating', compat:91, dist:'3 km', bio:'', interests:['Music','Beach','Coffee'], img:'https://randomuser.me/api/portraits/women/44.jpg', answers:{ sunday:'Brunch with the girls then a sunset walk on Camps Bay 🌊', hottake:'The best braai is the one someone else makes for you', obsessed:'Amapiano and overpriced matcha lattes', random:'I once accidentally crashed a Tinder date wearing the same dress as the other girl' } },
+  { id:2, name:'Lerato', age:26, city:'Cape Town', looking:'anything', compat:78, dist:'7 km', bio:'', interests:['Art','Dancing','Travel'], img:'https://randomuser.me/api/portraits/women/17.jpg', answers:{ sunday:'Painting with bad music playing too loud', hottake:'Joburg people are actually more fun than they get credit for', obsessed:'Studio Ghibli rewatches', random:'I can hold a handstand for exactly 43 seconds' } },
+  { id:3, name:'Chloe', age:22, city:'Cape Town', looking:'friends', compat:85, dist:'2 km', bio:'', interests:['Reading','Dogs','Outdoors'], img:'https://randomuser.me/api/portraits/women/25.jpg', answers:{ sunday:'Farmers market with my dog Chester then lying in the garden', hottake:'Rooibos tea is not tea. Fight me.', obsessed:'True crime podcasts that I immediately regret', random:'I\'ve read Pride & Prejudice 11 times and I\'ll do it again' } },
+  { id:4, name:'Naledi', age:28, city:'Johannesburg', looking:'dating', compat:72, dist:'12 km', bio:'', interests:['Tech','Gaming','Wine'], img:'https://randomuser.me/api/portraits/women/32.jpg', answers:{ sunday:'Coding a side project while listening to the rain', hottake:'We romanticise Joburg when Cape Town exists', obsessed:'Elden Ring and natural wine', random:'I can solve a Rubik\'s cube in under 2 minutes' } },
+  { id:5, name:'Jade', age:24, city:'Cape Town', looking:'anything', compat:88, dist:'1 km', bio:'', interests:['Yoga','Wellness','Travel'], img:'https://randomuser.me/api/portraits/women/55.jpg', answers:{ sunday:'Hot yoga then a 3-hour nap. No regrets.', hottake:'You don\'t need 5 AM routines to be a successful person', obsessed:'Van life TikToks even though I live in an apartment', random:'I\'ve visited 14 countries but never been to the Kruger' } },
+  { id:6, name:'Amara', age:27, city:'Durban', looking:'dating', compat:67, dist:'1.4 km away', bio:'', interests:['Cooking','Music','Beach'], img:'https://randomuser.me/api/portraits/women/62.jpg', answers:{ sunday:'Cooking a full Sunday lunch for no reason at all', hottake:'Durban has better food than anywhere in SA and it\'s not close', obsessed:'Burna Boy and chakalaka recipes', random:'I once cooked for 80 people at a wedding with 2 hours notice' } },
+  { id:7, name:'Siya', age:25, city:'Cape Town', looking:'friends', compat:82, dist:'4 km', bio:'', interests:['Music','Gym','Movies'], img:'https://randomuser.me/api/portraits/men/22.jpg', answers:{ sunday:'Gym at 7am, studio session at noon, watch football with the boys', hottake:'Live music &gt; recorded music. Always.', obsessed:'Making playlists for situations that haven\'t happened yet', random:'I have a playlist specifically for driving through tunnels' } },
+  { id:8, name:'Ethan', age:29, city:'Cape Town', looking:'dating', compat:76, dist:'6 km', bio:'', interests:['Art','Coffee','Outdoors'], img:'https://randomuser.me/api/portraits/men/36.jpg', answers:{ sunday:'Sketching at a coffee shop, hiking if the weather agrees', hottake:'Cape Town is actually affordable if you cook at home', obsessed:'Brutalist architecture and third-wave espresso', random:'I drew the layout of my childhood home from memory and it was 94% accurate' } },
+  { id:9, name:'Kwame', age:24, city:'Cape Town', looking:'anything', compat:94, dist:'8 km', bio:'', interests:['Running','Photography','Outdoors'], img:'https://randomuser.me/api/portraits/men/48.jpg', answers:{ sunday:'5K run at sunrise then taking photos of literally everything', hottake:'Rest days are for people who don\'t love what they do', obsessed:'Film photography — grain is beautiful', random:'I once ran a half marathon on a dare with zero training' } },
+  { id:10, name:'Zoe', age:21, city:'Stellenbosch', looking:'dating', compat:80, dist:'3 km', bio:'', interests:['Art','Photography','Reading'], img:'https://randomuser.me/api/portraits/women/77.jpg', answers:{ sunday:'Art market then wine with the housemates', hottake:'Social media made us worse at actually socialising', obsessed:'Polaroid cameras and annotating books', random:'My first word was apparently "why" and honestly nothing has changed' } },
+  { id:11, name:'Thabo', age:30, city:'Pretoria', looking:'dating', compat:69, dist:'11 km', bio:'', interests:['Outdoors','Music','Food'], img:'https://randomuser.me/api/portraits/men/54.jpg', answers:{ sunday:'Hiking and then arguing about nothing important with friends', hottake:'Pretoria has the best hidden restaurant scene in SA', obsessed:'Jazz, hiking trails, and people who are actually on time', random:'I hiked Kilimanjaro on my 28th birthday. Would not recommend in July.' } },
+  { id:12, name:'Priya', age:26, city:'Cape Town', looking:'friends', compat:86, dist:'5 km', bio:'', interests:['Tech','Coffee','Yoga'], img:'https://randomuser.me/api/portraits/women/91.jpg', answers:{ sunday:'Farmers market, plant shop, existential crisis, repeat', hottake:'Manifesting without action is just daydreaming', obsessed:'Seed cycling and Notion boards nobody else understands', random:'I have 34 plants and they all have names and backstories' } },
+];
+
+const SQUADS_DATA = [
+  { id:1, name:'Beach Braai Crew', desc:'We meet every other Sunday at Clifton for a braai and good vibes. All welcome.', count:6, vibe:['Outdoors','Food','Chill'], imgs:['https://randomuser.me/api/portraits/women/44.jpg','https://randomuser.me/api/portraits/men/22.jpg','https://randomuser.me/api/portraits/women/25.jpg'] },
+  { id:2, name:'Joburg Night Owls', desc:'Late-night food spots, jazz bars, and the kind of conversations you forget to take photos of.', count:4, vibe:['Music','Food','Nightlife'], imgs:['https://randomuser.me/api/portraits/men/36.jpg','https://randomuser.me/api/portraits/women/32.jpg','https://randomuser.me/api/portraits/men/48.jpg'] },
+  { id:3, name:'Cape Town Hikers 🏔️', desc:'Weekly hikes from easy to intense. Good music, worse jokes. Biscuits at the top always.', count:9, vibe:['Outdoors','Fitness','Nature'], imgs:['https://randomuser.me/api/portraits/women/77.jpg','https://randomuser.me/api/portraits/men/54.jpg','https://randomuser.me/api/portraits/women/91.jpg'] },
+  { id:4, name:'Gallery Hopping CPT', desc:'We do a different gallery or exhibition every Friday evening then find somewhere nice to eat after.', count:5, vibe:['Art','Culture','Food'], imgs:['https://randomuser.me/api/portraits/women/17.jpg','https://randomuser.me/api/portraits/women/62.jpg','https://randomuser.me/api/portraits/men/22.jpg'] },
+];
+
+const VIBES = ['☕ Coffee','🏃 Running','🎨 Art','🍕 Food','✈️ Travel','📸 Photography','🎮 Gaming','🐶 Dogs','🌿 Outdoors','📚 Reading','🎬 Movies','🧘 Yoga','🍷 Wine','💪 Gym','🎵 Music','🌊 Beach','🎭 Culture','🎸 Live Music','🧗 Adventure','🌙 Nightlife'];
+
+const REPLIES = [
+  'Okay so I actually smiled reading that 😊',
+  'No way, I feel the exact same way about that!',
+  'Tell me more honestly I\'m listening 👀',
+  'Lol okay you\'re definitely not what I expected',
+  'This is a good sign I think 😂',
+  'Okay your vibe is immaculate honestly',
+  'I was hoping you\'d message me first 😅',
+  'Okay but that\'s literally my personality too??',
+  'Right answer. You passed the vibe check.',
+  'Okay now I\'m curious about you 🤔',
+];
+
+// ── STATE ─────────────────────────────────────────────────
+let S = {
+  user: null,
+  queue: [],
+  matches: [],
+  convos: {},
+  currentChat: null,
+  pendingMatch: null,
+  connectsLeft: 10,
+  sparksLeft: 1,
+  spotlightTimer: null,
+  isPremium: null,
+  stats: { connects: 0, matches: 0, passes: 0 },
+  joinedSquads: new Set(),
+  selectedLooking: null,
+};
+
+// ── SETUP ─────────────────────────────────────────────────
+let setupStepIdx = 0;
+const TOTAL_STEPS = 5;
+
+function showSetup() {
+  document.getElementById('auth').style.display = 'none';
+  document.getElementById('setup').style.display = 'flex';
+  buildVibeGrid();
+}
+
+function quickLogin() {
+  S.user = {
+    name: 'You', age: 24, city: 'Cape Town',
+    looking: 'anything', gender: 'woman',
+    photo: 'https://randomuser.me/api/portraits/lego/1.jpg',
+    interests: ['Coffee','Music','Travel'],
+    answers: {},
+  };
+  startApp();
+}
+
+function setLooking(val) {
+  S.selectedLooking = val;
+  S.selectedDatingSub = null;
+  ['dating','friends','anything'].forEach(v => {
+    document.getElementById('lc-' + v).className = 'looking-card' + (v === val ? ' sel-' + v : '');
+  });
+  const sub = document.getElementById('dating-sub');
+  if (val === 'dating') {
+    sub.style.display = 'flex';
+    requestAnimationFrame(() => { sub.style.maxHeight = '300px'; sub.style.opacity = '1'; });
+  } else {
+    sub.style.maxHeight = '0'; sub.style.opacity = '0';
+    setTimeout(() => { sub.style.display = 'none'; }, 300);
+    document.querySelectorAll('.dating-sub-btn').forEach(el => el.classList.remove('sel'));
+  }
+}
+
+function setDatingSub(val) {
+  S.selectedDatingSub = val;
+  document.querySelectorAll('.dating-sub-btn').forEach(el => el.classList.remove('sel'));
+  document.getElementById('ds-' + val).classList.add('sel');
+}
+
+function buildVibeGrid() {
+  const g = document.getElementById('vibe-grid');
+  g.innerHTML = '';
+  VIBES.forEach(v => {
+    const el = document.createElement('button');
+    el.className = 'vibe-btn';
+    el.textContent = v;
+    el.onclick = () => {
+      const sel = document.querySelectorAll('.vibe-btn.sel');
+      if (el.classList.contains('sel')) el.classList.remove('sel');
+      else if (sel.length < 5) el.classList.add('sel');
+    };
+    g.appendChild(el);
+  });
+}
+
+function handlePhoto(input) {
+  const f = input.files[0]; if (!f) return;
+  const r = new FileReader();
+  r.onload = e => {
+    const img = document.getElementById('photo-preview');
+    img.src = e.target.result; img.style.display = 'block';
+    document.getElementById('photo-ph').style.display = 'none';
+    S._photo = e.target.result;
+  };
+  r.readAsDataURL(f);
+}
+
+function go(from) {
+  if (from === 0) {
+    const n = document.getElementById('s-name').value.trim();
+    const a = +document.getElementById('s-age').value;
+    if (!n) { showToast('Please enter your name'); return; }
+    if (!a || a < 18) { showToast('You must be 18+'); return; }
+  }
+  if (from === 1 && !S.selectedLooking) {
+    showToast('Let us know what you\'re looking for'); return;
+  }
+  setupStepIdx = from + 1;
+  document.querySelectorAll('.setup-step').forEach(el => el.classList.remove('active'));
+  document.getElementById('step-' + setupStepIdx).classList.add('active');
+  const pct = ((setupStepIdx + 1) / TOTAL_STEPS) * 100;
+  document.getElementById('progress-fill').style.width = pct + '%';
+}
+
+function finishSetup() {
+  const interests = [...document.querySelectorAll('.vibe-btn.sel')].map(el => el.textContent);
+  S.user = {
+    name: document.getElementById('s-name').value.trim(),
+    age: +document.getElementById('s-age').value,
+    gender: document.getElementById('s-gender').value,
+    city: document.getElementById('s-city').value,
+    looking: S.selectedLooking || 'anything',
+    photo: S._photo || 'https://randomuser.me/api/portraits/lego/1.jpg',
+    interests,
+    answers: {
+      sunday:   document.getElementById('q-sunday').value,
+      hottake:  document.getElementById('q-hottake').value,
+      obsessed: document.getElementById('q-obsessed').value,
+      random:   document.getElementById('q-random').value,
+    },
+  };
+  startApp();
+}
+
+// ── APP INIT ──────────────────────────────────────────────
+function startApp() {
+  document.getElementById('auth').style.display = 'none';
+  document.getElementById('setup').style.display = 'none';
+  document.getElementById('app').style.display = 'flex';
+
+  document.getElementById('me-name').textContent = S.user.name + ', ' + S.user.age;
+  document.getElementById('me-sub').textContent = S.user.city + ' · ' + capitalize(S.user.looking);
+  document.getElementById('me-photo').src = S.user.photo;
+  document.getElementById('match-my-av').src = S.user.photo;
+  document.getElementById('me-city-val').textContent = S.user.city + ' ›';
+  document.getElementById('me-looking-val').textContent = capitalize(S.user.looking) + ' ›';
+
+  S.queue = shuffle([...PROFILES]);
+  renderDiscover();
+  buildSquads();
+}
+
+// ── DISCOVER ──────────────────────────────────────────────
+function renderDiscover() {
+  const scroll = document.getElementById('profile-scroll');
+  const empty = document.getElementById('empty-discover');
+  scroll.innerHTML = '';
+
+  if (S.queue.length === 0) {
+    scroll.style.display = 'none';
+    empty.classList.add('show');
+    return;
+  }
+  scroll.style.display = 'block';
+  empty.classList.remove('show');
+
+  S.queue.forEach((p, i) => {
+    const el = buildProfileCard(p);
+    if (i > 0) el.style.display = 'none';
+    scroll.appendChild(el);
+    setupPhotoSwipe(p.id);
+  });
+}
+
+function buildProfileCard(p) {
+  const userInterests = (S.user?.interests || []).map(i => i.replace(/^[\S]+\s/, '').toLowerCase());
+  const shared = p.interests.filter(i => {
+    const clean = i.toLowerCase().replace(/^[\S]+\s/, '');
+    return userInterests.some(u => u.includes(clean) || clean.includes(u));
+  });
+
+  const chips = p.interests.map(tag => {
+    const isShared = shared.includes(tag);
+    return `<span class="interest-chip${isShared ? ' shared' : ''}">${isShared ? '✓ ' : ''}${tag}</span>`;
+  }).join('');
+
+  const waveBars = Array.from({length: 28}, (_, i) => {
+    const h = 20 + Math.random() * 80;
+    return `<div class="wave-bar" style="height:${h}%;animation-delay:${i*0.05}s"></div>`;
+  }).join('');
+
+  const lookingClass = p.looking === 'dating' ? 'pill-dating' : p.looking === 'friends' ? 'pill-friends' : 'pill-anything';
+  const lookingLabel = p.looking === 'dating' ? '💕 Dating' : p.looking === 'friends' ? '🤝 Friendship' : '✨ Open to anything';
+
+  const div = document.createElement('div');
+  div.className = 'profile-card-full fade-in';
+  div.dataset.id = p.id;
+  div.innerHTML = `
+    <div class="pc-photo" id="pc-photo-${p.id}">
+      <img src="${p.img}" alt="${p.name}" onclick="openPhoto('${p.img}','${p.name}',${p.age},'${p.city}')">
+      <div class="swipe-hint swipe-hint-pass"  id="hint-pass-${p.id}"><div class="swipe-label">PASS</div></div>
+      <div class="swipe-hint swipe-hint-link"  id="hint-link-${p.id}"><div class="swipe-label link-label">LINK</div></div>
+      <div class="swipe-hint swipe-hint-spark" id="hint-spark-${p.id}"><div class="swipe-label spark-label">⚡ SPARK</div></div>
+      <div class="pc-photo-bottom">
+        <div class="pc-name-row">
+          <span class="pc-name">${p.name}</span>
+          <span class="pc-age">${p.age}</span>
+        </div>
+        <div class="pc-meta">
+          <span class="pc-city">📍 ${p.city} · ${p.dist}</span>
+          <span class="pc-dot">·</span>
+          <span class="pill ${lookingClass}">${lookingLabel}</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="pc-voice" onclick="playVoice(this)">
+      <div class="voice-play">▶</div>
+      <div class="voice-wave">${waveBars}</div>
+      <div class="voice-dur">0:14</div>
+    </div>
+
+    <div class="pc-answers">
+      ${p.answers.sunday   ? `<div class="answer-block"><div class="ans-q">☀️ My ideal Sunday</div><div class="ans-a">${p.answers.sunday}</div></div>` : ''}
+      ${p.answers.hottake  ? `<div class="answer-block"><div class="ans-q">🔥 Hot take</div><div class="ans-a">${p.answers.hottake}</div></div>` : ''}
+      ${p.answers.obsessed ? `<div class="answer-block"><div class="ans-q">🎯 Currently obsessed with</div><div class="ans-a">${p.answers.obsessed}</div></div>` : ''}
+      ${p.answers.random   ? `<div class="answer-block"><div class="ans-q">😂 Most random fact</div><div class="ans-a">${p.answers.random}</div></div>` : ''}
+    </div>
+
+    ${shared.length ? `<div style="font-size:11px;color:var(--teal);font-weight:700;margin-bottom:6px">✓ ${shared.length} shared interest${shared.length>1?'s':''}</div>` : ''}
+    <div class="pc-interests">${chips}</div>
+
+    <div class="pc-actions">
+      <button class="btn-pass" onclick="doPass(${p.id})">Pass</button>
+      <button class="btn-spark${S.sparksLeft <= 0 ? ' used' : ''}" onclick="doSpark(${p.id})" title="Spark — guaranteed connection">⚡</button>
+      <button class="btn-connect" id="btn-connect-${p.id}" onclick="doConnect(${p.id})" ${S.connectsLeft <= 0 ? 'disabled' : ''}>
+        ${S.connectsLeft > 0 ? 'Connect' : 'No connects left'}
+      </button>
+    </div>
+  `;
+  return div;
+}
+
+let voicePlaying = null;
+function playVoice(el) {
+  const bars = el.querySelectorAll('.wave-bar');
+  const playBtn = el.querySelector('.voice-play');
+  if (voicePlaying === el) {
+    bars.forEach(b => b.classList.remove('playing'));
+    playBtn.textContent = '▶';
+    voicePlaying = null;
+  } else {
+    if (voicePlaying) {
+      voicePlaying.querySelectorAll('.wave-bar').forEach(b => b.classList.remove('playing'));
+      voicePlaying.querySelector('.voice-play').textContent = '▶';
+    }
+    bars.forEach((b, i) => { b.classList.add('playing'); b.style.animationDelay = (i * 0.05) + 's'; });
+    playBtn.textContent = '■';
+    voicePlaying = el;
+    setTimeout(() => {
+      if (voicePlaying === el) {
+        bars.forEach(b => b.classList.remove('playing'));
+        playBtn.textContent = '▶';
+        voicePlaying = null;
+      }
+    }, 14000);
+  }
+}
+
+function advanceDiscover() {
+  const scroll = document.getElementById('profile-scroll');
+  const cards = scroll.querySelectorAll('.profile-card-full');
+  if (cards.length === 0) { renderDiscover(); return; }
+  cards[0].remove();
+  if (cards.length > 1) cards[1].style.display = '';
+  else renderDiscover();
+}
+
+function doConnect(profileId) {
+  if (S.connectsLeft <= 0) { openSub('connects'); return; }
+  const p = PROFILES.find(x => x.id === profileId);
+  if (!p) return;
+  S.connectsLeft--;
+  S.stats.connects++;
+  document.getElementById('connects-count').textContent = S.connectsLeft;
+  updateStats();
+  showToast(`Connected with ${p.name}! 🔗`);
+  S.queue = S.queue.filter(x => x.id !== profileId);
+  advanceDiscover();
+  if (Math.random() < 0.48) {
+    setTimeout(() => triggerMatch(p), 800);
+  }
+}
+
+function doPass(profileId) {
+  S.stats.passes++;
+  updateStats();
+  S.queue = S.queue.filter(x => x.id !== profileId);
+  advanceDiscover();
+}
+
+function resetQueue() {
+  S.queue = shuffle([...PROFILES]);
+  S.connectsLeft = 10;
+  document.getElementById('connects-count').textContent = '10';
+  renderDiscover();
+}
+
+// ── MATCH ─────────────────────────────────────────────────
+function triggerMatch(p) {
+  S.matches.push(p);
+  S.stats.matches++;
+  S.convos[p.id] = [{
+    from: 'them',
+    text: `Hey ${S.user?.name || 'you'}! Glad we linked 😊 Love your profile answers by the way.`,
+    time: nowTime(),
+  }];
+  S.pendingMatch = p;
+  updateStats();
+  updateLinkedUI();
+  document.getElementById('match-their-av').src = p.img;
+  document.getElementById('match-name').textContent = p.name;
+  document.getElementById('match-overlay').classList.add('show');
+}
+
+function closeMatch() {
+  document.getElementById('match-overlay').classList.remove('show');
+  S.pendingMatch = null;
+}
+
+function openMatchChat() {
+  const p = S.pendingMatch;
+  document.getElementById('match-overlay').classList.remove('show');
+  S.pendingMatch = null;
+  if (p) openChat(p);
+}
+
+// ── LINKED UI ─────────────────────────────────────────────
+function updateLinkedUI() {
+  const nmScroll = document.getElementById('new-matches-scroll');
+  const convoList = document.getElementById('convo-list');
+  const badge = document.getElementById('badge-linked');
+
+  nmScroll.innerHTML = '';
+  convoList.innerHTML = '';
+
+  if (S.matches.length === 0) {
+    nmScroll.innerHTML = '<div class="no-matches-hint">No links yet. Keep connecting!</div>';
+    convoList.innerHTML = '<div class="convo-empty"><div class="ce-icon">💬</div><p>When you link with someone, your conversation threads show up here.</p></div>';
+    badge.classList.remove('show');
+    return;
+  }
+
+  badge.textContent = S.matches.length;
+  badge.classList.add('show');
+
+  S.matches.forEach(p => {
+    const nm = document.createElement('div');
+    nm.className = 'new-match-item';
+    nm.innerHTML = `<div class="nm-ring"><img src="${p.img}" alt="${p.name}"></div><span>${p.name}</span>`;
+    nm.onclick = () => openChat(p);
+    nmScroll.appendChild(nm);
+
+    const convos = S.convos[p.id] || [];
+    const last = convos[convos.length - 1];
+    const row = document.createElement('div');
+    row.className = 'convo-row';
+    const preview = last ? (last.from === 'me' ? 'You: ' + last.text : last.text) : 'Say something!';
+    row.innerHTML = `
+      <div class="convo-ava"><img src="${p.img}" alt="${p.name}"></div>
+      <div class="convo-body">
+        <div class="convo-top">
+          <div class="convo-name">${p.name}</div>
+          <div class="convo-time">${last ? last.time : 'now'}</div>
+        </div>
+        <div class="convo-preview${last && last.from === 'them' ? ' unread' : ''}">${preview}</div>
+      </div>
+      ${last && last.from === 'them' ? '<div class="unread-dot"></div>' : ''}
+    `;
+    row.onclick = () => openChat(p);
+    convoList.appendChild(row);
+  });
+}
+
+// ── CHAT ──────────────────────────────────────────────────
+function openChat(p) {
+  S.currentChat = p;
+  document.getElementById('chat-ava-img').src = p.img;
+  document.getElementById('chat-name').textContent = p.name;
+  renderChatMsgs();
+  document.getElementById('chat-view').classList.add('open');
+  setTimeout(() => document.getElementById('chat-input').focus(), 300);
+}
+
+function closeChat() {
+  document.getElementById('chat-view').classList.remove('open');
+  S.currentChat = null;
+  updateLinkedUI();
+}
+
+function renderChatMsgs() {
+  const container = document.getElementById('chat-msgs');
+  container.innerHTML = `<div class="chat-date-sep">Today</div>`;
+  const msgs = S.convos[S.currentChat?.id] || [];
+  msgs.forEach(m => {
+    const el = document.createElement('div');
+    el.className = 'bubble ' + (m.from === 'me' ? 'b-out' : 'b-in');
+    el.textContent = m.text;
+    container.appendChild(el);
+  });
+  container.scrollTop = container.scrollHeight;
+}
+
+function sendMsg() {
+  const inp = document.getElementById('chat-input');
+  const text = inp.value.trim();
+  if (!text || !S.currentChat) return;
+  inp.value = '';
+  const id = S.currentChat.id;
+  if (!S.convos[id]) S.convos[id] = [];
+  S.convos[id].push({ from: 'me', text, time: nowTime() });
+  renderChatMsgs();
+  setTimeout(() => {
+    const reply = REPLIES[Math.floor(Math.random() * REPLIES.length)];
+    S.convos[id].push({ from: 'them', text: reply, time: nowTime() });
+    if (S.currentChat?.id === id) renderChatMsgs();
+  }, 1000 + Math.random() * 1000);
+}
+
+// ── SQUADS ────────────────────────────────────────────────
+function buildSquads() {
+  const list = document.getElementById('squads-list');
+  list.innerHTML = '';
+  SQUADS_DATA.forEach(sq => {
+    const card = document.createElement('div');
+    card.className = 'squad-card';
+    const faces = sq.imgs.map(img => `<div class="squad-face"><img src="${img}" alt=""></div>`).join('');
+    const joined = S.joinedSquads.has(sq.id);
+    card.innerHTML = `
+      <div class="squad-banner">
+        <div class="squad-banner-faces">${faces}</div>
+      </div>
+      <div class="squad-info">
+        <div class="squad-top">
+          <div class="squad-name">${sq.name}</div>
+          <div class="squad-count">${sq.count} members</div>
+        </div>
+        <div class="squad-desc">${sq.desc}</div>
+        <div class="squad-footer">
+          <div class="squad-vibe-tags">${sq.vibe.map(v => `<span class="squad-vtag">${v}</span>`).join('')}</div>
+          ${joined
+            ? `<button class="btn-requested">Requested</button>`
+            : `<button class="btn-join" onclick="joinSquad(${sq.id},this)">Join</button>`
+          }
+        </div>
+      </div>
+    `;
+    list.appendChild(card);
+  });
+}
+
+function joinSquad(id, btn) {
+  S.joinedSquads.add(id);
+  btn.className = 'btn-requested';
+  btn.textContent = 'Requested';
+  btn.disabled = true;
+  showToast('Request sent! The squad will get back to you 👋');
+}
+
+// ── PROFILE ───────────────────────────────────────────────
+function updateMePhoto(input) {
+  const f = input.files[0]; if (!f) return;
+  const r = new FileReader();
+  r.onload = e => {
+    document.getElementById('me-photo').src = e.target.result;
+    document.getElementById('match-my-av').src = e.target.result;
+    if (S.user) S.user.photo = e.target.result;
+  };
+  r.readAsDataURL(f);
+}
+
+function updateStats() {
+  document.getElementById('s-connects').textContent = S.stats.connects;
+  document.getElementById('s-matches').textContent = S.stats.matches;
+  document.getElementById('s-passes').textContent = S.stats.passes;
+}
+
+function logout() {
+  if (!confirm('Log out of Linked?')) return;
+  location.reload();
+}
+
+// ── NAV ───────────────────────────────────────────────────
+function switchTab(tab) {
+  document.querySelectorAll('.tab-panel').forEach(el => el.classList.remove('active'));
+  document.querySelectorAll('.nav-btn').forEach(el => el.classList.remove('active'));
+  document.getElementById(tab + '-tab').classList.add('active');
+  document.getElementById('nav-' + (tab === 'linked' ? 'linked' : tab)).classList.add('active');
+  if (tab === 'linked') updateLinkedUI();
+}
+
+// ── TOAST ─────────────────────────────────────────────────
+function showToast(msg) {
+  const t = document.createElement('div');
+  t.textContent = msg;
+  Object.assign(t.style, {
+    position:'fixed', bottom:'88px', left:'50%', transform:'translateX(-50%)',
+    background:'rgba(21,21,21,0.96)', color:'var(--text)', padding:'12px 20px',
+    borderRadius:'50px', fontSize:'13px', fontWeight:'600', zIndex:'9999',
+    maxWidth:'85vw', textAlign:'center', boxShadow:'0 4px 24px rgba(0,0,0,0.6)',
+    border:'1px solid rgba(255,255,255,0.06)', opacity:'0', transition:'opacity 0.2s',
+    backdropFilter:'blur(12px)',
+  });
+  document.body.appendChild(t);
+  requestAnimationFrame(() => t.style.opacity = '1');
+  setTimeout(() => { t.style.opacity = '0'; setTimeout(() => t.remove(), 220); }, 2600);
+}
+
+// ── UTILS ─────────────────────────────────────────────────
+function shuffle(arr) {
+  for (let i = arr.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [arr[i], arr[j]] = [arr[j], arr[i]];
+  }
+  return arr;
+}
+
+function capitalize(s) { return s ? s[0].toUpperCase() + s.slice(1) : ''; }
+
+function nowTime() {
+  const d = new Date();
+  return `${d.getHours()}:${String(d.getMinutes()).padStart(2,'0')}`;
+}
+
+// ── PHOTO SWIPE ───────────────────────────────────────────
+function setupPhotoSwipe(profileId) {
+  // attach to the whole card so you can swipe from anywhere
+  const scroll = document.getElementById('profile-scroll');
+  const card   = scroll && scroll.querySelector(`.profile-card-full[data-id="${profileId}"]`);
+  const photo  = document.getElementById('pc-photo-' + profileId);
+  if (!card || !photo) return;
+
+  const hintPass  = document.getElementById('hint-pass-'  + profileId);
+  const hintLink  = document.getElementById('hint-link-'  + profileId);
+  const hintSpark = document.getElementById('hint-spark-' + profileId);
+
+  let startX, startY, curX = 0, curY = 0, locked = null, dragging = false;
+
+  const clearHints = () => {
+    hintPass.style.opacity = hintLink.style.opacity = hintSpark.style.opacity = 0;
+  };
+
+  const onStart = (x, y) => {
+    startX = x; startY = y;
+    dragging = true; locked = null; curX = 0; curY = 0;
+    photo.style.transition = 'none';
+  };
+
+  const onMove = (x, y) => {
+    if (!dragging) return;
+    const dx = x - startX, dy = y - startY;
+    if (!locked) {
+      if (Math.abs(dx) > 8 || Math.abs(dy) > 8)
+        locked = Math.abs(dx) > Math.abs(dy) ? 'h' : 'v';
+      else return;
+    }
+    if (locked === 'v') return;
+
+    curX = dx; curY = dy;
+    const rot = dx * 0.07;
+    photo.style.transform = `translateX(${dx}px) rotate(${rot}deg)`;
+
+    if (dx > 20) {
+      hintLink.style.opacity = Math.min(1, (dx - 20) / 70);
+      hintPass.style.opacity = hintSpark.style.opacity = 0;
+    } else if (dx < -20) {
+      hintPass.style.opacity = Math.min(1, (-dx - 20) / 70);
+      hintLink.style.opacity = hintSpark.style.opacity = 0;
+    } else {
+      clearHints();
+    }
+  };
+
+  const onEnd = () => {
+    if (!dragging) return;
+    dragging = false;
+
+    if (locked === 'h' && curX > 90) {
+      // fly right then connect
+      photo.style.transition = 'transform 0.35s ease-in, opacity 0.35s ease-in';
+      photo.style.transform = 'translateX(160%) rotate(22deg)';
+      photo.style.opacity = '0';
+      clearHints();
+      setTimeout(() => doConnect(profileId), 320);
+    } else if (locked === 'h' && curX < -90) {
+      // fly left then pass
+      photo.style.transition = 'transform 0.35s ease-in, opacity 0.35s ease-in';
+      photo.style.transform = 'translateX(-160%) rotate(-22deg)';
+      photo.style.opacity = '0';
+      clearHints();
+      setTimeout(() => doPass(profileId), 320);
+    } else {
+      photo.style.transition = 'transform 0.3s ease, opacity 0.3s ease';
+      photo.style.transform = '';
+      photo.style.opacity = '1';
+      clearHints();
+    }
+    curX = 0; curY = 0;
+  };
+
+  // touch — on the whole card
+  card.addEventListener('touchstart', e => onStart(e.touches[0].clientX, e.touches[0].clientY), { passive: true });
+  card.addEventListener('touchmove', e => {
+    if (locked === 'h') e.preventDefault();
+    onMove(e.touches[0].clientX, e.touches[0].clientY);
+  }, { passive: false });
+  card.addEventListener('touchend', onEnd);
+
+  // mouse — allow drag from anywhere on card
+  card.addEventListener('mousedown', e => {
+    if (['BUTTON','INPUT','TEXTAREA','SELECT'].includes(e.target.tagName)) return;
+    onStart(e.clientX, e.clientY);
+  });
+  window.addEventListener('mousemove', e => { if (dragging) onMove(e.clientX, e.clientY); });
+  window.addEventListener('mouseup',   () => { if (dragging) onEnd(); });
+}
+
+// ── SPARK ─────────────────────────────────────────────────
+function doSpark(profileId) {
+  if (S.sparksLeft <= 0) { showToast('Only 1 Spark per day — come back tomorrow ⚡'); return; }
+  const p = PROFILES.find(x => x.id === profileId);
+  if (!p) return;
+  S.sparksLeft--;
+  S.connectsLeft = Math.max(0, S.connectsLeft - 1);
+  S.stats.connects++;
+  document.getElementById('connects-count').textContent = S.connectsLeft;
+  updateStats();
+  showToast(`⚡ Spark sent to ${p.name}! They'll be notified.`);
+  S.queue = S.queue.filter(x => x.id !== profileId);
+  advanceDiscover();
+  setTimeout(() => triggerMatch(p), 600);
+}
+
+// ── SPOTLIGHT ─────────────────────────────────────────────
+function doSpotlight() {
+  if (S.spotlightTimer) { showToast('Spotlight is already active! ✨'); return; }
+  const pill   = document.getElementById('spotlight-pill');
+  const label  = document.getElementById('spotlight-label');
+  let secs = 30 * 60;
+  pill.classList.add('active');
+  showToast('🔦 You\'re in the Spotlight for 30 minutes!');
+  S.spotlightTimer = setInterval(() => {
+    secs--;
+    const m = Math.floor(secs / 60), s = secs % 60;
+    label.textContent = `${m}:${String(s).padStart(2,'0')}`;
+    if (secs <= 0) {
+      clearInterval(S.spotlightTimer);
+      S.spotlightTimer = null;
+      pill.classList.remove('active');
+      label.textContent = 'Spotlight';
+      showToast('Spotlight ended — hope you got some good connections!');
+    }
+  }, 1000);
+}
+
+// ── SUBSCRIPTION ──────────────────────────────────────────
+let selectedPlanId = 'gold';
+
+function openSub(trigger) {
+  selectPlan('gold');
+  document.getElementById('sub-screen').classList.add('open');
+  document.getElementById('sub-screen').scrollTop = 0;
+}
+
+function closeSub() {
+  document.getElementById('sub-screen').classList.remove('open');
+}
+
+function selectPlan(id) {
+  selectedPlanId = id;
+  ['gold','plus','annual'].forEach(p => {
+    document.getElementById('plan-' + p).classList.toggle('selected', p === id);
+  });
+  const labels = { gold: 'Get Linked Gold', plus: 'Get Linked Plus', annual: 'Get Gold Annual' };
+  document.getElementById('sub-cta-btn').textContent = labels[id];
+}
+
+function subscribeToPlan() {
+  S.isPremium = selectedPlanId;
+  S.connectsLeft = 9999;
+  if (selectedPlanId === 'gold' || selectedPlanId === 'annual') S.sparksLeft = 5;
+  closeSub();
+  updatePremiumUI();
+  showToast('Welcome to Linked Premium! ✦');
+  // unblur likes
+  document.querySelectorAll('.like-card img').forEach(img => {
+    img.style.filter = 'none';
+    img.style.transform = 'none';
+  });
+  document.querySelectorAll('.lock-layer').forEach(el => el.style.display = 'none');
+}
+
+function updatePremiumUI() {
+  if (!S.isPremium) return;
+  const banner = document.getElementById('premium-banner');
+  banner.classList.add('active-premium');
+  const planNames = { gold: 'Linked Gold', plus: 'Linked Plus', annual: 'Gold Annual' };
+  document.getElementById('pb-title').textContent = planNames[S.isPremium] + ' ✦';
+  document.getElementById('pb-perks').innerHTML = `
+    <div class="pb-perk">Unlimited connects active</div>
+    <div class="pb-perk">${S.isPremium !== 'plus' ? '5 Sparks per day' : '1 Spark per day'}</div>
+    <div class="pb-perk">Likes visible — no blur</div>
+  `;
+  document.getElementById('pb-btn').textContent = 'Manage subscription';
+}
+
+// ── PHOTO FULLSCREEN ──────────────────────────────────────
+function openPhoto(src, name, age, city) {
+  document.getElementById('photo-fs-img').src  = src;
+  document.getElementById('photo-fs-name').textContent = `${name}, ${age}`;
+  document.getElementById('photo-fs-sub').textContent  = `📍 ${city}`;
+  document.getElementById('photo-fs').classList.add('open');
+}
+function closePhoto() {
+  document.getElementById('photo-fs').classList.remove('open');
+}
+</script>
+</body>
+</html>
