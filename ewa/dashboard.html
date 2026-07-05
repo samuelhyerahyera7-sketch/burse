@@ -7,7 +7,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="/styles.css">
   <style>
     /* Dashboard-only overrides */
     body { background: #f0f4f8; }
@@ -30,21 +30,23 @@
 
     <!-- ─── SIDEBAR ─── -->
     <aside class="dash-sidebar" aria-label="Sidebar navigation">
-      <a href="/dashboard" class="active"><span>💳</span> Dashboard</a>
-      <a href="#"><span>📤</span> Withdraw</a>
-      <a href="#"><span>📋</span> Transactions</a>
-      <a href="#"><span>🏦</span> Bank Account</a>
-      <a href="#"><span>📊</span> Wellness</a>
-      <a href="#"><span>⚙️</span> Settings</a>
-      <a href="/" style="margin-top:auto"><span>←</span> Back to site</a>
-      <a href="#" onclick="signOut()" style="color:#f87171;"><span>🚪</span> Sign out</a>
+      <a href="/dashboard" class="active">Dashboard</a>
+      <a href="#">Withdraw</a>
+      <a href="#">Transactions</a>
+      <a href="#">Bank Account</a>
+      <a href="/leave">Leave</a>
+      <a href="#" id="payrollAdminLink" style="display:none">Run Payroll</a>
+      <a href="#">Wellness</a>
+      <a href="#">Settings</a>
+      <a href="/" style="margin-top:auto">Back to site</a>
+      <a href="#" onclick="signOut()" style="color:#f87171;">Sign out</a>
     </aside>
 
     <!-- ─── MAIN ─── -->
     <main class="dash-main">
 
       <div class="dash-greeting">
-        <h2 id="greetingText">Welcome back 👋</h2>
+        <h2 id="greetingText">Welcome back</h2>
         <p id="greetingSub">Loading your pay cycle...</p>
       </div>
 
@@ -112,12 +114,12 @@
                 </div>
               </div>
               <div style="padding:0 20px 20px">
-                <a href="#" onclick="openBankModal(event)" style="font-size:0.82rem;font-weight:600;color:var(--green)">Change bank account →</a>
+                <a href="#" onclick="openBankModal(event)" style="font-size:0.82rem;font-weight:600;color:var(--green)">Change bank account</a>
               </div>
             </div>
             <div id="bankEmpty" style="padding:20px 24px 24px;display:block">
               <p style="font-size:0.85rem;color:#8099b0;margin-bottom:12px">No bank account linked yet. Add one to enable withdrawals.</p>
-              <a href="#" onclick="openBankModal(event)" style="font-size:0.82rem;font-weight:600;color:var(--teal, #2ab3b3)">+ Add bank account →</a>
+              <a href="#" onclick="openBankModal(event)" style="font-size:0.82rem;font-weight:600;color:var(--teal, #2ab3b3)">Add bank account</a>
             </div>
           </div>
 
@@ -157,7 +159,6 @@
   <div id="withdrawModal" class="modal-overlay" hidden onclick="closeIfOutside(event)">
     <div class="modal-box" role="dialog" aria-modal="true" aria-labelledby="modal-title">
       <button class="modal-close" onclick="closeWithdrawModal()" aria-label="Close">✕</button>
-      <div class="modal-icon">💸</div>
       <h2 id="modal-title">Withdraw wages</h2>
       <p class="modal-sub" id="modalSub">Available: <strong>R —</strong></p>
 
@@ -210,7 +211,6 @@
   <div id="bankModal" class="modal-overlay" hidden onclick="closeBankIfOutside(event)">
     <div class="modal-box" role="dialog" aria-modal="true" aria-labelledby="bank-modal-title">
       <button class="modal-close" onclick="closeBankModal()" aria-label="Close">✕</button>
-      <div class="modal-icon">🏦</div>
       <h2 id="bank-modal-title">Add bank account</h2>
       <p class="modal-sub" style="margin-bottom:20px">Your withdrawal funds will be sent here.</p>
 
@@ -253,7 +253,7 @@
 
   <!-- ─── SUCCESS TOAST ─── -->
   <div id="successToast" class="toast" hidden>
-    ✅ Withdrawal sent! Funds arriving in ~2 minutes.
+    Withdrawal sent! Funds arriving in ~2 minutes.
   </div>
 
   <style>
@@ -386,7 +386,16 @@
       if (user.email === ADMIN_EMAIL) { window.location.href = '/admin'; return; }
       await loadProfile(user);
       await loadTransactions(user.id);
+      checkPayrollAccess(user.id);
     });
+
+    async function checkPayrollAccess(userId) {
+      const { data: company } = await sb.from('payroll_companies').select('id').eq('owner_id', userId).maybeSingle();
+      const link = document.getElementById('payrollAdminLink');
+      link.href = '/payroll-admin';
+      link.style.display = 'flex';
+      link.textContent = company ? 'Run Payroll' : 'Set Up Payroll';
+    }
 
     async function loadProfile(user) {
       const { data: p } = await sb.from('profiles').select('*').eq('id', user.id).single();
@@ -400,7 +409,7 @@
       // Greeting
       const hour = new Date().getHours();
       const timeOfDay = hour < 12 ? 'morning' : hour < 17 ? 'afternoon' : 'evening';
-      document.getElementById('greetingText').textContent = `Good ${timeOfDay}, ${firstName} 👋`;
+      document.getElementById('greetingText').textContent = `Good ${timeOfDay}, ${firstName}`;
 
       // Pay cycle line
       const today = new Date();
@@ -474,7 +483,7 @@
                           : w.status === 'declined' ? ' <span style="font-size:0.7rem;background:#fee2e2;color:#dc2626;padding:1px 6px;border-radius:4px;font-weight:600;">Declined</span>' : '';
         return `
           <div class="tx-item">
-            <div class="tx-icon tx-icon-withdraw">💸</div>
+            <div class="tx-icon tx-icon-withdraw">W</div>
             <div class="tx-detail">
               <strong>Wage withdrawal${statusBadge}</strong>
               <span>${date}</span>
@@ -482,7 +491,7 @@
             <div class="tx-amount credit">+${fmt(w.amount)}</div>
           </div>
           <div class="tx-item">
-            <div class="tx-icon tx-icon-fee">🏷️</div>
+            <div class="tx-icon tx-icon-fee">F</div>
             <div class="tx-detail">
               <strong>Burse ${w.fee >= 50 ? 'instant' : 'standard'} withdrawal fee</strong>
               <span>${date}</span>
@@ -585,7 +594,7 @@
       closeBankModal();
 
       const toast = document.getElementById('successToast');
-      toast.textContent = '✅ Bank account saved successfully.';
+      toast.textContent = 'Bank account saved successfully.';
       toast.hidden = false;
       setTimeout(() => { toast.hidden = true; }, 4000);
     }
