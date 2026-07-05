@@ -244,33 +244,33 @@
     </div>
     <nav class="sidebar-nav">
       <a class="nav-item active" onclick="showSection('overview')" href="#">
-        <span class="icon">📊</span> Overview
+        Overview
       </a>
       <a class="nav-item" onclick="showSection('users')" href="#">
-        <span class="icon">👥</span> Users
+        Users
       </a>
       <a class="nav-item" onclick="showSection('transactions')" href="#">
-        <span class="icon">💸</span> Transactions
+        Transactions
       </a>
       <a class="nav-item" onclick="showSection('employers')" href="#">
-        <span class="icon">🏢</span> Employers
+        Employers
       </a>
       <a class="nav-item" onclick="showSection('payroll')" href="#">
-        <span class="icon">🔗</span> Payroll
+        Payroll
       </a>
       <a class="nav-item" onclick="showSection('withdrawals')" href="#">
-        <span class="icon">⚡</span> Withdrawals
+        Withdrawals
       </a>
       <a class="nav-item" onclick="showSection('settings')" href="#">
-        <span class="icon">⚙️</span> Settings
+        Settings
       </a>
     </nav>
     <div class="sidebar-footer">
       <a class="nav-item" href="/" style="text-decoration:none;">
-        <span class="icon">←</span> Back to site
+        Back to site
       </a>
       <a class="nav-item" onclick="signOut()" href="#" style="color:#f87171;">
-        <span class="icon">🚪</span> Sign out
+        Sign out
       </a>
     </div>
   </aside>
@@ -323,7 +323,7 @@
           <div class="card">
             <div class="card-header">
               <span class="card-title">Recent Activity</span>
-              <span class="card-action" onclick="showSection('transactions')">View all →</span>
+              <span class="card-action" onclick="showSection('transactions')">View all</span>
             </div>
             <div id="recent-activity">
               <div class="loading">Loading activity...</div>
@@ -414,7 +414,7 @@
         </div>
         <div style="display:flex;gap:12px;margin-bottom:20px;flex-wrap:wrap;">
           <a href="/payroll-setup" class="btn-primary" style="text-decoration:none;padding:9px 20px;font-size:0.85rem;">+ Add Payroll Connection</a>
-          <button class="filter-btn" onclick="loadPayrollConnections()">↺ Refresh</button>
+          <button class="filter-btn" onclick="loadPayrollConnections()">Refresh</button>
         </div>
         <div id="payroll-connections-wrap">
           <div class="loading">Loading connections...</div>
@@ -586,17 +586,17 @@
 
     if (!conns || conns.length === 0) {
       wrap.innerHTML = `<div class="card" style="text-align:center;padding:40px;color:var(--soft);">
-        No payroll connections yet. <a href="/payroll-setup" style="color:var(--teal);font-weight:600;">Add the first one →</a>
+        No payroll connections yet. <a href="/payroll-setup" style="color:var(--teal);font-weight:600;">Add the first one</a>
       </div>`;
       return;
     }
 
-    const providerIcons = { sage:'🟢', payspace:'🔵', simplepay:'🟡', csv:'📄' };
+    const providerColors = { sage:'#16a34a', payspace:'#2563eb', simplepay:'#b45309', csv:'#64748b' };
     const providerNames = { sage:'Sage Business Cloud', payspace:'PaySpace', simplepay:'SimplePay', csv:'CSV Upload' };
 
     wrap.innerHTML = `<div style="display:grid;gap:14px;">` + conns.map(c => `
       <div class="card" style="display:flex;align-items:center;gap:20px;flex-wrap:wrap;">
-        <div style="font-size:2rem;">${providerIcons[c.provider] || '🔗'}</div>
+        <div style="width:44px;height:44px;border-radius:50%;background:${providerColors[c.provider] || '#7a8fb0'};color:#fff;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:0.85rem;flex-shrink:0;">${(providerNames[c.provider] || c.provider).slice(0,2).toUpperCase()}</div>
         <div style="flex:1;min-width:160px;">
           <div style="font-weight:700;font-size:0.95rem;">${c.company_name || 'Unnamed Company'}</div>
           <div style="font-size:0.82rem;color:var(--soft);">${providerNames[c.provider] || c.provider}</div>
@@ -609,7 +609,7 @@
           <span class="badge ${c.status === 'active' ? 'badge-green' : c.status === 'error' ? 'badge-red' : 'badge-yellow'}">${c.status}</span>
           <div style="font-size:0.72rem;color:var(--soft);margin-top:4px;">${c.last_synced_at ? 'Synced ' + new Date(c.last_synced_at).toLocaleDateString('en-ZA') : 'Never synced'}</div>
         </div>
-        <button onclick="triggerSync('${c.id}')" class="btn-primary" style="padding:7px 16px;font-size:0.8rem;">↺ Sync Now</button>
+        <button onclick="triggerSync('${c.id}')" class="btn-primary" style="padding:7px 16px;font-size:0.8rem;">Sync Now</button>
         <a href="/payroll-setup?edit=${c.id}" class="filter-btn" style="text-decoration:none;padding:7px 14px;font-size:0.8rem;">Edit</a>
       </div>`).join('') + `</div>`;
   }
@@ -665,7 +665,7 @@
     const wrap = document.getElementById('employers-table-wrap');
     const { data } = await sb.from('payroll_connections').select('*').order('created_at', { ascending: false });
     if (!data || data.length === 0) {
-      wrap.innerHTML = '<div style="text-align:center;padding:30px;color:var(--soft);font-size:0.85rem;">No employers connected yet. <a href="/payroll-setup" style="color:var(--teal);font-weight:600;">Add the first one →</a></div>';
+      wrap.innerHTML = '<div style="text-align:center;padding:30px;color:var(--soft);font-size:0.85rem;">No employers connected yet. <a href="/payroll-setup" style="color:var(--teal);font-weight:600;">Add the first one</a></div>';
       return;
     }
     const providerNames = { sage:'Sage Business Cloud', payspace:'PaySpace', simplepay:'SimplePay', csv:'CSV Upload' };
@@ -749,7 +749,7 @@
     } catch (e) {
       alert('Sync failed: ' + e.message);
     } finally {
-      btn.textContent = '↺ Sync Now';
+      btn.textContent = 'Sync Now';
       btn.disabled = false;
     }
   }

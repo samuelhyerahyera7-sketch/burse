@@ -119,15 +119,15 @@
   <aside class="sidebar">
     <div class="sidebar-logo"><span class="b">B</span><span class="u">urse</span><small>Payroll</small></div>
     <nav class="sidebar-nav">
-      <a class="nav-item active" onclick="showSection('overview')"><span class="icon">📊</span> Overview</a>
-      <a class="nav-item" onclick="showSection('company')"><span class="icon">🏢</span> Company Setup</a>
-      <a class="nav-item" onclick="showSection('staff')"><span class="icon">👥</span> Staff</a>
-      <a class="nav-item" onclick="showSection('runs')"><span class="icon">💰</span> Pay Runs</a>
-      <a class="nav-item" onclick="showSection('leave')"><span class="icon">🗓️</span> Leave</a>
-      <a class="nav-item" onclick="showSection('reports')"><span class="icon">📄</span> Statutory Reports</a>
+      <a class="nav-item active" onclick="showSection('overview')">Overview</a>
+      <a class="nav-item" onclick="showSection('company')">Company Setup</a>
+      <a class="nav-item" onclick="showSection('staff')">Staff</a>
+      <a class="nav-item" onclick="showSection('runs')">Pay Runs</a>
+      <a class="nav-item" onclick="showSection('leave')">Leave</a>
+      <a class="nav-item" onclick="showSection('reports')">Statutory Reports</a>
     </nav>
     <div class="sidebar-footer">
-      <a class="nav-item" href="/dashboard"><span class="icon">←</span> Back to Burse</a>
+      <a class="nav-item" href="/">Back to Burse</a>
     </div>
   </aside>
 
@@ -148,7 +148,7 @@
         <div class="card" id="setupPrompt" style="display:none">
           <div class="card-title">Set up your company to get started</div>
           <p style="font-size:0.85rem;color:var(--soft);margin:10px 0 16px">Add your PAYE, UIF and SDL reference numbers so Burse can calculate statutory deductions correctly.</p>
-          <button class="btn-primary" onclick="showSection('company')">Set up company →</button>
+          <button class="btn-primary" onclick="showSection('company')">Set up company</button>
         </div>
         <div class="card">
           <div class="card-header"><div class="card-title">Recent pay runs</div><a class="btn-outline btn-sm" onclick="showSection('runs')">View all</a></div>
@@ -284,7 +284,7 @@
       </div>
     </div>
     <div class="checkbox-row"><input type="checkbox" id="s-eti" checked onchange="updateEtiAgeWarning()"><label for="s-eti" style="margin:0">Eligible for Employment Tax Incentive (age 18–29, standard employer)</label></div>
-    <p class="form-hint" id="etiAgeWarning" style="display:none;color:var(--orange,#f97316);margin:-8px 0 14px">⚠ No SA ID number or date of birth entered — without one, this employee's age can't be determined and ETI will always calculate as R0, even with this box checked.</p>
+    <p class="form-hint" id="etiAgeWarning" style="display:none;color:var(--orange,#f97316);margin:-8px 0 14px">Warning: No SA ID number or date of birth entered — without one, this employee's age can't be determined and ETI will always calculate as R0, even with this box checked.</p>
     <div class="checkbox-row"><input type="checkbox" id="s-active" checked><label for="s-active" style="margin:0">Active</label></div>
     <div class="modal-actions">
       <button class="btn-outline" onclick="closeModal('staffModal')">Cancel</button>
@@ -536,7 +536,7 @@ async function loadRuns() {
 
   wrap.innerHTML = `<table><thead><tr><th>Period</th><th>Pay date</th><th>Frequency</th><th>Status</th><th></th></tr></thead><tbody>
     ${runsCache.map(r => `<tr>
-      <td>${r.period_start} → ${r.period_end}</td>
+      <td>${r.period_start} – ${r.period_end}</td>
       <td>${r.pay_date}</td>
       <td style="text-transform:capitalize">${r.frequency}</td>
       <td>${statusBadge(r.status)}</td>
@@ -582,7 +582,7 @@ async function viewRun(runId) {
   const run = runsCache.find(r => r.id === runId) || (await sb.from('payroll_runs').select('*').eq('id', runId).single()).data;
   const card = document.getElementById('runDetailCard');
   card.style.display = 'block';
-  document.getElementById('runDetailTitle').textContent = `Pay run: ${run.period_start} → ${run.period_end}`;
+  document.getElementById('runDetailTitle').textContent = `Pay run: ${run.period_start} – ${run.period_end}`;
 
   const actionsEl = document.getElementById('runDetailActions');
   actionsEl.innerHTML = '';
@@ -680,7 +680,7 @@ async function loadLeaveRequests() {
     ${requests.map(r => `<tr>
       <td>${esc(nameOf(r.staff_id))}</td>
       <td style="text-transform:capitalize">${r.leave_type.replace('_',' ')}</td>
-      <td>${r.start_date} → ${r.end_date}</td>
+      <td>${r.start_date} – ${r.end_date}</td>
       <td>${r.days}</td>
       <td>${leaveStatusBadge(r.status)}</td>
       <td>${r.status === 'pending' ? `<a class="btn-outline btn-sm" onclick="decideLeave('${r.id}','approved')">Approve</a> <a class="btn-danger btn-sm" onclick="decideLeave('${r.id}','rejected')">Reject</a>` : ''}</td>
@@ -711,7 +711,7 @@ async function decideLeave(id, decision) {
 function populateReportRunSelect() {
   const sel = document.getElementById('reportRunSelect');
   const finalized = runsCache.filter(r => r.status !== 'draft');
-  sel.innerHTML = '<option value="">— choose a run —</option>' + finalized.map(r => `<option value="${r.id}">${r.period_start} → ${r.period_end}</option>`).join('');
+  sel.innerHTML = '<option value="">— choose a run —</option>' + finalized.map(r => `<option value="${r.id}">${r.period_start} – ${r.period_end}</option>`).join('');
 }
 
 async function loadEmp201() {
@@ -724,7 +724,7 @@ async function loadEmp201() {
     wrap.innerHTML = `
       <div style="margin-top:16px;border-top:1px solid var(--border);padding-top:16px">
         <h3 style="font-size:1rem;margin-bottom:4px">${esc(r.company)}</h3>
-        <p style="font-size:0.8rem;color:var(--soft);margin-bottom:16px">PAYE ${r.paye_reference||'—'} · UIF ${r.uif_reference||'—'} · SDL ${r.sdl_reference||'—'} · Period ${r.period_start} → ${r.period_end} · Tax year ${r.tax_year}</p>
+        <p style="font-size:0.8rem;color:var(--soft);margin-bottom:16px">PAYE ${r.paye_reference||'—'} · UIF ${r.uif_reference||'—'} · SDL ${r.sdl_reference||'—'} · Period ${r.period_start} – ${r.period_end} · Tax year ${r.tax_year}</p>
         <table><tbody>
           <tr><td>Gross remuneration</td><td style="text-align:right">R ${r.totals.gross_remuneration.toLocaleString('en-ZA',{minimumFractionDigits:2})}</td></tr>
           <tr><td>PAYE deducted</td><td style="text-align:right">R ${r.totals.paye.toLocaleString('en-ZA',{minimumFractionDigits:2})}</td></tr>
@@ -747,7 +747,7 @@ function renderOverview() {
   document.getElementById('kpi-staff').textContent = staffCache.filter(s => s.active).length;
   const upcoming = runsCache.filter(r => r.status === 'draft').sort((a,b) => a.pay_date.localeCompare(b.pay_date))[0];
   document.getElementById('kpi-nextpay').textContent = upcoming ? upcoming.pay_date : '—';
-  document.getElementById('kpi-nextpay-sub').textContent = upcoming ? `${upcoming.period_start} → ${upcoming.period_end}` : 'No draft run scheduled';
+  document.getElementById('kpi-nextpay-sub').textContent = upcoming ? `${upcoming.period_start} – ${upcoming.period_end}` : 'No draft run scheduled';
 
   const lastFinal = runsCache.filter(r => r.status !== 'draft').sort((a,b) => b.pay_date.localeCompare(a.pay_date))[0];
   if (lastFinal) {
@@ -765,7 +765,7 @@ function renderOverview() {
   const runsWrap = document.getElementById('overviewRuns');
   if (runsCache.length === 0) { runsWrap.innerHTML = '<div class="empty">No pay runs yet.</div>'; return; }
   runsWrap.innerHTML = `<table><thead><tr><th>Period</th><th>Pay date</th><th>Status</th></tr></thead><tbody>
-    ${runsCache.slice(0,5).map(r => `<tr><td>${r.period_start} → ${r.period_end}</td><td>${r.pay_date}</td><td>${statusBadge(r.status)}</td></tr>`).join('')}
+    ${runsCache.slice(0,5).map(r => `<tr><td>${r.period_start} – ${r.period_end}</td><td>${r.pay_date}</td><td>${statusBadge(r.status)}</td></tr>`).join('')}
   </tbody></table>`;
 }
 

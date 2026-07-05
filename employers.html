@@ -114,7 +114,15 @@
     .demo-success {
       text-align: center; padding: 20px 0 8px;
     }
-    .demo-success .tick { font-size: 3rem; margin-bottom: 12px; }
+    .demo-success .tick {
+      width: 56px; height: 56px; margin: 0 auto 16px; border-radius: 50%;
+      background: rgba(42,179,179,0.12); display: flex; align-items: center; justify-content: center;
+    }
+    .demo-success .tick::after {
+      content: ''; width: 16px; height: 9px; margin-bottom: 4px;
+      border-left: 3px solid #2ab3b3; border-bottom: 3px solid #2ab3b3;
+      transform: rotate(-45deg);
+    }
     .demo-success h3 { font-size: 1.3rem; font-weight: 800; color: #0e1c40; margin-bottom: 8px; }
     .demo-success p { font-size: 0.88rem; color: #7a8fb0; line-height: 1.6; }
   </style>
@@ -219,7 +227,7 @@
       <!-- Success view -->
       <div id="demoSuccess" style="display:none">
         <div class="demo-success">
-          <div class="tick">✅</div>
+          <div class="tick"></div>
           <h3>We've got your request!</h3>
           <p>Thanks — someone from the Burse team will reach out to you within one business day to get things moving.</p>
         </div>

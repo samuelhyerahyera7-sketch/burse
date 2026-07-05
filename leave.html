@@ -43,7 +43,7 @@
 <body class="dash-body">
   <nav class="dash-nav" aria-label="Navigation">
     <a class="brand" href="/"><span class="brand-b">B</span><span class="brand-urse">urse</span></a>
-    <a href="/dashboard" style="font-size:0.85rem;font-weight:600;color:var(--teal,#2ab3b3)">← My Dashboard</a>
+    <a href="/" style="font-size:0.85rem;font-weight:600;color:var(--teal,#2ab3b3)">My Dashboard</a>
   </nav>
 
   <div class="leave-wrap" id="app">
@@ -137,7 +137,7 @@
             <table><thead><tr><th>Type</th><th>Dates</th><th>Days</th><th>Status</th></tr></thead><tbody>
               ${requests.map(r => `<tr>
                 <td style="text-transform:capitalize">${r.leave_type.replace('_',' ')}</td>
-                <td>${r.start_date} → ${r.end_date}</td>
+                <td>${r.start_date} – ${r.end_date}</td>
                 <td>${r.days}</td>
                 <td>${leaveBadge(r.status)}</td>
               </tr>`).join('')}

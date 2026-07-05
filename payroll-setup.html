@@ -49,7 +49,15 @@
     }
     .provider-card:hover { border-color: var(--teal); box-shadow: 0 4px 20px rgba(42,179,179,0.12); }
     .provider-card.selected { border-color: var(--teal); background: #f0fafa; box-shadow: 0 4px 20px rgba(42,179,179,0.18); }
-    .provider-card .icon { font-size: 2rem; margin-bottom: 10px; }
+    .provider-card .icon {
+      width: 40px; height: 40px; margin-bottom: 10px; border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      color: #fff; font-weight: 800; font-size: 0.8rem;
+    }
+    .provider-card .icon.icon-sage { background: #16a34a; }
+    .provider-card .icon.icon-payspace { background: #2563eb; }
+    .provider-card .icon.icon-simplepay { background: #b45309; }
+    .provider-card .icon.icon-csv { background: #64748b; }
     .provider-card .name { font-size: 0.95rem; font-weight: 700; color: var(--text); }
     .provider-card .desc { font-size: 0.78rem; color: var(--soft); margin-top: 3px; line-height: 1.4; }
 
@@ -149,7 +157,7 @@
 
   <div class="topbar">
     <a class="brand" href="/"><span class="b">B</span><span class="u">urse</span></a>
-    <a class="topbar-back" href="/admin">← Back to Admin</a>
+    <a class="topbar-back" href="/admin">Back to Admin</a>
   </div>
 
   <div class="page">
@@ -159,22 +167,22 @@
     <!-- Step 1: provider picker -->
     <div class="provider-grid" id="providerGrid">
       <div class="provider-card" onclick="selectProvider('sage')">
-        <div class="icon">🟢</div>
+        <div class="icon icon-sage">SA</div>
         <div class="name">Sage Business Cloud</div>
         <div class="desc">Sage One / Sage Business Cloud Payroll — most widely used in SA</div>
       </div>
       <div class="provider-card" onclick="selectProvider('payspace')">
-        <div class="icon">🔵</div>
+        <div class="icon icon-payspace">PS</div>
         <div class="name">PaySpace</div>
         <div class="desc">End-to-end payroll & HR platform, popular with mid-to-large SA businesses</div>
       </div>
       <div class="provider-card" onclick="selectProvider('simplepay')">
-        <div class="icon">🟡</div>
+        <div class="icon icon-simplepay">SP</div>
         <div class="name">SimplePay</div>
         <div class="desc">SA-focused payroll for SMEs — clean API with full employee data export</div>
       </div>
       <div class="provider-card" onclick="selectProvider('csv')">
-        <div class="icon">📄</div>
+        <div class="icon icon-csv">CSV</div>
         <div class="name">CSV Upload</div>
         <div class="desc">Works with any payroll system — upload a spreadsheet export any time</div>
       </div>
@@ -195,7 +203,7 @@
       <div class="oauth-box">
         <h4>Authorise with Sage</h4>
         <p>You'll be redirected to Sage to approve access, then returned here automatically.</p>
-        <a class="oauth-btn" href="#" onclick="startSageOAuth(event)">Connect Sage Account →</a>
+        <a class="oauth-btn" href="#" onclick="startSageOAuth(event)">Connect Sage Account</a>
       </div>
 
       <div class="or-divider">OR enter credentials manually</div>
@@ -218,12 +226,12 @@
         <div class="form-group">
           <label>Company ID</label>
           <input type="text" id="sage-company-id" placeholder="From Sage settings">
-          <span class="hint">Settings → Company → Company ID in Sage Business Cloud</span>
+          <span class="hint">Settings, then Company, then Company ID in Sage Business Cloud</span>
         </div>
       </div>
       <span class="hint">
-        Get credentials at <a href="https://developerselfservice.sageone.com" target="_blank">developerselfservice.sageone.com</a> →
-        Create App → OAuth 2.0. Set redirect URI to this page's URL.
+        Get credentials at <a href="https://developerselfservice.sageone.com" target="_blank">developerselfservice.sageone.com</a>.
+        Create App, then OAuth 2.0. Set redirect URI to this page's URL.
       </span>
 
       <div class="action-row">
@@ -237,7 +245,7 @@
     <!-- ── PaySpace form ── -->
     <div class="form-card" id="form-payspace">
       <h3>PaySpace</h3>
-      <p>Use PaySpace OAuth2 client credentials. Find these in PaySpace → Admin → API Access.</p>
+      <p>Use PaySpace OAuth2 client credentials. Find these in PaySpace, under Admin, then API Access.</p>
 
       <div class="company-row">
         <div class="form-group">
@@ -260,7 +268,7 @@
         <div class="form-group">
           <label>Company ID <span class="req">*</span></label>
           <input type="text" id="payspace-company-id" placeholder="Your PaySpace company ID">
-          <span class="hint">PaySpace → Admin → Company Settings → API</span>
+          <span class="hint">PaySpace, under Admin, then Company Settings, then API</span>
         </div>
         <div class="form-group">
           <label>API Base URL</label>
@@ -279,7 +287,7 @@
     <!-- ── SimplePay form ── -->
     <div class="form-card" id="form-simplepay">
       <h3>SimplePay</h3>
-      <p>Find your API key in SimplePay → Settings → Integrations → API Key.</p>
+      <p>Find your API key in SimplePay, under Settings, then Integrations, then API Key.</p>
 
       <div class="company-row">
         <div class="form-group">
@@ -291,7 +299,7 @@
       <div class="form-group">
         <label>API Key <span class="req">*</span></label>
         <input type="password" id="simplepay-api-key" placeholder="Your SimplePay API key">
-        <span class="hint">SimplePay → Settings → Integrations → API Key. Keep this secret.</span>
+        <span class="hint">SimplePay, under Settings, then Integrations, then API Key. Keep this secret.</span>
       </div>
 
       <div class="action-row">
@@ -408,7 +416,7 @@ EMP002,Thabo Khumalo,thabo@company.co.za,32000,24600,Finance,Accountant,88031250
     function showStatus(provider, type, msg) {
       const el = document.getElementById('status-' + provider);
       el.className = 'status-banner ' + type;
-      el.textContent = (type === 'success' ? '✓ ' : '✕ ') + msg;
+      el.textContent = msg;
       el.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
     }
 
