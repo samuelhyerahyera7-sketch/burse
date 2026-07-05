@@ -34,6 +34,8 @@
       <a href="#"><span>📤</span> Withdraw</a>
       <a href="#"><span>📋</span> Transactions</a>
       <a href="#"><span>🏦</span> Bank Account</a>
+      <a href="/leave"><span>🗓️</span> Leave</a>
+      <a href="#" id="payrollAdminLink" style="display:none"><span>🧾</span> Run Payroll</a>
       <a href="#"><span>📊</span> Wellness</a>
       <a href="#"><span>⚙️</span> Settings</a>
       <a href="/" style="margin-top:auto"><span>←</span> Back to site</a>
@@ -386,7 +388,19 @@
       if (user.email === ADMIN_EMAIL) { window.location.href = '/admin'; return; }
       await loadProfile(user);
       await loadTransactions(user.id);
+      checkPayrollAccess(user.id);
     });
+
+    async function checkPayrollAccess(userId) {
+      const { data: company } = await sb.from('payroll_companies').select('id').eq('owner_id', userId).maybeSingle();
+      const link = document.getElementById('payrollAdminLink');
+      link.href = '/payroll-admin';
+      link.style.display = 'flex';
+      link.textContent = '';
+      const icon = document.createElement('span'); icon.textContent = '🧾';
+      link.appendChild(icon);
+      link.appendChild(document.createTextNode(company ? ' Run Payroll' : ' Set Up Payroll'));
+    }
 
     async function loadProfile(user) {
       const { data: p } = await sb.from('profiles').select('*').eq('id', user.id).single();

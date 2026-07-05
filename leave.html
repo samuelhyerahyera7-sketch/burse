@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en-ZA">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Leave — Burse</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+  <style>
+    body { background: #f0f4f8; }
+    .leave-wrap { max-width: 880px; margin: 0 auto; padding: 32px 20px 60px; }
+    .leave-head { margin-bottom: 24px; }
+    .leave-head h1 { font-size: 1.5rem; font-weight: 900; color: var(--text); }
+    .leave-head p { font-size: 0.88rem; color: var(--text-mid); margin-top: 4px; }
+    .bal-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 14px; margin-bottom: 28px; }
+    .bal-card { background: #fff; border: 1px solid #e2e8f0; border-radius: 14px; padding: 18px; }
+    .bal-card .lbl { font-size: 0.72rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; color: #7a8fb0; margin-bottom: 8px; }
+    .bal-card .val { font-size: 1.6rem; font-weight: 900; color: var(--text); }
+    .bal-card .sub { font-size: 0.78rem; color: #7a8fb0; margin-top: 4px; }
+    .card { background:#fff; border:1px solid #e2e8f0; border-radius:14px; padding:22px; margin-bottom:20px; }
+    .card h2 { font-size: 0.95rem; font-weight: 800; margin-bottom: 16px; color: var(--text); }
+    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 12px; }
+    .form-group label { display:block; font-size:0.78rem; font-weight:600; color:#3d5070; margin-bottom:5px; }
+    .form-group input, .form-group select, .form-group textarea {
+      width:100%; padding:9px 12px; border:1.5px solid #e2e8f0; border-radius:8px;
+      font-size:0.85rem; font-family:'Inter',sans-serif; color:#0e1c40; outline:none;
+    }
+    .form-group input:focus, .form-group select:focus, .form-group textarea:focus { border-color:#2ab3b3; }
+    table { width:100%; border-collapse:collapse; }
+    th { font-size:0.7rem; font-weight:700; text-transform:uppercase; letter-spacing:0.06em; color:#7a8fb0; padding:8px 10px; text-align:left; border-bottom:1px solid #e2e8f0; }
+    td { font-size:0.83rem; padding:10px; border-bottom:1px solid #eef1f6; }
+    .badge { display:inline-flex; font-size:0.68rem; font-weight:700; padding:3px 8px; border-radius:50px; }
+    .badge-yellow { background:#fef3c7; color:#b45309; } .badge-green { background:#dcfce7; color:#15803d; }
+    .badge-red { background:#fee2e2; color:#dc2626; } .badge-gray { background:#f1f5f9; color:#64748b; }
+    .btn { padding:10px 20px; background:#1e2a6e; color:#fff; border:none; border-radius:8px; font-weight:700; cursor:pointer; font-family:'Inter',sans-serif; font-size:0.85rem; }
+    .btn:disabled { opacity:0.6; cursor:not-allowed; }
+    .empty { text-align:center; padding:24px; color:#7a8fb0; font-size:0.85rem; }
+    .error-box { display:none; background:#fff0f0; border:1px solid #fca5a5; color:#dc2626; font-size:0.8rem; padding:10px 14px; border-radius:8px; margin-bottom:12px; }
+    .gate { text-align:center; padding:80px 20px; color:#7a8fb0; }
+  </style>
+</head>
+<body class="dash-body">
+  <nav class="dash-nav" aria-label="Navigation">
+    <a class="brand" href="/"><span class="brand-b">B</span><span class="brand-urse">urse</span></a>
+    <a href="/dashboard" style="font-size:0.85rem;font-weight:600;color:var(--teal,#2ab3b3)">← My Dashboard</a>
+  </nav>
+
+  <div class="leave-wrap" id="app">
+    <div class="gate">Loading your leave information…</div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script>
+    const { createClient } = supabase;
+    const sb = createClient(
+      'https://lhrdunranqragptqouan.supabase.co',
+      'sb_publishable_DOXudlz8DvPusUsTWZezkQ_bryvuzg-'
+    );
+
+    let staff = null;
+
+    function esc(s){ return String(s??'').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+    function leaveBadge(status) {
+      if (status === 'approved') return '<span class="badge badge-green">Approved</span>';
+      if (status === 'rejected') return '<span class="badge badge-red">Rejected</span>';
+      if (status === 'cancelled') return '<span class="badge badge-gray">Cancelled</span>';
+      return '<span class="badge badge-yellow">Pending</span>';
+    }
+
+    (async function init() {
+      const { data } = await sb.auth.getSession();
+      if (!data.session) { window.location.href = '/login'; return; }
+
+      const { data: s } = await sb.from('payroll_staff').select('*').eq('user_id', data.session.user.id).maybeSingle();
+      const app = document.getElementById('app');
+
+      if (!s) {
+        app.innerHTML = '<div class="gate">You are not linked to a Burse Payroll company yet. Ask your employer to add you as staff.</div>';
+        return;
+      }
+      staff = s;
+      await render();
+    })();
+
+    async function render() {
+      const app = document.getElementById('app');
+      const { data: balances } = await sb.from('payroll_leave_balances').select('*').eq('staff_id', staff.id).order('cycle_start', { ascending: false });
+      const { data: requests } = await sb.from('payroll_leave_requests').select('*').eq('staff_id', staff.id).order('requested_at', { ascending: false });
+
+      const latestByType = {};
+      (balances || []).forEach(b => { if (!latestByType[b.leave_type]) latestByType[b.leave_type] = b; });
+
+      const typeLabels = { annual: 'Annual leave', sick: 'Sick leave', family_responsibility: 'Family responsibility' };
+
+      app.innerHTML = `
+        <div class="leave-head"><h1>Leave</h1><p>Your BCEA leave balances and requests, ${esc(staff.full_name)}.</p></div>
+
+        <div class="bal-grid">
+          ${Object.keys(typeLabels).map(t => {
+            const b = latestByType[t];
+            const balance = b ? (Number(b.entitled_days) - Number(b.taken_days)).toFixed(1) : '—';
+            return `<div class="bal-card">
+              <div class="lbl">${typeLabels[t]}</div>
+              <div class="val">${balance}</div>
+              <div class="sub">${b ? `${Number(b.taken_days).toFixed(1)} taken of ${Number(b.entitled_days).toFixed(1)}` : 'Not yet calculated'}</div>
+            </div>`;
+          }).join('')}
+        </div>
+
+        <div class="card">
+          <h2>Request leave</h2>
+          <div class="error-box" id="reqError"></div>
+          <div class="form-row">
+            <div class="form-group"><label>Leave type</label>
+              <select id="req-type">
+                <option value="annual">Annual leave</option>
+                <option value="sick">Sick leave</option>
+                <option value="family_responsibility">Family responsibility</option>
+                <option value="unpaid">Unpaid leave</option>
+              </select>
+            </div>
+            <div class="form-group"><label>&nbsp;</label></div>
+          </div>
+          <div class="form-row">
+            <div class="form-group"><label>Start date</label><input type="date" id="req-start"></div>
+            <div class="form-group"><label>End date</label><input type="date" id="req-end"></div>
+          </div>
+          <div class="form-group" style="margin-bottom:12px"><label>Reason (optional)</label><textarea id="req-reason" rows="2"></textarea></div>
+          <button class="btn" id="submitReqBtn" onclick="submitRequest()">Submit Request</button>
+        </div>
+
+        <div class="card">
+          <h2>Your requests</h2>
+          <div id="reqTableWrap">
+            ${(!requests || requests.length === 0) ? '<div class="empty">No leave requests yet.</div>' : `
+            <table><thead><tr><th>Type</th><th>Dates</th><th>Days</th><th>Status</th></tr></thead><tbody>
+              ${requests.map(r => `<tr>
+                <td style="text-transform:capitalize">${r.leave_type.replace('_',' ')}</td>
+                <td>${r.start_date} → ${r.end_date}</td>
+                <td>${r.days}</td>
+                <td>${leaveBadge(r.status)}</td>
+              </tr>`).join('')}
+            </tbody></table>`}
+          </div>
+        </div>
+      `;
+    }
+
+    function businessDaysBetween(startStr, endStr) {
+      const start = new Date(startStr), end = new Date(endStr);
+      let days = 0;
+      for (let d = new Date(start); d <= end; d.setDate(d.getDate() + 1)) {
+        const day = d.getDay();
+        if (day !== 0 && day !== 6) days++;
+      }
+      return days;
+    }
+
+    async function submitRequest() {
+      const errEl = document.getElementById('reqError');
+      errEl.style.display = 'none';
+      const leave_type = document.getElementById('req-type').value;
+      const start_date = document.getElementById('req-start').value;
+      const end_date = document.getElementById('req-end').value;
+      const reason = document.getElementById('req-reason').value.trim() || null;
+
+      if (!start_date || !end_date || end_date < start_date) {
+        errEl.textContent = 'Please choose a valid date range.'; errEl.style.display = 'block'; return;
+      }
+
+      const days = businessDaysBetween(start_date, end_date);
+      const btn = document.getElementById('submitReqBtn');
+      btn.disabled = true; btn.textContent = 'Submitting…';
+
+      const { error } = await sb.from('payroll_leave_requests').insert({
+        staff_id: staff.id, leave_type, start_date, end_date, days, reason,
+      });
+
+      btn.disabled = false; btn.textContent = 'Submit Request';
+
+      if (error) { errEl.textContent = error.message; errEl.style.display = 'block'; return; }
+      await render();
+    }
+  </script>
+</body>
+</html>

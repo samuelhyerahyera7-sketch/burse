@@ -1,0 +1,767 @@
+<!DOCTYPE html>
+<html lang="en-ZA">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Payroll — Burse</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --navy: #1e2a6e; --teal: #2ab3b3; --white: #ffffff; --bg: #f0f2f8;
+      --card: #ffffff; --border: #e2e8f0; --text: #0e1c40; --mid: #3d5070;
+      --soft: #7a8fb0; --red: #dc2626; --green: #16a34a; --orange: #f97316;
+    }
+    html, body { height: 100%; font-family: 'Inter', sans-serif; background: var(--bg); color: var(--text); }
+    a { text-decoration: none; }
+
+    .layout { display: grid; grid-template-columns: 220px 1fr; min-height: 100vh; }
+    .sidebar { background: var(--navy); position: fixed; top:0; left:0; bottom:0; width:220px; display:flex; flex-direction:column; z-index:50; }
+    .sidebar-logo { padding: 22px 20px 18px; font-size:1.5rem; font-weight:900; letter-spacing:-0.04em; border-bottom:1px solid rgba(255,255,255,0.08); }
+    .sidebar-logo .b { color: var(--teal); } .sidebar-logo .u { color: var(--white); }
+    .sidebar-logo small { display:block; font-size:0.65rem; font-weight:600; letter-spacing:0.12em; text-transform:uppercase; color:rgba(255,255,255,0.35); margin-top:2px; }
+    .sidebar-nav { flex:1; padding:16px 10px; display:flex; flex-direction:column; gap:2px; }
+    .nav-item { display:flex; align-items:center; gap:10px; padding:10px 12px; border-radius:8px; font-size:0.875rem; font-weight:500; color:rgba(255,255,255,0.55); cursor:pointer; transition:all .15s; }
+    .nav-item:hover { background: rgba(255,255,255,0.07); color: rgba(255,255,255,0.9); }
+    .nav-item.active { background: rgba(42,179,179,0.18); color: var(--teal); font-weight:600; }
+    .nav-item .icon { font-size:1rem; width:20px; text-align:center; flex-shrink:0; }
+    .sidebar-footer { padding:14px 10px; border-top:1px solid rgba(255,255,255,0.08); }
+
+    .main { margin-left:220px; min-height:100vh; }
+    .topbar { background:var(--card); border-bottom:1px solid var(--border); padding:0 28px; height:60px; display:flex; align-items:center; justify-content:space-between; position:sticky; top:0; z-index:40; }
+    .topbar-title { font-size:1rem; font-weight:700; }
+    .content { padding:28px; }
+    .section { display:none; } .section.active { display:block; }
+
+    .page-header { margin-bottom:22px; }
+    .page-header h1 { font-size:1.4rem; font-weight:800; margin-bottom:3px; }
+    .page-header p { font-size:0.83rem; color:var(--soft); }
+
+    .kpi-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:16px; margin-bottom:24px; }
+    .kpi-card { background:var(--card); border:1px solid var(--border); border-radius:14px; padding:20px; box-shadow:0 1px 3px rgba(10,20,60,0.06); }
+    .kpi-label { font-size:0.72rem; font-weight:700; letter-spacing:0.08em; text-transform:uppercase; color:var(--soft); margin-bottom:8px; }
+    .kpi-val { font-size:1.9rem; font-weight:900; letter-spacing:-0.03em; margin-bottom:4px; }
+    .kpi-sub { font-size:0.78rem; color:var(--soft); }
+
+    .card { background:var(--card); border:1px solid var(--border); border-radius:14px; padding:22px; box-shadow:0 1px 3px rgba(10,20,60,0.06); margin-bottom:20px; }
+    .card-header { display:flex; align-items:center; justify-content:space-between; margin-bottom:18px; }
+    .card-title { font-size:0.92rem; font-weight:700; }
+
+    table { width:100%; border-collapse:collapse; }
+    th { font-size:0.7rem; font-weight:700; letter-spacing:0.08em; text-transform:uppercase; color:var(--soft); padding:8px 12px; text-align:left; border-bottom:1px solid var(--border); }
+    td { font-size:0.83rem; padding:12px; border-bottom:1px solid var(--border); }
+    tr:last-child td { border-bottom:none; }
+    tr:hover td { background:#f8f9fb; }
+
+    .badge { display:inline-flex; align-items:center; font-size:0.68rem; font-weight:700; padding:3px 8px; border-radius:50px; letter-spacing:0.04em; }
+    .badge-green { background:#dcfce7; color:#15803d; }
+    .badge-red { background:#fee2e2; color:#dc2626; }
+    .badge-yellow { background:#fef3c7; color:#b45309; }
+    .badge-blue { background:#dbeafe; color:#1d4ed8; }
+    .badge-gray { background:#f1f5f9; color:#64748b; }
+
+    .form-row { display:grid; grid-template-columns:1fr 1fr; gap:14px; margin-bottom:14px; }
+    .form-row-3 { display:grid; grid-template-columns:1fr 1fr 1fr; gap:14px; margin-bottom:14px; }
+    .form-group label { display:block; font-size:0.78rem; font-weight:600; color:var(--mid); margin-bottom:5px; }
+    .form-group input, .form-group select, .form-group textarea {
+      width:100%; padding:9px 12px; border:1.5px solid var(--border); border-radius:8px;
+      font-size:0.85rem; font-family:'Inter',sans-serif; color:var(--text); outline:none; background:var(--card);
+    }
+    .form-group input:focus, .form-group select:focus, .form-group textarea:focus { border-color:var(--teal); }
+    .form-hint { font-size:0.72rem; color:var(--soft); margin-top:4px; }
+    .checkbox-row { display:flex; align-items:center; gap:8px; margin-bottom:14px; }
+    .checkbox-row input { width:auto; }
+
+    .btn-primary { padding:10px 20px; background:var(--navy); color:white; border:none; border-radius:8px; font-size:0.85rem; font-weight:700; font-family:'Inter',sans-serif; cursor:pointer; }
+    .btn-primary:hover { background:#162050; }
+    .btn-primary:disabled { opacity:0.6; cursor:not-allowed; }
+    .btn-teal { padding:10px 20px; background:var(--teal); color:white; border:none; border-radius:8px; font-size:0.85rem; font-weight:700; font-family:'Inter',sans-serif; cursor:pointer; }
+    .btn-teal:hover { background:#238f8f; }
+    .btn-outline { padding:9px 16px; border:1.5px solid var(--border); border-radius:8px; font-size:0.82rem; font-weight:600; color:var(--mid); cursor:pointer; background:var(--card); font-family:'Inter',sans-serif; }
+    .btn-outline:hover { border-color:var(--teal); color:var(--teal); }
+    .btn-danger { padding:6px 12px; background:#fee2e2; color:var(--red); border:none; border-radius:6px; font-size:0.75rem; font-weight:700; font-family:'Inter',sans-serif; cursor:pointer; }
+    .btn-sm { padding:6px 12px; font-size:0.75rem; }
+
+    .loading { text-align:center; padding:40px; color:var(--soft); font-size:0.85rem; }
+    .empty { text-align:center; padding:30px; color:var(--soft); font-size:0.85rem; }
+
+    /* Modal */
+    .modal-overlay { position:fixed; inset:0; z-index:200; background:rgba(10,20,50,0.6); display:flex; align-items:center; justify-content:center; padding:20px; }
+    .modal-overlay[hidden] { display:none; }
+    .modal-box { background:#fff; border-radius:16px; padding:28px; max-width:640px; width:100%; max-height:88vh; overflow-y:auto; box-shadow:0 32px 80px rgba(0,0,0,0.3); }
+    .modal-box h2 { font-size:1.2rem; font-weight:800; margin-bottom:18px; }
+    .modal-actions { display:flex; justify-content:flex-end; gap:10px; margin-top:18px; }
+    .modal-close { float:right; background:#f0f4f8; border:none; width:28px; height:28px; border-radius:50%; cursor:pointer; }
+
+    .error-box { background:#fff0f0; border:1px solid #fca5a5; color:#dc2626; font-size:0.8rem; padding:10px 14px; border-radius:8px; margin-bottom:14px; display:none; }
+
+    #auth-gate { position:fixed; inset:0; z-index:9999; background:#1e2a6e; display:flex; align-items:center; justify-content:center; flex-direction:column; gap:14px; }
+    #auth-gate.hidden { display:none; }
+    .gate-spinner { width:36px; height:36px; border-radius:50%; border:3px solid rgba(42,179,179,0.3); border-top-color:#2ab3b3; animation:spin .7s linear infinite; }
+    @keyframes spin { to { transform:rotate(360deg); } }
+    #auth-gate p { color:rgba(255,255,255,0.5); font-size:0.82rem; }
+    .layout { visibility:hidden; }
+
+    @media (max-width:1024px) { .kpi-grid { grid-template-columns:repeat(2,1fr); } .form-row, .form-row-3 { grid-template-columns:1fr; } }
+    @media (max-width:768px) { .layout { grid-template-columns:1fr; } .sidebar { width:100%; position:relative; height:auto; } .main { margin-left:0; } }
+  </style>
+</head>
+<body>
+
+<div id="auth-gate"><div class="gate-spinner"></div><p>Loading your payroll…</p></div>
+
+<div class="layout" id="layout">
+  <aside class="sidebar">
+    <div class="sidebar-logo"><span class="b">B</span><span class="u">urse</span><small>Payroll</small></div>
+    <nav class="sidebar-nav">
+      <a class="nav-item active" onclick="showSection('overview')"><span class="icon">📊</span> Overview</a>
+      <a class="nav-item" onclick="showSection('company')"><span class="icon">🏢</span> Company Setup</a>
+      <a class="nav-item" onclick="showSection('staff')"><span class="icon">👥</span> Staff</a>
+      <a class="nav-item" onclick="showSection('runs')"><span class="icon">💰</span> Pay Runs</a>
+      <a class="nav-item" onclick="showSection('leave')"><span class="icon">🗓️</span> Leave</a>
+      <a class="nav-item" onclick="showSection('reports')"><span class="icon">📄</span> Statutory Reports</a>
+    </nav>
+    <div class="sidebar-footer">
+      <a class="nav-item" href="/dashboard"><span class="icon">←</span> Back to Burse</a>
+    </div>
+  </aside>
+
+  <div class="main">
+    <div class="topbar"><div class="topbar-title" id="topbarTitle">Overview</div><div id="companyBadge" style="font-size:0.8rem;color:var(--soft)"></div></div>
+
+    <div class="content">
+
+      <!-- OVERVIEW -->
+      <section class="section active" id="section-overview">
+        <div class="page-header"><h1>Overview</h1><p>Your payroll at a glance.</p></div>
+        <div class="kpi-grid">
+          <div class="kpi-card"><div class="kpi-label">Active staff</div><div class="kpi-val" id="kpi-staff">—</div><div class="kpi-sub">Currently employed</div></div>
+          <div class="kpi-card"><div class="kpi-label">Next pay date</div><div class="kpi-val" id="kpi-nextpay" style="font-size:1.3rem">—</div><div class="kpi-sub" id="kpi-nextpay-sub">—</div></div>
+          <div class="kpi-card"><div class="kpi-label">Last run — net paid</div><div class="kpi-val" id="kpi-lastnet" style="font-size:1.3rem">—</div><div class="kpi-sub" id="kpi-lastnet-sub">—</div></div>
+          <div class="kpi-card"><div class="kpi-label">Tax year</div><div class="kpi-val" id="kpi-taxyear" style="font-size:1.3rem">—</div><div class="kpi-sub">Based on today's date</div></div>
+        </div>
+        <div class="card" id="setupPrompt" style="display:none">
+          <div class="card-title">Set up your company to get started</div>
+          <p style="font-size:0.85rem;color:var(--soft);margin:10px 0 16px">Add your PAYE, UIF and SDL reference numbers so Burse can calculate statutory deductions correctly.</p>
+          <button class="btn-primary" onclick="showSection('company')">Set up company →</button>
+        </div>
+        <div class="card">
+          <div class="card-header"><div class="card-title">Recent pay runs</div><a class="btn-outline btn-sm" onclick="showSection('runs')">View all</a></div>
+          <div id="overviewRuns"><div class="loading">Loading…</div></div>
+        </div>
+      </section>
+
+      <!-- COMPANY -->
+      <section class="section" id="section-company">
+        <div class="page-header"><h1>Company Setup</h1><p>Statutory registration details used for PAYE, UIF and SDL calculations.</p></div>
+        <div class="card">
+          <div class="error-box" id="companyError"></div>
+          <div class="form-row">
+            <div class="form-group"><label>Trading name</label><input id="c-trading" placeholder="e.g. Acme Holdings"></div>
+            <div class="form-group"><label>Registered name</label><input id="c-registered" placeholder="e.g. Acme Holdings (Pty) Ltd"></div>
+          </div>
+          <div class="form-row">
+            <div class="form-group"><label>Company registration number</label><input id="c-regnum" placeholder="e.g. 2019/123456/07"></div>
+            <div class="form-group"><label>Industry</label><input id="c-industry" placeholder="e.g. Retail"></div>
+          </div>
+          <div class="form-row-3">
+            <div class="form-group"><label>PAYE reference number</label><input id="c-paye" placeholder="7XXXXXXXXX"></div>
+            <div class="form-group"><label>UIF reference number</label><input id="c-uif" placeholder="U..."></div>
+            <div class="form-group"><label>SDL reference number</label><input id="c-sdl" placeholder="L..."></div>
+          </div>
+          <div class="form-row">
+            <div class="form-group"><label>Work week</label>
+              <select id="c-workdays"><option value="5">5 days/week (21 days annual leave = 15 working days)</option><option value="6">6 days/week (21 days annual leave = 18 working days)</option></select>
+            </div>
+            <div class="form-group"><label>Address</label><input id="c-address" placeholder="Registered address"></div>
+          </div>
+          <div class="checkbox-row"><input type="checkbox" id="c-sdlexempt"><label for="c-sdlexempt" style="margin:0">SDL exempt (annual payroll ≤ R500,000)</label></div>
+          <button class="btn-primary" onclick="saveCompany()" id="saveCompanyBtn">Save Company</button>
+        </div>
+      </section>
+
+      <!-- STAFF -->
+      <section class="section" id="section-staff">
+        <div class="page-header"><h1>Staff</h1><p>Everyone you pay through Burse Payroll.</p></div>
+        <div class="card">
+          <div class="card-header"><div class="card-title">All staff</div><button class="btn-teal btn-sm" onclick="openStaffModal()">+ Add Staff</button></div>
+          <div id="staffTableWrap"><div class="loading">Loading…</div></div>
+        </div>
+      </section>
+
+      <!-- RUNS -->
+      <section class="section" id="section-runs">
+        <div class="page-header"><h1>Pay Runs</h1><p>Create, calculate and finalize payroll for a period.</p></div>
+        <div class="card">
+          <div class="card-header"><div class="card-title">All pay runs</div><button class="btn-teal btn-sm" onclick="openRunModal()">+ New Pay Run</button></div>
+          <div id="runsTableWrap"><div class="loading">Loading…</div></div>
+        </div>
+        <div class="card" id="runDetailCard" style="display:none">
+          <div class="card-header"><div class="card-title" id="runDetailTitle">Pay run</div><div id="runDetailActions"></div></div>
+          <div id="runDetailWrap"></div>
+        </div>
+      </section>
+
+      <!-- LEAVE -->
+      <section class="section" id="section-leave">
+        <div class="page-header"><h1>Leave</h1><p>BCEA-compliant leave balances and requests.</p></div>
+        <div class="card">
+          <div class="card-header"><div class="card-title">Leave balances</div><button class="btn-outline btn-sm" onclick="runLeaveAccrual()">Recalculate accruals</button></div>
+          <div id="leaveBalancesWrap"><div class="loading">Loading…</div></div>
+        </div>
+        <div class="card">
+          <div class="card-header"><div class="card-title">Leave requests</div></div>
+          <div id="leaveRequestsWrap"><div class="loading">Loading…</div></div>
+        </div>
+      </section>
+
+      <!-- REPORTS -->
+      <section class="section" id="section-reports">
+        <div class="page-header"><h1>Statutory Reports</h1><p>EMP201 monthly reconciliation figures for SARS eFiling. Generate a report from a finalized pay run.</p></div>
+        <div class="card">
+          <div class="form-row">
+            <div class="form-group"><label>Select finalized pay run</label><select id="reportRunSelect"><option value="">— choose a run —</option></select></div>
+            <div class="form-group" style="display:flex;align-items:flex-end"><button class="btn-primary" onclick="loadEmp201()">Generate EMP201</button></div>
+          </div>
+          <div id="emp201Wrap"></div>
+        </div>
+      </section>
+
+    </div>
+  </div>
+</div>
+
+<!-- STAFF MODAL -->
+<div class="modal-overlay" id="staffModal" hidden>
+  <div class="modal-box">
+    <button class="modal-close" onclick="closeModal('staffModal')">✕</button>
+    <h2 id="staffModalTitle">Add Staff Member</h2>
+    <div class="error-box" id="staffError"></div>
+    <input type="hidden" id="s-id">
+    <div class="form-row">
+      <div class="form-group"><label>Full name</label><input id="s-name" required></div>
+      <div class="form-group"><label>Employee number</label><input id="s-empnum"></div>
+    </div>
+    <div class="form-row">
+      <div class="form-group"><label>SA ID number</label><input id="s-idnum" placeholder="13 digits" maxlength="13"></div>
+      <div class="form-group"><label>Date of birth <span style="font-weight:400;color:var(--soft)">(if no SA ID)</span></label><input type="date" id="s-dob"></div>
+    </div>
+    <div class="form-row">
+      <div class="form-group"><label>Email</label><input type="email" id="s-email"></div>
+      <div class="form-group"><label>Start date</label><input type="date" id="s-start" required></div>
+    </div>
+    <div class="form-row">
+      <div class="form-group"><label>Job title</label><input id="s-title"></div>
+      <div class="form-group"><label>Pay frequency</label>
+        <select id="s-freq"><option value="monthly">Monthly</option><option value="fortnightly">Fortnightly</option><option value="weekly">Weekly</option></select>
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="form-group"><label>Basic salary (per pay period)</label><input type="number" id="s-basic" step="0.01"></div>
+      <div class="form-group"><label>Travel allowance</label><input type="number" id="s-travel" step="0.01"></div>
+    </div>
+    <div class="form-row">
+      <div class="form-group"><label>Other taxable allowance</label><input type="number" id="s-othertax" step="0.01"></div>
+      <div class="form-group"><label>Other non-taxable allowance (e.g. reimbursive)</label><input type="number" id="s-otherNontax" step="0.01"></div>
+    </div>
+    <div class="form-row">
+      <div class="form-group"><label>Retirement fund contribution (employee)</label><input type="number" id="s-retirement" step="0.01"></div>
+      <div class="form-group"><label>Medical aid dependants <span style="font-weight:400;color:var(--soft)">(0 = none, 1 = member only)</span></label><input type="number" id="s-medical" step="1" min="0"></div>
+    </div>
+    <div class="form-row">
+      <div class="form-group"><label>Bank name</label><input id="s-bankname"></div>
+      <div class="form-group"><label>Account number</label><input id="s-bankacc"></div>
+    </div>
+    <div class="form-row">
+      <div class="form-group"><label>Branch code</label><input id="s-branchcode"></div>
+      <div class="form-group"><label>Account type</label>
+        <select id="s-accttype"><option>Savings</option><option>Cheque</option></select>
+      </div>
+    </div>
+    <div class="checkbox-row"><input type="checkbox" id="s-eti" checked><label for="s-eti" style="margin:0">Eligible for Employment Tax Incentive (age 18–29, standard employer)</label></div>
+    <div class="checkbox-row"><input type="checkbox" id="s-active" checked><label for="s-active" style="margin:0">Active</label></div>
+    <div class="modal-actions">
+      <button class="btn-outline" onclick="closeModal('staffModal')">Cancel</button>
+      <button class="btn-primary" onclick="saveStaff()" id="saveStaffBtn">Save Staff Member</button>
+    </div>
+  </div>
+</div>
+
+<!-- RUN MODAL -->
+<div class="modal-overlay" id="runModal" hidden>
+  <div class="modal-box" style="max-width:480px">
+    <button class="modal-close" onclick="closeModal('runModal')">✕</button>
+    <h2>New Pay Run</h2>
+    <div class="error-box" id="runError"></div>
+    <div class="form-group" style="margin-bottom:14px"><label>Period start</label><input type="date" id="r-start"></div>
+    <div class="form-group" style="margin-bottom:14px"><label>Period end</label><input type="date" id="r-end"></div>
+    <div class="form-group" style="margin-bottom:14px"><label>Pay date</label><input type="date" id="r-paydate"></div>
+    <div class="form-group" style="margin-bottom:14px"><label>Frequency</label>
+      <select id="r-freq"><option value="monthly">Monthly</option><option value="fortnightly">Fortnightly</option><option value="weekly">Weekly</option></select>
+    </div>
+    <div class="modal-actions">
+      <button class="btn-outline" onclick="closeModal('runModal')">Cancel</button>
+      <button class="btn-primary" onclick="createRun()" id="createRunBtn">Create Run</button>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+const SUPABASE_URL = 'https://lhrdunranqragptqouan.supabase.co';
+const SUPABASE_KEY = 'sb_publishable_DOXudlz8DvPusUsTWZezkQ_bryvuzg-';
+const { createClient } = supabase;
+const sb = createClient(SUPABASE_URL, SUPABASE_KEY);
+
+let session = null;
+let company = null;
+let staffCache = [];
+let runsCache = [];
+
+(async function init() {
+  const { data } = await sb.auth.getSession();
+  if (!data.session) { window.location.href = '/login'; return; }
+  session = data.session;
+
+  document.getElementById('auth-gate').classList.add('hidden');
+  document.getElementById('layout').style.visibility = 'visible';
+
+  await loadCompany();
+  await Promise.all([loadStaff(), loadRuns()]);
+  renderOverview();
+})();
+
+function showSection(name) {
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+  document.getElementById('section-' + name).classList.add('active');
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  event?.target?.closest('.nav-item')?.classList.add('active');
+  const titles = { overview:'Overview', company:'Company Setup', staff:'Staff', runs:'Pay Runs', leave:'Leave', reports:'Statutory Reports' };
+  document.getElementById('topbarTitle').textContent = titles[name];
+  if (name === 'staff') loadStaff();
+  if (name === 'runs') loadRuns();
+  if (name === 'leave') { loadLeaveBalances(); loadLeaveRequests(); }
+  if (name === 'reports') populateReportRunSelect();
+}
+
+async function callEngine(action, payload) {
+  const res = await fetch(`${SUPABASE_URL}/functions/v1/payroll-engine`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'apikey': SUPABASE_KEY,
+      'Authorization': `Bearer ${session.access_token}`,
+    },
+    body: JSON.stringify({ action, ...payload }),
+  });
+  const data = await res.json();
+  if (!res.ok) throw new Error(data.error || 'Something went wrong');
+  return data;
+}
+
+// ── Company ──
+async function loadCompany() {
+  const { data } = await sb.from('payroll_companies').select('*').eq('owner_id', session.user.id).maybeSingle();
+  company = data;
+  document.getElementById('companyBadge').textContent = company ? company.trading_name : '';
+  document.getElementById('setupPrompt').style.display = company ? 'none' : 'block';
+  if (company) {
+    document.getElementById('c-trading').value = company.trading_name || '';
+    document.getElementById('c-registered').value = company.registered_name || '';
+    document.getElementById('c-regnum').value = company.company_reg_number || '';
+    document.getElementById('c-industry').value = company.industry || '';
+    document.getElementById('c-paye').value = company.paye_reference || '';
+    document.getElementById('c-uif').value = company.uif_reference || '';
+    document.getElementById('c-sdl').value = company.sdl_reference || '';
+    document.getElementById('c-workdays').value = String(company.work_days_per_week || 5);
+    document.getElementById('c-address').value = company.address || '';
+    document.getElementById('c-sdlexempt').checked = !!company.sdl_exempt;
+  }
+}
+
+async function saveCompany() {
+  const errEl = document.getElementById('companyError');
+  errEl.style.display = 'none';
+  const payload = {
+    owner_id: session.user.id,
+    trading_name: val('c-trading'),
+    registered_name: val('c-registered') || null,
+    company_reg_number: val('c-regnum') || null,
+    industry: val('c-industry') || null,
+    paye_reference: val('c-paye') || null,
+    uif_reference: val('c-uif') || null,
+    sdl_reference: val('c-sdl') || null,
+    work_days_per_week: parseInt(document.getElementById('c-workdays').value),
+    address: val('c-address') || null,
+    sdl_exempt: document.getElementById('c-sdlexempt').checked,
+    updated_at: new Date().toISOString(),
+  };
+  if (!payload.trading_name) { errEl.textContent = 'Trading name is required.'; errEl.style.display = 'block'; return; }
+
+  const btn = document.getElementById('saveCompanyBtn');
+  btn.disabled = true; btn.textContent = 'Saving…';
+
+  let result;
+  if (company) result = await sb.from('payroll_companies').update(payload).eq('id', company.id).select().single();
+  else result = await sb.from('payroll_companies').insert(payload).select().single();
+
+  btn.disabled = false; btn.textContent = 'Save Company';
+
+  if (result.error) { errEl.textContent = result.error.message; errEl.style.display = 'block'; return; }
+  company = result.data;
+  document.getElementById('companyBadge').textContent = company.trading_name;
+  document.getElementById('setupPrompt').style.display = 'none';
+  renderOverview();
+}
+
+// ── Staff ──
+async function loadStaff() {
+  const wrap = document.getElementById('staffTableWrap');
+  if (!company) { wrap.innerHTML = '<div class="empty">Set up your company first.</div>'; return; }
+  const { data, error } = await sb.from('payroll_staff').select('*').eq('company_id', company.id).order('full_name');
+  if (error) { wrap.innerHTML = `<div class="empty">${error.message}</div>`; return; }
+  staffCache = data || [];
+  if (staffCache.length === 0) { wrap.innerHTML = '<div class="empty">No staff yet. Click "+ Add Staff" to get started.</div>'; return; }
+
+  wrap.innerHTML = `<table><thead><tr><th>Name</th><th>Job title</th><th>Basic salary</th><th>Frequency</th><th>Status</th><th></th></tr></thead><tbody>
+    ${staffCache.map(s => `<tr>
+      <td>${esc(s.full_name)}</td>
+      <td>${esc(s.job_title||'—')}</td>
+      <td>R ${Number(s.basic_salary||0).toLocaleString('en-ZA',{minimumFractionDigits:2})}</td>
+      <td style="text-transform:capitalize">${s.pay_frequency}</td>
+      <td>${s.active ? '<span class="badge badge-green">Active</span>' : '<span class="badge badge-gray">Inactive</span>'}</td>
+      <td><a class="btn-outline btn-sm" onclick="openStaffModal('${s.id}')">Edit</a></td>
+    </tr>`).join('')}
+  </tbody></table>`;
+}
+
+function openStaffModal(id) {
+  document.getElementById('staffError').style.display = 'none';
+  const s = id ? staffCache.find(x => x.id === id) : null;
+  document.getElementById('staffModalTitle').textContent = s ? 'Edit Staff Member' : 'Add Staff Member';
+  document.getElementById('s-id').value = s?.id || '';
+  document.getElementById('s-name').value = s?.full_name || '';
+  document.getElementById('s-empnum').value = s?.employee_number || '';
+  document.getElementById('s-idnum').value = s?.id_number || '';
+  document.getElementById('s-dob').value = s?.date_of_birth || '';
+  document.getElementById('s-email').value = s?.email || '';
+  document.getElementById('s-start').value = s?.start_date || '';
+  document.getElementById('s-title').value = s?.job_title || '';
+  document.getElementById('s-freq').value = s?.pay_frequency || 'monthly';
+  document.getElementById('s-basic').value = s?.basic_salary ?? '';
+  document.getElementById('s-travel').value = s?.travel_allowance ?? '';
+  document.getElementById('s-othertax').value = s?.other_taxable_allowance ?? '';
+  document.getElementById('s-otherNontax').value = s?.other_nontaxable_allowance ?? '';
+  document.getElementById('s-retirement').value = s?.retirement_contribution ?? '';
+  document.getElementById('s-medical').value = s?.medical_aid_dependants ?? 0;
+  document.getElementById('s-bankname').value = s?.bank_name || '';
+  document.getElementById('s-bankacc').value = s?.bank_account_number || '';
+  document.getElementById('s-branchcode').value = s?.bank_branch_code || '';
+  document.getElementById('s-accttype').value = s?.account_type || 'Savings';
+  document.getElementById('s-eti').checked = s ? !!s.is_eti_eligible : true;
+  document.getElementById('s-active').checked = s ? !!s.active : true;
+  document.getElementById('staffModal').hidden = false;
+}
+
+async function saveStaff() {
+  const errEl = document.getElementById('staffError');
+  errEl.style.display = 'none';
+  if (!company) { errEl.textContent = 'Set up your company first.'; errEl.style.display = 'block'; return; }
+
+  const name = val('s-name'); const start = val('s-start');
+  if (!name || !start) { errEl.textContent = 'Full name and start date are required.'; errEl.style.display = 'block'; return; }
+
+  const payload = {
+    company_id: company.id,
+    full_name: name,
+    employee_number: val('s-empnum') || null,
+    id_number: val('s-idnum') || null,
+    date_of_birth: val('s-dob') || null,
+    email: val('s-email') || null,
+    start_date: start,
+    job_title: val('s-title') || null,
+    pay_frequency: document.getElementById('s-freq').value,
+    basic_salary: numOr0('s-basic'),
+    travel_allowance: numOr0('s-travel'),
+    other_taxable_allowance: numOr0('s-othertax'),
+    other_nontaxable_allowance: numOr0('s-otherNontax'),
+    retirement_contribution: numOr0('s-retirement'),
+    medical_aid_dependants: parseInt(document.getElementById('s-medical').value || '0'),
+    bank_name: val('s-bankname') || null,
+    bank_account_number: val('s-bankacc') || null,
+    bank_branch_code: val('s-branchcode') || null,
+    account_type: document.getElementById('s-accttype').value,
+    is_eti_eligible: document.getElementById('s-eti').checked,
+    active: document.getElementById('s-active').checked,
+    updated_at: new Date().toISOString(),
+  };
+
+  const btn = document.getElementById('saveStaffBtn');
+  btn.disabled = true; btn.textContent = 'Saving…';
+
+  const id = val('s-id');
+  const result = id
+    ? await sb.from('payroll_staff').update(payload).eq('id', id).select().single()
+    : await sb.from('payroll_staff').insert(payload).select().single();
+
+  btn.disabled = false; btn.textContent = 'Save Staff Member';
+
+  if (result.error) { errEl.textContent = result.error.message; errEl.style.display = 'block'; return; }
+  closeModal('staffModal');
+  await loadStaff();
+  renderOverview();
+}
+
+// ── Runs ──
+async function loadRuns() {
+  const wrap = document.getElementById('runsTableWrap');
+  if (!company) { wrap.innerHTML = '<div class="empty">Set up your company first.</div>'; return; }
+  const { data, error } = await sb.from('payroll_runs').select('*').eq('company_id', company.id).order('period_start', { ascending: false });
+  if (error) { wrap.innerHTML = `<div class="empty">${error.message}</div>`; return; }
+  runsCache = data || [];
+  if (runsCache.length === 0) { wrap.innerHTML = '<div class="empty">No pay runs yet. Click "+ New Pay Run" to process your first payroll.</div>'; return; }
+
+  wrap.innerHTML = `<table><thead><tr><th>Period</th><th>Pay date</th><th>Frequency</th><th>Status</th><th></th></tr></thead><tbody>
+    ${runsCache.map(r => `<tr>
+      <td>${r.period_start} → ${r.period_end}</td>
+      <td>${r.pay_date}</td>
+      <td style="text-transform:capitalize">${r.frequency}</td>
+      <td>${statusBadge(r.status)}</td>
+      <td><a class="btn-outline btn-sm" onclick="viewRun('${r.id}')">View</a></td>
+    </tr>`).join('')}
+  </tbody></table>`;
+}
+
+function statusBadge(status) {
+  if (status === 'finalized') return '<span class="badge badge-green">Finalized</span>';
+  if (status === 'paid') return '<span class="badge badge-blue">Paid</span>';
+  return '<span class="badge badge-yellow">Draft</span>';
+}
+
+function openRunModal() {
+  document.getElementById('runError').style.display = 'none';
+  document.getElementById('r-start').value = '';
+  document.getElementById('r-end').value = '';
+  document.getElementById('r-paydate').value = '';
+  document.getElementById('runModal').hidden = false;
+}
+
+async function createRun() {
+  const errEl = document.getElementById('runError');
+  errEl.style.display = 'none';
+  const period_start = val('r-start'), period_end = val('r-end'), pay_date = val('r-paydate');
+  if (!period_start || !period_end || !pay_date) { errEl.textContent = 'All dates are required.'; errEl.style.display = 'block'; return; }
+
+  const btn = document.getElementById('createRunBtn');
+  btn.disabled = true; btn.textContent = 'Creating…';
+  try {
+    const { run } = await callEngine('create_run', { company_id: company.id, period_start, period_end, pay_date, frequency: document.getElementById('r-freq').value });
+    closeModal('runModal');
+    await loadRuns();
+    viewRun(run.id);
+  } catch (e) {
+    errEl.textContent = e.message; errEl.style.display = 'block';
+  }
+  btn.disabled = false; btn.textContent = 'Create Run';
+}
+
+async function viewRun(runId) {
+  const run = runsCache.find(r => r.id === runId) || (await sb.from('payroll_runs').select('*').eq('id', runId).single()).data;
+  const card = document.getElementById('runDetailCard');
+  card.style.display = 'block';
+  document.getElementById('runDetailTitle').textContent = `Pay run: ${run.period_start} → ${run.period_end}`;
+
+  const actionsEl = document.getElementById('runDetailActions');
+  actionsEl.innerHTML = '';
+  if (run.status === 'draft') {
+    actionsEl.innerHTML = `
+      <button class="btn-outline btn-sm" onclick="calculateRun('${run.id}')">Calculate</button>
+      <button class="btn-primary btn-sm" onclick="finalizeRun('${run.id}')" style="margin-left:8px">Finalize</button>`;
+  }
+
+  const { data: payslips } = await sb.from('payroll_payslips').select('*, payroll_staff(full_name)').eq('run_id', run.id);
+  const wrap = document.getElementById('runDetailWrap');
+  if (!payslips || payslips.length === 0) {
+    wrap.innerHTML = '<div class="empty">No payslips calculated yet. Click "Calculate" to run payroll for this period.</div>';
+    card.scrollIntoView({ behavior: 'smooth' });
+    return;
+  }
+
+  const totalNet = payslips.reduce((s,p) => s + Number(p.net_pay), 0);
+  wrap.innerHTML = `
+    <p style="font-size:0.85rem;color:var(--soft);margin-bottom:14px">${payslips.length} payslips · Total net pay R ${totalNet.toLocaleString('en-ZA',{minimumFractionDigits:2})}</p>
+    <table><thead><tr><th>Employee</th><th>Gross</th><th>PAYE</th><th>UIF</th><th>Net Pay</th><th></th></tr></thead><tbody>
+    ${payslips.map(p => `<tr>
+      <td>${esc(p.payroll_staff?.full_name || '—')}</td>
+      <td>R ${Number(p.gross_pay).toLocaleString('en-ZA',{minimumFractionDigits:2})}</td>
+      <td>R ${Number(p.paye).toLocaleString('en-ZA',{minimumFractionDigits:2})}</td>
+      <td>R ${Number(p.uif_employee).toLocaleString('en-ZA',{minimumFractionDigits:2})}</td>
+      <td><strong>R ${Number(p.net_pay).toLocaleString('en-ZA',{minimumFractionDigits:2})}</strong></td>
+      <td><a class="btn-outline btn-sm" href="/payslip.html?id=${p.id}" target="_blank">View Payslip</a></td>
+    </tr>`).join('')}
+    </tbody></table>`;
+  card.scrollIntoView({ behavior: 'smooth' });
+}
+
+async function calculateRun(runId) {
+  try {
+    await callEngine('calculate', { run_id: runId });
+    viewRun(runId);
+  } catch (e) { alert(e.message); }
+}
+
+async function finalizeRun(runId) {
+  if (!confirm('Finalize this pay run? Payslips will be locked and leave/YTD figures updated.')) return;
+  try {
+    await callEngine('finalize', { run_id: runId });
+    await loadRuns();
+    viewRun(runId);
+  } catch (e) { alert(e.message); }
+}
+
+// ── Leave ──
+async function loadLeaveBalances() {
+  const wrap = document.getElementById('leaveBalancesWrap');
+  if (!company) { wrap.innerHTML = '<div class="empty">Set up your company first.</div>'; return; }
+  const { data: staffIds } = await sb.from('payroll_staff').select('id, full_name').eq('company_id', company.id);
+  if (!staffIds || staffIds.length === 0) { wrap.innerHTML = '<div class="empty">No staff yet.</div>'; return; }
+  const ids = staffIds.map(s => s.id);
+  const { data: balances } = await sb.from('payroll_leave_balances').select('*').in('staff_id', ids).order('cycle_start', { ascending: false });
+  const nameOf = id => staffIds.find(s => s.id === id)?.full_name || '—';
+
+  if (!balances || balances.length === 0) {
+    wrap.innerHTML = '<div class="empty">No leave balances yet. Click "Recalculate accruals" to generate them.</div>';
+    return;
+  }
+  wrap.innerHTML = `<table><thead><tr><th>Employee</th><th>Leave type</th><th>Cycle start</th><th>Entitled</th><th>Taken</th><th>Balance</th></tr></thead><tbody>
+    ${balances.map(b => `<tr>
+      <td>${esc(nameOf(b.staff_id))}</td>
+      <td style="text-transform:capitalize">${b.leave_type.replace('_',' ')}</td>
+      <td>${b.cycle_start}</td>
+      <td>${Number(b.entitled_days).toFixed(2)}</td>
+      <td>${Number(b.taken_days).toFixed(2)}</td>
+      <td><strong>${(Number(b.entitled_days)-Number(b.taken_days)).toFixed(2)}</strong></td>
+    </tr>`).join('')}
+  </tbody></table>`;
+}
+
+async function runLeaveAccrual() {
+  if (!company) return;
+  try {
+    await callEngine('leave_accrue', { company_id: company.id });
+    await loadLeaveBalances();
+  } catch (e) { alert(e.message); }
+}
+
+async function loadLeaveRequests() {
+  const wrap = document.getElementById('leaveRequestsWrap');
+  if (!company) { wrap.innerHTML = '<div class="empty">Set up your company first.</div>'; return; }
+  const { data: staffIds } = await sb.from('payroll_staff').select('id, full_name').eq('company_id', company.id);
+  if (!staffIds || staffIds.length === 0) { wrap.innerHTML = '<div class="empty">No staff yet.</div>'; return; }
+  const ids = staffIds.map(s => s.id);
+  const { data: requests } = await sb.from('payroll_leave_requests').select('*').in('staff_id', ids).order('requested_at', { ascending: false });
+  const nameOf = id => staffIds.find(s => s.id === id)?.full_name || '—';
+
+  if (!requests || requests.length === 0) { wrap.innerHTML = '<div class="empty">No leave requests yet.</div>'; return; }
+  wrap.innerHTML = `<table><thead><tr><th>Employee</th><th>Type</th><th>Dates</th><th>Days</th><th>Status</th><th></th></tr></thead><tbody>
+    ${requests.map(r => `<tr>
+      <td>${esc(nameOf(r.staff_id))}</td>
+      <td style="text-transform:capitalize">${r.leave_type.replace('_',' ')}</td>
+      <td>${r.start_date} → ${r.end_date}</td>
+      <td>${r.days}</td>
+      <td>${leaveStatusBadge(r.status)}</td>
+      <td>${r.status === 'pending' ? `<a class="btn-outline btn-sm" onclick="decideLeave('${r.id}','approved')">Approve</a> <a class="btn-danger btn-sm" onclick="decideLeave('${r.id}','rejected')">Reject</a>` : ''}</td>
+    </tr>`).join('')}
+  </tbody></table>`;
+}
+
+function leaveStatusBadge(status) {
+  if (status === 'approved') return '<span class="badge badge-green">Approved</span>';
+  if (status === 'rejected') return '<span class="badge badge-red">Rejected</span>';
+  if (status === 'cancelled') return '<span class="badge badge-gray">Cancelled</span>';
+  return '<span class="badge badge-yellow">Pending</span>';
+}
+
+async function decideLeave(id, decision) {
+  const { error } = await sb.from('payroll_leave_requests').update({ status: decision, decided_at: new Date().toISOString(), decided_by: session.user.id }).eq('id', id);
+  if (error) { alert(error.message); return; }
+  if (decision === 'approved') {
+    const { data: req } = await sb.from('payroll_leave_requests').select('*').eq('id', id).single();
+    const { data: bal } = await sb.from('payroll_leave_balances').select('*').eq('staff_id', req.staff_id).eq('leave_type', req.leave_type).order('cycle_start', { ascending: false }).limit(1).maybeSingle();
+    if (bal) await sb.from('payroll_leave_balances').update({ taken_days: Number(bal.taken_days) + Number(req.days) }).eq('id', bal.id);
+  }
+  await loadLeaveRequests();
+  await loadLeaveBalances();
+}
+
+// ── Reports ──
+function populateReportRunSelect() {
+  const sel = document.getElementById('reportRunSelect');
+  const finalized = runsCache.filter(r => r.status !== 'draft');
+  sel.innerHTML = '<option value="">— choose a run —</option>' + finalized.map(r => `<option value="${r.id}">${r.period_start} → ${r.period_end}</option>`).join('');
+}
+
+async function loadEmp201() {
+  const runId = document.getElementById('reportRunSelect').value;
+  const wrap = document.getElementById('emp201Wrap');
+  if (!runId) { wrap.innerHTML = ''; return; }
+  wrap.innerHTML = '<div class="loading">Calculating…</div>';
+  try {
+    const r = await callEngine('emp201_summary', { run_id: runId });
+    wrap.innerHTML = `
+      <div style="margin-top:16px;border-top:1px solid var(--border);padding-top:16px">
+        <h3 style="font-size:1rem;margin-bottom:4px">${esc(r.company)}</h3>
+        <p style="font-size:0.8rem;color:var(--soft);margin-bottom:16px">PAYE ${r.paye_reference||'—'} · UIF ${r.uif_reference||'—'} · SDL ${r.sdl_reference||'—'} · Period ${r.period_start} → ${r.period_end} · Tax year ${r.tax_year}</p>
+        <table><tbody>
+          <tr><td>Gross remuneration</td><td style="text-align:right">R ${r.totals.gross_remuneration.toLocaleString('en-ZA',{minimumFractionDigits:2})}</td></tr>
+          <tr><td>PAYE deducted</td><td style="text-align:right">R ${r.totals.paye.toLocaleString('en-ZA',{minimumFractionDigits:2})}</td></tr>
+          <tr><td>Less: ETI</td><td style="text-align:right">– R ${r.totals.eti.toLocaleString('en-ZA',{minimumFractionDigits:2})}</td></tr>
+          <tr><td><strong>PAYE payable (EMP201)</strong></td><td style="text-align:right"><strong>R ${r.emp201.paye_payable.toLocaleString('en-ZA',{minimumFractionDigits:2})}</strong></td></tr>
+          <tr><td>UIF (employee + employer)</td><td style="text-align:right">R ${r.emp201.uif_payable.toLocaleString('en-ZA',{minimumFractionDigits:2})}</td></tr>
+          <tr><td>SDL</td><td style="text-align:right">R ${r.emp201.sdl_payable.toLocaleString('en-ZA',{minimumFractionDigits:2})}</td></tr>
+          <tr><td><strong>Total payable to SARS</strong></td><td style="text-align:right"><strong>R ${r.emp201.total_payable.toLocaleString('en-ZA',{minimumFractionDigits:2})}</strong></td></tr>
+        </tbody></table>
+        <p class="form-hint" style="margin-top:14px">These figures are for you to capture on SARS eFiling / e@syFile — Burse does not submit EMP201s directly to SARS.</p>
+        <button class="btn-outline btn-sm" style="margin-top:10px" onclick="window.print()">Print</button>
+      </div>`;
+  } catch (e) {
+    wrap.innerHTML = `<div class="error-box" style="display:block">${e.message}</div>`;
+  }
+}
+
+// ── Overview ──
+function renderOverview() {
+  document.getElementById('kpi-staff').textContent = staffCache.filter(s => s.active).length;
+  const upcoming = runsCache.filter(r => r.status === 'draft').sort((a,b) => a.pay_date.localeCompare(b.pay_date))[0];
+  document.getElementById('kpi-nextpay').textContent = upcoming ? upcoming.pay_date : '—';
+  document.getElementById('kpi-nextpay-sub').textContent = upcoming ? `${upcoming.period_start} → ${upcoming.period_end}` : 'No draft run scheduled';
+
+  const lastFinal = runsCache.filter(r => r.status !== 'draft').sort((a,b) => b.pay_date.localeCompare(a.pay_date))[0];
+  if (lastFinal) {
+    sb.from('payroll_payslips').select('net_pay').eq('run_id', lastFinal.id).then(({ data }) => {
+      const total = (data||[]).reduce((s,p) => s + Number(p.net_pay), 0);
+      document.getElementById('kpi-lastnet').textContent = `R ${total.toLocaleString('en-ZA',{minimumFractionDigits:2})}`;
+      document.getElementById('kpi-lastnet-sub').textContent = lastFinal.pay_date;
+    });
+  }
+
+  const now = new Date();
+  const startYear = now.getMonth() >= 2 ? now.getFullYear() : now.getFullYear() - 1;
+  document.getElementById('kpi-taxyear').textContent = `${startYear}/${startYear+1}`;
+
+  const runsWrap = document.getElementById('overviewRuns');
+  if (runsCache.length === 0) { runsWrap.innerHTML = '<div class="empty">No pay runs yet.</div>'; return; }
+  runsWrap.innerHTML = `<table><thead><tr><th>Period</th><th>Pay date</th><th>Status</th></tr></thead><tbody>
+    ${runsCache.slice(0,5).map(r => `<tr><td>${r.period_start} → ${r.period_end}</td><td>${r.pay_date}</td><td>${statusBadge(r.status)}</td></tr>`).join('')}
+  </tbody></table>`;
+}
+
+// ── Helpers ──
+function closeModal(id) { document.getElementById(id).hidden = true; }
+function val(id) { return document.getElementById(id).value.trim(); }
+function numOr0(id) { return parseFloat(document.getElementById(id).value) || 0; }
+function esc(str) { return String(str).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+</script>
+</body>
+</html>
