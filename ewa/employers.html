@@ -246,8 +246,8 @@
 
     const { createClient } = supabase;
     const sb = createClient(
-      'https://lhrdunranqragptqouan.supabase.co',
-      'sb_publishable_DOXudlz8DvPusUsTWZezkQ_bryvuzg-'
+      'https://pnpfurfodmejdggnyjof.supabase.co',
+      'sb_publishable_q2fnC5EJrToRNuvUjW619Q_NKMbO0iX'
     );
 
     sb.auth.getSession().then(({ data }) => {
@@ -316,9 +316,9 @@
       }
 
       // Fire email notification (non-blocking — don't let email failure block the UX)
-      fetch('https://lhrdunranqragptqouan.supabase.co/functions/v1/notify-demo', {
+      fetch('https://pnpfurfodmejdggnyjof.supabase.co/functions/v1/notify-demo', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json', 'apikey': 'sb_publishable_DOXudlz8DvPusUsTWZezkQ_bryvuzg-' },
+        headers: { 'Content-Type': 'application/json', 'apikey': 'sb_publishable_q2fnC5EJrToRNuvUjW619Q_NKMbO0iX' },
         body: JSON.stringify(payload),
       }).catch(() => {});
 
