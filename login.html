@@ -152,14 +152,15 @@
     <div class="login-card">
       <!-- LOGIN FORM (default) -->
       <div id="viewLogin">
-        <h2>Welcome back</h2>
+        <h2 id="authTitle">Welcome back</h2>
         <p id="loginSubtitle">Log in to access your earned wages.</p>
 
-        <div class="error-msg" id="errorMsg">
-          Incorrect email or password. Please try again.
+        <div class="error-msg" id="errorMsg"></div>
+        <div class="error-msg" id="successMsg" style="background:#e6f7f7;border-color:#2ab3b3;color:#1e9090;">
+          Account created! Check your email to confirm, then log in.
         </div>
 
-        <form id="loginForm" onsubmit="handleLogin(event)">
+        <form id="loginForm" onsubmit="handleAuth(event)">
           <div class="form-group">
             <label for="email">Email address</label>
             <input type="email" id="email" placeholder="you@example.com" required autocomplete="email">
@@ -168,14 +169,15 @@
             <label for="password">Password</label>
             <input type="password" id="password" placeholder="Enter your password" required autocomplete="current-password">
           </div>
-          <div class="forgot">
+          <div class="forgot" id="forgotRow">
             <a href="#" onclick="handleForgotPassword(event)">Forgot password?</a>
           </div>
           <button type="submit" class="btn-login">Log In</button>
         </form>
 
         <div class="signup-row">
-          Don't have an account? <a href="/" id="signupLink">Get started free</a>
+          <span id="switchText">Don't have an account?</span>
+          <a href="#" id="switchLink" onclick="toggleMode(); return false;">Sign up free</a>
         </div>
       </div>
 
@@ -264,9 +266,39 @@
       return email === ADMIN_EMAIL ? '/admin' : '/dashboard';
     }
 
-    if (!window.location.hostname.startsWith('ewa.')) {
+    const onEwaHost = window.location.hostname.startsWith('ewa.');
+    if (!onEwaHost) {
       document.getElementById('loginSubtitle').textContent = 'Log in to run your payroll.';
     }
+
+    let currentMode = 'login';
+    function setMode(mode) {
+      currentMode = mode;
+      document.getElementById('errorMsg').style.display = 'none';
+      document.getElementById('successMsg').style.display = 'none';
+      const title = document.getElementById('authTitle');
+      const subtitle = document.getElementById('loginSubtitle');
+      const btn = document.querySelector('#loginForm .btn-login');
+      const switchText = document.getElementById('switchText');
+      const switchLink = document.getElementById('switchLink');
+      const forgotRow = document.getElementById('forgotRow');
+      if (mode === 'login') {
+        title.textContent = 'Welcome back';
+        subtitle.textContent = onEwaHost ? 'Log in to access your earned wages.' : 'Log in to run your payroll.';
+        btn.textContent = 'Log In';
+        switchText.textContent = "Don't have an account?";
+        switchLink.textContent = 'Sign up free';
+        forgotRow.style.display = 'block';
+      } else {
+        title.textContent = 'Create your account';
+        subtitle.textContent = onEwaHost ? 'Sign up to access your earned wages.' : 'Sign up to start running payroll.';
+        btn.textContent = 'Sign Up';
+        switchText.textContent = 'Already have an account?';
+        switchLink.textContent = 'Log in';
+        forgotRow.style.display = 'none';
+      }
+    }
+    function toggleMode() { setMode(currentMode === 'login' ? 'signup' : 'login'); }
 
     // Supabase v2 sends recovery links with ?code= (PKCE) or #type=recovery (implicit)
     // Detect either format immediately so we never redirect away from the reset form
@@ -288,17 +320,34 @@
       }
     });
 
-    async function handleLogin(e) {
+    async function handleAuth(e) {
       e.preventDefault();
       const email = document.getElementById('email').value;
       const password = document.getElementById('password').value;
-      const btn = document.querySelector('.btn-login');
+      const btn = document.querySelector('#loginForm .btn-login');
       const errorMsg = document.getElementById('errorMsg');
+      const successMsg = document.getElementById('successMsg');
 
       errorMsg.style.display = 'none';
-      btn.textContent = 'Logging in...';
+      successMsg.style.display = 'none';
       btn.disabled = true;
 
+      if (currentMode === 'signup') {
+        btn.textContent = 'Creating account...';
+        const { error } = await sb.auth.signUp({ email, password });
+        btn.disabled = false;
+        btn.textContent = 'Sign Up';
+        if (error) {
+          errorMsg.textContent = error.message;
+          errorMsg.style.display = 'block';
+          return;
+        }
+        successMsg.style.display = 'block';
+        document.getElementById('loginForm').reset();
+        return;
+      }
+
+      btn.textContent = 'Logging in...';
       const { data, error } = await sb.auth.signInWithPassword({ email, password });
 
       if (error) {
