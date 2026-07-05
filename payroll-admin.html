@@ -16,7 +16,11 @@
     html, body { height: 100%; font-family: 'Inter', sans-serif; background: var(--bg); color: var(--text); }
     a { text-decoration: none; }
 
-    .layout { display: grid; grid-template-columns: 220px 1fr; min-height: 100vh; }
+    /* .sidebar is position:fixed (out of normal flow), so .layout stays a plain
+       block box and .main gets its width from margin-left, not a grid track —
+       a grid here would drop the fixed sidebar from the item list and collapse
+       .main into the wrong column. */
+    .layout { min-height: 100vh; }
     .sidebar { background: var(--navy); position: fixed; top:0; left:0; bottom:0; width:220px; display:flex; flex-direction:column; z-index:50; }
     .sidebar-logo { padding: 22px 20px 18px; font-size:1.5rem; font-weight:900; letter-spacing:-0.04em; border-bottom:1px solid rgba(255,255,255,0.08); }
     .sidebar-logo .b { color: var(--teal); } .sidebar-logo .u { color: var(--white); }
@@ -104,7 +108,7 @@
     .layout { visibility:hidden; }
 
     @media (max-width:1024px) { .kpi-grid { grid-template-columns:repeat(2,1fr); } .form-row, .form-row-3 { grid-template-columns:1fr; } }
-    @media (max-width:768px) { .layout { grid-template-columns:1fr; } .sidebar { width:100%; position:relative; height:auto; } .main { margin-left:0; } }
+    @media (max-width:768px) { .sidebar { width:100%; position:relative; height:auto; } .main { margin-left:0; } }
   </style>
 </head>
 <body>
@@ -244,8 +248,8 @@
       <div class="form-group"><label>Employee number</label><input id="s-empnum"></div>
     </div>
     <div class="form-row">
-      <div class="form-group"><label>SA ID number</label><input id="s-idnum" placeholder="13 digits" maxlength="13"></div>
-      <div class="form-group"><label>Date of birth <span style="font-weight:400;color:var(--soft)">(if no SA ID)</span></label><input type="date" id="s-dob"></div>
+      <div class="form-group"><label>SA ID number</label><input id="s-idnum" placeholder="13 digits" maxlength="13" oninput="updateEtiAgeWarning()"></div>
+      <div class="form-group"><label>Date of birth <span style="font-weight:400;color:var(--soft)">(if no SA ID)</span></label><input type="date" id="s-dob" onchange="updateEtiAgeWarning()"></div>
     </div>
     <div class="form-row">
       <div class="form-group"><label>Email</label><input type="email" id="s-email"></div>
@@ -279,7 +283,8 @@
         <select id="s-accttype"><option>Savings</option><option>Cheque</option></select>
       </div>
     </div>
-    <div class="checkbox-row"><input type="checkbox" id="s-eti" checked><label for="s-eti" style="margin:0">Eligible for Employment Tax Incentive (age 18–29, standard employer)</label></div>
+    <div class="checkbox-row"><input type="checkbox" id="s-eti" checked onchange="updateEtiAgeWarning()"><label for="s-eti" style="margin:0">Eligible for Employment Tax Incentive (age 18–29, standard employer)</label></div>
+    <p class="form-hint" id="etiAgeWarning" style="display:none;color:var(--orange,#f97316);margin:-8px 0 14px">⚠ No SA ID number or date of birth entered — without one, this employee's age can't be determined and ETI will always calculate as R0, even with this box checked.</p>
     <div class="checkbox-row"><input type="checkbox" id="s-active" checked><label for="s-active" style="margin:0">Active</label></div>
     <div class="modal-actions">
       <button class="btn-outline" onclick="closeModal('staffModal')">Cancel</button>
@@ -462,6 +467,13 @@ function openStaffModal(id) {
   document.getElementById('s-eti').checked = s ? !!s.is_eti_eligible : true;
   document.getElementById('s-active').checked = s ? !!s.active : true;
   document.getElementById('staffModal').hidden = false;
+  updateEtiAgeWarning();
+}
+
+function updateEtiAgeWarning() {
+  const hasAgeInfo = val('s-idnum').length >= 6 || !!val('s-dob');
+  const etiChecked = document.getElementById('s-eti').checked;
+  document.getElementById('etiAgeWarning').style.display = (etiChecked && !hasAgeInfo) ? 'block' : 'none';
 }
 
 async function saveStaff() {
@@ -612,7 +624,7 @@ async function calculateRun(runId) {
 }
 
 async function finalizeRun(runId) {
-  if (!confirm('Finalize this pay run? Payslips will be locked and leave/YTD figures updated.')) return;
+  if (!confirm('Finalize this pay run? Payslips will be locked and can no longer be recalculated. Remember to recalculate leave accruals separately from the Leave tab.')) return;
   try {
     await callEngine('finalize', { run_id: runId });
     await loadRuns();

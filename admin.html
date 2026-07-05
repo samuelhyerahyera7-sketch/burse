@@ -25,7 +25,11 @@
     html, body { height: 100%; font-family: 'Inter', sans-serif; background: var(--bg); color: var(--text); }
 
     /* ── Layout ── */
-    .admin-layout { display: grid; grid-template-columns: 220px 1fr; min-height: 100vh; }
+    /* .sidebar is position:fixed (out of normal flow), so .admin-layout stays a
+       plain block box and .main gets its width from margin-left, not a grid
+       track — a grid here would drop the fixed sidebar from the item list and
+       collapse .main into the wrong column. */
+    .admin-layout { min-height: 100vh; }
 
     /* ── Sidebar ── */
     .sidebar {
@@ -198,7 +202,6 @@
       .two-col { grid-template-columns: 1fr; }
     }
     @media (max-width: 768px) {
-      .admin-layout { grid-template-columns: 1fr; }
       .sidebar { width: 100%; position: relative; height: auto; }
       .main { margin-left: 0; }
       .kpi-grid { grid-template-columns: 1fr 1fr; }

@@ -54,6 +54,15 @@ Deno.serve(async (req) => {
     switch (action) {
       case 'create_run': {
         const { company_id, period_start, period_end, pay_date, frequency } = body;
+        if (!company_id || !period_start || !period_end || !pay_date) {
+          return json({ error: 'company_id, period_start, period_end and pay_date are all required' }, 400);
+        }
+        if (isNaN(Date.parse(period_start)) || isNaN(Date.parse(period_end)) || isNaN(Date.parse(pay_date))) {
+          return json({ error: 'period_start, period_end and pay_date must be valid dates' }, 400);
+        }
+        if (period_end < period_start) {
+          return json({ error: 'period_end cannot be before period_start' }, 400);
+        }
         await requireOwnedCompany(company_id);
         const tax_year = taxYearForDate(new Date(pay_date));
         const { data, error } = await sb
@@ -92,7 +101,8 @@ Deno.serve(async (req) => {
 
         const results = [];
         for (const staff of staffList ?? []) {
-          const payslip = computePayslip(staff, run, company, annualPayrollEstimate);
+          const ytdBefore = await fetchYtdBefore(sb, staff.id, run);
+          const payslip = computePayslip(staff, run, company, annualPayrollEstimate, ytdBefore);
           const { data: saved, error: upErr } = await sb
             .from('payroll_payslips')
             .upsert({ run_id: run.id, staff_id: staff.id, ...payslip }, { onConflict: 'run_id,staff_id' })
@@ -224,8 +234,42 @@ Deno.serve(async (req) => {
 
 // ─── Payslip calculation ──────────────────────────────────────────────────
 
+interface YtdBefore {
+  gross: number;
+  taxable: number;
+  paye: number;
+  uifEmployee: number;
+  retirementDeductible: number;
+}
+
+/**
+ * Sums this staff member's payslips from earlier pay dates within the same
+ * tax year, so PAYE annualisation, the retirement fund annual cap, and the
+ * payslip's displayed YTD figures are all consistent across periods. Runs
+ * are keyed by pay_date (not period dates) since that's what determines
+ * which tax year a payment falls in.
+ */
 // deno-lint-ignore no-explicit-any
-function computePayslip(staff: any, run: any, company: any, annualPayrollEstimate: number) {
+async function fetchYtdBefore(sb: any, staffId: string, run: any): Promise<YtdBefore> {
+  const { data } = await sb
+    .from('payroll_payslips')
+    .select('gross_pay, taxable_income, paye, uif_employee, retirement_deductible, payroll_runs!inner(pay_date, tax_year)')
+    .eq('staff_id', staffId)
+    .eq('payroll_runs.tax_year', run.tax_year)
+    .lt('payroll_runs.pay_date', run.pay_date);
+
+  // deno-lint-ignore no-explicit-any
+  return (data ?? []).reduce((acc: YtdBefore, p: any) => ({
+    gross: acc.gross + Number(p.gross_pay || 0),
+    taxable: acc.taxable + Number(p.taxable_income || 0),
+    paye: acc.paye + Number(p.paye || 0),
+    uifEmployee: acc.uifEmployee + Number(p.uif_employee || 0),
+    retirementDeductible: acc.retirementDeductible + Number(p.retirement_deductible || 0),
+  }), { gross: 0, taxable: 0, paye: 0, uifEmployee: 0, retirementDeductible: 0 });
+}
+
+// deno-lint-ignore no-explicit-any
+function computePayslip(staff: any, run: any, company: any, annualPayrollEstimate: number, ytdBefore: YtdBefore) {
   const freq = staff.pay_frequency || run.frequency || 'monthly';
   const periods = periodsPerYear(freq);
 
@@ -243,7 +287,7 @@ function computePayslip(staff: any, run: any, company: any, annualPayrollEstimat
   const retirementDeductible = deductibleRetirementContribution(
     retirementContribution,
     remunerationForRetirementCap,
-    0, // MVP: no cross-period YTD cap tracking yet — capped per-period only
+    ytdBefore.retirementDeductible,
     periods,
     run.tax_year,
   );
@@ -300,6 +344,11 @@ function computePayslip(staff: any, run: any, company: any, annualPayrollEstimat
     other_deductions_json: otherDeductionsList,
     total_deductions: totalDeductions,
     net_pay: netPay,
+    ytd_gross: round2(ytdBefore.gross + grossPay),
+    ytd_taxable: round2(ytdBefore.taxable + taxableIncome),
+    ytd_paye: round2(ytdBefore.paye + paye.periodPaye),
+    ytd_uif_employee: round2(ytdBefore.uifEmployee + uif.employee),
+    ytd_retirement: round2(ytdBefore.retirementDeductible + retirementDeductible),
   };
 }
 
