@@ -97,6 +97,42 @@
       text-decoration: none;
     }
 
+    .password-wrap { position: relative; }
+    .password-wrap input { padding-right: 42px; }
+    .password-toggle {
+      position: absolute;
+      right: 10px;
+      top: 50%;
+      transform: translateY(-50%);
+      background: none;
+      border: none;
+      cursor: pointer;
+      color: #b0bec5;
+      padding: 4px;
+      display: flex;
+      align-items: center;
+    }
+    .password-toggle:hover { color: #7a8fb0; }
+    .password-toggle svg { width: 18px; height: 18px; }
+
+    .remember-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-top: -6px;
+      margin-bottom: 16px;
+    }
+    .remember-label {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 0.78rem;
+      color: #3d5070;
+      font-weight: 600;
+      cursor: pointer;
+    }
+    .remember-label input { width: auto; margin: 0; cursor: pointer; }
+
     .btn-login {
       width: 100%;
       padding: 12px;
@@ -164,10 +200,18 @@
           </div>
           <div class="form-group">
             <label for="password">Password</label>
-            <input type="password" id="password" placeholder="Enter your password" required autocomplete="current-password">
+            <div class="password-wrap">
+              <input type="password" id="password" placeholder="Enter your password" required autocomplete="current-password">
+              <button type="button" class="password-toggle" id="passwordToggle" aria-label="Show password">
+                <svg id="eyeIcon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7-11-7-11-7z"/><circle cx="12" cy="12" r="3"/></svg>
+              </button>
+            </div>
           </div>
-          <div class="forgot" id="forgotRow">
-            <a href="#" onclick="handleForgotPassword(event)">Forgot password?</a>
+          <div class="remember-row">
+            <label class="remember-label"><input type="checkbox" id="rememberMe" checked> Stay logged in</label>
+            <div class="forgot" id="forgotRow" style="margin:0">
+              <a href="#" onclick="handleForgotPassword(event)">Forgot password?</a>
+            </div>
           </div>
           <button type="submit" class="btn-login" id="authSubmitBtn">Log In</button>
         </form>
@@ -205,11 +249,39 @@
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script>
+    // "Stay logged in" support, shared by every page that creates a Supabase
+    // client (login.html, payroll-admin.html, leave.html): the actual
+    // preference lives in localStorage as a small flag (not the session
+    // itself), and this custom storage adapter reads that flag on every
+    // call to decide whether the real session goes into localStorage
+    // (persists across browser restarts) or sessionStorage (cleared when
+    // the tab/browser closes).
+    function burseGetRemember() { return localStorage.getItem('burse-remember') !== '0'; }
+    function burseSetRemember(v) { localStorage.setItem('burse-remember', v ? '1' : '0'); }
+    const burseAuthStorage = {
+      getItem: (key) => (burseGetRemember() ? window.localStorage : window.sessionStorage).getItem(key),
+      setItem: (key, value) => (burseGetRemember() ? window.localStorage : window.sessionStorage).setItem(key, value),
+      removeItem: (key) => (burseGetRemember() ? window.localStorage : window.sessionStorage).removeItem(key),
+    };
+
     const { createClient } = supabase;
     const sb = createClient(
       'https://pnpfurfodmejdggnyjof.supabase.co',
-      'sb_publishable_q2fnC5EJrToRNuvUjW619Q_NKMbO0iX'
+      'sb_publishable_q2fnC5EJrToRNuvUjW619Q_NKMbO0iX',
+      { auth: { storage: burseAuthStorage, persistSession: true, autoRefreshToken: true } }
     );
+
+    document.getElementById('rememberMe').checked = burseGetRemember();
+
+    document.getElementById('passwordToggle').addEventListener('click', () => {
+      const input = document.getElementById('password');
+      const showing = input.type === 'text';
+      input.type = showing ? 'password' : 'text';
+      document.getElementById('passwordToggle').setAttribute('aria-label', showing ? 'Show password' : 'Hide password');
+      document.getElementById('eyeIcon').innerHTML = showing
+        ? '<path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7-11-7-11-7z"/><circle cx="12" cy="12" r="3"/>'
+        : '<path d="M17.94 17.94A10.94 10.94 0 0 1 12 20c-7 0-11-8-11-8a21.8 21.8 0 0 1 5.06-6.06M9.9 4.24A10.94 10.94 0 0 1 12 4c7 0 11 8 11 8a21.77 21.77 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/>';
+    });
 
     function postLoginDestination() {
       return '/payroll-admin';
@@ -281,6 +353,10 @@
       const btn = document.querySelector('#loginForm .btn-login');
       const errorMsg = document.getElementById('errorMsg');
       const successMsg = document.getElementById('successMsg');
+
+      // Must be set before signIn/signUp writes the session, since our
+      // storage adapter checks this flag on every read/write.
+      burseSetRemember(document.getElementById('rememberMe').checked);
 
       errorMsg.style.display = 'none';
       successMsg.style.display = 'none';

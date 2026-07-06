@@ -94,6 +94,10 @@
     .form-group input:focus, .form-group select:focus, .form-group textarea:focus { border-color:var(--teal); }
     .form-hint { font-size:0.72rem; color:var(--soft); margin-top:4px; }
     .checkbox-row { display:flex; align-items:center; gap:8px; margin-bottom:14px; }
+    .deduction-row { display:flex; gap:8px; margin-bottom:8px; }
+    .deduction-row input { flex:1; }
+    .deduction-row input.amount { max-width:130px; }
+    .deduction-row button { flex-shrink:0; }
     .checkbox-row input { width:auto; }
 
     .btn-primary { padding:10px 20px; background:var(--navy-dark); color:white; border:none; border-radius:8px; font-size:0.85rem; font-weight:700; font-family:'Inter',sans-serif; cursor:pointer; }
@@ -370,6 +374,15 @@
       <div class="form-group"><label>Retirement fund contribution (employee)</label><input type="number" id="s-retirement" step="0.01"></div>
       <div class="form-group"><label>Medical aid dependants <span style="font-weight:400;color:var(--soft)">(0 = none, 1 = member only)</span></label><input type="number" id="s-medical" step="1" min="0"></div>
     </div>
+    <div class="form-row">
+      <div class="form-group"><label>Tax number <span style="font-weight:400;color:var(--soft)">(SARS income tax reference)</span></label><input id="s-taxnum" placeholder="e.g. 9012345678"></div>
+      <div class="form-group"></div>
+    </div>
+    <div class="form-group" style="margin-bottom:14px">
+      <label>Other deductions <span style="font-weight:400;color:var(--soft)">(recurring — garnishee, loan repayment, union fee, etc.)</span></label>
+      <div id="s-deductions-list"></div>
+      <button type="button" class="btn-outline btn-sm" style="margin-top:6px" onclick="addDeductionRow()">+ Add deduction</button>
+    </div>
     <p class="form-hint" style="margin-bottom:8px">Banking details — only visible to you as the account owner, masked to the last 4 digits everywhere else in the app.</p>
     <div class="form-row">
       <div class="form-group"><label>Bank name</label><input id="s-bankname"></div>
@@ -415,7 +428,18 @@
 const SUPABASE_URL = 'https://pnpfurfodmejdggnyjof.supabase.co';
 const SUPABASE_KEY = 'sb_publishable_q2fnC5EJrToRNuvUjW619Q_NKMbO0iX';
 const { createClient } = supabase;
-const sb = createClient(SUPABASE_URL, SUPABASE_KEY);
+
+// Must match the storage adapter in login.html exactly — the "Stay logged in"
+// choice made at login is a flag in localStorage, and every page's client
+// reads it to decide whether the real session lives in localStorage
+// (persists across restarts) or sessionStorage (cleared when the browser closes).
+function burseGetRemember() { return localStorage.getItem('burse-remember') !== '0'; }
+const burseAuthStorage = {
+  getItem: (key) => (burseGetRemember() ? window.localStorage : window.sessionStorage).getItem(key),
+  setItem: (key, value) => (burseGetRemember() ? window.localStorage : window.sessionStorage).setItem(key, value),
+  removeItem: (key) => (burseGetRemember() ? window.localStorage : window.sessionStorage).removeItem(key),
+};
+const sb = createClient(SUPABASE_URL, SUPABASE_KEY, { auth: { storage: burseAuthStorage, persistSession: true, autoRefreshToken: true } });
 
 // Every fetch() to our own edge functions goes through this so a slow/dead
 // connection can never leave a button stuck on "Sending..."/"Loading..."
@@ -647,6 +671,7 @@ async function loadStaff() {
 
 function openStaffModal(id) {
   if (!isOwner) return;
+  if (!id && !requireCompany()) return;
   document.getElementById('staffError').style.display = 'none';
   const s = id ? staffCache.find(x => x.id === id) : null;
   document.getElementById('staffModalTitle').textContent = s ? 'Edit Employee' : 'Add Employee';
@@ -665,12 +690,14 @@ function openStaffModal(id) {
   document.getElementById('s-otherNontax').value = s?.other_nontaxable_allowance ?? '';
   document.getElementById('s-retirement').value = s?.retirement_contribution ?? '';
   document.getElementById('s-medical').value = s?.medical_aid_dependants ?? 0;
+  document.getElementById('s-taxnum').value = s?.tax_number || '';
   document.getElementById('s-bankname').value = s?.bank_name || '';
   document.getElementById('s-bankacc').value = s?.bank_account_number || '';
   document.getElementById('s-branchcode').value = s?.bank_branch_code || '';
   document.getElementById('s-accttype').value = s?.account_type || 'Savings';
   document.getElementById('s-eti').checked = s ? !!s.is_eti_eligible : true;
   document.getElementById('s-active').checked = s ? !!s.active : true;
+  renderDeductionRows(Array.isArray(s?.other_deductions_json) ? s.other_deductions_json : []);
   document.getElementById('staffModal').hidden = false;
   updateEtiAgeWarning();
 }
@@ -679,6 +706,30 @@ function updateEtiAgeWarning() {
   const hasAgeInfo = val('s-idnum').length >= 6 || !!val('s-dob');
   const etiChecked = document.getElementById('s-eti').checked;
   document.getElementById('etiAgeWarning').style.display = (etiChecked && !hasAgeInfo) ? 'block' : 'none';
+}
+
+// ── Recurring other-deductions list (garnishee, loan repayment, union fee, etc.) ──
+function renderDeductionRows(rows) {
+  const wrap = document.getElementById('s-deductions-list');
+  wrap.innerHTML = '';
+  (rows.length ? rows : []).forEach(r => addDeductionRow(r.label, r.amount));
+}
+function addDeductionRow(label, amount) {
+  const wrap = document.getElementById('s-deductions-list');
+  const row = document.createElement('div');
+  row.className = 'deduction-row';
+  row.innerHTML = `
+    <input placeholder="Label, e.g. Union fee" class="ded-label" value="${label ? esc(label) : ''}">
+    <input type="number" step="0.01" placeholder="Amount" class="amount ded-amount" value="${amount ?? ''}">
+    <button type="button" class="btn-danger" onclick="this.closest('.deduction-row').remove()">Remove</button>
+  `;
+  wrap.appendChild(row);
+}
+function collectDeductionRows() {
+  return Array.from(document.querySelectorAll('#s-deductions-list .deduction-row')).map(row => ({
+    label: row.querySelector('.ded-label').value.trim(),
+    amount: parseFloat(row.querySelector('.ded-amount').value) || 0,
+  })).filter(d => d.label && d.amount > 0);
 }
 
 async function saveStaff() {
@@ -705,6 +756,8 @@ async function saveStaff() {
     other_nontaxable_allowance: numOr0('s-otherNontax'),
     retirement_contribution: numOr0('s-retirement'),
     medical_aid_dependants: parseInt(document.getElementById('s-medical').value || '0'),
+    tax_number: val('s-taxnum') || null,
+    other_deductions_json: collectDeductionRows(),
     bank_name: val('s-bankname') || null,
     bank_account_number: val('s-bankacc') || null,
     bank_branch_code: val('s-branchcode') || null,
@@ -758,6 +811,7 @@ function statusBadge(status) {
 
 function openRunModal() {
   if (!isOwner) return;
+  if (!requireCompany()) return;
   document.getElementById('runError').style.display = 'none';
   document.getElementById('r-start').value = '';
   document.getElementById('r-end').value = '';
@@ -768,6 +822,7 @@ function openRunModal() {
 async function createRun() {
   const errEl = document.getElementById('runError');
   errEl.style.display = 'none';
+  if (!company) { errEl.textContent = 'Set up your company first.'; errEl.style.display = 'block'; return; }
   const period_start = val('r-start'), period_end = val('r-end'), pay_date = val('r-paydate');
   if (!period_start || !period_end || !pay_date) { errEl.textContent = 'All dates are required.'; errEl.style.display = 'block'; return; }
 
@@ -1159,6 +1214,14 @@ function renderDashboard() {
 }
 
 // ── Helpers ──
+function requireCompany() {
+  if (company) return true;
+  showSection('settings');
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  document.querySelector(".nav-item[onclick*='settings']")?.classList.add('active');
+  alert('Set up your company first — fill in your company details below to get started.');
+  return false;
+}
 function closeModal(id) { document.getElementById(id).hidden = true; }
 function val(id) { return document.getElementById(id).value.trim(); }
 function numOr0(id) { return parseFloat(document.getElementById(id).value) || 0; }

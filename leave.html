@@ -81,10 +81,19 @@
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script>
+    // Must match the storage adapter in login.html exactly — see comment there.
+    function burseGetRemember() { return localStorage.getItem('burse-remember') !== '0'; }
+    const burseAuthStorage = {
+      getItem: (key) => (burseGetRemember() ? window.localStorage : window.sessionStorage).getItem(key),
+      setItem: (key, value) => (burseGetRemember() ? window.localStorage : window.sessionStorage).setItem(key, value),
+      removeItem: (key) => (burseGetRemember() ? window.localStorage : window.sessionStorage).removeItem(key),
+    };
+
     const { createClient } = supabase;
     const sb = createClient(
       'https://pnpfurfodmejdggnyjof.supabase.co',
-      'sb_publishable_q2fnC5EJrToRNuvUjW619Q_NKMbO0iX'
+      'sb_publishable_q2fnC5EJrToRNuvUjW619Q_NKMbO0iX',
+      { auth: { storage: burseAuthStorage, persistSession: true, autoRefreshToken: true } }
     );
 
     let staff = null;
