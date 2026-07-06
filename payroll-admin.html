@@ -9,9 +9,9 @@
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     :root {
-      --navy: #1e2a6e; --teal: #2ab3b3; --white: #ffffff; --bg: #f0f2f8;
-      --card: #ffffff; --border: #e2e8f0; --text: #0e1c40; --mid: #3d5070;
-      --soft: #7a8fb0; --red: #dc2626; --green: #16a34a; --orange: #f97316;
+      --navy: #1a2f72; --navy-dark: #0e1c40; --teal: #2ab3b3; --teal-dark: #1e9090; --white: #ffffff;
+      --bg: #f7f9fc; --card: #ffffff; --border: #e6eaf0; --text: #0e1c40; --mid: #3d5070;
+      --soft: #7a8fb0; --red: #dc2626; --green: #16a34a; --orange: #b45309;
     }
     html, body { height: 100%; font-family: 'Inter', sans-serif; background: var(--bg); color: var(--text); }
     a { text-decoration: none; }
@@ -21,21 +21,21 @@
        a grid here would drop the fixed sidebar from the item list and collapse
        .main into the wrong column. */
     .layout { min-height: 100vh; }
-    .sidebar { background: var(--navy); position: fixed; top:0; left:0; bottom:0; width:220px; display:flex; flex-direction:column; z-index:50; }
-    .sidebar-logo { padding: 22px 20px 18px; font-size:1.5rem; font-weight:900; letter-spacing:-0.04em; border-bottom:1px solid rgba(255,255,255,0.08); }
+    .sidebar { background: var(--navy-dark); position: fixed; top:0; left:0; bottom:0; width:222px; display:flex; flex-direction:column; z-index:50; }
+    .sidebar-logo { padding: 22px 20px 18px; font-size:1.4rem; font-weight:900; letter-spacing:-0.04em; border-bottom:1px solid rgba(255,255,255,0.08); }
     .sidebar-logo .b { color: var(--teal); } .sidebar-logo .u { color: var(--white); }
-    .sidebar-logo small { display:block; font-size:0.65rem; font-weight:600; letter-spacing:0.12em; text-transform:uppercase; color:rgba(255,255,255,0.35); margin-top:2px; }
-    .sidebar-nav { flex:1; padding:16px 10px; display:flex; flex-direction:column; gap:2px; }
-    .nav-item { display:flex; align-items:center; gap:10px; padding:10px 12px; border-radius:8px; font-size:0.875rem; font-weight:500; color:rgba(255,255,255,0.55); cursor:pointer; transition:all .15s; }
-    .nav-item:hover { background: rgba(255,255,255,0.07); color: rgba(255,255,255,0.9); }
-    .nav-item.active { background: rgba(42,179,179,0.18); color: var(--teal); font-weight:600; }
-    .nav-item .icon { font-size:1rem; width:20px; text-align:center; flex-shrink:0; }
+    .sidebar-logo small { display:block; font-size:0.62rem; font-weight:600; letter-spacing:0.12em; text-transform:uppercase; color:rgba(255,255,255,0.35); margin-top:2px; }
+    .sidebar-nav { flex:1; padding:14px 10px; display:flex; flex-direction:column; gap:1px; overflow-y:auto; }
+    .nav-item { padding:9px 12px; border-radius:7px; font-size:0.85rem; font-weight:500; color:rgba(255,255,255,0.6); cursor:pointer; transition:all .15s; display:flex; align-items:center; justify-content:space-between; }
+    .nav-item:hover { background: rgba(255,255,255,0.06); color: rgba(255,255,255,0.92); }
+    .nav-item.active { background: rgba(42,179,179,0.2); color: var(--teal); font-weight:700; }
+    .nav-soon { font-size:0.6rem; font-weight:700; letter-spacing:0.04em; text-transform:uppercase; background:rgba(255,255,255,0.1); color:rgba(255,255,255,0.55); padding:2px 6px; border-radius:20px; }
     .sidebar-footer { padding:14px 10px; border-top:1px solid rgba(255,255,255,0.08); }
 
-    .main { margin-left:220px; min-height:100vh; }
+    .main { margin-left:222px; min-height:100vh; }
     .topbar { background:var(--card); border-bottom:1px solid var(--border); padding:0 28px; height:60px; display:flex; align-items:center; justify-content:space-between; position:sticky; top:0; z-index:40; }
     .topbar-title { font-size:1rem; font-weight:700; }
-    .content { padding:28px; }
+    .content { padding:28px; max-width:1200px; }
     .section { display:none; } .section.active { display:block; }
 
     .page-header { margin-bottom:22px; }
@@ -43,22 +43,22 @@
     .page-header p { font-size:0.83rem; color:var(--soft); }
 
     .kpi-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:16px; margin-bottom:24px; }
-    .kpi-card { background:var(--card); border:1px solid var(--border); border-radius:14px; padding:20px; box-shadow:0 1px 3px rgba(10,20,60,0.06); }
-    .kpi-label { font-size:0.72rem; font-weight:700; letter-spacing:0.08em; text-transform:uppercase; color:var(--soft); margin-bottom:8px; }
-    .kpi-val { font-size:1.9rem; font-weight:900; letter-spacing:-0.03em; margin-bottom:4px; }
-    .kpi-sub { font-size:0.78rem; color:var(--soft); }
+    .kpi-card { background:var(--card); border:1px solid var(--border); border-radius:14px; padding:20px; }
+    .kpi-label { font-size:0.7rem; font-weight:700; letter-spacing:0.06em; text-transform:uppercase; color:var(--soft); margin-bottom:8px; }
+    .kpi-val { font-size:1.7rem; font-weight:900; letter-spacing:-0.02em; margin-bottom:4px; }
+    .kpi-sub { font-size:0.76rem; color:var(--soft); }
 
-    .card { background:var(--card); border:1px solid var(--border); border-radius:14px; padding:22px; box-shadow:0 1px 3px rgba(10,20,60,0.06); margin-bottom:20px; }
-    .card-header { display:flex; align-items:center; justify-content:space-between; margin-bottom:18px; }
+    .card { background:var(--card); border:1px solid var(--border); border-radius:14px; padding:22px; margin-bottom:20px; }
+    .card-header { display:flex; align-items:center; justify-content:space-between; margin-bottom:18px; gap:12px; flex-wrap:wrap; }
     .card-title { font-size:0.92rem; font-weight:700; }
 
     table { width:100%; border-collapse:collapse; }
-    th { font-size:0.7rem; font-weight:700; letter-spacing:0.08em; text-transform:uppercase; color:var(--soft); padding:8px 12px; text-align:left; border-bottom:1px solid var(--border); }
+    th { font-size:0.68rem; font-weight:700; letter-spacing:0.06em; text-transform:uppercase; color:var(--soft); padding:8px 12px; text-align:left; border-bottom:1px solid var(--border); }
     td { font-size:0.83rem; padding:12px; border-bottom:1px solid var(--border); }
     tr:last-child td { border-bottom:none; }
-    tr:hover td { background:#f8f9fb; }
+    tr:hover td { background:#fafbfd; }
 
-    .badge { display:inline-flex; align-items:center; font-size:0.68rem; font-weight:700; padding:3px 8px; border-radius:50px; letter-spacing:0.04em; }
+    .badge { display:inline-flex; align-items:center; font-size:0.66rem; font-weight:700; padding:3px 8px; border-radius:50px; letter-spacing:0.02em; }
     .badge-green { background:#dcfce7; color:#15803d; }
     .badge-red { background:#fee2e2; color:#dc2626; }
     .badge-yellow { background:#fef3c7; color:#b45309; }
@@ -77,11 +77,12 @@
     .checkbox-row { display:flex; align-items:center; gap:8px; margin-bottom:14px; }
     .checkbox-row input { width:auto; }
 
-    .btn-primary { padding:10px 20px; background:var(--navy); color:white; border:none; border-radius:8px; font-size:0.85rem; font-weight:700; font-family:'Inter',sans-serif; cursor:pointer; }
+    .btn-primary { padding:10px 20px; background:var(--navy-dark); color:white; border:none; border-radius:8px; font-size:0.85rem; font-weight:700; font-family:'Inter',sans-serif; cursor:pointer; }
     .btn-primary:hover { background:#162050; }
-    .btn-primary:disabled { opacity:0.6; cursor:not-allowed; }
+    .btn-primary:disabled { opacity:0.45; cursor:not-allowed; }
     .btn-teal { padding:10px 20px; background:var(--teal); color:white; border:none; border-radius:8px; font-size:0.85rem; font-weight:700; font-family:'Inter',sans-serif; cursor:pointer; }
-    .btn-teal:hover { background:#238f8f; }
+    .btn-teal:hover { background:var(--teal-dark); }
+    .btn-teal:disabled { opacity:0.45; cursor:not-allowed; }
     .btn-outline { padding:9px 16px; border:1.5px solid var(--border); border-radius:8px; font-size:0.82rem; font-weight:600; color:var(--mid); cursor:pointer; background:var(--card); font-family:'Inter',sans-serif; }
     .btn-outline:hover { border-color:var(--teal); color:var(--teal); }
     .btn-danger { padding:6px 12px; background:#fee2e2; color:var(--red); border:none; border-radius:6px; font-size:0.75rem; font-weight:700; font-family:'Inter',sans-serif; cursor:pointer; }
@@ -90,7 +91,6 @@
     .loading { text-align:center; padding:40px; color:var(--soft); font-size:0.85rem; }
     .empty { text-align:center; padding:30px; color:var(--soft); font-size:0.85rem; }
 
-    /* Modal */
     .modal-overlay { position:fixed; inset:0; z-index:200; background:rgba(10,20,50,0.6); display:flex; align-items:center; justify-content:center; padding:20px; }
     .modal-overlay[hidden] { display:none; }
     .modal-box { background:#fff; border-radius:16px; padding:28px; max-width:640px; width:100%; max-height:88vh; overflow-y:auto; box-shadow:0 32px 80px rgba(0,0,0,0.3); }
@@ -99,8 +99,10 @@
     .modal-close { float:right; background:#f0f4f8; border:none; width:28px; height:28px; border-radius:50%; cursor:pointer; }
 
     .error-box { background:#fff0f0; border:1px solid #fca5a5; color:#dc2626; font-size:0.8rem; padding:10px 14px; border-radius:8px; margin-bottom:14px; display:none; }
+    .info-box { background:#eef4ff; border:1px solid #c7d9fb; color:#1d4ed8; font-size:0.82rem; padding:12px 16px; border-radius:8px; margin-bottom:16px; line-height:1.5; }
+    .disabled-box { background:#f7f9fc; border:1px dashed var(--border); color:var(--soft); font-size:0.85rem; padding:36px; border-radius:12px; text-align:center; line-height:1.7; }
 
-    #auth-gate { position:fixed; inset:0; z-index:9999; background:#1e2a6e; display:flex; align-items:center; justify-content:center; flex-direction:column; gap:14px; }
+    #auth-gate { position:fixed; inset:0; z-index:9999; background:#0e1c40; display:flex; align-items:center; justify-content:center; flex-direction:column; gap:14px; }
     #auth-gate.hidden { display:none; }
     .gate-spinner { width:36px; height:36px; border-radius:50%; border:3px solid rgba(42,179,179,0.3); border-top-color:#2ab3b3; animation:spin .7s linear infinite; }
     @keyframes spin { to { transform:rotate(360deg); } }
@@ -119,12 +121,16 @@
   <aside class="sidebar">
     <div class="sidebar-logo"><span class="b">B</span><span class="u">urse</span><small>Payroll</small></div>
     <nav class="sidebar-nav">
-      <a class="nav-item active" onclick="showSection('overview')">Overview</a>
-      <a class="nav-item" onclick="showSection('company')">Company Setup</a>
-      <a class="nav-item" onclick="showSection('staff')">Staff</a>
-      <a class="nav-item" onclick="showSection('runs')">Pay Runs</a>
+      <a class="nav-item active" onclick="showSection('dashboard')">Dashboard</a>
+      <a class="nav-item" onclick="showSection('employees')">Employees</a>
+      <a class="nav-item" onclick="showSection('payroll')">Payroll</a>
+      <a class="nav-item" onclick="showSection('payslips')">Payslips</a>
       <a class="nav-item" onclick="showSection('leave')">Leave</a>
-      <a class="nav-item" onclick="showSection('reports')">Statutory Reports</a>
+      <a class="nav-item" onclick="showSection('reports')">Reports</a>
+      <a class="nav-item" onclick="showSection('bankfiles')">Bank Payment Files</a>
+      <a class="nav-item" onclick="showSection('bankfeeds')">Bank Feeds <span class="nav-soon">Soon</span></a>
+      <a class="nav-item" onclick="showSection('accountants')">Accountant Access</a>
+      <a class="nav-item" onclick="showSection('settings')">Settings</a>
     </nav>
     <div class="sidebar-footer">
       <a class="nav-item" href="/">Back to Burse</a>
@@ -132,33 +138,138 @@
   </aside>
 
   <div class="main">
-    <div class="topbar"><div class="topbar-title" id="topbarTitle">Overview</div><div id="companyBadge" style="font-size:0.8rem;color:var(--soft)"></div></div>
+    <div class="topbar"><div class="topbar-title" id="topbarTitle">Dashboard</div><div id="companyBadge" style="font-size:0.8rem;color:var(--soft)"></div></div>
 
     <div class="content">
 
-      <!-- OVERVIEW -->
-      <section class="section active" id="section-overview">
-        <div class="page-header"><h1>Overview</h1><p>Your payroll at a glance.</p></div>
+      <!-- DASHBOARD -->
+      <section class="section active" id="section-dashboard">
+        <div class="page-header"><h1>Dashboard</h1><p id="dashSubtitle">Your payroll at a glance.</p></div>
         <div class="kpi-grid">
-          <div class="kpi-card"><div class="kpi-label">Active staff</div><div class="kpi-val" id="kpi-staff">—</div><div class="kpi-sub">Currently employed</div></div>
-          <div class="kpi-card"><div class="kpi-label">Next pay date</div><div class="kpi-val" id="kpi-nextpay" style="font-size:1.3rem">—</div><div class="kpi-sub" id="kpi-nextpay-sub">—</div></div>
-          <div class="kpi-card"><div class="kpi-label">Last run — net paid</div><div class="kpi-val" id="kpi-lastnet" style="font-size:1.3rem">—</div><div class="kpi-sub" id="kpi-lastnet-sub">—</div></div>
-          <div class="kpi-card"><div class="kpi-label">Tax year</div><div class="kpi-val" id="kpi-taxyear" style="font-size:1.3rem">—</div><div class="kpi-sub">Based on today's date</div></div>
+          <div class="kpi-card"><div class="kpi-label">Employees</div><div class="kpi-val" id="kpi-employees">—</div><div class="kpi-sub">Currently active</div></div>
+          <div class="kpi-card"><div class="kpi-label">Payroll status</div><div class="kpi-val" id="kpi-status" style="font-size:1.2rem">—</div><div class="kpi-sub" id="kpi-status-sub">—</div></div>
+          <div class="kpi-card"><div class="kpi-label">Gross pay</div><div class="kpi-val" id="kpi-gross" style="font-size:1.3rem">—</div><div class="kpi-sub">This period</div></div>
+          <div class="kpi-card"><div class="kpi-label">Net pay</div><div class="kpi-val" id="kpi-net" style="font-size:1.3rem">—</div><div class="kpi-sub" id="kpi-deductions-sub">—</div></div>
         </div>
         <div class="card" id="setupPrompt" style="display:none">
           <div class="card-title">Set up your company to get started</div>
           <p style="font-size:0.85rem;color:var(--soft);margin:10px 0 16px">Add your PAYE, UIF and SDL reference numbers so Burse can calculate statutory deductions correctly.</p>
-          <button class="btn-primary" onclick="showSection('company')">Set up company</button>
+          <button class="btn-primary" onclick="showSection('settings')">Set up company</button>
         </div>
         <div class="card">
-          <div class="card-header"><div class="card-title">Recent pay runs</div><a class="btn-outline btn-sm" onclick="showSection('runs')">View all</a></div>
-          <div id="overviewRuns"><div class="loading">Loading…</div></div>
+          <div class="card-header">
+            <div class="card-title">Current pay run</div>
+            <div>
+              <button class="btn-outline btn-sm" onclick="showSection('payroll')" style="margin-right:8px">View all runs</button>
+              <button class="btn-teal btn-sm" onclick="openRunModal()">Run Payroll</button>
+              <button class="btn-primary btn-sm" id="dashBankFileBtn" style="display:none;margin-left:8px" onclick="showSection('bankfiles')">Download Bank Payment File</button>
+            </div>
+          </div>
+          <div id="dashCurrentRun"><div class="loading">Loading…</div></div>
         </div>
       </section>
 
-      <!-- COMPANY -->
-      <section class="section" id="section-company">
-        <div class="page-header"><h1>Company Setup</h1><p>Statutory registration details used for PAYE, UIF and SDL calculations.</p></div>
+      <!-- EMPLOYEES -->
+      <section class="section" id="section-employees">
+        <div class="page-header"><h1>Employees</h1><p>Everyone you pay through Burse Payroll.</p></div>
+        <div class="card">
+          <div class="card-header"><div class="card-title">All employees</div><button class="btn-teal btn-sm" onclick="openStaffModal()">Add Employee</button></div>
+          <div id="staffTableWrap"><div class="loading">Loading…</div></div>
+        </div>
+      </section>
+
+      <!-- PAYROLL -->
+      <section class="section" id="section-payroll">
+        <div class="page-header"><h1>Payroll</h1><p>Create, calculate and approve payroll for a period.</p></div>
+        <div class="card">
+          <div class="card-header"><div class="card-title">All pay runs</div><button class="btn-teal btn-sm" onclick="openRunModal()">Run Payroll</button></div>
+          <div id="runsTableWrap"><div class="loading">Loading…</div></div>
+        </div>
+        <div class="card" id="runDetailCard" style="display:none">
+          <div class="card-header"><div class="card-title" id="runDetailTitle">Pay run</div><div id="runDetailActions"></div></div>
+          <div id="runDetailWrap"></div>
+        </div>
+      </section>
+
+      <!-- PAYSLIPS -->
+      <section class="section" id="section-payslips">
+        <div class="page-header"><h1>Payslips</h1><p>All payslips generated by a pay run.</p></div>
+        <div class="card">
+          <div class="form-row">
+            <div class="form-group"><label>Select pay run</label><select id="payslipsRunSelect" onchange="loadPayslipsForRun()"><option value="">— choose a run —</option></select></div>
+            <div class="form-group"></div>
+          </div>
+          <div id="payslipsTableWrap"><div class="empty">Select a pay run to view its payslips.</div></div>
+        </div>
+      </section>
+
+      <!-- LEAVE -->
+      <section class="section" id="section-leave">
+        <div class="page-header"><h1>Leave</h1><p>BCEA-compliant leave balances and requests.</p></div>
+        <div class="card">
+          <div class="card-header"><div class="card-title">Leave balances</div><button class="btn-outline btn-sm" onclick="runLeaveAccrual()">Recalculate accruals</button></div>
+          <div id="leaveBalancesWrap"><div class="loading">Loading…</div></div>
+        </div>
+        <div class="card">
+          <div class="card-header"><div class="card-title">Leave requests</div></div>
+          <div id="leaveRequestsWrap"><div class="loading">Loading…</div></div>
+        </div>
+      </section>
+
+      <!-- REPORTS -->
+      <section class="section" id="section-reports">
+        <div class="page-header"><h1>Reports</h1><p>EMP201 monthly reconciliation figures for SARS eFiling. Generate a report from an approved pay run.</p></div>
+        <div class="card">
+          <div class="form-row">
+            <div class="form-group"><label>Select approved pay run</label><select id="reportRunSelect"><option value="">— choose a run —</option></select></div>
+            <div class="form-group" style="display:flex;align-items:flex-end"><button class="btn-primary" onclick="loadEmp201()">Generate EMP201</button></div>
+          </div>
+          <div id="emp201Wrap"></div>
+        </div>
+      </section>
+
+      <!-- BANK PAYMENT FILES -->
+      <section class="section" id="section-bankfiles">
+        <div class="page-header"><h1>Bank Payment Files</h1><p>Generate a bulk payment file once a pay run has been approved.</p></div>
+        <div class="info-box">Download this file and upload it to your business banking bulk payments section.</div>
+        <div class="card">
+          <div class="card-header"><div class="card-title">Approved pay runs</div></div>
+          <div id="bankFilesWrap"><div class="loading">Loading…</div></div>
+        </div>
+      </section>
+
+      <!-- BANK FEEDS (disabled) -->
+      <section class="section" id="section-bankfeeds">
+        <div class="page-header"><h1>Bank Feeds</h1><p>Automatic transaction imports for payroll reconciliation.</p></div>
+        <div class="disabled-box">
+          <strong style="display:block;color:var(--text);font-size:1rem;margin-bottom:8px">Bank Feeds — Coming Soon</strong>
+          Bank Feeds will let you import your business bank account transactions on a read-only basis,
+          so payroll payments can be automatically matched and reconciled against what actually left your account.
+          No live bank linking is available yet — this section is a placeholder for a future release.
+        </div>
+      </section>
+
+      <!-- ACCOUNTANT ACCESS -->
+      <section class="section" id="section-accountants">
+        <div class="page-header"><h1>Accountant Access</h1><p>Give your accountant view-only access to payroll reports, payslips and bank payment files.</p></div>
+        <div class="card">
+          <div class="card-header"><div class="card-title">Invite an accountant</div></div>
+          <div class="error-box" id="accountantError"></div>
+          <div class="form-row">
+            <div class="form-group"><label>Accountant's email address</label><input type="email" id="acc-email" placeholder="accountant@firm.co.za"></div>
+            <div class="form-group" style="display:flex;align-items:flex-end"><button class="btn-primary" onclick="inviteAccountant()" id="inviteAccountantBtn">Send Invite</button></div>
+          </div>
+          <p class="form-hint">Accountants can view payroll reports, payslips, bank payment files and reconciliation notes. They cannot approve payroll, edit bank details, or change salary amounts.</p>
+        </div>
+        <div class="card">
+          <div class="card-header"><div class="card-title">Accountants with access</div></div>
+          <div id="accountantsTableWrap"><div class="loading">Loading…</div></div>
+        </div>
+      </section>
+
+      <!-- SETTINGS -->
+      <section class="section" id="section-settings">
+        <div class="page-header"><h1>Settings</h1><p>Company statutory details used for PAYE, UIF and SDL calculations.</p></div>
         <div class="card">
           <div class="error-box" id="companyError"></div>
           <div class="form-row">
@@ -181,54 +292,8 @@
             <div class="form-group"><label>Address</label><input id="c-address" placeholder="Registered address"></div>
           </div>
           <div class="checkbox-row"><input type="checkbox" id="c-sdlexempt"><label for="c-sdlexempt" style="margin:0">SDL exempt (annual payroll ≤ R500,000)</label></div>
-          <button class="btn-primary" onclick="saveCompany()" id="saveCompanyBtn">Save Company</button>
-        </div>
-      </section>
-
-      <!-- STAFF -->
-      <section class="section" id="section-staff">
-        <div class="page-header"><h1>Staff</h1><p>Everyone you pay through Burse Payroll.</p></div>
-        <div class="card">
-          <div class="card-header"><div class="card-title">All staff</div><button class="btn-teal btn-sm" onclick="openStaffModal()">+ Add Staff</button></div>
-          <div id="staffTableWrap"><div class="loading">Loading…</div></div>
-        </div>
-      </section>
-
-      <!-- RUNS -->
-      <section class="section" id="section-runs">
-        <div class="page-header"><h1>Pay Runs</h1><p>Create, calculate and finalize payroll for a period.</p></div>
-        <div class="card">
-          <div class="card-header"><div class="card-title">All pay runs</div><button class="btn-teal btn-sm" onclick="openRunModal()">+ New Pay Run</button></div>
-          <div id="runsTableWrap"><div class="loading">Loading…</div></div>
-        </div>
-        <div class="card" id="runDetailCard" style="display:none">
-          <div class="card-header"><div class="card-title" id="runDetailTitle">Pay run</div><div id="runDetailActions"></div></div>
-          <div id="runDetailWrap"></div>
-        </div>
-      </section>
-
-      <!-- LEAVE -->
-      <section class="section" id="section-leave">
-        <div class="page-header"><h1>Leave</h1><p>BCEA-compliant leave balances and requests.</p></div>
-        <div class="card">
-          <div class="card-header"><div class="card-title">Leave balances</div><button class="btn-outline btn-sm" onclick="runLeaveAccrual()">Recalculate accruals</button></div>
-          <div id="leaveBalancesWrap"><div class="loading">Loading…</div></div>
-        </div>
-        <div class="card">
-          <div class="card-header"><div class="card-title">Leave requests</div></div>
-          <div id="leaveRequestsWrap"><div class="loading">Loading…</div></div>
-        </div>
-      </section>
-
-      <!-- REPORTS -->
-      <section class="section" id="section-reports">
-        <div class="page-header"><h1>Statutory Reports</h1><p>EMP201 monthly reconciliation figures for SARS eFiling. Generate a report from a finalized pay run.</p></div>
-        <div class="card">
-          <div class="form-row">
-            <div class="form-group"><label>Select finalized pay run</label><select id="reportRunSelect"><option value="">— choose a run —</option></select></div>
-            <div class="form-group" style="display:flex;align-items:flex-end"><button class="btn-primary" onclick="loadEmp201()">Generate EMP201</button></div>
-          </div>
-          <div id="emp201Wrap"></div>
+          <div class="form-group" style="margin-bottom:16px"><label>Reconciliation notes <span style="font-weight:400;color:var(--soft)">(visible to your accountant)</span></label><textarea id="c-notes" rows="3" placeholder="Notes for your accountant about this period's payroll..."></textarea></div>
+          <button class="btn-primary" onclick="saveCompany()" id="saveCompanyBtn">Save Settings</button>
         </div>
       </section>
 
@@ -240,7 +305,7 @@
 <div class="modal-overlay" id="staffModal" hidden>
   <div class="modal-box">
     <button class="modal-close" onclick="closeModal('staffModal')">✕</button>
-    <h2 id="staffModalTitle">Add Staff Member</h2>
+    <h2 id="staffModalTitle">Add Employee</h2>
     <div class="error-box" id="staffError"></div>
     <input type="hidden" id="s-id">
     <div class="form-row">
@@ -273,6 +338,7 @@
       <div class="form-group"><label>Retirement fund contribution (employee)</label><input type="number" id="s-retirement" step="0.01"></div>
       <div class="form-group"><label>Medical aid dependants <span style="font-weight:400;color:var(--soft)">(0 = none, 1 = member only)</span></label><input type="number" id="s-medical" step="1" min="0"></div>
     </div>
+    <p class="form-hint" style="margin-bottom:8px">Banking details — only visible to you as the account owner, masked to the last 4 digits everywhere else in the app.</p>
     <div class="form-row">
       <div class="form-group"><label>Bank name</label><input id="s-bankname"></div>
       <div class="form-group"><label>Account number</label><input id="s-bankacc"></div>
@@ -284,11 +350,11 @@
       </div>
     </div>
     <div class="checkbox-row"><input type="checkbox" id="s-eti" checked onchange="updateEtiAgeWarning()"><label for="s-eti" style="margin:0">Eligible for Employment Tax Incentive (age 18–29, standard employer)</label></div>
-    <p class="form-hint" id="etiAgeWarning" style="display:none;color:var(--orange,#f97316);margin:-8px 0 14px">Warning: No SA ID number or date of birth entered — without one, this employee's age can't be determined and ETI will always calculate as R0, even with this box checked.</p>
+    <p class="form-hint" id="etiAgeWarning" style="display:none;color:var(--orange);margin:-8px 0 14px">Warning: No SA ID number or date of birth entered — without one, this employee's age can't be determined and ETI will always calculate as R0, even with this box checked.</p>
     <div class="checkbox-row"><input type="checkbox" id="s-active" checked><label for="s-active" style="margin:0">Active</label></div>
     <div class="modal-actions">
       <button class="btn-outline" onclick="closeModal('staffModal')">Cancel</button>
-      <button class="btn-primary" onclick="saveStaff()" id="saveStaffBtn">Save Staff Member</button>
+      <button class="btn-primary" onclick="saveStaff()" id="saveStaffBtn">Save Employee</button>
     </div>
   </div>
 </div>
@@ -297,7 +363,7 @@
 <div class="modal-overlay" id="runModal" hidden>
   <div class="modal-box" style="max-width:480px">
     <button class="modal-close" onclick="closeModal('runModal')">✕</button>
-    <h2>New Pay Run</h2>
+    <h2>Run Payroll</h2>
     <div class="error-box" id="runError"></div>
     <div class="form-group" style="margin-bottom:14px"><label>Period start</label><input type="date" id="r-start"></div>
     <div class="form-group" style="margin-bottom:14px"><label>Period end</label><input type="date" id="r-end"></div>
@@ -323,18 +389,21 @@ let session = null;
 let company = null;
 let staffCache = [];
 let runsCache = [];
+let isOwner = true; // set false if the signed-in user only has accountant (view-only) access
 
 (async function init() {
   const { data } = await sb.auth.getSession();
   if (!data.session) { window.location.href = '/login'; return; }
   session = data.session;
 
+  await sb.rpc('claim_accountant_invites');
+
   document.getElementById('auth-gate').classList.add('hidden');
   document.getElementById('layout').style.visibility = 'visible';
 
   await loadCompany();
   await Promise.all([loadStaff(), loadRuns()]);
-  renderOverview();
+  renderDashboard();
 })();
 
 function showSection(name) {
@@ -342,12 +411,15 @@ function showSection(name) {
   document.getElementById('section-' + name).classList.add('active');
   document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
   event?.target?.closest('.nav-item')?.classList.add('active');
-  const titles = { overview:'Overview', company:'Company Setup', staff:'Staff', runs:'Pay Runs', leave:'Leave', reports:'Statutory Reports' };
+  const titles = { dashboard:'Dashboard', employees:'Employees', payroll:'Payroll', payslips:'Payslips', leave:'Leave', reports:'Reports', bankfiles:'Bank Payment Files', bankfeeds:'Bank Feeds', accountants:'Accountant Access', settings:'Settings' };
   document.getElementById('topbarTitle').textContent = titles[name];
-  if (name === 'staff') loadStaff();
-  if (name === 'runs') loadRuns();
+  if (name === 'employees') loadStaff();
+  if (name === 'payroll') loadRuns();
+  if (name === 'payslips') { populatePayslipsRunSelect(); }
   if (name === 'leave') { loadLeaveBalances(); loadLeaveRequests(); }
   if (name === 'reports') populateReportRunSelect();
+  if (name === 'bankfiles') loadBankFiles();
+  if (name === 'accountants') loadAccountants();
 }
 
 async function callEngine(action, payload) {
@@ -368,9 +440,19 @@ async function callEngine(action, payload) {
 // ── Company ──
 async function loadCompany() {
   const { data } = await sb.from('payroll_companies').select('*').eq('owner_id', session.user.id).maybeSingle();
-  company = data;
-  document.getElementById('companyBadge').textContent = company ? company.trading_name : '';
-  document.getElementById('setupPrompt').style.display = company ? 'none' : 'block';
+  if (data) {
+    company = data;
+    isOwner = true;
+  } else {
+    // Not an owner — check for accepted accountant access instead
+    const { data: acc } = await sb.from('payroll_accountants').select('*, payroll_companies(*)').eq('user_id', session.user.id).eq('status', 'accepted').maybeSingle();
+    if (acc) { company = acc.payroll_companies; isOwner = false; }
+  }
+  document.getElementById('companyBadge').textContent = company ? (company.trading_name + (isOwner ? '' : ' · Accountant view')) : '';
+  document.getElementById('setupPrompt').style.display = (company || !isOwner) ? 'none' : 'block';
+  if (!isOwner) {
+    document.querySelectorAll('.btn-teal, #saveCompanyBtn, #inviteAccountantBtn').forEach(el => el.style.display = 'none');
+  }
   if (company) {
     document.getElementById('c-trading').value = company.trading_name || '';
     document.getElementById('c-registered').value = company.registered_name || '';
@@ -382,6 +464,10 @@ async function loadCompany() {
     document.getElementById('c-workdays').value = String(company.work_days_per_week || 5);
     document.getElementById('c-address').value = company.address || '';
     document.getElementById('c-sdlexempt').checked = !!company.sdl_exempt;
+    document.getElementById('c-notes').value = company.reconciliation_notes || '';
+    if (!isOwner) {
+      document.querySelectorAll('#section-settings input, #section-settings select, #section-settings textarea').forEach(el => el.disabled = true);
+    }
   }
 }
 
@@ -400,6 +486,7 @@ async function saveCompany() {
     work_days_per_week: parseInt(document.getElementById('c-workdays').value),
     address: val('c-address') || null,
     sdl_exempt: document.getElementById('c-sdlexempt').checked,
+    reconciliation_notes: val('c-notes') || null,
     updated_at: new Date().toISOString(),
   };
   if (!payload.trading_name) { errEl.textContent = 'Trading name is required.'; errEl.style.display = 'block'; return; }
@@ -411,40 +498,48 @@ async function saveCompany() {
   if (company) result = await sb.from('payroll_companies').update(payload).eq('id', company.id).select().single();
   else result = await sb.from('payroll_companies').insert(payload).select().single();
 
-  btn.disabled = false; btn.textContent = 'Save Company';
+  btn.disabled = false; btn.textContent = 'Save Settings';
 
   if (result.error) { errEl.textContent = result.error.message; errEl.style.display = 'block'; return; }
   company = result.data;
   document.getElementById('companyBadge').textContent = company.trading_name;
   document.getElementById('setupPrompt').style.display = 'none';
-  renderOverview();
+  renderDashboard();
 }
 
-// ── Staff ──
+// ── Employees ──
+function maskAccount(num) {
+  if (!num) return '—';
+  const digits = String(num).replace(/\s/g, '');
+  return digits.length <= 4 ? digits : '•••• ' + digits.slice(-4);
+}
+
 async function loadStaff() {
   const wrap = document.getElementById('staffTableWrap');
   if (!company) { wrap.innerHTML = '<div class="empty">Set up your company first.</div>'; return; }
   const { data, error } = await sb.from('payroll_staff').select('*').eq('company_id', company.id).order('full_name');
   if (error) { wrap.innerHTML = `<div class="empty">${error.message}</div>`; return; }
   staffCache = data || [];
-  if (staffCache.length === 0) { wrap.innerHTML = '<div class="empty">No staff yet. Click "+ Add Staff" to get started.</div>'; return; }
+  if (staffCache.length === 0) { wrap.innerHTML = '<div class="empty">No employees yet. Click "Add Employee" to get started.</div>'; return; }
 
-  wrap.innerHTML = `<table><thead><tr><th>Name</th><th>Job title</th><th>Basic salary</th><th>Frequency</th><th>Status</th><th></th></tr></thead><tbody>
+  wrap.innerHTML = `<table><thead><tr><th>Name</th><th>Job title</th><th>Basic salary</th><th>Frequency</th><th>Bank account</th><th>Status</th><th></th></tr></thead><tbody>
     ${staffCache.map(s => `<tr>
       <td>${esc(s.full_name)}</td>
       <td>${esc(s.job_title||'—')}</td>
       <td>R ${Number(s.basic_salary||0).toLocaleString('en-ZA',{minimumFractionDigits:2})}</td>
       <td style="text-transform:capitalize">${s.pay_frequency}</td>
+      <td>${esc(maskAccount(s.bank_account_number))}</td>
       <td>${s.active ? '<span class="badge badge-green">Active</span>' : '<span class="badge badge-gray">Inactive</span>'}</td>
-      <td><a class="btn-outline btn-sm" onclick="openStaffModal('${s.id}')">Edit</a></td>
+      <td>${isOwner ? `<a class="btn-outline btn-sm" onclick="openStaffModal('${s.id}')">Edit</a>` : ''}</td>
     </tr>`).join('')}
   </tbody></table>`;
 }
 
 function openStaffModal(id) {
+  if (!isOwner) return;
   document.getElementById('staffError').style.display = 'none';
   const s = id ? staffCache.find(x => x.id === id) : null;
-  document.getElementById('staffModalTitle').textContent = s ? 'Edit Staff Member' : 'Add Staff Member';
+  document.getElementById('staffModalTitle').textContent = s ? 'Edit Employee' : 'Add Employee';
   document.getElementById('s-id').value = s?.id || '';
   document.getElementById('s-name').value = s?.full_name || '';
   document.getElementById('s-empnum').value = s?.employee_number || '';
@@ -517,22 +612,22 @@ async function saveStaff() {
     ? await sb.from('payroll_staff').update(payload).eq('id', id).select().single()
     : await sb.from('payroll_staff').insert(payload).select().single();
 
-  btn.disabled = false; btn.textContent = 'Save Staff Member';
+  btn.disabled = false; btn.textContent = 'Save Employee';
 
   if (result.error) { errEl.textContent = result.error.message; errEl.style.display = 'block'; return; }
   closeModal('staffModal');
   await loadStaff();
-  renderOverview();
+  renderDashboard();
 }
 
-// ── Runs ──
+// ── Payroll (runs) ──
 async function loadRuns() {
   const wrap = document.getElementById('runsTableWrap');
   if (!company) { wrap.innerHTML = '<div class="empty">Set up your company first.</div>'; return; }
   const { data, error } = await sb.from('payroll_runs').select('*').eq('company_id', company.id).order('period_start', { ascending: false });
   if (error) { wrap.innerHTML = `<div class="empty">${error.message}</div>`; return; }
   runsCache = data || [];
-  if (runsCache.length === 0) { wrap.innerHTML = '<div class="empty">No pay runs yet. Click "+ New Pay Run" to process your first payroll.</div>'; return; }
+  if (runsCache.length === 0) { wrap.innerHTML = '<div class="empty">No pay runs yet. Click "Run Payroll" to process your first payroll.</div>'; return; }
 
   wrap.innerHTML = `<table><thead><tr><th>Period</th><th>Pay date</th><th>Frequency</th><th>Status</th><th></th></tr></thead><tbody>
     ${runsCache.map(r => `<tr>
@@ -546,12 +641,13 @@ async function loadRuns() {
 }
 
 function statusBadge(status) {
-  if (status === 'finalized') return '<span class="badge badge-green">Finalized</span>';
+  if (status === 'finalized') return '<span class="badge badge-green">Approved</span>';
   if (status === 'paid') return '<span class="badge badge-blue">Paid</span>';
   return '<span class="badge badge-yellow">Draft</span>';
 }
 
 function openRunModal() {
+  if (!isOwner) return;
   document.getElementById('runError').style.display = 'none';
   document.getElementById('r-start').value = '';
   document.getElementById('r-end').value = '';
@@ -570,6 +666,8 @@ async function createRun() {
   try {
     const { run } = await callEngine('create_run', { company_id: company.id, period_start, period_end, pay_date, frequency: document.getElementById('r-freq').value });
     closeModal('runModal');
+    showSection('payroll');
+    document.querySelector(".nav-item[onclick*='payroll']")?.classList.add('active');
     await loadRuns();
     viewRun(run.id);
   } catch (e) {
@@ -586,10 +684,12 @@ async function viewRun(runId) {
 
   const actionsEl = document.getElementById('runDetailActions');
   actionsEl.innerHTML = '';
-  if (run.status === 'draft') {
+  if (run.status === 'draft' && isOwner) {
     actionsEl.innerHTML = `
       <button class="btn-outline btn-sm" onclick="calculateRun('${run.id}')">Calculate</button>
-      <button class="btn-primary btn-sm" onclick="finalizeRun('${run.id}')" style="margin-left:8px">Finalize</button>`;
+      <button class="btn-primary btn-sm" onclick="finalizeRun('${run.id}')" style="margin-left:8px">Approve Payroll</button>`;
+  } else if (run.status === 'finalized') {
+    actionsEl.innerHTML = `<button class="btn-primary btn-sm" onclick="showSection('bankfiles')">Download Bank Payment File</button>`;
   }
 
   const { data: payslips } = await sb.from('payroll_payslips').select('*, payroll_staff(full_name)').eq('run_id', run.id);
@@ -624,12 +724,36 @@ async function calculateRun(runId) {
 }
 
 async function finalizeRun(runId) {
-  if (!confirm('Finalize this pay run? Payslips will be locked and can no longer be recalculated. Remember to recalculate leave accruals separately from the Leave tab.')) return;
+  if (!confirm('Approve this pay run? Payslips will be locked and can no longer be recalculated. Remember to recalculate leave accruals separately from the Leave tab.')) return;
   try {
     await callEngine('finalize', { run_id: runId });
     await loadRuns();
     viewRun(runId);
+    renderDashboard();
   } catch (e) { alert(e.message); }
+}
+
+// ── Payslips (dedicated view) ──
+function populatePayslipsRunSelect() {
+  const sel = document.getElementById('payslipsRunSelect');
+  sel.innerHTML = '<option value="">— choose a run —</option>' + runsCache.map(r => `<option value="${r.id}">${r.period_start} – ${r.period_end}</option>`).join('');
+}
+
+async function loadPayslipsForRun() {
+  const runId = document.getElementById('payslipsRunSelect').value;
+  const wrap = document.getElementById('payslipsTableWrap');
+  if (!runId) { wrap.innerHTML = '<div class="empty">Select a pay run to view its payslips.</div>'; return; }
+  wrap.innerHTML = '<div class="loading">Loading…</div>';
+  const { data: payslips } = await sb.from('payroll_payslips').select('*, payroll_staff(full_name)').eq('run_id', runId);
+  if (!payslips || payslips.length === 0) { wrap.innerHTML = '<div class="empty">No payslips for this run yet.</div>'; return; }
+  wrap.innerHTML = `<table><thead><tr><th>Employee</th><th>Gross</th><th>Net Pay</th><th></th></tr></thead><tbody>
+    ${payslips.map(p => `<tr>
+      <td>${esc(p.payroll_staff?.full_name || '—')}</td>
+      <td>R ${Number(p.gross_pay).toLocaleString('en-ZA',{minimumFractionDigits:2})}</td>
+      <td><strong>R ${Number(p.net_pay).toLocaleString('en-ZA',{minimumFractionDigits:2})}</strong></td>
+      <td><a class="btn-outline btn-sm" href="/payslip.html?id=${p.id}" target="_blank">View Payslip</a></td>
+    </tr>`).join('')}
+  </tbody></table>`;
 }
 
 // ── Leave ──
@@ -637,7 +761,7 @@ async function loadLeaveBalances() {
   const wrap = document.getElementById('leaveBalancesWrap');
   if (!company) { wrap.innerHTML = '<div class="empty">Set up your company first.</div>'; return; }
   const { data: staffIds } = await sb.from('payroll_staff').select('id, full_name').eq('company_id', company.id);
-  if (!staffIds || staffIds.length === 0) { wrap.innerHTML = '<div class="empty">No staff yet.</div>'; return; }
+  if (!staffIds || staffIds.length === 0) { wrap.innerHTML = '<div class="empty">No employees yet.</div>'; return; }
   const ids = staffIds.map(s => s.id);
   const { data: balances } = await sb.from('payroll_leave_balances').select('*').in('staff_id', ids).order('cycle_start', { ascending: false });
   const nameOf = id => staffIds.find(s => s.id === id)?.full_name || '—';
@@ -659,7 +783,7 @@ async function loadLeaveBalances() {
 }
 
 async function runLeaveAccrual() {
-  if (!company) return;
+  if (!company || !isOwner) return;
   try {
     await callEngine('leave_accrue', { company_id: company.id });
     await loadLeaveBalances();
@@ -670,7 +794,7 @@ async function loadLeaveRequests() {
   const wrap = document.getElementById('leaveRequestsWrap');
   if (!company) { wrap.innerHTML = '<div class="empty">Set up your company first.</div>'; return; }
   const { data: staffIds } = await sb.from('payroll_staff').select('id, full_name').eq('company_id', company.id);
-  if (!staffIds || staffIds.length === 0) { wrap.innerHTML = '<div class="empty">No staff yet.</div>'; return; }
+  if (!staffIds || staffIds.length === 0) { wrap.innerHTML = '<div class="empty">No employees yet.</div>'; return; }
   const ids = staffIds.map(s => s.id);
   const { data: requests } = await sb.from('payroll_leave_requests').select('*').in('staff_id', ids).order('requested_at', { ascending: false });
   const nameOf = id => staffIds.find(s => s.id === id)?.full_name || '—';
@@ -683,7 +807,7 @@ async function loadLeaveRequests() {
       <td>${r.start_date} – ${r.end_date}</td>
       <td>${r.days}</td>
       <td>${leaveStatusBadge(r.status)}</td>
-      <td>${r.status === 'pending' ? `<a class="btn-outline btn-sm" onclick="decideLeave('${r.id}','approved')">Approve</a> <a class="btn-danger btn-sm" onclick="decideLeave('${r.id}','rejected')">Reject</a>` : ''}</td>
+      <td>${(r.status === 'pending' && isOwner) ? `<a class="btn-outline btn-sm" onclick="decideLeave('${r.id}','approved')">Approve</a> <a class="btn-danger btn-sm" onclick="decideLeave('${r.id}','rejected')">Reject</a>` : ''}</td>
     </tr>`).join('')}
   </tbody></table>`;
 }
@@ -742,31 +866,164 @@ async function loadEmp201() {
   }
 }
 
-// ── Overview ──
-function renderOverview() {
-  document.getElementById('kpi-staff').textContent = staffCache.filter(s => s.active).length;
-  const upcoming = runsCache.filter(r => r.status === 'draft').sort((a,b) => a.pay_date.localeCompare(b.pay_date))[0];
-  document.getElementById('kpi-nextpay').textContent = upcoming ? upcoming.pay_date : '—';
-  document.getElementById('kpi-nextpay-sub').textContent = upcoming ? `${upcoming.period_start} – ${upcoming.period_end}` : 'No draft run scheduled';
+// ── Bank Payment Files ──
+async function loadBankFiles() {
+  const wrap = document.getElementById('bankFilesWrap');
+  if (!company) { wrap.innerHTML = '<div class="empty">Set up your company first.</div>'; return; }
+  const approved = runsCache.filter(r => r.status !== 'draft');
+  if (approved.length === 0) { wrap.innerHTML = '<div class="empty">No approved pay runs yet. Approve a pay run from the Payroll tab to generate a payment file.</div>'; return; }
+  wrap.innerHTML = `<table><thead><tr><th>Period</th><th>Pay date</th><th>Status</th><th></th></tr></thead><tbody>
+    ${approved.map(r => `<tr>
+      <td>${r.period_start} – ${r.period_end}</td>
+      <td>${r.pay_date}</td>
+      <td>${statusBadge(r.status)}</td>
+      <td><button class="btn-primary btn-sm" onclick="downloadBankFile('${r.id}')">Download CSV</button></td>
+    </tr>`).join('')}
+  </tbody></table>`;
+}
 
-  const lastFinal = runsCache.filter(r => r.status !== 'draft').sort((a,b) => b.pay_date.localeCompare(a.pay_date))[0];
-  if (lastFinal) {
-    sb.from('payroll_payslips').select('net_pay').eq('run_id', lastFinal.id).then(({ data }) => {
-      const total = (data||[]).reduce((s,p) => s + Number(p.net_pay), 0);
-      document.getElementById('kpi-lastnet').textContent = `R ${total.toLocaleString('en-ZA',{minimumFractionDigits:2})}`;
-      document.getElementById('kpi-lastnet-sub').textContent = lastFinal.pay_date;
-    });
+async function downloadBankFile(runId) {
+  const run = runsCache.find(r => r.id === runId);
+  if (!run || run.status === 'draft') { alert('This pay run has not been approved yet.'); return; }
+
+  const { data: payslips } = await sb.from('payroll_payslips').select('*, payroll_staff(*)').eq('run_id', runId);
+  if (!payslips || payslips.length === 0) { alert('No payslips found for this run.'); return; }
+
+  const reference = `SALARY-${run.pay_date}`;
+  const header = ['Employee Name','Bank Name','Account Holder Name','Account Number','Branch Code','Account Type','Payment Amount','Payment Reference'];
+  const rows = payslips.map(p => {
+    const s = p.payroll_staff || {};
+    return [
+      s.full_name || '',
+      s.bank_name || '',
+      s.full_name || '',
+      s.bank_account_number || '',
+      s.bank_branch_code || '',
+      s.account_type || '',
+      Number(p.net_pay).toFixed(2),
+      reference,
+    ];
+  });
+
+  const csvEscape = (v) => /[",\n]/.test(v) ? `"${String(v).replace(/"/g,'""')}"` : v;
+  const csv = [header, ...rows].map(row => row.map(csvEscape).join(',')).join('\r\n');
+
+  const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `burse-payment-file-${run.period_start}-to-${run.period_end}.csv`;
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  URL.revokeObjectURL(url);
+
+  await sb.from('payroll_audit_log').insert({
+    company_id: company.id,
+    actor_id: session.user.id,
+    action: 'bank_file_downloaded',
+    meta: { run_id: runId, period_start: run.period_start, period_end: run.period_end, employee_count: payslips.length },
+  });
+}
+
+// ── Accountant Access ──
+async function loadAccountants() {
+  const wrap = document.getElementById('accountantsTableWrap');
+  if (!company) { wrap.innerHTML = '<div class="empty">Set up your company first.</div>'; return; }
+  const { data, error } = await sb.from('payroll_accountants').select('*').eq('company_id', company.id).order('invited_at', { ascending: false });
+  if (error) { wrap.innerHTML = `<div class="empty">${error.message}</div>`; return; }
+  if (!data || data.length === 0) { wrap.innerHTML = '<div class="empty">No accountants invited yet.</div>'; return; }
+
+  const statusBadgeFor = (s) => s === 'accepted' ? '<span class="badge badge-green">Accepted</span>' : s === 'revoked' ? '<span class="badge badge-gray">Revoked</span>' : '<span class="badge badge-yellow">Pending</span>';
+
+  wrap.innerHTML = `<table><thead><tr><th>Email</th><th>Status</th><th>Invited</th><th></th></tr></thead><tbody>
+    ${data.map(a => `<tr>
+      <td>${esc(a.email)}</td>
+      <td>${statusBadgeFor(a.status)}</td>
+      <td>${new Date(a.invited_at).toLocaleDateString('en-ZA')}</td>
+      <td>${a.status !== 'revoked' && isOwner ? `<a class="btn-danger btn-sm" onclick="revokeAccountant('${a.id}')">Revoke</a>` : ''}</td>
+    </tr>`).join('')}
+  </tbody></table>`;
+}
+
+async function inviteAccountant() {
+  if (!isOwner) return;
+  const errEl = document.getElementById('accountantError');
+  errEl.style.display = 'none';
+  const email = val('acc-email').toLowerCase();
+  if (!email || !email.includes('@')) { errEl.textContent = 'Enter a valid email address.'; errEl.style.display = 'block'; return; }
+
+  const btn = document.getElementById('inviteAccountantBtn');
+  btn.disabled = true; btn.textContent = 'Sending…';
+
+  const { error } = await sb.from('payroll_accountants').insert({ company_id: company.id, email });
+
+  btn.disabled = false; btn.textContent = 'Send Invite';
+
+  if (error) { errEl.textContent = error.message; errEl.style.display = 'block'; return; }
+
+  await sb.from('payroll_audit_log').insert({
+    company_id: company.id, actor_id: session.user.id, action: 'accountant_invited', meta: { email },
+  });
+
+  document.getElementById('acc-email').value = '';
+  await loadAccountants();
+}
+
+async function revokeAccountant(id) {
+  if (!confirm('Revoke this accountant\'s access?')) return;
+  const { error } = await sb.from('payroll_accountants').update({ status: 'revoked' }).eq('id', id);
+  if (error) { alert(error.message); return; }
+  await sb.from('payroll_audit_log').insert({
+    company_id: company.id, actor_id: session.user.id, action: 'accountant_revoked', meta: { accountant_id: id },
+  });
+  await loadAccountants();
+}
+
+// ── Dashboard ──
+function renderDashboard() {
+  document.getElementById('kpi-employees').textContent = staffCache.filter(s => s.active).length;
+
+  const latest = runsCache.slice().sort((a,b) => b.pay_date.localeCompare(a.pay_date))[0];
+  const dashWrap = document.getElementById('dashCurrentRun');
+  const bankBtn = document.getElementById('dashBankFileBtn');
+
+  if (!latest) {
+    document.getElementById('kpi-status').textContent = 'No pay run';
+    document.getElementById('kpi-status-sub').textContent = 'Run payroll to get started';
+    document.getElementById('kpi-gross').textContent = 'R 0.00';
+    document.getElementById('kpi-net').textContent = 'R 0.00';
+    document.getElementById('kpi-deductions-sub').textContent = '—';
+    document.getElementById('dashSubtitle').textContent = 'Your payroll at a glance.';
+    dashWrap.innerHTML = '<div class="empty">No pay runs yet. Click "Run Payroll" to process your first payroll.</div>';
+    bankBtn.style.display = 'none';
+    return;
   }
 
-  const now = new Date();
-  const startYear = now.getMonth() >= 2 ? now.getFullYear() : now.getFullYear() - 1;
-  document.getElementById('kpi-taxyear').textContent = `${startYear}/${startYear+1}`;
+  const monthLabel = new Date(latest.period_start).toLocaleDateString('en-ZA', { month: 'long', year: 'numeric' });
+  document.getElementById('dashSubtitle').textContent = `Current payroll month: ${monthLabel}`;
+  document.getElementById('kpi-status').textContent = latest.status === 'finalized' ? 'Approved' : latest.status === 'paid' ? 'Paid' : 'Draft';
+  document.getElementById('kpi-status-sub').textContent = `${latest.period_start} – ${latest.period_end}`;
+  bankBtn.style.display = latest.status !== 'draft' ? 'inline-flex' : 'none';
 
-  const runsWrap = document.getElementById('overviewRuns');
-  if (runsCache.length === 0) { runsWrap.innerHTML = '<div class="empty">No pay runs yet.</div>'; return; }
-  runsWrap.innerHTML = `<table><thead><tr><th>Period</th><th>Pay date</th><th>Status</th></tr></thead><tbody>
-    ${runsCache.slice(0,5).map(r => `<tr><td>${r.period_start} – ${r.period_end}</td><td>${r.pay_date}</td><td>${statusBadge(r.status)}</td></tr>`).join('')}
-  </tbody></table>`;
+  sb.from('payroll_payslips').select('gross_pay, total_deductions, net_pay').eq('run_id', latest.id).then(({ data }) => {
+    const totals = (data||[]).reduce((acc,p) => ({
+      gross: acc.gross + Number(p.gross_pay), deductions: acc.deductions + Number(p.total_deductions), net: acc.net + Number(p.net_pay),
+    }), { gross:0, deductions:0, net:0 });
+    document.getElementById('kpi-gross').textContent = `R ${totals.gross.toLocaleString('en-ZA',{minimumFractionDigits:2})}`;
+    document.getElementById('kpi-net').textContent = `R ${totals.net.toLocaleString('en-ZA',{minimumFractionDigits:2})}`;
+    document.getElementById('kpi-deductions-sub').textContent = `Deductions: R ${totals.deductions.toLocaleString('en-ZA',{minimumFractionDigits:2})}`;
+
+    dashWrap.innerHTML = `<table><thead><tr><th>Period</th><th>Pay date</th><th>Status</th><th>Gross</th><th>Net</th></tr></thead><tbody>
+      <tr>
+        <td>${latest.period_start} – ${latest.period_end}</td>
+        <td>${latest.pay_date}</td>
+        <td>${statusBadge(latest.status)}</td>
+        <td>R ${totals.gross.toLocaleString('en-ZA',{minimumFractionDigits:2})}</td>
+        <td><strong>R ${totals.net.toLocaleString('en-ZA',{minimumFractionDigits:2})}</strong></td>
+      </tr>
+    </tbody></table>`;
+  });
 }
 
 // ── Helpers ──

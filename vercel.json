@@ -4,13 +4,5 @@
   "buildCommand": null,
   "outputDirectory": ".",
   "installCommand": null,
-  "framework": null,
-  "rewrites": [
-    { "source": "/", "has": [{ "type": "host", "value": "ewa.burse.co.za" }], "destination": "/ewa/index.html" },
-    { "source": "/employees", "has": [{ "type": "host", "value": "ewa.burse.co.za" }], "destination": "/ewa/employees.html" },
-    { "source": "/employers", "has": [{ "type": "host", "value": "ewa.burse.co.za" }], "destination": "/ewa/employers.html" },
-    { "source": "/dashboard", "has": [{ "type": "host", "value": "ewa.burse.co.za" }], "destination": "/ewa/dashboard.html" },
-    { "source": "/admin", "has": [{ "type": "host", "value": "ewa.burse.co.za" }], "destination": "/ewa/admin.html" },
-    { "source": "/payroll-setup", "has": [{ "type": "host", "value": "ewa.burse.co.za" }], "destination": "/ewa/payroll-setup.html" }
-  ]
+  "framework": null
 }

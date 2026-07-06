@@ -30,7 +30,7 @@ Deno.serve(async (req) => {
         </div>
         <div style="background:#f8f9fb;padding:28px;border:1px solid #e2e8f0;border-top:none;border-radius:0 0 12px 12px">
           <p style="font-size:0.8rem;font-weight:700;letter-spacing:0.07em;text-transform:uppercase;color:#2ab3b3;margin:0 0 10px">
-            ${isDemo ? '📅 New Demo Request' : '💬 New Contact Message'}
+            ${isDemo ? 'New Demo Request' : 'New Contact Message'}
           </p>
           <h2 style="font-size:1.3rem;font-weight:800;margin:0 0 20px">${first_name} ${last_name}</h2>
 
@@ -52,7 +52,7 @@ Deno.serve(async (req) => {
           </div>` : ''}
 
           <div style="margin-top:24px;padding-top:16px;border-top:1px solid #e2e8f0;font-size:0.75rem;color:#b0bec5">
-            Submitted via burse.co.za/employers · ${new Date().toLocaleString('en-ZA', { timeZone: 'Africa/Johannesburg' })}
+            Submitted via burse.co.za · ${new Date().toLocaleString('en-ZA', { timeZone: 'Africa/Johannesburg' })}
           </div>
         </div>
       </div>

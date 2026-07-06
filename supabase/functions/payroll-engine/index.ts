@@ -131,6 +131,13 @@ Deno.serve(async (req) => {
           .eq('id', run_id);
         if (updErr) throw new HttpError(updErr.message, 400);
 
+        await sb.from('payroll_audit_log').insert({
+          company_id: run.company_id,
+          actor_id: uid,
+          action: 'payroll_approved',
+          meta: { run_id, period_start: run.period_start, period_end: run.period_end, payslip_count: payslips.length },
+        });
+
         return json({ ok: true, payslip_count: payslips.length });
       }
 
