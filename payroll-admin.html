@@ -421,14 +421,20 @@ let session = null;
 let company = null;
 let staffCache = [];
 let runsCache = [];
-let isOwner = true; // set false if the signed-in user only has accountant (view-only) access
+let isOwner = false; // only set true once loadCompany() confirms real ownership
 
 (async function init() {
   const { data } = await sb.auth.getSession();
   if (!data.session) { window.location.href = '/login'; return; }
   session = data.session;
 
-  await sb.rpc('claim_accountant_invites');
+  await Promise.all([
+    sb.rpc('claim_accountant_invites'),
+    sb.rpc('claim_payroll_staff_invites'),
+  ]);
+
+  const isEmployee = await checkEmployeeOnly();
+  if (isEmployee) { window.location.href = '/leave'; return; }
 
   document.getElementById('auth-gate').classList.add('hidden');
   document.getElementById('layout').style.visibility = 'visible';
@@ -437,6 +443,18 @@ let isOwner = true; // set false if the signed-in user only has accountant (view
   await Promise.all([loadStaff(), loadRuns()]);
   renderDashboard();
 })();
+
+// A signed-in user who owns no company and has no accepted accountant invite,
+// but IS linked as an employee, belongs on the employee self-service portal —
+// never on this owner/accountant console.
+async function checkEmployeeOnly() {
+  const { data: owned } = await sb.from('payroll_companies').select('id').eq('owner_id', session.user.id).maybeSingle();
+  if (owned) return false;
+  const { data: acc } = await sb.from('payroll_accountants').select('id').eq('user_id', session.user.id).eq('status', 'accepted').maybeSingle();
+  if (acc) return false;
+  const { data: staff } = await sb.from('payroll_staff').select('id').eq('user_id', session.user.id).maybeSingle();
+  return !!staff;
+}
 
 function showSection(name) {
   document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
@@ -492,6 +510,9 @@ async function loadCompany() {
     // Not an owner — check for accepted accountant access instead
     const { data: acc } = await sb.from('payroll_accountants').select('*, payroll_companies(*)').eq('user_id', session.user.id).eq('status', 'accepted').maybeSingle();
     if (acc) { company = acc.payroll_companies; isOwner = false; }
+    // Neither an owner, an accountant, nor (checked before this ran) a linked
+    // employee — a brand new user who hasn't set up a company yet.
+    else { isOwner = true; }
   }
   document.getElementById('companyBadge').textContent = company ? (company.trading_name + (isOwner ? '' : ' · Accountant view')) : '';
   document.getElementById('setupPrompt').style.display = (company || !isOwner) ? 'none' : 'block';

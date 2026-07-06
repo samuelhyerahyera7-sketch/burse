@@ -7,8 +7,14 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
   <style>
     * { box-sizing: border-box; margin:0; padding:0; }
-    body { font-family:'Inter',sans-serif; background:#f0f2f8; color:#0e1c40; padding:32px 16px; }
-    .sheet { max-width:720px; margin:0 auto; background:#fff; border-radius:14px; padding:36px; box-shadow:0 1px 3px rgba(10,20,60,0.08); }
+    body { font-family:'Inter',sans-serif; background:#fff; color:#0e1c40; padding:0 0 40px; }
+    .topnav { display:flex; align-items:center; gap:16px; padding:16px 20px; border-bottom:1px solid #e6eaf0; margin-bottom:28px; }
+    .topnav .brand { font-size:1.2rem; font-weight:900; letter-spacing:-0.04em; text-decoration:none; color:#0e1c40; }
+    .topnav .brand .b { color:#2ab3b3; }
+    .topnav .back { margin-left:auto; font-size:0.85rem; font-weight:600; color:#3d5070; text-decoration:none; display:flex; align-items:center; gap:6px; }
+    .topnav .back:hover { color:#0e1c40; }
+    .topnav .back svg { width:16px; height:16px; }
+    .sheet { max-width:720px; margin:0 auto; background:#fff; border-radius:14px; padding:36px; box-shadow:0 1px 3px rgba(10,20,60,0.08); border:1px solid #e6eaf0; }
     .top { display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:24px; border-bottom:2px solid #0e1c40; padding-bottom:18px; }
     .top h1 { font-size:1.3rem; font-weight:900; }
     .top .b { color:#2ab3b3; }
@@ -25,13 +31,20 @@
     .net-box .label { font-size:0.8rem; color:rgba(255,255,255,0.6); }
     .net-box .val { font-size:1.4rem; font-weight:900; }
     .foot { margin-top:24px; font-size:0.72rem; color:#7a8fb0; line-height:1.6; }
-    .print-btn { display:block; margin:20px auto 0; padding:10px 20px; background:#1e2a6e; color:#fff; border:none; border-radius:8px; font-weight:700; cursor:pointer; font-family:'Inter',sans-serif; }
+    .print-btn { display:block; margin:20px auto 0; padding:10px 20px; background:#0e1c40; color:#fff; border:none; border-radius:8px; font-weight:700; cursor:pointer; font-family:'Inter',sans-serif; }
     .loading, .error { text-align:center; padding:60px 20px; color:#7a8fb0; }
-    @media print { body { background:#fff; padding:0; } .sheet { box-shadow:none; border-radius:0; } .print-btn { display:none; } }
+    @media print { .topnav { display:none; } body { background:#fff; padding:0; } .sheet { box-shadow:none; border-radius:0; border:none; } .print-btn { display:none; } }
   </style>
 </head>
 <body>
-  <div class="sheet" id="sheet"><div class="loading">Loading payslip…</div></div>
+  <nav class="topnav">
+    <a class="brand" href="/"><span class="b">B</span>urse</a>
+    <a class="back" href="/leave">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5"/><polyline points="12 19 5 12 12 5"/></svg>
+      Back to My Payroll
+    </a>
+  </nav>
+  <div class="sheet" id="sheet" style="margin-left:auto;margin-right:auto"><div class="loading">Loading payslip…</div></div>
   <button class="print-btn" id="printBtn" style="display:none" onclick="window.print()">Print / Save as PDF</button>
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
