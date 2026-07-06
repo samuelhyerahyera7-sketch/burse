@@ -37,12 +37,29 @@
     .nav-right .btn-ghost, .nav-right .btn-primary { display: none; }
     @media (min-width: 800px) { .nav-right .btn-ghost, .nav-right .btn-primary { display: inline-flex; } }
 
-    .mobile-menu { display: none; flex-direction: column; gap: 2px; padding: 10px 24px 16px; border-top: 1px solid var(--border); background: #fff; }
-    .mobile-menu.open { display: flex; }
-    .mobile-menu a { padding: 10px 4px; font-size: 0.92rem; font-weight: 600; color: var(--text-mid); border-bottom: 1px solid var(--border); }
+    .nav-backdrop {
+      position: fixed; inset: 0; background: rgba(14,28,64,0.4); z-index: 199;
+      opacity: 0; visibility: hidden; transition: opacity 0.25s ease;
+    }
+    .nav-backdrop.open { opacity: 1; visibility: visible; }
+    .mobile-menu {
+      position: fixed; top: 0; right: 0; height: 100vh; width: 78%; max-width: 300px;
+      display: flex; flex-direction: column; gap: 2px; padding: 74px 24px 24px;
+      background: #fff; box-shadow: -8px 0 24px rgba(14,28,64,0.12); z-index: 200;
+      transform: translateX(100%); transition: transform 0.28s ease; overflow-y: auto;
+    }
+    .mobile-menu.open { transform: translateX(0); }
+    .mobile-menu-close {
+      position: absolute; top: 16px; right: 16px; width: 36px; height: 36px; border-radius: 8px;
+      border: 1px solid var(--border); background: none; color: var(--navy-dark);
+      display: flex; align-items: center; justify-content: center;
+    }
+    .mobile-menu-close svg { width: 18px; height: 18px; }
+    .mobile-menu a { padding: 12px 4px; font-size: 0.92rem; font-weight: 600; color: var(--text-mid); border-bottom: 1px solid var(--border); }
     .mobile-menu a:last-child { border-bottom: none; }
     .mobile-menu .btn-primary { margin-top: 10px; border-bottom: none; color: #fff; }
-    @media (min-width: 800px) { .mobile-menu { display: none !important; } }
+    body.nav-open { overflow: hidden; }
+    @media (min-width: 800px) { .mobile-menu, .nav-backdrop { display: none !important; } }
 
     .btn { display: inline-flex; align-items: center; justify-content: center; padding: 10px 20px; border-radius: 5px; font-weight: 700; font-size: 0.87rem; transition: all 0.15s; }
     .btn-primary { background: var(--navy-dark); color: #fff; }
@@ -84,13 +101,13 @@
     @media (min-width: 700px) { .section-head { margin-bottom: 44px; } .section-head h2 { font-size: 1.7rem; white-space: normal; } }
     .feature-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-bottom: 16px; }
     @media (min-width: 700px) { .feature-grid { gap: 18px; margin-bottom: 20px; } }
-    .feature-card { background: #fff; border: 1px solid var(--border); border-radius: 10px; padding: 10px 6px; text-align: center; display: flex; flex-direction: column; align-items: center; }
+    .feature-card { background: #fff; border: 1px solid var(--border); border-radius: 10px; padding: 10px 2px; text-align: center; display: flex; flex-direction: column; align-items: center; width: 100%; overflow: hidden; }
     @media (min-width: 700px) { .feature-card { border-radius: 14px; padding: 24px; } }
     .feature-icon { color: var(--teal-dark); display: flex; align-items: center; justify-content: center; margin-bottom: 6px; }
     .feature-icon svg { width: 22px; height: 22px; }
     @media (min-width: 700px) { .feature-icon { margin-bottom: 12px; } .feature-icon svg { width: 30px; height: 30px; } }
-    .feature-card h3 { font-size: 0.66rem; font-weight: 800; color: var(--navy-dark); margin-bottom: 3px; line-height: 1.25; }
-    @media (min-width: 700px) { .feature-card h3 { font-size: 0.98rem; margin-bottom: 6px; } }
+    .feature-card h3 { font-size: 0.56rem; font-weight: 800; color: var(--navy-dark); margin-bottom: 3px; line-height: 1.25; white-space: nowrap; max-width: 100%; }
+    @media (min-width: 700px) { .feature-card h3 { font-size: 0.98rem; margin-bottom: 6px; white-space: normal; } }
     .feature-card p { font-size: 0.56rem; color: var(--text-soft); line-height: 1.35; }
     @media (min-width: 700px) { .feature-card p { font-size: 0.85rem; line-height: 1.55; } }
 
@@ -150,7 +167,11 @@
         </button>
       </div>
     </div>
+    <div class="nav-backdrop" id="navBackdrop"></div>
     <div class="mobile-menu" id="mobileMenu">
+      <button class="mobile-menu-close" id="navClose" type="button" aria-label="Close menu">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
       <a href="#features">Product</a>
       <a href="#trust">Solutions</a>
       <a href="#features">Resources</a>
@@ -161,11 +182,28 @@
     </div>
   </nav>
   <script>
-    document.getElementById('navBurger').addEventListener('click', function () {
+    (function () {
+      var burger = document.getElementById('navBurger');
+      var closeBtn = document.getElementById('navClose');
       var menu = document.getElementById('mobileMenu');
-      var open = menu.classList.toggle('open');
-      this.setAttribute('aria-expanded', open ? 'true' : 'false');
-    });
+      var backdrop = document.getElementById('navBackdrop');
+
+      function openMenu() {
+        menu.classList.add('open');
+        backdrop.classList.add('open');
+        document.body.classList.add('nav-open');
+        burger.setAttribute('aria-expanded', 'true');
+      }
+      function closeMenu() {
+        menu.classList.remove('open');
+        backdrop.classList.remove('open');
+        document.body.classList.remove('nav-open');
+        burger.setAttribute('aria-expanded', 'false');
+      }
+      burger.addEventListener('click', openMenu);
+      closeBtn.addEventListener('click', closeMenu);
+      backdrop.addEventListener('click', closeMenu);
+    })();
   </script>
 
   <main>
