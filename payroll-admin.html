@@ -511,6 +511,15 @@
     <div class="checkbox-row"><input type="checkbox" id="s-eti" checked onchange="updateEtiAgeWarning()"><label for="s-eti" style="margin:0">Eligible for Employment Tax Incentive (age 18–29, standard employer)</label></div>
     <p class="form-hint" id="etiAgeWarning" style="display:none;color:var(--orange);margin:-8px 0 14px">Warning: No SA ID number or date of birth entered — without one, this employee's age can't be determined and ETI will always calculate as R0, even with this box checked.</p>
     <div class="checkbox-row"><input type="checkbox" id="s-active" checked><label for="s-active" style="margin:0">Active</label></div>
+
+    <div class="form-group" id="s-documents-section" style="display:none;margin-bottom:14px">
+      <label>Documents <span style="font-weight:400;color:var(--soft)">(contracts, ID copies, etc. — private, only you and this employee can access them)</span></label>
+      <div id="s-documents-list" style="margin-bottom:8px"></div>
+      <input type="file" id="s-document-file">
+      <button type="button" class="btn-outline btn-sm" style="margin-top:6px" onclick="uploadStaffDocument()" id="uploadDocBtn">Upload</button>
+      <div class="error-box" id="documentError"></div>
+    </div>
+
     <div class="modal-actions">
       <button class="btn-outline" onclick="closeModal('staffModal')">Cancel</button>
       <button class="btn-primary" onclick="saveStaff()" id="saveStaffBtn">Save Employee</button>
@@ -860,6 +869,10 @@ function openStaffModal(id) {
   renderDeductionRows(Array.isArray(s?.other_deductions_json) ? s.other_deductions_json : []);
   document.getElementById('staffModal').hidden = false;
   updateEtiAgeWarning();
+
+  const docsSection = document.getElementById('s-documents-section');
+  if (s) { docsSection.style.display = 'block'; loadStaffDocuments(s.id); }
+  else { docsSection.style.display = 'none'; }
 }
 
 function updateEtiAgeWarning() {
@@ -941,6 +954,65 @@ async function saveStaff() {
   closeModal('staffModal');
   await loadStaff();
   renderDashboard();
+}
+
+// ── Employee documents (Supabase Storage, bucket "staff-documents") ──
+async function loadStaffDocuments(staffId) {
+  const wrap = document.getElementById('s-documents-list');
+  wrap.innerHTML = '<div class="loading">Loading…</div>';
+  const { data, error } = await sb.from('payroll_staff_documents').select('*').eq('staff_id', staffId).order('uploaded_at', { ascending: false });
+  if (error) { wrap.innerHTML = `<div class="empty">${error.message}</div>`; return; }
+  if (!data || data.length === 0) { wrap.innerHTML = '<div class="empty" style="padding:12px">No documents uploaded yet.</div>'; return; }
+  wrap.innerHTML = data.map(d => `
+    <div class="deduction-row" style="align-items:center">
+      <span style="flex:1;font-size:0.85rem">${esc(d.file_name)}</span>
+      <a class="btn-outline btn-sm" onclick="downloadStaffDocument('${d.id}','${esc(d.storage_path)}')">Download</a>
+      <button type="button" class="btn-danger" onclick="deleteStaffDocument('${d.id}','${esc(d.storage_path)}')">Delete</button>
+    </div>
+  `).join('');
+}
+
+async function uploadStaffDocument() {
+  const staffId = val('s-id');
+  const fileInput = document.getElementById('s-document-file');
+  const errEl = document.getElementById('documentError');
+  errEl.style.display = 'none';
+  const file = fileInput.files[0];
+  if (!file) { errEl.textContent = 'Choose a file first.'; errEl.style.display = 'block'; return; }
+  if (!staffId || !company) return;
+
+  const btn = document.getElementById('uploadDocBtn');
+  btn.disabled = true; btn.textContent = 'Uploading…';
+
+  const path = `${company.id}/${staffId}/${Date.now()}-${file.name}`;
+  const { error: uploadErr } = await sb.storage.from('staff-documents').upload(path, file);
+  if (uploadErr) {
+    btn.disabled = false; btn.textContent = 'Upload';
+    errEl.textContent = uploadErr.message; errEl.style.display = 'block'; return;
+  }
+
+  const { error: insertErr } = await sb.from('payroll_staff_documents').insert({
+    staff_id: staffId, company_id: company.id, file_name: file.name, storage_path: path,
+    content_type: file.type || null, size_bytes: file.size, uploaded_by: session.user.id,
+  });
+  btn.disabled = false; btn.textContent = 'Upload';
+  if (insertErr) { errEl.textContent = insertErr.message; errEl.style.display = 'block'; return; }
+
+  fileInput.value = '';
+  await loadStaffDocuments(staffId);
+}
+
+async function downloadStaffDocument(id, storagePath) {
+  const { data, error } = await sb.storage.from('staff-documents').createSignedUrl(storagePath, 60);
+  if (error) { alert(error.message); return; }
+  window.open(data.signedUrl, '_blank');
+}
+
+async function deleteStaffDocument(id, storagePath) {
+  if (!confirm('Delete this document?')) return;
+  await sb.storage.from('staff-documents').remove([storagePath]);
+  await sb.from('payroll_staff_documents').delete().eq('id', id);
+  await loadStaffDocuments(val('s-id'));
 }
 
 // ── Payroll (runs) ──
