@@ -264,6 +264,16 @@
       }
     });
 
+    // Races a promise against a hard deadline so a stalled connection can
+    // never leave the button stuck on "Logging in..."/"Creating account..."
+    // indefinitely — it always resolves, errors, or times out within timeoutMs.
+    function withTimeout(promise, timeoutMs = 15000) {
+      return Promise.race([
+        promise,
+        new Promise((_, reject) => setTimeout(() => reject(new Error('The request timed out. Check your connection and try again.')), timeoutMs)),
+      ]);
+    }
+
     async function handleAuth(e) {
       e.preventDefault();
       const email = document.getElementById('email').value;
@@ -276,35 +286,40 @@
       successMsg.style.display = 'none';
       btn.disabled = true;
 
-      if (currentMode === 'signup') {
-        btn.textContent = 'Creating account...';
-        const { error } = await sb.auth.signUp({ email, password });
-        btn.disabled = false;
-        btn.textContent = 'Sign Up';
-        if (error) {
-          errorMsg.textContent = error.message;
-          errorMsg.style.display = 'block';
+      try {
+        if (currentMode === 'signup') {
+          btn.textContent = 'Creating account...';
+          const { error } = await withTimeout(sb.auth.signUp({ email, password }));
+          if (error) {
+            errorMsg.textContent = error.message;
+            errorMsg.style.display = 'block';
+            return;
+          }
+          successMsg.style.display = 'block';
+          document.getElementById('loginForm').reset();
           return;
         }
-        successMsg.style.display = 'block';
-        document.getElementById('loginForm').reset();
+
+        btn.textContent = 'Logging in...';
+        const { data, error } = await withTimeout(sb.auth.signInWithPassword({ email, password }));
+
+        if (error) {
+          errorMsg.textContent = error.message || 'Incorrect email or password. Please try again.';
+          errorMsg.style.display = 'block';
+          document.getElementById('password').value = '';
+          document.getElementById('password').focus();
+          return;
+        }
+
+        window.location.href = postLoginDestination();
         return;
-      }
-
-      btn.textContent = 'Logging in...';
-      const { data, error } = await sb.auth.signInWithPassword({ email, password });
-
-      if (error) {
-        errorMsg.textContent = error.message || 'Incorrect email or password. Please try again.';
+      } catch (e) {
+        errorMsg.textContent = e.message || 'Something went wrong. Please try again.';
         errorMsg.style.display = 'block';
-        document.getElementById('password').value = '';
-        document.getElementById('password').focus();
-        btn.textContent = 'Log In';
+      } finally {
         btn.disabled = false;
-        return;
+        btn.textContent = currentMode === 'signup' ? 'Sign Up' : 'Log In';
       }
-
-      window.location.href = postLoginDestination();
     }
 
     async function handleForgotPassword(e) {
