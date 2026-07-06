@@ -21,19 +21,38 @@
        a grid here would drop the fixed sidebar from the item list and collapse
        .main into the wrong column. */
     .layout { min-height: 100vh; }
-    .sidebar { background: var(--navy-dark); position: fixed; top:0; left:0; bottom:0; width:222px; display:flex; flex-direction:column; z-index:50; }
-    .sidebar-logo { padding: 22px 20px 18px; font-size:1.4rem; font-weight:900; letter-spacing:-0.04em; border-bottom:1px solid rgba(255,255,255,0.08); }
+    .sidebar { background: var(--navy-dark); position: fixed; top:0; left:0; bottom:0; width:222px; display:flex; flex-direction:column; z-index:220; transition: transform .25s ease; }
+    .sidebar-logo { padding: 22px 20px 18px; font-size:1.4rem; font-weight:900; letter-spacing:-0.04em; border-bottom:1px solid rgba(255,255,255,0.08); display:flex; align-items:center; justify-content:space-between; }
     .sidebar-logo .b { color: var(--teal); } .sidebar-logo .u { color: var(--white); }
     .sidebar-logo small { display:block; font-size:0.62rem; font-weight:600; letter-spacing:0.12em; text-transform:uppercase; color:rgba(255,255,255,0.35); margin-top:2px; }
+    .sidebar-close { display:none; width:32px; height:32px; border-radius:8px; border:1px solid rgba(255,255,255,0.15); background:none; color:rgba(255,255,255,0.7); align-items:center; justify-content:center; }
+    .sidebar-close svg { width:16px; height:16px; }
     .sidebar-nav { flex:1; padding:14px 10px; display:flex; flex-direction:column; gap:1px; overflow-y:auto; }
-    .nav-item { padding:9px 12px; border-radius:7px; font-size:0.85rem; font-weight:500; color:rgba(255,255,255,0.6); cursor:pointer; transition:all .15s; display:flex; align-items:center; justify-content:space-between; }
+    .nav-item { padding:9px 12px; border-radius:7px; font-size:0.85rem; font-weight:500; color:rgba(255,255,255,0.6); cursor:pointer; transition:all .15s; display:flex; align-items:center; gap:10px; }
     .nav-item:hover { background: rgba(255,255,255,0.06); color: rgba(255,255,255,0.92); }
     .nav-item.active { background: rgba(42,179,179,0.2); color: var(--teal); font-weight:700; }
+    .nav-item svg { width:16px; height:16px; flex-shrink:0; }
+    .nav-item span.nav-label { flex:1; }
     .nav-soon { font-size:0.6rem; font-weight:700; letter-spacing:0.04em; text-transform:uppercase; background:rgba(255,255,255,0.1); color:rgba(255,255,255,0.55); padding:2px 6px; border-radius:20px; }
     .sidebar-footer { padding:14px 10px; border-top:1px solid rgba(255,255,255,0.08); }
 
+    .sidebar-backdrop { display:none; position:fixed; inset:0; background:rgba(14,28,64,0.4); z-index:210; }
+
+    @media (max-width: 899px) {
+      .sidebar { transform: translateX(-100%); }
+      .sidebar.open { transform: translateX(0); }
+      .sidebar-close { display:flex; }
+      .sidebar-backdrop.open { display:block; }
+      .main { margin-left:0 !important; }
+      .nav-burger { display:flex !important; }
+    }
+
     .main { margin-left:222px; min-height:100vh; }
-    .topbar { background:var(--card); border-bottom:1px solid var(--border); padding:0 28px; height:60px; display:flex; align-items:center; justify-content:space-between; position:sticky; top:0; z-index:40; }
+    .topbar { background:var(--card); border-bottom:1px solid var(--border); padding:0 16px; height:60px; display:flex; align-items:center; gap:12px; justify-content:space-between; position:sticky; top:0; z-index:40; }
+    @media (min-width: 900px) { .topbar { padding:0 28px; } }
+    .nav-burger { display:none; align-items:center; justify-content:center; width:36px; height:36px; border-radius:8px; border:1px solid var(--border); background:none; color:var(--navy-dark); flex-shrink:0; }
+    .nav-burger svg { width:18px; height:18px; }
+    .topbar-left { display:flex; align-items:center; gap:12px; }
     .topbar-title { font-size:1rem; font-weight:700; }
     .content { padding:28px; max-width:1200px; }
     .section { display:none; } .section.active { display:block; }
@@ -110,7 +129,6 @@
     .layout { visibility:hidden; }
 
     @media (max-width:1024px) { .kpi-grid { grid-template-columns:repeat(2,1fr); } .form-row, .form-row-3 { grid-template-columns:1fr; } }
-    @media (max-width:768px) { .sidebar { width:100%; position:relative; height:auto; } .main { margin-left:0; } }
   </style>
 </head>
 <body>
@@ -118,27 +136,41 @@
 <div id="auth-gate"><div class="gate-spinner"></div><p>Loading your payroll…</p></div>
 
 <div class="layout" id="layout">
-  <aside class="sidebar">
-    <div class="sidebar-logo"><span class="b">B</span><span class="u">urse</span><small>Payroll</small></div>
+  <div class="sidebar-backdrop" id="sidebarBackdrop"></div>
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-logo">
+      <div><span class="b">B</span><span class="u">urse</span><small>Payroll</small></div>
+      <button class="sidebar-close" id="sidebarClose" type="button" aria-label="Close menu">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+    </div>
     <nav class="sidebar-nav">
-      <a class="nav-item active" onclick="showSection('dashboard')">Dashboard</a>
-      <a class="nav-item" onclick="showSection('employees')">Employees</a>
-      <a class="nav-item" onclick="showSection('payroll')">Payroll</a>
-      <a class="nav-item" onclick="showSection('payslips')">Payslips</a>
-      <a class="nav-item" onclick="showSection('leave')">Leave</a>
-      <a class="nav-item" onclick="showSection('reports')">Reports</a>
-      <a class="nav-item" onclick="showSection('bankfiles')">Bank Payment Files</a>
-      <a class="nav-item" onclick="showSection('bankfeeds')">Bank Feeds <span class="nav-soon">Soon</span></a>
-      <a class="nav-item" onclick="showSection('accountants')">Accountant Access</a>
-      <a class="nav-item" onclick="showSection('settings')">Settings</a>
+      <a class="nav-item active" onclick="showSection('dashboard')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg><span class="nav-label">Dashboard</span></a>
+      <a class="nav-item" onclick="showSection('employees')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg><span class="nav-label">Employees</span></a>
+      <a class="nav-item" onclick="showSection('payroll')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg><span class="nav-label">Payroll</span></a>
+      <a class="nav-item" onclick="showSection('payslips')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 17v-6a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v6"/><path d="M9 21h6"/><rect x="3" y="3" width="18" height="18" rx="2"/></svg><span class="nav-label">Payslips</span></a>
+      <a class="nav-item" onclick="showSection('leave')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg><span class="nav-label">Leave</span></a>
+      <a class="nav-item" onclick="showSection('reports')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg><span class="nav-label">Reports</span></a>
+      <a class="nav-item" onclick="showSection('bankfiles')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12V7a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-1"/><path d="M18 12a2 2 0 1 0 0 4 2 2 0 0 0 0-4z"/></svg><span class="nav-label">Bank Payment Files</span></a>
+      <a class="nav-item" onclick="showSection('bankfeeds')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 11a9 9 0 0 1 9 9"/><path d="M4 4a16 16 0 0 1 16 16"/><circle cx="5" cy="19" r="1"/></svg><span class="nav-label">Bank Feeds</span> <span class="nav-soon">Soon</span></a>
+      <a class="nav-item" onclick="showSection('accountants')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg><span class="nav-label">Accountant Access</span></a>
+      <a class="nav-item" onclick="showSection('settings')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg><span class="nav-label">Settings</span></a>
     </nav>
     <div class="sidebar-footer">
-      <a class="nav-item" href="/">Back to Burse</a>
+      <a class="nav-item" href="/"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5"/><polyline points="12 19 5 12 12 5"/></svg><span class="nav-label">Back to Burse</span></a>
     </div>
   </aside>
 
   <div class="main">
-    <div class="topbar"><div class="topbar-title" id="topbarTitle">Dashboard</div><div id="companyBadge" style="font-size:0.8rem;color:var(--soft)"></div></div>
+    <div class="topbar">
+      <div class="topbar-left">
+        <button class="nav-burger" id="sidebarBurger" type="button" aria-label="Menu">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+        </button>
+        <div class="topbar-title" id="topbarTitle">Dashboard</div>
+      </div>
+      <div id="companyBadge" style="font-size:0.8rem;color:var(--soft)"></div>
+    </div>
 
     <div class="content">
 
@@ -420,7 +452,20 @@ function showSection(name) {
   if (name === 'reports') populateReportRunSelect();
   if (name === 'bankfiles') loadBankFiles();
   if (name === 'accountants') loadAccountants();
+  closeSidebar();
 }
+
+function openSidebar() {
+  document.getElementById('sidebar').classList.add('open');
+  document.getElementById('sidebarBackdrop').classList.add('open');
+}
+function closeSidebar() {
+  document.getElementById('sidebar').classList.remove('open');
+  document.getElementById('sidebarBackdrop').classList.remove('open');
+}
+document.getElementById('sidebarBurger').addEventListener('click', openSidebar);
+document.getElementById('sidebarClose').addEventListener('click', closeSidebar);
+document.getElementById('sidebarBackdrop').addEventListener('click', closeSidebar);
 
 async function callEngine(action, payload) {
   const res = await fetch(`${SUPABASE_URL}/functions/v1/payroll-engine`, {
