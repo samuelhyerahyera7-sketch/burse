@@ -41,59 +41,12 @@
     .btn-lg { padding: 13px 26px; font-size: 0.94rem; border-radius: 10px; }
 
     /* ── Hero ── */
-    .hero { padding: 64px 0 60px; }
-    .hero-grid { display: grid; grid-template-columns: 1fr; gap: 44px; align-items: center; }
-    @media (min-width: 960px) { .hero-grid { grid-template-columns: 1fr 1fr; } }
-    .eyebrow { display: inline-block; font-size: 0.76rem; font-weight: 600; color: var(--text-mid); background: var(--bg-soft); border: 1px solid var(--border); padding: 6px 14px; border-radius: 50px; margin-bottom: 20px; }
-    .hero h1 { font-size: clamp(2rem, 4vw, 2.85rem); font-weight: 900; letter-spacing: -0.03em; line-height: 1.12; color: var(--navy-dark); margin-bottom: 18px; }
-    .hero h1 .accent { color: var(--teal); }
-    .hero-sub { font-size: 1.02rem; color: var(--text-mid); max-width: 480px; margin-bottom: 26px; }
-    .hero-actions { display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 28px; }
-    .trust-row { display: flex; gap: 20px; flex-wrap: wrap; font-size: 0.82rem; color: var(--text-mid); font-weight: 600; }
+    .hero { padding: 48px 0 60px; text-align: center; }
+    .hero-image { width: 100%; max-width: 1100px; height: auto; display: block; margin: 0 auto 32px; }
+    .hero-actions { display: flex; gap: 12px; flex-wrap: wrap; justify-content: center; margin-bottom: 24px; }
+    .trust-row { display: flex; gap: 20px; flex-wrap: wrap; justify-content: center; font-size: 0.82rem; color: var(--text-mid); font-weight: 600; }
     .trust-row span { display: inline-flex; align-items: center; gap: 6px; }
     .trust-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--teal); }
-
-    /* ── Hero device mockups: a straight-on laptop with an overlapping phone ── */
-    .device-stage { position: relative; padding: 6px 0 64px; max-width: 560px; margin: 0 auto; }
-
-    .laptop { position: relative; z-index: 1; }
-    .laptop-screen {
-      background: #fff; border: 10px solid var(--navy-dark); border-radius: 18px;
-      box-shadow: 0 30px 70px rgba(14,28,64,0.2); overflow: hidden;
-    }
-    .laptop-screen-inner { display: flex; min-height: 300px; }
-    .laptop-sidebar { width: 132px; background: var(--navy-dark); padding: 16px 10px; flex-shrink: 0; }
-    .laptop-brand { color: #fff; font-weight: 900; font-size: 0.95rem; margin-bottom: 16px; letter-spacing: -0.03em; }
-    .laptop-brand .accent { color: var(--teal); }
-    .laptop-nav-item { font-size: 0.66rem; color: rgba(255,255,255,0.5); padding: 6px 8px; border-radius: 6px; margin-bottom: 2px; font-weight: 600; }
-    .laptop-nav-item.active { background: rgba(42,179,179,0.2); color: var(--teal); font-weight: 700; }
-    .laptop-main { flex: 1; padding: 16px 18px; min-width: 0; }
-    .laptop-main-title { font-size: 0.72rem; font-weight: 700; color: var(--text-soft); text-transform: uppercase; letter-spacing: 0.04em; margin-bottom: 10px; }
-    .laptop-kpis { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; margin-bottom: 10px; }
-    .laptop-kpi { background: var(--bg-soft); border: 1px solid var(--border); border-radius: 8px; padding: 8px 10px; }
-    .laptop-kpi span { display: block; font-size: 0.6rem; color: var(--text-soft); margin-bottom: 3px; }
-    .laptop-kpi strong { font-size: 0.86rem; color: var(--navy-dark); font-weight: 900; }
-    .laptop-chart { display: flex; align-items: flex-end; gap: 5px; height: 44px; background: var(--bg-soft); border: 1px solid var(--border); border-radius: 8px; padding: 8px; margin-bottom: 10px; }
-    .laptop-chart span { flex: 1; background: linear-gradient(180deg, var(--teal), var(--teal-dark)); border-radius: 2px; }
-    .laptop-row { display: flex; justify-content: space-between; font-size: 0.66rem; padding: 6px 0; border-top: 1px solid var(--border); color: var(--text-mid); }
-    .laptop-row strong { color: var(--navy-dark); }
-    .laptop-base {
-      height: 14px; background: linear-gradient(180deg, #d5dbe6, #b9c1d1);
-      border-radius: 0 0 10px 10px;
-    }
-
-    .phone { position: absolute; left: -18px; bottom: -18px; width: 132px; z-index: 2; }
-    @media (max-width: 640px) { .phone { display: none; } }
-    .phone-frame { background: var(--navy-dark); border-radius: 22px; padding: 7px; box-shadow: 0 22px 50px rgba(14,28,64,0.28); }
-    .phone-notch { width: 42px; height: 12px; background: var(--navy-dark); border-radius: 0 0 8px 8px; margin: 0 auto; }
-    .phone-screen { background: #fff; border-radius: 15px; padding: 12px 9px 10px; }
-    .phone-brand { font-weight: 900; font-size: 0.72rem; color: var(--navy-dark); margin-bottom: 3px; }
-    .phone-brand .accent { color: var(--teal); }
-    .phone-sub { font-size: 0.56rem; color: var(--text-soft); margin-bottom: 8px; }
-    .phone-card { background: var(--navy-dark); color: #fff; border-radius: 8px; padding: 8px 9px; margin-bottom: 8px; }
-    .phone-card span { display: block; font-size: 0.54rem; color: rgba(255,255,255,0.55); margin-bottom: 2px; }
-    .phone-card strong { font-size: 0.78rem; }
-    .phone-action { background: var(--bg-soft); border: 1px solid var(--border); border-radius: 6px; padding: 6px 8px; font-size: 0.56rem; font-weight: 700; color: var(--navy-dark); margin-bottom: 5px; }
 
     /* ── Features ── */
     .features { padding: 70px 0; background: var(--bg-soft); }
@@ -144,70 +97,21 @@
 
   <main>
     <section class="hero">
-      <div class="container hero-grid">
-        <div>
-          <span class="eyebrow">Payroll software built for South African businesses</span>
-          <h1>Payroll made simple.<br><span class="accent">Businesses run better.</span></h1>
-          <p class="hero-sub">Everything you need to run payroll, pay employees and stay compliant — in one powerful platform.</p>
-          <div class="hero-actions">
-            <a class="btn btn-primary btn-lg" href="/login">Get Started Free</a>
-            <a class="btn btn-outline-navy btn-lg" href="mailto:hello@burse.co.za?subject=Book%20a%20demo">Book a Demo</a>
-          </div>
-          <div class="trust-row">
-            <span><span class="trust-dot"></span>Secure &amp; Compliant</span>
-            <span><span class="trust-dot"></span>Local Support</span>
-            <span><span class="trust-dot"></span>Built for SA</span>
-          </div>
+      <div class="container">
+        <img
+          class="hero-image"
+          src="/assets/homepage-hero.png"
+          alt="Burse payroll — Payroll made simple. Businesses run better. Everything you need to run payroll, pay employees and stay compliant, in one powerful platform."
+          width="1537" height="1023"
+        >
+        <div class="hero-actions">
+          <a class="btn btn-primary btn-lg" href="/login">Get Started Free</a>
+          <a class="btn btn-outline-navy btn-lg" href="mailto:hello@burse.co.za?subject=Book%20a%20demo">Book a Demo</a>
         </div>
-
-        <div class="device-stage">
-          <div class="laptop">
-            <div class="laptop-screen">
-              <div class="laptop-screen-inner">
-                <div class="laptop-sidebar">
-                  <div class="laptop-brand"><span class="accent">B</span>urse</div>
-                  <div class="laptop-nav-item active">Dashboard</div>
-                  <div class="laptop-nav-item">Employees</div>
-                  <div class="laptop-nav-item">Payroll</div>
-                  <div class="laptop-nav-item">Payslips</div>
-                  <div class="laptop-nav-item">Leave</div>
-                  <div class="laptop-nav-item">Reports</div>
-                  <div class="laptop-nav-item">Settings</div>
-                </div>
-                <div class="laptop-main">
-                  <div class="laptop-main-title">Dashboard</div>
-                  <div class="laptop-kpis">
-                    <div class="laptop-kpi"><span>Employees</span><strong>128</strong></div>
-                    <div class="laptop-kpi"><span>Total Payroll</span><strong>R1,248,600</strong></div>
-                    <div class="laptop-kpi"><span>Net Pay</span><strong>R854,250</strong></div>
-                    <div class="laptop-kpi"><span>Employer Cost</span><strong>R394,350</strong></div>
-                  </div>
-                  <div class="laptop-chart">
-                    <span style="height:40%"></span><span style="height:65%"></span><span style="height:50%"></span>
-                    <span style="height:80%"></span><span style="height:60%"></span><span style="height:95%"></span>
-                    <span style="height:70%"></span><span style="height:100%"></span>
-                  </div>
-                  <div class="laptop-row"><span>Monthly Payroll — May 2026</span><strong>Approved</strong></div>
-                  <div class="laptop-row"><span>Monthly Payroll — April 2026</span><strong>Approved</strong></div>
-                </div>
-              </div>
-            </div>
-            <div class="laptop-base"></div>
-          </div>
-
-          <div class="phone">
-            <div class="phone-frame">
-              <div class="phone-notch"></div>
-              <div class="phone-screen">
-                <div class="phone-brand"><span class="accent">B</span>urse</div>
-                <div class="phone-sub">Good morning, Sarah</div>
-                <div class="phone-card"><span>Net Pay this month</span><strong>R14,850.00</strong></div>
-                <div class="phone-action">Run Payroll</div>
-                <div class="phone-action">View Payslip</div>
-                <div class="phone-action">Request Leave</div>
-              </div>
-            </div>
-          </div>
+        <div class="trust-row">
+          <span><span class="trust-dot"></span>Secure &amp; Compliant</span>
+          <span><span class="trust-dot"></span>Local Support</span>
+          <span><span class="trust-dot"></span>Built for SA</span>
         </div>
       </div>
     </section>
