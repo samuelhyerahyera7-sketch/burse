@@ -41,10 +41,19 @@
     .btn-lg { padding: 13px 26px; font-size: 0.94rem; border-radius: 10px; }
 
     /* ── Hero ── */
-    .hero { padding: 48px 0 60px; text-align: center; }
-    .hero-image { width: 100%; max-width: 1100px; height: auto; display: block; margin: 0 auto 32px; }
-    .hero-actions { display: flex; gap: 12px; flex-wrap: wrap; justify-content: center; margin-bottom: 24px; }
-    .trust-row { display: flex; gap: 20px; flex-wrap: wrap; justify-content: center; font-size: 0.82rem; color: var(--text-mid); font-weight: 600; }
+    .hero { padding: 0 0 40px; text-align: center; }
+    .hero-media { position: relative; width: 100%; line-height: 0; }
+    .hero-image { width: 100%; height: auto; display: block; }
+    .hero-overlay-actions {
+      position: absolute; left: 6%; top: 78%; display: flex; flex-direction: column;
+      align-items: flex-start; gap: 14px;
+    }
+    .hero-overlay-actions .btn { width: 220px; }
+    @media (max-width: 700px) {
+      .hero-overlay-actions { left: 5%; top: auto; bottom: 4%; gap: 8px; }
+      .hero-overlay-actions .btn { width: 160px; padding: 9px 14px; font-size: 0.78rem; }
+    }
+    .trust-row { display: flex; gap: 20px; flex-wrap: wrap; justify-content: center; font-size: 0.82rem; color: var(--text-mid); font-weight: 600; margin-top: 26px; }
     .trust-row span { display: inline-flex; align-items: center; gap: 6px; }
     .trust-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--teal); }
 
@@ -97,17 +106,19 @@
 
   <main>
     <section class="hero">
-      <div class="container">
+      <div class="hero-media">
         <img
           class="hero-image"
           src="/assets/homepage-hero.png"
           alt="Burse payroll — Payroll made simple. Businesses run better. Everything you need to run payroll, pay employees and stay compliant, in one powerful platform."
           width="1537" height="1023"
         >
-        <div class="hero-actions">
+        <div class="hero-overlay-actions">
           <a class="btn btn-primary btn-lg" href="/login">Get Started Free</a>
           <a class="btn btn-outline-navy btn-lg" href="mailto:hello@burse.co.za?subject=Book%20a%20demo">Book a Demo</a>
         </div>
+      </div>
+      <div class="container">
         <div class="trust-row">
           <span><span class="trust-dot"></span>Secure &amp; Compliant</span>
           <span><span class="trust-dot"></span>Local Support</span>
