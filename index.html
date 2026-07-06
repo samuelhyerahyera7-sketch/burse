@@ -75,18 +75,19 @@
     .hero-media { position: relative; width: 100%; line-height: 0; }
     .hero-image { width: 100%; height: auto; display: block; }
     .hero-overlay-actions {
-      position: absolute; left: 5%; top: 78%; max-width: 32%; display: flex; flex-direction: column;
-      align-items: stretch; gap: 10px;
+      position: absolute; left: 5%; top: 80%; width: 32%; display: flex; flex-direction: column;
+      align-items: stretch; gap: 8px;
     }
     .hero-overlay-actions .btn { width: 100%; white-space: nowrap; padding: 14px 12px; font-size: 0.85rem; }
     @media (max-width: 700px) {
-      /* On phone the image is too small/variable to safely overlay buttons on top of it
-         without covering text in the picture — put them in a normal block below the
-         image instead, so there is never any overlap regardless of image content. */
-      .hero-overlay-actions {
-        position: static; max-width: none; width: 100%; padding: 16px 20px 0; gap: 10px;
-      }
-      .hero-overlay-actions .btn { padding: 13px 12px; font-size: 0.85rem; border-radius: 6px; }
+      /* Same bottom-left overlay at every width — percentages keep it pinned to the
+         same blank patch of the picture (below the paragraph, left of the phone/laptop
+         graphic) regardless of screen size. Only font size/padding shrink here. */
+      .hero-overlay-actions { gap: 6px; }
+      .hero-overlay-actions .btn { padding: 8px 6px; font-size: 0.6rem; border-radius: 5px; }
+    }
+    @media (max-width: 420px) {
+      .hero-overlay-actions .btn { padding: 6px 4px; font-size: 0.5rem; }
     }
     .trust-row { display: flex; align-items: center; gap: 8px; flex-wrap: nowrap; justify-content: center; font-size: 0.6rem; color: var(--text-mid); font-weight: 600; margin-top: 30px; }
     @media (min-width: 560px) { .trust-row { gap: 14px; font-size: 0.82rem; } }
