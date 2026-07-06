@@ -1035,14 +1035,35 @@ async function inviteAccountant() {
 
   const { error } = await sb.from('payroll_accountants').insert({ company_id: company.id, email });
 
-  btn.disabled = false; btn.textContent = 'Send Invite';
-
-  if (error) { errEl.textContent = error.message; errEl.style.display = 'block'; return; }
+  if (error) {
+    btn.disabled = false; btn.textContent = 'Send Invite';
+    errEl.textContent = error.message; errEl.style.display = 'block'; return;
+  }
 
   await sb.from('payroll_audit_log').insert({
     company_id: company.id, actor_id: session.user.id, action: 'accountant_invited', meta: { email },
   });
 
+  // Best-effort email notification — the invite row already exists and
+  // claim_accountant_invites() will link it up on their first login even if
+  // this email never arrives, so a failure here shouldn't block the invite.
+  try {
+    const res = await fetch(`${SUPABASE_URL}/functions/v1/notify-accountant-invite`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${session.access_token}` },
+      body: JSON.stringify({ to: email, company_name: company.trading_name }),
+    });
+    if (!res.ok) {
+      const data = await res.json().catch(() => ({}));
+      errEl.textContent = `Accountant added, but the invite email could not be sent (${data.error || 'unknown error'}). Ask them to sign up at burse.co.za/login with this email address.`;
+      errEl.style.display = 'block';
+    }
+  } catch (e) {
+    errEl.textContent = 'Accountant added, but the invite email could not be sent. Ask them to sign up at burse.co.za/login with this email address.';
+    errEl.style.display = 'block';
+  }
+
+  btn.disabled = false; btn.textContent = 'Send Invite';
   document.getElementById('acc-email').value = '';
   await loadAccountants();
 }
