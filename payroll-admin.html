@@ -473,13 +473,24 @@ function showSection(name) {
   closeSidebar();
 }
 
+let lockedScrollY = 0;
 function openSidebar() {
+  lockedScrollY = window.scrollY;
   document.getElementById('sidebar').classList.add('open');
   document.getElementById('sidebarBackdrop').classList.add('open');
+  document.body.style.position = 'fixed';
+  document.body.style.top = -lockedScrollY + 'px';
+  document.body.style.left = '0';
+  document.body.style.right = '0';
 }
 function closeSidebar() {
   document.getElementById('sidebar').classList.remove('open');
   document.getElementById('sidebarBackdrop').classList.remove('open');
+  document.body.style.position = '';
+  document.body.style.top = '';
+  document.body.style.left = '';
+  document.body.style.right = '';
+  window.scrollTo(0, lockedScrollY);
 }
 document.getElementById('sidebarBurger').addEventListener('click', openSidebar);
 document.getElementById('sidebarClose').addEventListener('click', closeSidebar);

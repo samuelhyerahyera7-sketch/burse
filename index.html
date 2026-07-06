@@ -58,7 +58,6 @@
     .mobile-menu a { padding: 12px 4px; font-size: 0.92rem; font-weight: 600; color: var(--text-mid); border-bottom: 1px solid var(--border); }
     .mobile-menu a:last-child { border-bottom: none; }
     .mobile-menu .btn-primary { margin-top: 10px; border-bottom: none; color: #fff; }
-    body.nav-open { overflow: hidden; }
     @media (min-width: 800px) { .mobile-menu, .nav-backdrop { display: none !important; } }
 
     .btn { display: inline-flex; align-items: center; justify-content: center; padding: 10px 20px; border-radius: 5px; font-weight: 700; font-size: 0.87rem; transition: all 0.15s; }
@@ -81,8 +80,13 @@
     }
     .hero-overlay-actions .btn { width: 100%; white-space: nowrap; padding: 14px 12px; font-size: 0.85rem; }
     @media (max-width: 700px) {
-      .hero-overlay-actions { top: auto; bottom: 3%; max-width: 36%; gap: 8px; }
-      .hero-overlay-actions .btn { padding: 12px 8px; font-size: 0.7rem; border-radius: 6px; }
+      /* On phone the image is too small/variable to safely overlay buttons on top of it
+         without covering text in the picture — put them in a normal block below the
+         image instead, so there is never any overlap regardless of image content. */
+      .hero-overlay-actions {
+        position: static; max-width: none; width: 100%; padding: 16px 20px 0; gap: 10px;
+      }
+      .hero-overlay-actions .btn { padding: 13px 12px; font-size: 0.85rem; border-radius: 6px; }
     }
     .trust-row { display: flex; align-items: center; gap: 8px; flex-wrap: nowrap; justify-content: center; font-size: 0.6rem; color: var(--text-mid); font-weight: 600; margin-top: 30px; }
     @media (min-width: 560px) { .trust-row { gap: 14px; font-size: 0.82rem; } }
@@ -190,16 +194,26 @@
       var menu = document.getElementById('mobileMenu');
       var backdrop = document.getElementById('navBackdrop');
 
+      var lockedScrollY = 0;
+
       function openMenu() {
+        lockedScrollY = window.scrollY;
         menu.classList.add('open');
         backdrop.classList.add('open');
-        document.body.classList.add('nav-open');
+        document.body.style.position = 'fixed';
+        document.body.style.top = -lockedScrollY + 'px';
+        document.body.style.left = '0';
+        document.body.style.right = '0';
         burger.setAttribute('aria-expanded', 'true');
       }
       function closeMenu() {
         menu.classList.remove('open');
         backdrop.classList.remove('open');
-        document.body.classList.remove('nav-open');
+        document.body.style.position = '';
+        document.body.style.top = '';
+        document.body.style.left = '';
+        document.body.style.right = '';
+        window.scrollTo(0, lockedScrollY);
         burger.setAttribute('aria-expanded', 'false');
       }
       burger.addEventListener('click', openMenu);
