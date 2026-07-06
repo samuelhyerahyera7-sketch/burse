@@ -125,6 +125,15 @@
     .info-box { background:#eef4ff; border:1px solid #c7d9fb; color:#1d4ed8; font-size:0.82rem; padding:12px 16px; border-radius:8px; margin-bottom:16px; line-height:1.5; }
     .disabled-box { background:#f7f9fc; border:1px dashed var(--border); color:var(--soft); font-size:0.85rem; padding:36px; border-radius:12px; text-align:center; line-height:1.7; }
 
+    .checklist-row { display:flex; align-items:center; gap:12px; padding:10px 0; border-bottom:1px solid var(--border); }
+    .checklist-row:last-child { border-bottom:none; }
+    .checklist-check { width:22px; height:22px; border-radius:50%; flex-shrink:0; display:flex; align-items:center; justify-content:center; }
+    .checklist-check.done { background:#dcfce7; color:#15803d; }
+    .checklist-check.todo { background:#f1f5f9; color:#94a3b8; }
+    .checklist-check svg { width:13px; height:13px; }
+    .checklist-label { flex:1; font-size:0.85rem; font-weight:600; }
+    .checklist-label.done { color:var(--soft); text-decoration:line-through; }
+
     .subtabs { display:flex; gap:4px; border-bottom:1px solid var(--border); margin-bottom:20px; }
     .subtab { padding:10px 14px; font-size:0.85rem; font-weight:700; color:var(--soft); cursor:pointer; border-bottom:2px solid transparent; }
     .subtab.active { color:var(--navy-dark); border-bottom-color:var(--teal); }
@@ -194,9 +203,9 @@
           <div class="kpi-card"><div class="kpi-label">Net pay</div><div class="kpi-val" id="kpi-net" style="font-size:1.3rem">—</div><div class="kpi-sub" id="kpi-deductions-sub">—</div></div>
         </div>
         <div class="card" id="setupPrompt" style="display:none">
-          <div class="card-title">Set up your company to get started</div>
-          <p style="font-size:0.85rem;color:var(--soft);margin:10px 0 16px">Add your PAYE, UIF and SDL reference numbers so Burse can calculate statutory deductions correctly.</p>
-          <button class="btn-primary" onclick="showSection('settings')">Set up company</button>
+          <div class="card-title">Get your company set up</div>
+          <p style="font-size:0.85rem;color:var(--soft);margin:10px 0 16px">Work through this checklist to get Burse ready to run your first payroll.</p>
+          <div id="setupChecklist"></div>
         </div>
         <div class="card">
           <div class="card-header">
@@ -340,31 +349,101 @@
 
       <!-- SETTINGS -->
       <section class="section" id="section-settings">
-        <div class="page-header"><h1>Settings</h1><p>Company statutory details used for PAYE, UIF and SDL calculations.</p></div>
-        <div class="card">
-          <div class="error-box" id="companyError"></div>
-          <div class="form-row">
-            <div class="form-group"><label>Trading name</label><input id="c-trading" placeholder="e.g. Acme Holdings"></div>
-            <div class="form-group"><label>Registered name</label><input id="c-registered" placeholder="e.g. Acme Holdings (Pty) Ltd"></div>
-          </div>
-          <div class="form-row">
-            <div class="form-group"><label>Company registration number</label><input id="c-regnum" placeholder="e.g. 2019/123456/07"></div>
-            <div class="form-group"><label>Industry</label><input id="c-industry" placeholder="e.g. Retail"></div>
-          </div>
-          <div class="form-row-3">
-            <div class="form-group"><label>PAYE reference number</label><input id="c-paye" placeholder="7XXXXXXXXX"></div>
-            <div class="form-group"><label>UIF reference number</label><input id="c-uif" placeholder="U..."></div>
-            <div class="form-group"><label>SDL reference number</label><input id="c-sdl" placeholder="L..."></div>
-          </div>
-          <div class="form-row">
-            <div class="form-group"><label>Work week</label>
-              <select id="c-workdays"><option value="5">5 days/week (21 days annual leave = 15 working days)</option><option value="6">6 days/week (21 days annual leave = 18 working days)</option></select>
+        <div class="page-header"><h1>Settings</h1><p>Company, payroll, tax, roles, notification and security settings.</p></div>
+        <div class="subtabs">
+          <div class="subtab active" data-subtab="s-company" onclick="switchSettingsTab('s-company')">Company Profile</div>
+          <div class="subtab" data-subtab="s-payroll" onclick="switchSettingsTab('s-payroll')">Payroll Settings</div>
+          <div class="subtab" data-subtab="s-roles" onclick="switchSettingsTab('s-roles')">User Roles</div>
+          <div class="subtab" data-subtab="s-notifications" onclick="switchSettingsTab('s-notifications')">Notifications</div>
+          <div class="subtab" data-subtab="s-security" onclick="switchSettingsTab('s-security')">Security</div>
+        </div>
+
+        <div class="error-box" id="companyError"></div>
+
+        <!-- Company Profile -->
+        <div class="subtab-panel active" id="settingspanel-s-company">
+          <div class="card">
+            <div class="card-header"><div class="card-title">Company profile</div></div>
+            <div class="form-row">
+              <div class="form-group"><label>Trading name</label><input id="c-trading" placeholder="e.g. Acme Holdings"></div>
+              <div class="form-group"><label>Registered name</label><input id="c-registered" placeholder="e.g. Acme Holdings (Pty) Ltd"></div>
             </div>
-            <div class="form-group"><label>Address</label><input id="c-address" placeholder="Registered address"></div>
+            <div class="form-row">
+              <div class="form-group"><label>Company registration number</label><input id="c-regnum" placeholder="e.g. 2019/123456/07"></div>
+              <div class="form-group"><label>Industry</label><input id="c-industry" placeholder="e.g. Retail"></div>
+            </div>
+            <div class="form-group" style="margin-bottom:16px"><label>Address</label><input id="c-address" placeholder="Registered address"></div>
+            <button class="btn-primary save-company-btn" onclick="saveCompany()" id="saveCompanyBtn">Save Settings</button>
           </div>
-          <div class="checkbox-row"><input type="checkbox" id="c-sdlexempt"><label for="c-sdlexempt" style="margin:0">SDL exempt (annual payroll ≤ R500,000)</label></div>
-          <div class="form-group" style="margin-bottom:16px"><label>Reconciliation notes <span style="font-weight:400;color:var(--soft)">(visible to your accountant)</span></label><textarea id="c-notes" rows="3" placeholder="Notes for your accountant about this period's payroll..."></textarea></div>
-          <button class="btn-primary" onclick="saveCompany()" id="saveCompanyBtn">Save Settings</button>
+        </div>
+
+        <!-- Payroll Settings (incl. tax reference numbers, since the engine has no separate configurable "tax settings" beyond these) -->
+        <div class="subtab-panel" id="settingspanel-s-payroll">
+          <div class="card">
+            <div class="card-header"><div class="card-title">Payroll &amp; tax settings</div></div>
+            <div class="form-row-3">
+              <div class="form-group"><label>PAYE reference number</label><input id="c-paye" placeholder="7XXXXXXXXX"></div>
+              <div class="form-group"><label>UIF reference number</label><input id="c-uif" placeholder="U..."></div>
+              <div class="form-group"><label>SDL reference number</label><input id="c-sdl" placeholder="L..."></div>
+            </div>
+            <div class="form-row">
+              <div class="form-group"><label>Work week</label>
+                <select id="c-workdays"><option value="5">5 days/week (21 days annual leave = 15 working days)</option><option value="6">6 days/week (21 days annual leave = 18 working days)</option></select>
+              </div>
+              <div class="form-group"></div>
+            </div>
+            <div class="checkbox-row"><input type="checkbox" id="c-sdlexempt"><label for="c-sdlexempt" style="margin:0">SDL exempt (annual payroll ≤ R500,000)</label></div>
+            <div class="info-box">Tax year and SARS tax tables (PAYE brackets, UIF ceiling, ETI bands) are applied automatically based on the pay date — there's nothing to configure here.</div>
+            <p class="form-hint" style="margin-bottom:8px">Company bank reference — informational only. Burse never moves money; payments happen via the CSV you export from Bank Payment Files, uploaded to your own business banking.</p>
+            <div class="form-row">
+              <div class="form-group"><label>Bank name</label><input id="c-bankname"></div>
+              <div class="form-group"><label>Account number</label><input id="c-bankacc"></div>
+            </div>
+            <div class="form-group" style="margin-bottom:16px"><label>Branch code</label><input id="c-branchcode" style="max-width:200px"></div>
+            <div class="form-group" style="margin-bottom:16px"><label>Reconciliation notes <span style="font-weight:400;color:var(--soft)">(visible to your accountant)</span></label><textarea id="c-notes" rows="3" placeholder="Notes for your accountant about this period's payroll..."></textarea></div>
+            <button class="btn-primary save-company-btn" onclick="saveCompany()" id="savePayrollSettingsBtn">Save Settings</button>
+          </div>
+        </div>
+
+        <!-- User Roles (informational — the only two roles are Owner and Accountant) -->
+        <div class="subtab-panel" id="settingspanel-s-roles">
+          <div class="card">
+            <div class="card-header"><div class="card-title">User roles</div></div>
+            <div class="checklist-row">
+              <div class="checklist-label" style="flex:none;width:120px">Owner</div>
+              <div class="checklist-label" style="font-weight:400;color:var(--soft)">Full access — manages employees, runs and approves payroll, downloads bank files, edits banking details, invites accountants.</div>
+            </div>
+            <div class="checklist-row">
+              <div class="checklist-label" style="flex:none;width:120px">Accountant</div>
+              <div class="checklist-label" style="font-weight:400;color:var(--soft)">Read-only — can view payslips, reports and bank payment files. Cannot approve payroll, edit bank details, or change salaries.</div>
+            </div>
+            <button class="btn-outline btn-sm" style="margin-top:14px" onclick="showSection('accountants')">Manage Accountant Access</button>
+          </div>
+        </div>
+
+        <!-- Notifications -->
+        <div class="subtab-panel" id="settingspanel-s-notifications">
+          <div class="card">
+            <div class="card-header"><div class="card-title">Notification settings</div></div>
+            <div class="checkbox-row"><input type="checkbox" id="n-payroll-approved"><label for="n-payroll-approved" style="margin:0">Email me when a pay run is approved</label></div>
+            <div class="checkbox-row"><input type="checkbox" id="n-leave-requested"><label for="n-leave-requested" style="margin:0">Email me when an employee submits a leave request</label></div>
+            <div class="checkbox-row"><input type="checkbox" id="n-accountant-invited"><label for="n-accountant-invited" style="margin:0">Email me when an accountant invite is sent</label></div>
+            <button class="btn-primary" onclick="saveNotificationPrefs()" id="saveNotificationsBtn">Save Preferences</button>
+          </div>
+        </div>
+
+        <!-- Security -->
+        <div class="subtab-panel" id="settingspanel-s-security">
+          <div class="card">
+            <div class="card-header"><div class="card-title">Change password</div></div>
+            <div class="error-box" id="securityError"></div>
+            <div class="info-box" id="securitySuccess" style="display:none;background:#e6f7f7;border-color:#2ab3b3;color:#1e9090">Password updated.</div>
+            <div class="form-row">
+              <div class="form-group"><label>New password</label><input type="password" id="sec-newpass" placeholder="At least 8 characters"></div>
+              <div class="form-group"><label>Confirm new password</label><input type="password" id="sec-confirmpass" placeholder="Repeat new password"></div>
+            </div>
+            <button class="btn-primary" onclick="changePassword()" id="changePasswordBtn">Update Password</button>
+          </div>
         </div>
       </section>
 
@@ -618,9 +697,8 @@ async function loadCompany() {
     else { isOwner = true; }
   }
   document.getElementById('companyBadge').textContent = company ? (company.trading_name + (isOwner ? '' : ' · Accountant view')) : '';
-  document.getElementById('setupPrompt').style.display = (company || !isOwner) ? 'none' : 'block';
   if (!isOwner) {
-    document.querySelectorAll('.btn-teal, #saveCompanyBtn, #inviteAccountantBtn').forEach(el => el.style.display = 'none');
+    document.querySelectorAll('.btn-teal, .save-company-btn, #inviteAccountantBtn, #saveNotificationsBtn').forEach(el => el.style.display = 'none');
   }
   if (company) {
     document.getElementById('c-trading').value = company.trading_name || '';
@@ -634,10 +712,55 @@ async function loadCompany() {
     document.getElementById('c-address').value = company.address || '';
     document.getElementById('c-sdlexempt').checked = !!company.sdl_exempt;
     document.getElementById('c-notes').value = company.reconciliation_notes || '';
+    document.getElementById('c-bankname').value = company.bank_name || '';
+    document.getElementById('c-bankacc').value = company.bank_account_number || '';
+    document.getElementById('c-branchcode').value = company.bank_branch_code || '';
+    const prefs = company.notification_prefs || {};
+    document.getElementById('n-payroll-approved').checked = prefs.payroll_approved !== false;
+    document.getElementById('n-leave-requested').checked = prefs.leave_requested !== false;
+    document.getElementById('n-accountant-invited').checked = prefs.accountant_invited !== false;
     if (!isOwner) {
       document.querySelectorAll('#section-settings input, #section-settings select, #section-settings textarea').forEach(el => el.disabled = true);
     }
   }
+}
+
+function switchSettingsTab(name) {
+  document.querySelectorAll('#section-settings .subtab').forEach(t => t.classList.toggle('active', t.dataset.subtab === name));
+  document.querySelectorAll('#section-settings .subtab-panel').forEach(p => p.classList.toggle('active', p.id === 'settingspanel-' + name));
+}
+
+async function saveNotificationPrefs() {
+  if (!company) { return; }
+  const btn = document.getElementById('saveNotificationsBtn');
+  btn.disabled = true; btn.textContent = 'Saving…';
+  const notification_prefs = {
+    payroll_approved: document.getElementById('n-payroll-approved').checked,
+    leave_requested: document.getElementById('n-leave-requested').checked,
+    accountant_invited: document.getElementById('n-accountant-invited').checked,
+  };
+  const { error } = await sb.from('payroll_companies').update({ notification_prefs }).eq('id', company.id);
+  btn.disabled = false; btn.textContent = 'Save Preferences';
+  if (error) { alert(error.message); return; }
+  company.notification_prefs = notification_prefs;
+}
+
+async function changePassword() {
+  const errEl = document.getElementById('securityError');
+  const successEl = document.getElementById('securitySuccess');
+  errEl.style.display = 'none'; successEl.style.display = 'none';
+  const newPw = val('sec-newpass'), confirmPw = val('sec-confirmpass');
+  if (newPw.length < 8) { errEl.textContent = 'Password must be at least 8 characters.'; errEl.style.display = 'block'; return; }
+  if (newPw !== confirmPw) { errEl.textContent = 'Passwords do not match.'; errEl.style.display = 'block'; return; }
+
+  const btn = document.getElementById('changePasswordBtn');
+  btn.disabled = true; btn.textContent = 'Updating…';
+  const { error } = await withTimeout(sb.auth.updateUser({ password: newPw })).catch(e => ({ error: e }));
+  btn.disabled = false; btn.textContent = 'Update Password';
+  if (error) { errEl.textContent = error.message; errEl.style.display = 'block'; return; }
+  successEl.style.display = 'block';
+  document.getElementById('sec-newpass').value = '';
+  document.getElementById('sec-confirmpass').value = '';
 }
 
 async function saveCompany() {
@@ -656,23 +779,25 @@ async function saveCompany() {
     address: val('c-address') || null,
     sdl_exempt: document.getElementById('c-sdlexempt').checked,
     reconciliation_notes: val('c-notes') || null,
+    bank_name: val('c-bankname') || null,
+    bank_account_number: val('c-bankacc') || null,
+    bank_branch_code: val('c-branchcode') || null,
     updated_at: new Date().toISOString(),
   };
   if (!payload.trading_name) { errEl.textContent = 'Trading name is required.'; errEl.style.display = 'block'; return; }
 
-  const btn = document.getElementById('saveCompanyBtn');
-  btn.disabled = true; btn.textContent = 'Saving…';
+  const btns = document.querySelectorAll('.save-company-btn');
+  btns.forEach(b => { b.disabled = true; b.textContent = 'Saving…'; });
 
   let result;
   if (company) result = await sb.from('payroll_companies').update(payload).eq('id', company.id).select().single();
   else result = await sb.from('payroll_companies').insert(payload).select().single();
 
-  btn.disabled = false; btn.textContent = 'Save Settings';
+  btns.forEach(b => { b.disabled = false; b.textContent = 'Save Settings'; });
 
   if (result.error) { errEl.textContent = result.error.message; errEl.style.display = 'block'; return; }
   company = result.data;
   document.getElementById('companyBadge').textContent = company.trading_name;
-  document.getElementById('setupPrompt').style.display = 'none';
   renderDashboard();
 }
 
@@ -1232,11 +1357,25 @@ async function loadBankFiles() {
   if (!company) { wrap.innerHTML = '<div class="empty">Set up your company first.</div>'; return; }
   const approved = runsCache.filter(r => r.status !== 'draft');
   if (approved.length === 0) { wrap.innerHTML = '<div class="empty">No approved pay runs yet. Approve a pay run from the Payroll tab to generate a payment file.</div>'; return; }
-  wrap.innerHTML = `<table><thead><tr><th>Period</th><th>Pay date</th><th>Status</th><th></th></tr></thead><tbody>
+  wrap.innerHTML = '<div class="loading">Loading…</div>';
+
+  const [{ data: payslips }, { data: downloads }] = await Promise.all([
+    sb.from('payroll_payslips').select('run_id, net_pay').in('run_id', approved.map(r => r.id)),
+    sb.from('payroll_audit_log').select('meta, created_at').eq('company_id', company.id).eq('action', 'bank_file_downloaded').order('created_at', { ascending: false }),
+  ]);
+
+  const netByRun = {};
+  (payslips || []).forEach(p => { netByRun[p.run_id] = (netByRun[p.run_id] || 0) + Number(p.net_pay); });
+  const lastDownloadByRun = {};
+  (downloads || []).forEach(d => { const rid = d.meta?.run_id; if (rid && !lastDownloadByRun[rid]) lastDownloadByRun[rid] = d.created_at; });
+
+  wrap.innerHTML = `<table><thead><tr><th>Period</th><th>Pay date</th><th>Status</th><th>Total net pay</th><th>Payment file</th><th></th></tr></thead><tbody>
     ${approved.map(r => `<tr>
       <td>${r.period_start} – ${r.period_end}</td>
       <td>${r.pay_date}</td>
       <td>${statusBadge(r.status)}</td>
+      <td><strong>R ${(netByRun[r.id] || 0).toLocaleString('en-ZA',{minimumFractionDigits:2})}</strong></td>
+      <td>${lastDownloadByRun[r.id] ? `<span class="badge badge-green">Generated ${new Date(lastDownloadByRun[r.id]).toLocaleDateString('en-ZA')}</span>` : '<span class="badge badge-gray">Not yet generated</span>'}</td>
       <td><button class="btn-primary btn-sm" onclick="downloadBankFile('${r.id}')">Download CSV</button></td>
     </tr>`).join('')}
   </tbody></table>`;
@@ -1284,6 +1423,7 @@ async function downloadBankFile(runId) {
     action: 'bank_file_downloaded',
     meta: { run_id: runId, period_start: run.period_start, period_end: run.period_end, employee_count: payslips.length },
   });
+  await loadBankFiles();
 }
 
 // ── Accountant Access ──
@@ -1363,8 +1503,38 @@ async function revokeAccountant(id) {
 }
 
 // ── Dashboard ──
+function renderSetupChecklist() {
+  const card = document.getElementById('setupPrompt');
+  if (!isOwner) { card.style.display = 'none'; return; }
+
+  const items = [
+    { label: 'Company details', done: !!company?.trading_name, tab: 'settings' },
+    { label: 'PAYE reference number', done: !!company?.paye_reference, tab: 'settings' },
+    { label: 'UIF reference number', done: !!company?.uif_reference, tab: 'settings' },
+    { label: 'SDL reference number (or marked exempt)', done: !!company?.sdl_reference || !!company?.sdl_exempt, tab: 'settings' },
+    { label: 'Banking details', done: !!(company?.bank_name && company?.bank_account_number), tab: 'settings' },
+    { label: 'Pay schedule', done: !!company, tab: 'settings' },
+    { label: 'First employee added', done: staffCache.length > 0, tab: 'employees' },
+    { label: 'First payroll run', done: runsCache.length > 0, tab: 'payroll' },
+  ];
+
+  if (items.every(i => i.done)) { card.style.display = 'none'; return; }
+  card.style.display = 'block';
+
+  document.getElementById('setupChecklist').innerHTML = items.map(i => `
+    <div class="checklist-row">
+      <div class="checklist-check ${i.done ? 'done' : 'todo'}">
+        ${i.done ? '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>' : ''}
+      </div>
+      <div class="checklist-label ${i.done ? 'done' : ''}">${i.label}</div>
+      ${!i.done ? `<button class="btn-outline btn-sm" onclick="showSection('${i.tab}')">Go</button>` : ''}
+    </div>
+  `).join('');
+}
+
 function renderDashboard() {
   document.getElementById('kpi-employees').textContent = staffCache.filter(s => s.active).length;
+  renderSetupChecklist();
 
   const latest = runsCache.slice().sort((a,b) => b.pay_date.localeCompare(a.pay_date))[0];
   const dashWrap = document.getElementById('dashCurrentRun');
