@@ -74,31 +74,57 @@ const TAX_2025_2026: TaxTable = {
   medicalCreditPrincipal: 364,
   medicalCreditDependant: 364,
   medicalCreditAdditional: 246,
+  // ETI thresholds increased with effect from 1 April 2025 (SARS: "Employment Tax
+  // Incentive (ETI) changes with effect from 1 April 2025" — qualifying remuneration
+  // ceiling R6,500 -> R7,500; R1,500 flat band widened from R2,000-R4,500 to R2,500-R5,500).
+  // Applied for the whole 2025/2026 tax year below since this engine only carries one
+  // ETI table per tax year and the new figures cover the vast majority of the year.
   etiMinRemuneration: 0,
-  etiMaxRemuneration: 6500,
+  etiMaxRemuneration: 7500,
   etiBands: [
-    { upTo: 2000,  kind: 'percent', rate: 0.75 },
-    { upTo: 4500,  kind: 'flat',    amount: 1500 },
-    { upTo: 6500,  kind: 'taper',   amount: 1500, rate: 0.75, taperFrom: 4500 },
+    { upTo: 2500,  kind: 'percent', rate: 0.60 },
+    { upTo: 5500,  kind: 'flat',    amount: 1500 },
+    { upTo: 7500,  kind: 'taper',   amount: 1500, rate: 0.75, taperFrom: 5500 },
   ],
   retirementDeductionCapPercent: 0.275,
   retirementDeductionAnnualCap: 350000,
 };
 
-// ── 2026/2027 tax year (1 Mar 2026 – 28 Feb 2027) ──
-// PROVISIONAL: SARS had not gazetted final 2026/2027 brackets, rebates or the
-// UIF/SDL/ETI parameters at the time this engine was built. Carried forward
-// from 2025/2026 unchanged as a safe placeholder so payroll can run without
-// interruption at the start of the new tax year. An admin MUST update the
-// `tax_tables` row for 2026/2027 in the database as soon as the Budget Speech
-// / Government Gazette figures are published — do not file EMP201/EMP501 or
-// issue IRP5s using provisional figures.
+// ── 2026/2027 tax year (1 Mar 2026 – 28 Feb 2027) — confirmed Budget 2026 rates ──
+// Source: 2026 Budget Speech (25 Feb 2026) — 3.4% inflationary bracket/rebate
+// adjustment, and the SARS Budget 2026 tax guide. UIF ceiling, SDL threshold and
+// ETI parameters carried forward unchanged (no change announced for 2026/2027).
 const TAX_2026_2027: TaxTable = {
-  ...TAX_2025_2026,
   taxYear: '2026/2027',
   validFrom: '2026-03-01',
   validTo: '2027-02-28',
-  provisional: true,
+  brackets: [
+    { from: 0,        base: 0,       rate: 0.18 },
+    { from: 245101,   base: 44118,   rate: 0.26 },
+    { from: 383101,   base: 79998,   rate: 0.31 },
+    { from: 530201,   base: 125599,  rate: 0.36 },
+    { from: 695801,   base: 185215,  rate: 0.39 },
+    { from: 887001,   base: 239783,  rate: 0.41 },
+    { from: 1878601,  base: 646339,  rate: 0.45 },
+  ],
+  rebates: { primary: 17820, secondary: 9765, tertiary: 3249 },
+  thresholds: { under65: 99000, from65to74: 153250, from75: 171300 },
+  uifMonthlyCeiling: 17712,
+  uifRate: 0.01,
+  sdlRate: 0.01,
+  sdlAnnualPayrollExemption: 500000,
+  medicalCreditPrincipal: 376,
+  medicalCreditDependant: 376,
+  medicalCreditAdditional: 254,
+  etiMinRemuneration: 0,
+  etiMaxRemuneration: 7500,
+  etiBands: [
+    { upTo: 2500,  kind: 'percent', rate: 0.60 },
+    { upTo: 5500,  kind: 'flat',    amount: 1500 },
+    { upTo: 7500,  kind: 'taper',   amount: 1500, rate: 0.75, taperFrom: 5500 },
+  ],
+  retirementDeductionCapPercent: 0.275,
+  retirementDeductionAnnualCap: 350000,
 };
 
 export const TAX_TABLES: Record<string, TaxTable> = {

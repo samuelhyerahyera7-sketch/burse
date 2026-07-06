@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en-ZA">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Privacy Policy — Burse</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root { --navy-dark: #0e1c40; --teal: #2ab3b3; --text: #0e1c40; --text-mid: #3d5070; --text-soft: #7a8fb0; --border: #e6eaf0; }
+    body { font-family: 'Inter', system-ui, sans-serif; color: var(--text); background: #fff; line-height: 1.65; }
+    .container { max-width: 760px; margin: 0 auto; padding: 0 24px; }
+    .topnav { border-bottom: 1px solid var(--border); padding: 18px 0; }
+    .brand { font-size: 1.3rem; font-weight: 900; letter-spacing: -0.04em; text-decoration: none; }
+    .brand-b { color: var(--teal); } .brand-u { color: var(--navy-dark); }
+    main { padding: 48px 0 80px; }
+    h1 { font-size: 1.8rem; font-weight: 900; color: var(--navy-dark); margin-bottom: 6px; }
+    .updated { font-size: 0.85rem; color: var(--text-soft); margin-bottom: 32px; }
+    .notice { background: #fff7e6; border: 1px solid #f2c86b; border-radius: 10px; padding: 14px 18px; font-size: 0.85rem; color: #7a5a10; margin-bottom: 32px; }
+    h2 { font-size: 1.05rem; font-weight: 800; color: var(--navy-dark); margin: 28px 0 8px; }
+    p, li { font-size: 0.92rem; color: var(--text-mid); margin-bottom: 10px; }
+    ul { padding-left: 20px; margin-bottom: 10px; }
+    table { width: 100%; border-collapse: collapse; margin: 12px 0 18px; font-size: 0.88rem; }
+    th, td { text-align: left; padding: 8px 10px; border-bottom: 1px solid var(--border); color: var(--text-mid); }
+    th { color: var(--navy-dark); font-weight: 700; }
+    a { color: var(--teal); font-weight: 600; }
+    footer { border-top: 1px solid var(--border); padding: 24px 0; text-align: center; font-size: 0.82rem; color: var(--text-soft); }
+  </style>
+</head>
+<body>
+  <nav class="topnav"><div class="container"><a class="brand" href="/"><span class="brand-b">B</span><span class="brand-u">urse</span></a></div></nav>
+  <main class="container">
+    <h1>Privacy Policy</h1>
+    <p class="updated">Last updated: 6 July 2026</p>
+
+    <div class="notice">
+      This is a general template describing how Burse's platform is built to handle data, not a substitute for
+      legal advice. It should be reviewed by a South African attorney familiar with POPIA before publication.
+    </div>
+
+    <h2>1. Scope and roles under POPIA</h2>
+    <p>This policy explains how Burse (Pty) Ltd ("Burse") processes personal information through the Service.
+      For employee payroll data submitted by a Customer company, that company is the <strong>responsible party</strong>
+      under the Protection of Personal Information Act, 2013 (POPIA), and Burse acts as an <strong>operator</strong>
+      processing the data only on the Customer's instructions. For account holders (business owners and
+      accountants) and website visitors, Burse is the responsible party.</p>
+
+    <h2>2. What we collect</h2>
+    <table>
+      <tr><th>Category</th><th>Examples</th></tr>
+      <tr><td>Account data</td><td>Name, email, password (hashed), role</td></tr>
+      <tr><td>Company data</td><td>Company name, registration number, PAYE/UIF/SDL reference numbers</td></tr>
+      <tr><td>Employee data</td><td>Name, ID number, salary, banking details, leave records, tax status</td></tr>
+      <tr><td>Usage data</td><td>Login timestamps, audit log entries (approvals, downloads, invites)</td></tr>
+    </table>
+
+    <h2>3. Why we process it</h2>
+    <ul>
+      <li>To calculate PAYE, UIF, SDL and ETI and generate payslips and payroll reports.</li>
+      <li>To generate bank payment files for Customer-initiated salary payments.</li>
+      <li>To operate accountant invitations and role-based access control.</li>
+      <li>To maintain an audit trail of payroll approvals and data access.</li>
+      <li>To respond to support requests sent to hello@burse.co.za.</li>
+    </ul>
+
+    <h2>4. Storage, security and sub-processors</h2>
+    <p>Data is stored in a Postgres database hosted by Supabase, secured with row-level security policies so a
+      company's payroll data is only readable by that company's owner and accepted accountants. Bank account
+      numbers are masked to the last 4 digits everywhere in the interface except the owner's own edit form and the
+      bank payment file the owner generates. We do not sell personal information to third parties.</p>
+
+    <h2>5. Retention</h2>
+    <p>Payroll records are retained for as long as the Customer account is active, and for a reasonable period
+      after closure to meet South African statutory retention requirements for payroll and tax records (generally
+      five years). Customers may request deletion sooner where not inconsistent with those obligations.</p>
+
+    <h2>6. Data subject rights</h2>
+    <p>Employees and account holders may request access to, correction of, or deletion of their personal
+      information by contacting their employer (for payroll data) or Burse directly at
+      <a href="mailto:hello@burse.co.za">hello@burse.co.za</a> (for account data). You may also lodge a complaint
+      with the Information Regulator of South Africa.</p>
+
+    <h2>7. Cookies</h2>
+    <p>Burse uses only the essential cookies/local storage needed to keep you signed in. We do not use
+      third-party advertising or tracking cookies.</p>
+
+    <h2>8. Changes to this policy</h2>
+    <p>We may update this policy as the Service evolves. Material changes will be reflected by updating the date
+      at the top of this page.</p>
+
+    <h2>9. Contact</h2>
+    <p>Questions or requests regarding this policy: <a href="mailto:hello@burse.co.za">hello@burse.co.za</a></p>
+  </main>
+  <footer><p>Burse (Pty) Ltd &copy; 2026</p></footer>
+</body>
+</html>

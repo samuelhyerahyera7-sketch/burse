@@ -46,29 +46,6 @@
       border: 1px solid #e2e8f0;
     }
 
-    .divider { display: flex; align-items: center; gap: 12px; margin: 16px 0; color: #b0bec5; font-size: 0.76rem; font-weight: 600; }
-    .divider::before, .divider::after { content: ''; flex: 1; height: 1px; background: #e2e8f0; }
-
-    .btn-google {
-      width: 100%;
-      padding: 11px;
-      background: #fff;
-      color: #0e1c40;
-      border: 1.5px solid #e2e8f0;
-      border-radius: 10px;
-      font-size: 0.88rem;
-      font-weight: 700;
-      font-family: 'Inter', sans-serif;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 10px;
-      transition: border-color 0.18s, background 0.18s;
-    }
-    .btn-google:hover { border-color: #b0bec5; background: #f8f9fb; }
-    .btn-google svg { width: 18px; height: 18px; flex-shrink: 0; }
-
     .login-card h2 {
       font-size: 1.3rem;
       font-weight: 800;
@@ -194,12 +171,6 @@
           </div>
           <button type="submit" class="btn-login" id="authSubmitBtn">Log In</button>
         </form>
-
-        <div class="divider">or</div>
-        <button type="button" class="btn-google" onclick="handleGoogleAuth()">
-          <svg viewBox="0 0 24 24"><path fill="#4285F4" d="M23.49 12.27c0-.79-.07-1.54-.19-2.27H12v4.51h6.47c-.29 1.48-1.14 2.73-2.43 3.58v3h3.93c2.3-2.12 3.52-5.24 3.52-8.82z"/><path fill="#34A853" d="M12 24c3.24 0 5.95-1.08 7.93-2.91l-3.93-3c-1.09.73-2.49 1.17-4 1.17-3.08 0-5.69-2.08-6.62-4.87H1.32v3.09C3.29 21.3 7.31 24 12 24z"/><path fill="#FBBC05" d="M5.38 14.39a7.6 7.6 0 0 1 0-4.78V6.52H1.32a12 12 0 0 0 0 10.96l4.06-3.09z"/><path fill="#EA4335" d="M12 4.75c1.77 0 3.35.61 4.6 1.8l3.44-3.44C17.94 1.19 15.24 0 12 0 7.31 0 3.29 2.7 1.32 6.52l4.06 3.09C6.31 6.83 8.92 4.75 12 4.75z"/></svg>
-          Log in with Google
-        </button>
 
         <div class="signup-row">
           <span id="switchText">Don't have an account?</span>
@@ -334,17 +305,6 @@
       }
 
       window.location.href = postLoginDestination();
-    }
-
-    async function handleGoogleAuth() {
-      const { error } = await sb.auth.signInWithOAuth({
-        provider: 'google',
-        options: { redirectTo: window.location.origin + '/payroll-admin' }
-      });
-      if (error) {
-        document.getElementById('errorMsg').textContent = error.message;
-        document.getElementById('errorMsg').style.display = 'block';
-      }
     }
 
     async function handleForgotPassword(e) {
