@@ -381,15 +381,11 @@
       <!-- INTEGRATIONS -->
       <section class="section" id="section-integrations">
         <div class="page-header"><h1>Integrations</h1><p>Keep another payroll system as your system of record and sync data into Burse on your own schedule.</p></div>
-        <div class="info-box">
-          Burse doesn't yet hold live API connections to third-party payroll providers. For now, "syncing" means
-          re-running the Migration Wizard's import against a fresh export from your other system — new and changed
-          employees are matched and updated by Employee Number, nothing is duplicated. Run it whenever your source
-          system changes, or set a reminder to do it monthly.
-        </div>
+        <div class="error-box" id="integrationError"></div>
         <div class="card">
-          <div class="card-header"><div class="card-title">Sync status</div><button class="btn-teal btn-sm" onclick="showSection('migrate')">Sync now</button></div>
-          <div id="integrationStatusWrap"><div class="loading">Loading…</div></div>
+          <div class="card-header"><div class="card-title">Live connections</div></div>
+          <p class="form-hint" style="margin-bottom:16px">A live connection reads your employee list directly from the provider's API — no file exports needed. For providers without a live connection yet, use the <a onclick="showSection('migrate')" style="color:var(--teal);cursor:pointer;font-weight:700">Migration Wizard</a> and re-run it whenever your source data changes.</p>
+          <div id="liveConnectionsWrap"><div class="loading">Loading…</div></div>
         </div>
         <div class="card">
           <div class="card-header"><div class="card-title">Bank Feeds</div></div>
@@ -1840,16 +1836,115 @@ async function loadMigrationJobs() {
   </tbody></table>`;
 }
 
+const LIVE_CONNECTION_PROVIDERS = [
+  { key: 'simplepay', name: 'SimplePay', fields: [{ key: 'api_key', label: 'API Key', hint: 'From payroll.simplepay.cloud → Settings → External Users' }] },
+  { key: 'payspace', name: 'PaySpace', fields: [{ key: 'client_id', label: 'Client ID' }, { key: 'client_secret', label: 'Client Secret' }], notYet: true },
+];
+
 async function loadIntegrationStatus() {
   if (!requireCompany()) return;
-  const wrap = document.getElementById('integrationStatusWrap');
-  const { data, error } = await sb.from('payroll_migration_jobs').select('*').eq('company_id', company.id).eq('mode', 'integrate').order('created_at', { ascending: false }).limit(1).maybeSingle();
-  if (error || !data) { wrap.innerHTML = `<div class="empty">Not connected to another payroll system yet. Choose "Keep existing payroll software and integrate with Burse" in the Migration Wizard to set this up.</div>`; return; }
-  const providerName = MIG_PROVIDERS.find(p => p.key === data.provider)?.name || data.provider;
-  wrap.innerHTML = `
-    <div class="checklist-row"><div><strong>${esc(providerName)}</strong><div class="form-hint">Last synced ${data.last_synced_at ? new Date(data.last_synced_at).toLocaleString('en-ZA') : 'never'}</div></div></div>
-    <div class="checklist-row"><div>${data.imported_count} of ${data.row_count} rows synced successfully${data.error_count ? `, ${data.error_count} flagged for review` : ''}.</div></div>
-  `;
+  const wrap = document.getElementById('liveConnectionsWrap');
+  document.getElementById('integrationError').style.display = 'none';
+  const { data: conns } = await sb.from('payroll_integration_connections').select('*').eq('company_id', company.id);
+  const byProvider = {}; (conns || []).forEach(c => byProvider[c.provider] = c);
+
+  wrap.innerHTML = LIVE_CONNECTION_PROVIDERS.map(p => {
+    const c = byProvider[p.key];
+    if (c && c.status !== 'disconnected') {
+      return `<div class="checklist-row" style="justify-content:space-between">
+        <div>
+          <strong>${esc(p.name)}</strong>
+          <span class="badge ${c.status === 'connected' ? 'badge-green' : 'badge-red'}" style="margin-left:8px">${c.status}</span>
+          <div class="form-hint">Last synced ${c.last_sync_at ? new Date(c.last_sync_at).toLocaleString('en-ZA') : 'never'}${c.last_error ? ' — ' + esc(c.last_error) : ''}</div>
+        </div>
+        <div>
+          <button class="btn-teal btn-sm" onclick="syncIntegration('${c.id}', this)">Sync now</button>
+          <button class="btn-outline btn-sm" style="margin-left:8px" onclick="disconnectIntegration('${c.id}')">Disconnect</button>
+        </div>
+      </div>`;
+    }
+    return `<div class="checklist-row" style="justify-content:space-between">
+      <div><strong>${esc(p.name)}</strong>${p.notYet ? '<div class="form-hint">Connect UI is ready — live syncing needs endpoint details confirmed with your PaySpace account manager first.</div>' : ''}</div>
+      <button class="btn-outline btn-sm" onclick="openConnectModal('${p.key}')">Connect</button>
+    </div>`;
+  }).join('');
+}
+
+function openConnectModal(providerKey) {
+  const p = LIVE_CONNECTION_PROVIDERS.find(x => x.key === providerKey);
+  const existing = document.getElementById('connectModalOverlay');
+  if (existing) existing.remove();
+  const overlay = document.createElement('div');
+  overlay.className = 'modal-overlay'; overlay.id = 'connectModalOverlay';
+  overlay.innerHTML = `
+    <div class="modal-box">
+      <button class="modal-close" onclick="document.getElementById('connectModalOverlay').remove()">✕</button>
+      <h2>Connect ${esc(p.name)}</h2>
+      <div class="error-box" id="connectModalError"></div>
+      ${p.fields.map(f => `<div class="form-group" style="margin-bottom:12px"><label>${esc(f.label)}</label><input type="text" id="connect-${f.key}" ${f.hint ? `placeholder="${esc(f.hint)}"` : ''}></div>`).join('')}
+      <div class="modal-actions">
+        <button class="btn-outline" onclick="document.getElementById('connectModalOverlay').remove()">Cancel</button>
+        <button class="btn-teal" id="connectSubmitBtn" onclick="submitConnect('${providerKey}')">Connect</button>
+      </div>
+    </div>`;
+  document.body.appendChild(overlay);
+}
+
+async function submitConnect(providerKey) {
+  const p = LIVE_CONNECTION_PROVIDERS.find(x => x.key === providerKey);
+  const errEl = document.getElementById('connectModalError');
+  errEl.style.display = 'none';
+  const credentials = {};
+  for (const f of p.fields) {
+    const v = document.getElementById(`connect-${f.key}`).value.trim();
+    if (!v) { errEl.textContent = `${f.label} is required.`; errEl.style.display = 'block'; return; }
+    credentials[f.key] = v;
+  }
+  const btn = document.getElementById('connectSubmitBtn');
+  btn.disabled = true; btn.textContent = 'Connecting…';
+  try {
+    const res = await withTimeout(fetchWithTimeout(`${SUPABASE_URL}/functions/v1/integration-connect`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${session.access_token}` },
+      body: JSON.stringify({ company_id: company.id, provider: providerKey, credentials }),
+    }));
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.error || 'Could not connect.');
+    document.getElementById('connectModalOverlay').remove();
+    loadIntegrationStatus();
+  } catch (e) {
+    errEl.textContent = e.message || 'Something went wrong.';
+    errEl.style.display = 'block';
+    btn.disabled = false; btn.textContent = 'Connect';
+  }
+}
+
+async function syncIntegration(connectionId, btnEl) {
+  const errEl = document.getElementById('integrationError');
+  errEl.style.display = 'none';
+  const original = btnEl.textContent;
+  btnEl.disabled = true; btnEl.textContent = 'Syncing…';
+  try {
+    const res = await withTimeout(fetchWithTimeout(`${SUPABASE_URL}/functions/v1/integration-sync`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${session.access_token}` },
+      body: JSON.stringify({ connection_id: connectionId }),
+    }, 60000), 60000);
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.error || 'Sync failed.');
+    loadIntegrationStatus();
+  } catch (e) {
+    errEl.textContent = e.message || 'Sync failed.';
+    errEl.style.display = 'block';
+  } finally {
+    btnEl.disabled = false; btnEl.textContent = original;
+  }
+}
+
+async function disconnectIntegration(connectionId) {
+  if (!confirm('Disconnect this integration? You can reconnect it any time.')) return;
+  await sb.from('payroll_integration_connections').update({ status: 'disconnected' }).eq('id', connectionId);
+  loadIntegrationStatus();
 }
 
 function startMigrationWizard() {
