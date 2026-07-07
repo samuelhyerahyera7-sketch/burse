@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en-ZA">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>API Reference — Burse</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --navy: #1a2f72; --navy-dark: #0e1c40; --teal: #2ab3b3; --teal-dark: #1e9090; --white: #ffffff;
+    --bg: #f7f9fc; --card: #ffffff; --border: #e6eaf0; --text: #0e1c40; --mid: #3d5070;
+    --soft: #7a8fb0; --red: #dc2626; --green: #16a34a;
+  }
+  html, body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--text); }
+  a { color: var(--teal); }
+  code, pre { font-family: 'JetBrains Mono', monospace; }
+  .wrap { max-width: 880px; margin: 0 auto; padding: 40px 24px 100px; }
+  .top { display: flex; align-items: center; justify-content: space-between; margin-bottom: 34px; }
+  .logo { font-size: 1.3rem; font-weight: 900; letter-spacing: -0.04em; }
+  .logo .b { color: var(--teal); } .logo .u { color: var(--navy-dark); }
+  .back { font-size: 0.85rem; font-weight: 700; color: var(--soft); }
+  h1 { font-size: 2rem; font-weight: 900; letter-spacing: -0.02em; margin-bottom: 10px; }
+  h2 { font-size: 1.2rem; font-weight: 800; margin: 40px 0 12px; padding-top: 20px; border-top: 1px solid var(--border); }
+  h2:first-of-type { border-top: none; padding-top: 0; }
+  h3 { font-size: 0.98rem; font-weight: 800; margin: 24px 0 8px; }
+  p { font-size: 0.92rem; line-height: 1.65; color: var(--mid); margin-bottom: 12px; }
+  .lede { font-size: 1.02rem; color: var(--mid); margin-bottom: 28px; }
+  .badge { display: inline-block; font-size: 0.68rem; font-weight: 800; padding: 3px 9px; border-radius: 50px; letter-spacing: 0.03em; margin-right: 6px; }
+  .badge-get { background: #dbeafe; color: #1d4ed8; }
+  .badge-post { background: #dcfce7; color: #15803d; }
+  .endpoint { display: flex; align-items: center; gap: 10px; font-family: 'JetBrains Mono', monospace; font-size: 0.85rem; font-weight: 700; margin: 22px 0 6px; }
+  .scope-tag { display: inline-block; font-size: 0.68rem; font-weight: 700; padding: 2px 8px; border-radius: 50px; background: #f1f5f9; color: #64748b; margin-left: 8px; }
+  pre { background: var(--navy-dark); color: #e2f5f5; border-radius: 10px; padding: 16px 18px; overflow-x: auto; font-size: 0.8rem; line-height: 1.6; margin: 10px 0 18px; }
+  .card { background: var(--card); border: 1px solid var(--border); border-radius: 14px; padding: 22px 26px; margin-bottom: 4px; }
+  table { width: 100%; border-collapse: collapse; margin: 10px 0 18px; }
+  th { font-size: 0.68rem; font-weight: 700; letter-spacing: 0.05em; text-transform: uppercase; color: var(--soft); padding: 6px 10px; text-align: left; border-bottom: 1px solid var(--border); }
+  td { font-size: 0.82rem; padding: 8px 10px; border-bottom: 1px solid var(--border); font-family: 'JetBrains Mono', monospace; }
+  td.desc { font-family: 'Inter', sans-serif; color: var(--mid); }
+  .info-box { background: #eef4ff; border: 1px solid #c7d9fb; color: #1d4ed8; font-size: 0.85rem; padding: 12px 16px; border-radius: 8px; margin-bottom: 18px; line-height: 1.5; }
+  .warn-box { background: #fff0f0; border: 1px solid #fca5a5; color: #dc2626; font-size: 0.85rem; padding: 12px 16px; border-radius: 8px; margin-bottom: 18px; line-height: 1.5; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="top">
+    <div class="logo"><span class="b">B</span><span class="u">urse</span></div>
+    <a class="back" href="/">← Back to Burse</a>
+  </div>
+
+  <h1>Burse API v1</h1>
+  <p class="lede">A REST API for connecting Burse to earned-wage-access providers, accounting software, or your own internal systems — reading payroll and bookkeeping data, and recording salary advances.</p>
+
+  <div class="card">
+    <h3 style="margin-top:0">Base URL</h3>
+    <pre>https://pnpfurfodmejdggnyjof.supabase.co/functions/v1/api-v1</pre>
+    <h3>Authentication</h3>
+    <p style="margin-bottom:0">Every request needs an API key in the <code>Authorization</code> header. Create one from <strong>Settings → API</strong> in Burse Payroll — the raw key is shown once, at creation time, and never again.</p>
+    <pre>Authorization: Bearer bk_live_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx</pre>
+  </div>
+
+  <div class="info-box">Each key is scoped to one company and a fixed set of permissions (<strong>scopes</strong>). Requesting an endpoint your key doesn't have the scope for returns <code>403</code>. Requests are rate-limited to 120/minute per key — going over returns <code>429</code>.</div>
+
+  <h2>Scopes</h2>
+  <table>
+    <thead><tr><th>Scope</th><th class="desc">Grants</th></tr></thead>
+    <tbody>
+      <tr><td>read</td><td class="desc">Read employees, pay runs, payslips and current-period earnings</td></tr>
+      <tr><td>advances:write</td><td class="desc">Record a salary advance (EWA draw) against an employee</td></tr>
+      <tr><td>bookkeeping:read</td><td class="desc">Read the chart of accounts and journal</td></tr>
+      <tr><td>bookkeeping:write</td><td class="desc">Post journal entries and record expenses</td></tr>
+    </tbody>
+  </table>
+
+  <h2>Payroll</h2>
+
+  <div class="endpoint"><span class="badge badge-get">GET</span> /employees <span class="scope-tag">read</span></div>
+  <p>Returns the company's employee roster. Sensitive fields (ID number, tax number, banking details, salary) are deliberately excluded from this list — use <code>/payslips</code> for compensation figures.</p>
+  <pre>curl https://pnpfurfodmejdggnyjof.supabase.co/functions/v1/api-v1/employees \
+  -H "Authorization: Bearer bk_live_..."</pre>
+  <pre>{ "employees": [ { "id": "...", "employee_number": "EMP001", "full_name": "Jane Doe",
+    "job_title": "Sales Rep", "department": null, "employment_type": "permanent",
+    "pay_frequency": "monthly", "active": true, "start_date": "2024-01-15", "end_date": null } ] }</pre>
+
+  <div class="endpoint"><span class="badge badge-get">GET</span> /payroll-runs <span class="scope-tag">read</span></div>
+  <p>The company's last 50 pay runs, most recent first.</p>
+  <pre>{ "payroll_runs": [ { "id": "...", "period_start": "2026-07-01", "period_end": "2026-07-31",
+    "pay_date": "2026-07-25", "frequency": "monthly", "status": "finalized",
+    "tax_year": "2026/2027", "finalized_at": "2026-07-24T09:12:00Z" } ] }</pre>
+
+  <div class="endpoint"><span class="badge badge-get">GET</span> /payslips?run_id=... <span class="scope-tag">read</span></div>
+  <p>Payslips for a given run, or pass <code>?employee_id=...</code> instead for that employee's last 24 payslips.</p>
+
+  <div class="endpoint"><span class="badge badge-get">GET</span> /earnings/current?employee_id=... <span class="scope-tag">read</span></div>
+  <p>The primary endpoint for earned-wage-access (EWA) integrations. Returns how much of the employee's basic salary has been earned so far in the <em>current open pay period</em>, pro-rated by calendar days elapsed, along with any advance already drawn this cycle.</p>
+  <pre>{ "employee_id": "...", "full_name": "Jane Doe", "has_open_period": true,
+  "run_id": "...", "period_start": "2026-07-01", "period_end": "2026-07-31",
+  "days_elapsed": 7, "total_days": 31, "basic_salary": 20000,
+  "earned_to_date": 4516.13, "already_advanced_this_cycle": 1500,
+  "available_to_advance": 3016.13,
+  "note": "earned_to_date is pro-rated on basic_salary only (calendar days), and does not include allowances, bonuses or statutory deductions. available_to_advance is advisory — you decide the actual cap." }</pre>
+  <p>If no pay run has been created yet for the period covering today, <code>has_open_period</code> is <code>false</code> and no figures are returned.</p>
+
+  <div class="endpoint"><span class="badge badge-post">POST</span> /advances <span class="scope-tag">advances:write</span></div>
+  <p>Records a salary advance against an employee. It's automatically deducted in full from their <em>next</em> payslip via Burse's existing loan/advance mechanism — no separate reconciliation step needed. If the employee already has an advance outstanding this cycle, the new amount is added to it rather than creating a second one.</p>
+  <pre>curl -X POST https://pnpfurfodmejdggnyjof.supabase.co/functions/v1/api-v1/advances \
+  -H "Authorization: Bearer bk_live_..." -H "Content-Type: application/json" \
+  -d '{"employee_id": "...", "amount": 1500, "label": "EWA draw"}'</pre>
+  <table>
+    <thead><tr><th>Field</th><th class="desc">Description</th></tr></thead>
+    <tbody>
+      <tr><td>employee_id</td><td class="desc">Required. Must belong to your company.</td></tr>
+      <tr><td>amount</td><td class="desc">Required. A positive number, in Rand.</td></tr>
+      <tr><td>label</td><td class="desc">Optional. Shown on the employee's payslip. Defaults to "Salary Advance".</td></tr>
+    </tbody>
+  </table>
+
+  <h2>Bookkeeping</h2>
+
+  <div class="endpoint"><span class="badge badge-get">GET</span> /bookkeeping/accounts <span class="scope-tag">bookkeeping:read</span></div>
+  <p>The company's chart of accounts.</p>
+
+  <div class="endpoint"><span class="badge badge-get">GET</span> /bookkeeping/journal <span class="scope-tag">bookkeeping:read</span></div>
+  <p>The last 100 journal entries, with their lines.</p>
+
+  <div class="endpoint"><span class="badge badge-post">POST</span> /bookkeeping/journal-entries <span class="scope-tag">bookkeeping:write</span></div>
+  <p>Posts a manual, balanced double-entry journal entry. Rejected if debits and credits don't match exactly.</p>
+  <pre>curl -X POST https://pnpfurfodmejdggnyjof.supabase.co/functions/v1/api-v1/bookkeeping/journal-entries \
+  -H "Authorization: Bearer bk_live_..." -H "Content-Type: application/json" \
+  -d '{
+    "entry_date": "2026-07-07",
+    "description": "Office supplies",
+    "lines": [
+      { "account_id": "...", "debit": 500, "credit": 0 },
+      { "account_id": "...", "debit": 0, "credit": 500 }
+    ]
+  }'</pre>
+
+  <div class="endpoint"><span class="badge badge-post">POST</span> /bookkeeping/expenses <span class="scope-tag">bookkeeping:write</span></div>
+  <p>Records an expense against an expense-type account — posts the matching journal entry automatically.</p>
+  <pre>{ "expense_date": "2026-07-07", "vendor": "Telkom", "account_id": "...",
+  "amount": 850, "vat_amount": 127.50, "description": "July connectivity" }</pre>
+
+  <h2>Errors</h2>
+  <table>
+    <thead><tr><th>Status</th><th class="desc">Meaning</th></tr></thead>
+    <tbody>
+      <tr><td>400</td><td class="desc">Bad request — missing or invalid field. See <code>error</code> in the response body.</td></tr>
+      <tr><td>401</td><td class="desc">Missing, invalid or revoked API key.</td></tr>
+      <tr><td>403</td><td class="desc">Your key doesn't have the scope required for this endpoint.</td></tr>
+      <tr><td>404</td><td class="desc">The resource (employee, run, endpoint) doesn't exist or isn't yours.</td></tr>
+      <tr><td>429</td><td class="desc">Rate limit exceeded (120 requests/minute per key). Back off and retry.</td></tr>
+    </tbody>
+  </table>
+
+  <div class="warn-box">Keep your API key secret — anyone with it has scoped access to your company's payroll and bookkeeping data. Revoke a key immediately from Settings → API if it's ever exposed.</div>
+</div>
+</body>
+</html>

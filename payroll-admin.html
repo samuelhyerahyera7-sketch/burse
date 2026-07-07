@@ -481,6 +481,7 @@
           <div class="subtab" data-subtab="s-roles" onclick="switchSettingsTab('s-roles')">User Roles</div>
           <div class="subtab" data-subtab="s-notifications" onclick="switchSettingsTab('s-notifications')">Notifications</div>
           <div class="subtab" data-subtab="s-security" onclick="switchSettingsTab('s-security')">Security</div>
+          <div class="subtab" data-subtab="s-api" onclick="switchSettingsTab('s-api')">API</div>
         </div>
 
         <div class="error-box" id="companyError"></div>
@@ -577,8 +578,54 @@
             <button class="btn-primary" onclick="changePassword()" id="changePasswordBtn">Update Password</button>
           </div>
         </div>
+
+        <!-- API -->
+        <div class="subtab-panel" id="settingspanel-s-api">
+          <div class="card">
+            <div class="card-header"><div class="card-title">API keys</div><button class="btn-teal btn-sm" onclick="openApiKeyModal()">Create Key</button></div>
+            <p class="form-hint" style="margin-bottom:16px">Connect Burse to an EWA provider, accounting software or your own systems. Full reference at <a href="api-docs.html" target="_blank" style="color:var(--teal);font-weight:700">api-docs.html</a>.</p>
+            <div id="apiKeysWrap"><div class="loading">Loading…</div></div>
+          </div>
+        </div>
       </section>
 
+    </div>
+  </div>
+</div>
+
+<!-- API KEY MODAL -->
+<div class="modal-overlay" id="apiKeyModal" hidden>
+  <div class="modal-box" style="max-width:480px">
+    <button class="modal-close" onclick="closeModal('apiKeyModal')">✕</button>
+    <h2>Create API Key</h2>
+    <div class="error-box" id="apiKeyError"></div>
+    <div class="form-group" style="margin-bottom:14px"><label>Name</label><input id="ak-name" placeholder="e.g. Wagestream EWA integration"></div>
+    <div class="form-group" style="margin-bottom:6px"><label>Scopes</label></div>
+    <div class="checkbox-row"><input type="checkbox" id="ak-scope-read" checked><label for="ak-scope-read" style="margin:0">Read employees, pay runs &amp; payslips</label></div>
+    <div class="checkbox-row"><input type="checkbox" id="ak-scope-advances"><label for="ak-scope-advances" style="margin:0">Record salary advances (EWA)</label></div>
+    <div class="checkbox-row"><input type="checkbox" id="ak-scope-bk-read"><label for="ak-scope-bk-read" style="margin:0">Read bookkeeping (accounts &amp; journal)</label></div>
+    <div class="checkbox-row" style="margin-bottom:14px"><input type="checkbox" id="ak-scope-bk-write"><label for="ak-scope-bk-write" style="margin:0">Write bookkeeping (journal entries &amp; expenses)</label></div>
+    <div class="modal-actions">
+      <button class="btn-outline" onclick="closeModal('apiKeyModal')">Cancel</button>
+      <button class="btn-primary" onclick="createApiKeyAction()" id="createApiKeyBtn">Create Key</button>
+    </div>
+  </div>
+</div>
+
+<!-- API KEY REVEAL MODAL -->
+<div class="modal-overlay" id="apiKeyRevealModal" hidden>
+  <div class="modal-box" style="max-width:520px">
+    <h2>Your new API key</h2>
+    <div class="info-box" style="background:#fff0f0;border-color:#fca5a5;color:#dc2626">This is the only time this key will ever be shown. Copy it now and store it somewhere safe — Burse only keeps a hash of it, not the key itself.</div>
+    <div class="form-group" style="margin-bottom:14px">
+      <label>Key</label>
+      <div style="display:flex;gap:8px">
+        <input id="ak-reveal-value" readonly style="font-family:monospace;font-size:0.78rem">
+        <button class="btn-outline btn-sm" onclick="copyApiKey()" id="copyApiKeyBtn" type="button">Copy</button>
+      </div>
+    </div>
+    <div class="modal-actions">
+      <button class="btn-primary" onclick="closeModal('apiKeyRevealModal'); loadApiKeys();">Done</button>
     </div>
   </div>
 </div>
@@ -1050,6 +1097,7 @@ function updateLeavePolicyHints() {
 function switchSettingsTab(name) {
   document.querySelectorAll('#section-settings .subtab').forEach(t => t.classList.toggle('active', t.dataset.subtab === name));
   document.querySelectorAll('#section-settings .subtab-panel').forEach(p => p.classList.toggle('active', p.id === 'settingspanel-' + name));
+  if (name === 's-api') loadApiKeys();
 }
 
 async function saveNotificationPrefs() {
@@ -1083,6 +1131,76 @@ async function changePassword() {
   successEl.style.display = 'block';
   document.getElementById('sec-newpass').value = '';
   document.getElementById('sec-confirmpass').value = '';
+}
+
+// ── API keys ──
+async function loadApiKeys() {
+  const wrap = document.getElementById('apiKeysWrap');
+  if (!company) { wrap.innerHTML = '<div class="empty">Set up your company first.</div>'; return; }
+  wrap.innerHTML = '<div class="loading">Loading…</div>';
+  const { data, error } = await sb.from('api_keys').select('*').eq('company_id', company.id).order('created_at', { ascending: false });
+  if (error) { wrap.innerHTML = `<div class="empty">${esc(error.message)}</div>`; return; }
+  if (!data || data.length === 0) { wrap.innerHTML = '<div class="empty">No API keys yet.</div>'; return; }
+  wrap.innerHTML = `<table><thead><tr><th>Name</th><th>Key</th><th>Scopes</th><th>Last used</th><th>Status</th><th></th></tr></thead><tbody>
+    ${data.map(k => `<tr>
+      <td>${esc(k.name)}</td>
+      <td style="font-family:monospace;font-size:0.78rem">${esc(k.key_prefix)}…</td>
+      <td>${k.scopes.map(s => `<span class="badge badge-gray" style="margin-right:4px">${esc(s)}</span>`).join('')}</td>
+      <td>${k.last_used_at ? new Date(k.last_used_at).toLocaleString('en-ZA') : 'Never'}</td>
+      <td>${k.revoked_at ? '<span class="badge badge-red">Revoked</span>' : '<span class="badge badge-green">Active</span>'}</td>
+      <td>${k.revoked_at ? '' : `<button type="button" class="btn-danger" onclick="revokeApiKeyAction('${k.id}')">Revoke</button>`}</td>
+    </tr>`).join('')}
+  </tbody></table>`;
+}
+
+function openApiKeyModal() {
+  if (!company) { alert('Set up your company first.'); return; }
+  document.getElementById('apiKeyError').style.display = 'none';
+  document.getElementById('ak-name').value = '';
+  document.getElementById('ak-scope-read').checked = true;
+  document.getElementById('ak-scope-advances').checked = false;
+  document.getElementById('ak-scope-bk-read').checked = false;
+  document.getElementById('ak-scope-bk-write').checked = false;
+  document.getElementById('apiKeyModal').hidden = false;
+}
+
+async function createApiKeyAction() {
+  const errEl = document.getElementById('apiKeyError');
+  errEl.style.display = 'none';
+  const name = val('ak-name');
+  if (!name) { errEl.textContent = 'Name is required.'; errEl.style.display = 'block'; return; }
+  const scopes = [];
+  if (document.getElementById('ak-scope-read').checked) scopes.push('read');
+  if (document.getElementById('ak-scope-advances').checked) scopes.push('advances:write');
+  if (document.getElementById('ak-scope-bk-read').checked) scopes.push('bookkeeping:read');
+  if (document.getElementById('ak-scope-bk-write').checked) scopes.push('bookkeeping:write');
+  if (scopes.length === 0) { errEl.textContent = 'Select at least one scope.'; errEl.style.display = 'block'; return; }
+
+  const btn = document.getElementById('createApiKeyBtn');
+  btn.disabled = true; btn.textContent = 'Creating…';
+  const { data, error } = await sb.rpc('create_api_key', { p_company_id: company.id, p_name: name, p_scopes: scopes });
+  btn.disabled = false; btn.textContent = 'Create Key';
+  if (error) { errEl.textContent = error.message; errEl.style.display = 'block'; return; }
+  closeModal('apiKeyModal');
+  document.getElementById('ak-reveal-value').value = data[0].raw_key;
+  document.getElementById('apiKeyRevealModal').hidden = false;
+}
+
+function copyApiKey() {
+  const input = document.getElementById('ak-reveal-value');
+  input.select();
+  navigator.clipboard?.writeText(input.value);
+  const btn = document.getElementById('copyApiKeyBtn');
+  const original = btn.textContent;
+  btn.textContent = 'Copied!';
+  setTimeout(() => { btn.textContent = original; }, 1500);
+}
+
+async function revokeApiKeyAction(id) {
+  if (!confirm('Revoke this key? Any integration using it will stop working immediately.')) return;
+  const { error } = await sb.rpc('revoke_api_key', { p_key_id: id });
+  if (error) { alert(error.message); return; }
+  loadApiKeys();
 }
 
 async function saveCompany() {
