@@ -316,6 +316,8 @@
     }
     function toggleMode() { setMode(currentMode === 'login' ? 'signup' : 'login'); }
 
+    if (new URLSearchParams(window.location.search).get('mode') === 'signup') setMode('signup');
+
     // Supabase v2 sends recovery links with ?code= (PKCE) or #type=recovery (implicit)
     // Detect either format immediately so we never redirect away from the reset form
     const _isRecovery = new URLSearchParams(window.location.search).has('code')
