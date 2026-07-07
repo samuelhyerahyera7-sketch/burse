@@ -2161,6 +2161,11 @@ const LIVE_CONNECTION_PROVIDERS = [
     { key: 'scope', label: 'Scope', hint: 'Supplied with your credentials at registration' },
     { key: 'company_id', label: 'PaySpace Company ID' },
   ] },
+  { key: 'sage_payroll', name: 'Sage Payroll', fields: [
+    { key: 'client_id', label: 'Client ID' },
+    { key: 'client_secret', label: 'Client Secret' },
+    { key: 'company_id', label: 'Sage Company ID' },
+  ], notYet: 'Sage\'s payroll API endpoint is region-specific and hasn\'t been confirmed for South Africa yet — talk to your Sage account manager or developer.sage.com. Connecting will show an error until that\'s sorted out; nothing is saved.' },
 ];
 
 async function loadIntegrationStatus() {
@@ -2186,7 +2191,7 @@ async function loadIntegrationStatus() {
       </div>`;
     }
     return `<div class="checklist-row" style="justify-content:space-between">
-      <div><strong>${esc(p.name)}</strong></div>
+      <div><strong>${esc(p.name)}</strong>${p.notYet ? `<div class="form-hint">${esc(p.notYet)}</div>` : ''}</div>
       <button class="btn-outline btn-sm" onclick="openConnectModal('${p.key}')">Connect</button>
     </div>`;
   }).join('');

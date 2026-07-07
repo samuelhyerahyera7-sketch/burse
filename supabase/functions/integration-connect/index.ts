@@ -32,7 +32,7 @@ Deno.serve(async (req) => {
     const { data: company } = await sb.from('payroll_companies').select('id, owner_id').eq('id', company_id).maybeSingle();
     if (!company || company.owner_id !== uid) return json({ error: 'Not authorised for this company' }, 404);
 
-    if (!['simplepay', 'payspace'].includes(provider)) return json({ error: 'Unsupported provider' }, 400);
+    if (!['simplepay', 'payspace', 'sage_payroll'].includes(provider)) return json({ error: 'Unsupported provider' }, 400);
 
     // ── Validate the credentials against the real provider before storing anything ──
     let externalRef: string | null = null;
@@ -78,6 +78,17 @@ Deno.serve(async (req) => {
           : `PaySpace returned an unexpected error (${empRes.status}).` }, 400);
       }
       externalRef = String(pspCompanyId);
+    } else if (provider === 'sage_payroll') {
+      // Sage Business Cloud Payroll does have a real OAuth2 API, but the API
+      // host is region/edition-specific and contradictory across what's publicly
+      // documented (api.columbus.sage.com for Spain, lohnabrechnung.sage.com for
+      // Germany, no confirmed South African host found) — and registering an
+      // OAuth app requires a Sage developer account tied to a real business,
+      // which isn't something this service can do on a customer's behalf.
+      // Shipping a guessed host here would silently point at the wrong region's
+      // API rather than just being unavailable, so this stays off until a real
+      // Sage-confirmed endpoint is available.
+      return json({ error: 'Sage Payroll isn\'t connected yet — Sage\'s API endpoint is region-specific and needs confirming with your Sage account manager or developer.sage.com before this can go live. Your details have not been saved.' }, 501);
     }
 
     const secretName = `payroll_integration_${provider}_${company_id}`;
