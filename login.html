@@ -250,19 +250,74 @@
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script>
     // "Stay logged in" support, shared by every page that creates a Supabase
-    // client (login.html, payroll-admin.html, leave.html): the actual
-    // preference lives in localStorage as a small flag (not the session
-    // itself), and this custom storage adapter reads that flag on every
-    // call to decide whether the real session goes into localStorage
-    // (persists across browser restarts) or sessionStorage (cleared when
-    // the tab/browser closes).
+    // client (login, payroll, leave, payslip, tax certificate, and the
+    // Bookkeeping product on its own subdomain): the preference itself is a
+    // small localStorage flag, and this custom storage adapter reads it on
+    // every call to decide where the real session lives.
+    //
+    // On the real burse.co.za domain, a "remembered" session is stored in a
+    // cookie scoped to Domain=.burse.co.za so logging in on Payroll also logs
+    // you into Bookkeeping (and back) without a second login — the two
+    // products are different subdomains, which the browser treats as
+    // different origins with separate localStorage, so a plain localStorage
+    // adapter alone can't cross that boundary. A cookie can, since cookies
+    // support a parent-domain scope that both subdomains inherit.
+    // Supabase's session JSON can exceed one cookie's ~4KB limit, so large
+    // values are split across numbered chunk cookies and reassembled on read.
+    // Off the real domain (local testing, file://, preview URLs) this quietly
+    // falls back to plain localStorage/sessionStorage — identical to the
+    // original behaviour — since a cross-subdomain cookie makes no sense there.
     function burseGetRemember() { return localStorage.getItem('burse-remember') !== '0'; }
     function burseSetRemember(v) { localStorage.setItem('burse-remember', v ? '1' : '0'); }
-    const burseAuthStorage = {
-      getItem: (key) => (burseGetRemember() ? window.localStorage : window.sessionStorage).getItem(key),
-      setItem: (key, value) => (burseGetRemember() ? window.localStorage : window.sessionStorage).setItem(key, value),
-      removeItem: (key) => (burseGetRemember() ? window.localStorage : window.sessionStorage).removeItem(key),
-    };
+
+    const burseAuthStorage = (() => {
+      const onProdDomain = location.hostname.endsWith('burse.co.za');
+      if (!onProdDomain) {
+        return {
+          getItem: (key) => (burseGetRemember() ? window.localStorage : window.sessionStorage).getItem(key),
+          setItem: (key, value) => (burseGetRemember() ? window.localStorage : window.sessionStorage).setItem(key, value),
+          removeItem: (key) => (burseGetRemember() ? window.localStorage : window.sessionStorage).removeItem(key),
+        };
+      }
+      const COOKIE_DOMAIN = '.burse.co.za';
+      const CHUNK_SIZE = 3000;
+      function cookieGet(name) {
+        const m = document.cookie.match(new RegExp('(?:^|; )' + name.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + '=([^;]*)'));
+        return m ? decodeURIComponent(m[1]) : null;
+      }
+      function cookieSet(name, value, days) {
+        document.cookie = `${name}=${encodeURIComponent(value)}; path=/; domain=${COOKIE_DOMAIN}; max-age=${days * 86400}; samesite=lax; secure`;
+      }
+      function cookieRemove(name) {
+        document.cookie = `${name}=; path=/; domain=${COOKIE_DOMAIN}; max-age=0`;
+      }
+      return {
+        getItem: (key) => {
+          if (!burseGetRemember()) return sessionStorage.getItem(key);
+          const n = cookieGet(key + '__n');
+          if (n === null) return cookieGet(key);
+          let value = '';
+          for (let i = 0; i < parseInt(n, 10); i++) value += cookieGet(key + '__' + i) || '';
+          return value || null;
+        },
+        setItem: (key, value) => {
+          if (!burseGetRemember()) { sessionStorage.setItem(key, value); return; }
+          cookieRemove(key + '__n');
+          if (value.length <= CHUNK_SIZE) { cookieSet(key, value, 30); return; }
+          cookieRemove(key);
+          const chunks = [];
+          for (let i = 0; i < value.length; i += CHUNK_SIZE) chunks.push(value.slice(i, i + CHUNK_SIZE));
+          chunks.forEach((c, i) => cookieSet(key + '__' + i, c, 30));
+          cookieSet(key + '__n', String(chunks.length), 30);
+        },
+        removeItem: (key) => {
+          sessionStorage.removeItem(key);
+          const n = cookieGet(key + '__n');
+          if (n !== null) { for (let i = 0; i < parseInt(n, 10); i++) cookieRemove(key + '__' + i); cookieRemove(key + '__n'); }
+          cookieRemove(key);
+        },
+      };
+    })();
 
     const { createClient } = supabase;
     const sb = createClient(

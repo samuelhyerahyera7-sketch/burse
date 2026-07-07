@@ -702,16 +702,62 @@ const SUPABASE_URL = 'https://pnpfurfodmejdggnyjof.supabase.co';
 const SUPABASE_KEY = 'sb_publishable_q2fnC5EJrToRNuvUjW619Q_NKMbO0iX';
 const { createClient } = supabase;
 
-// Must match the storage adapter in login.html exactly — the "Stay logged in"
-// choice made at login is a flag in localStorage, and every page's client
-// reads it to decide whether the real session lives in localStorage
-// (persists across restarts) or sessionStorage (cleared when the browser closes).
+// Must match the storage adapter in login.html exactly — see the comment
+// there for the full explanation. On the real burse.co.za domain this uses
+// a Domain=.burse.co.za cookie so a Payroll login also logs you into
+// Bookkeeping (and back) without a second login; off that domain it's a
+// plain localStorage/sessionStorage adapter, identical to before.
 function burseGetRemember() { return localStorage.getItem('burse-remember') !== '0'; }
-const burseAuthStorage = {
-  getItem: (key) => (burseGetRemember() ? window.localStorage : window.sessionStorage).getItem(key),
-  setItem: (key, value) => (burseGetRemember() ? window.localStorage : window.sessionStorage).setItem(key, value),
-  removeItem: (key) => (burseGetRemember() ? window.localStorage : window.sessionStorage).removeItem(key),
-};
+function burseSetRemember(v) { localStorage.setItem('burse-remember', v ? '1' : '0'); }
+
+const burseAuthStorage = (() => {
+  const onProdDomain = location.hostname.endsWith('burse.co.za');
+  if (!onProdDomain) {
+    return {
+      getItem: (key) => (burseGetRemember() ? window.localStorage : window.sessionStorage).getItem(key),
+      setItem: (key, value) => (burseGetRemember() ? window.localStorage : window.sessionStorage).setItem(key, value),
+      removeItem: (key) => (burseGetRemember() ? window.localStorage : window.sessionStorage).removeItem(key),
+    };
+  }
+  const COOKIE_DOMAIN = '.burse.co.za';
+  const CHUNK_SIZE = 3000;
+  function cookieGet(name) {
+    const m = document.cookie.match(new RegExp('(?:^|; )' + name.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + '=([^;]*)'));
+    return m ? decodeURIComponent(m[1]) : null;
+  }
+  function cookieSet(name, value, days) {
+    document.cookie = `${name}=${encodeURIComponent(value)}; path=/; domain=${COOKIE_DOMAIN}; max-age=${days * 86400}; samesite=lax; secure`;
+  }
+  function cookieRemove(name) {
+    document.cookie = `${name}=; path=/; domain=${COOKIE_DOMAIN}; max-age=0`;
+  }
+  return {
+    getItem: (key) => {
+      if (!burseGetRemember()) return sessionStorage.getItem(key);
+      const n = cookieGet(key + '__n');
+      if (n === null) return cookieGet(key);
+      let value = '';
+      for (let i = 0; i < parseInt(n, 10); i++) value += cookieGet(key + '__' + i) || '';
+      return value || null;
+    },
+    setItem: (key, value) => {
+      if (!burseGetRemember()) { sessionStorage.setItem(key, value); return; }
+      cookieRemove(key + '__n');
+      if (value.length <= CHUNK_SIZE) { cookieSet(key, value, 30); return; }
+      cookieRemove(key);
+      const chunks = [];
+      for (let i = 0; i < value.length; i += CHUNK_SIZE) chunks.push(value.slice(i, i + CHUNK_SIZE));
+      chunks.forEach((c, i) => cookieSet(key + '__' + i, c, 30));
+      cookieSet(key + '__n', String(chunks.length), 30);
+    },
+    removeItem: (key) => {
+      sessionStorage.removeItem(key);
+      const n = cookieGet(key + '__n');
+      if (n !== null) { for (let i = 0; i < parseInt(n, 10); i++) cookieRemove(key + '__' + i); cookieRemove(key + '__n'); }
+      cookieRemove(key);
+    },
+  };
+})();
 const sb = createClient(SUPABASE_URL, SUPABASE_KEY, { auth: { storage: burseAuthStorage, persistSession: true, autoRefreshToken: true } });
 
 // Every fetch() to our own edge functions goes through this so a slow/dead
