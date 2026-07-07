@@ -1530,6 +1530,7 @@ async function inviteAccountant() {
   if (!isOwner) return;
   const errEl = document.getElementById('accountantError');
   errEl.style.display = 'none';
+  if (!company) { errEl.textContent = 'Set up your company first.'; errEl.style.display = 'block'; return; }
   const email = val('acc-email').toLowerCase();
   if (!email || !email.includes('@')) { errEl.textContent = 'Enter a valid email address.'; errEl.style.display = 'block'; return; }
 
