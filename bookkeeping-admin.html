@@ -172,6 +172,7 @@
       <a class="nav-item" onclick="showSection('invoices')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg><span class="nav-label">Invoices</span></a>
       <a class="nav-item" onclick="showSection('expenses')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M16 8h-6a2 2 0 1 0 0 4h4a2 2 0 1 1 0 4H8"/><line x1="12" y1="6" x2="12" y2="18"/></svg><span class="nav-label">Expenses</span></a>
       <a class="nav-item" onclick="showSection('reports')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg><span class="nav-label">Reports</span></a>
+      <a class="nav-item" onclick="showSection('analytics')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg><span class="nav-label">Analytics</span></a>
       <a class="nav-item" id="payrollNavLink" href="#"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg><span class="nav-label">Payroll</span></a>
     </nav>
     <div class="sidebar-footer">
@@ -265,6 +266,29 @@
         </div>
         <div class="subtab-panel" id="reportpanel-balance">
           <div class="card"><div class="card-title" style="margin-bottom:14px">Balance sheet (as of today)</div><div id="balanceSheetWrap"><div class="loading">Loading…</div></div></div>
+        </div>
+      </section>
+
+      <!-- ANALYTICS -->
+      <section class="section" id="section-analytics">
+        <div class="page-header"><h1>Analytics</h1><p>Trends across your last 6 months.</p></div>
+        <div class="kpi-grid">
+          <div class="kpi-card"><div class="kpi-label">This month's income</div><div class="kpi-val" id="an-kpi-income">—</div><div class="kpi-sub">All income accounts</div></div>
+          <div class="kpi-card"><div class="kpi-label">This month's expenses</div><div class="kpi-val" id="an-kpi-expense">—</div><div class="kpi-sub">All expense accounts</div></div>
+          <div class="kpi-card"><div class="kpi-label">Net margin</div><div class="kpi-val" id="an-kpi-margin">—</div><div class="kpi-sub">This month</div></div>
+          <div class="kpi-card"><div class="kpi-label">Bank balance</div><div class="kpi-val" id="an-kpi-bank">—</div><div class="kpi-sub">Account 1000, today</div></div>
+        </div>
+        <div class="card">
+          <div class="card-header"><div class="card-title">Income vs expenses</div><div style="display:flex;gap:14px;font-size:0.76rem;color:var(--soft)"><span><span style="display:inline-block;width:9px;height:9px;border-radius:50%;background:#16a34a;margin-right:5px"></span>Income</span><span><span style="display:inline-block;width:9px;height:9px;border-radius:50%;background:#dc2626;margin-right:5px"></span>Expenses</span></div></div>
+          <div id="analyticsIncomeExpenseChart"><div class="loading">Loading…</div></div>
+        </div>
+        <div class="card">
+          <div class="card-header"><div class="card-title">Bank balance trend</div></div>
+          <div id="analyticsBankChart"><div class="loading">Loading…</div></div>
+        </div>
+        <div class="card">
+          <div class="card-header"><div class="card-title">Top expense accounts</div><p class="form-hint">All-time</p></div>
+          <div id="analyticsTopExpenses"><div class="loading">Loading…</div></div>
         </div>
       </section>
 
@@ -531,13 +555,14 @@ function showSection(name) {
   document.getElementById('section-' + name).classList.add('active');
   document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
   event?.target?.closest('.nav-item')?.classList.add('active');
-  const titles = { dashboard:'Dashboard', accounts:'Chart of Accounts', journal:'Journal', invoices:'Invoices', expenses:'Expenses', reports:'Reports' };
+  const titles = { dashboard:'Dashboard', accounts:'Chart of Accounts', journal:'Journal', invoices:'Invoices', expenses:'Expenses', reports:'Reports', analytics:'Analytics' };
   document.getElementById('topbarTitle').textContent = titles[name];
   if (name === 'accounts') loadAccounts();
   if (name === 'journal') loadJournal();
   if (name === 'invoices') loadInvoices();
   if (name === 'expenses') loadExpenses();
   if (name === 'reports') { loadTrialBalance(); }
+  if (name === 'analytics') { loadAnalytics(); }
   closeSidebar();
 }
 
@@ -560,7 +585,7 @@ document.getElementById('sidebarBackdrop').addEventListener('click', closeSideba
 
 function closeModal(id) { document.getElementById(id).hidden = true; }
 function esc(str) { return String(str ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
-function money(n) { return 'R ' + Number(n || 0).toLocaleString('en-ZA', { minimumFractionDigits: 2 }); }
+function money(n) { return 'R ' + Number(n || 0).toLocaleString('en-ZA', { minimumFractionDigits: 2, maximumFractionDigits: 2 }); }
 function val(id) { return document.getElementById(id).value.trim(); }
 function today() { return new Date().toISOString().slice(0, 10); }
 
@@ -867,6 +892,11 @@ async function fetchAllLinesWithAccounts() {
   return data || [];
 }
 
+async function fetchAllLinesWithAccountsAndDate() {
+  const { data } = await sb.from('bk_journal_lines').select('debit, credit, bk_journal_entries!inner(company_id, entry_date), bk_accounts(id, code, name, type)').eq('bk_journal_entries.company_id', company.id);
+  return (data || []).sort((a, b) => (a.bk_journal_entries?.entry_date || '').localeCompare(b.bk_journal_entries?.entry_date || ''));
+}
+
 async function loadTrialBalance() {
   const wrap = document.getElementById('trialBalanceWrap');
   if (!requireCompany()) { wrap.innerHTML = '<div class="empty">Set up your company first.</div>'; return; }
@@ -942,6 +972,122 @@ async function loadBalanceSheet() {
     </tbody></table>`;
   };
   wrap.innerHTML = section('Assets', groups.asset) + section('Liabilities', groups.liability) + section('Equity', groups.equity);
+}
+
+// ── Analytics ──
+function buildMultiLineChart(points, seriesKeys, colors) {
+  const w = 640, h = 220, padL = 60, padR = 20, padT = 20, padB = 30;
+  const allVals = points.flatMap(p => seriesKeys.map(k => p[k] || 0));
+  const maxVal = Math.max(...allVals, 1);
+  const stepX = (w - padL - padR) / Math.max(points.length - 1, 1);
+  const xFor = i => points.length === 1 ? (padL + w - padL - padR) / 2 : padL + i * stepX;
+  const yFor = v => padT + (1 - v / maxVal) * (h - padT - padB);
+
+  const gridLines = [0, 0.25, 0.5, 0.75, 1].map(f => {
+    const y = padT + f * (h - padT - padB);
+    const val = maxVal * (1 - f);
+    return `<line x1="${padL}" y1="${y}" x2="${w-padR}" y2="${y}" stroke="#e6eaf0" stroke-width="1"/>
+      <text x="${padL - 8}" y="${y + 3}" font-size="10" fill="#7a8fb0" text-anchor="end">R${Math.round(val/1000)}k</text>`;
+  }).join('');
+  const labels = points.map((p, i) => `<text x="${xFor(i)}" y="${h - 8}" font-size="10" fill="#7a8fb0" text-anchor="middle">${esc(p.label)}</text>`).join('');
+  const lines = seriesKeys.map((key, si) => {
+    const linePoints = points.map((p, i) => `${xFor(i)},${yFor(p[key] || 0)}`).join(' ');
+    const dots = points.map((p, i) => `<circle cx="${xFor(i)}" cy="${yFor(p[key] || 0)}" r="3.5" fill="${colors[si]}"/>`).join('');
+    return `<polyline points="${linePoints}" fill="none" stroke="${colors[si]}" stroke-width="2.5"/>${dots}`;
+  }).join('');
+
+  return `<svg viewBox="0 0 ${w} ${h}" style="width:100%;height:auto;max-width:640px">${gridLines}${lines}${labels}</svg>`;
+}
+
+function buildHBarChart(points, color) {
+  const w = 640, rowH = 34, padL = 160, padR = 110, padT = 10;
+  const h = padT * 2 + points.length * rowH;
+  const maxVal = Math.max(...points.map(p => p.value), 1);
+  const bars = points.map((p, i) => {
+    const y = padT + i * rowH;
+    const barMaxW = w - padL - padR;
+    const barW = (p.value / maxVal) * barMaxW;
+    return `<text x="${padL - 10}" y="${y + rowH/2 + 4}" font-size="11" fill="var(--text)" text-anchor="end">${esc(p.label)}</text>
+      <rect x="${padL}" y="${y + 7}" width="${barMaxW}" height="${rowH - 16}" rx="4" fill="#f1f5f9"/>
+      <rect x="${padL}" y="${y + 7}" width="${barW}" height="${rowH - 16}" rx="4" fill="${color}"/>
+      <text x="${w - 10}" y="${y + rowH/2 + 4}" font-size="11" fill="var(--text)" font-weight="700" text-anchor="end">${money(p.value)}</text>`;
+  }).join('');
+  return `<svg viewBox="0 0 ${w} ${h}" style="width:100%;height:auto;max-width:640px">${bars}</svg>`;
+}
+
+async function loadAnalytics() {
+  const ieWrap = document.getElementById('analyticsIncomeExpenseChart');
+  const bankWrap = document.getElementById('analyticsBankChart');
+  const topWrap = document.getElementById('analyticsTopExpenses');
+  if (!requireCompany()) { ieWrap.innerHTML = bankWrap.innerHTML = topWrap.innerHTML = '<div class="empty">Set up your company first.</div>'; return; }
+  const lines = await fetchAllLinesWithAccountsAndDate();
+  if (lines.length === 0) {
+    ieWrap.innerHTML = bankWrap.innerHTML = topWrap.innerHTML = '<div class="empty">No journal activity yet.</div>';
+    document.getElementById('an-kpi-income').textContent = money(0);
+    document.getElementById('an-kpi-expense').textContent = money(0);
+    document.getElementById('an-kpi-margin').textContent = '—';
+    document.getElementById('an-kpi-bank').textContent = money(0);
+    return;
+  }
+
+  // Income vs expenses, last 6 calendar months
+  const now = new Date();
+  const months = [];
+  for (let i = 5; i >= 0; i--) {
+    const d = new Date(now.getFullYear(), now.getMonth() - i, 1);
+    months.push({ key: d.toISOString().slice(0, 7), label: d.toLocaleDateString('en-ZA', { month: 'short' }) });
+  }
+  const byMonth = {};
+  months.forEach(m => byMonth[m.key] = { income: 0, expense: 0 });
+  lines.forEach(l => {
+    const acc = l.bk_accounts;
+    const date = l.bk_journal_entries?.entry_date;
+    if (!acc || !date) return;
+    const key = date.slice(0, 7);
+    if (!byMonth[key]) return;
+    if (acc.type === 'income') byMonth[key].income += Number(l.credit || 0) - Number(l.debit || 0);
+    if (acc.type === 'expense') byMonth[key].expense += Number(l.debit || 0) - Number(l.credit || 0);
+  });
+  const iePoints = months.map(m => ({ label: m.label, income: byMonth[m.key].income, expense: byMonth[m.key].expense }));
+  ieWrap.innerHTML = buildMultiLineChart(iePoints, ['income', 'expense'], ['#16a34a', '#dc2626']);
+
+  // Bank balance trend — cumulative running balance of account 1000, sampled at each month-end
+  const bankLines = lines.filter(l => l.bk_accounts?.code === '1000');
+  let running = 0;
+  const bankByMonth = {};
+  months.forEach(m => bankByMonth[m.key] = null);
+  bankLines.forEach(l => {
+    running += Number(l.debit || 0) - Number(l.credit || 0);
+    const key = l.bk_journal_entries.entry_date.slice(0, 7);
+    if (key in bankByMonth) bankByMonth[key] = running;
+  });
+  let lastKnown = 0;
+  // Carry the running balance forward through months with no bank activity, and
+  // backward-fill starting balance for months before the first bank line.
+  const bankPoints = months.map(m => {
+    if (bankByMonth[m.key] !== null) lastKnown = bankByMonth[m.key];
+    return { label: m.label, value: lastKnown };
+  });
+  bankWrap.innerHTML = buildMultiLineChart(bankPoints, ['value'], ['#1a2f72']);
+
+  // Top expense accounts, all-time
+  const expenseTotals = new Map();
+  lines.forEach(l => {
+    const acc = l.bk_accounts;
+    if (!acc || acc.type !== 'expense') return;
+    const net = Number(l.debit || 0) - Number(l.credit || 0);
+    expenseTotals.set(acc.name, (expenseTotals.get(acc.name) || 0) + net);
+  });
+  const topExpenses = [...expenseTotals.entries()].map(([label, value]) => ({ label, value })).filter(p => p.value > 0).sort((a, b) => b.value - a.value).slice(0, 5);
+  topWrap.innerHTML = topExpenses.length === 0 ? '<div class="empty">No expenses recorded yet.</div>' : buildHBarChart(topExpenses, '#dc2626');
+
+  // This month's KPIs
+  const thisMonthKey = months[months.length - 1].key;
+  document.getElementById('an-kpi-income').textContent = money(byMonth[thisMonthKey].income);
+  document.getElementById('an-kpi-expense').textContent = money(byMonth[thisMonthKey].expense);
+  const margin = byMonth[thisMonthKey].income > 0 ? ((byMonth[thisMonthKey].income - byMonth[thisMonthKey].expense) / byMonth[thisMonthKey].income) * 100 : 0;
+  document.getElementById('an-kpi-margin').textContent = margin.toFixed(1) + '%';
+  document.getElementById('an-kpi-bank').textContent = money(bankPoints[bankPoints.length - 1].value);
 }
 
 // ── Dashboard ──
