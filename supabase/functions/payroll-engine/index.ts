@@ -182,6 +182,11 @@ Deno.serve(async (req) => {
           meta: { run_id, period_start: run.period_start, period_end: run.period_end, payslip_count: payslips.length },
         });
 
+        // Best-effort — a business that hasn't opened Bookkeeping yet has no
+        // chart of accounts, and that's fine; payroll finalization must never
+        // fail because the sibling product hasn't been set up.
+        await postPayrollJournalEntry(sb, run, payslips).catch((e) => console.error('bookkeeping auto-post skipped:', e));
+
         return json({ ok: true, payslip_count: payslips.length });
       }
 
@@ -489,6 +494,70 @@ async function upsertLeaveBalance(sb: any, staffId: string, leaveType: string, c
   }
   return sb.from('payroll_leave_balances')
     .insert({ staff_id: staffId, leave_type: leaveType, cycle_start: iso, entitled_days: entitled, taken_days: 0 });
+}
+
+// deno-lint-ignore no-explicit-any
+async function postPayrollJournalEntry(sb: any, run: any, payslips: any[]) {
+  const { data: accounts } = await sb.from('bk_accounts').select('id, code').eq('company_id', run.company_id);
+  if (!accounts || accounts.length === 0) return; // Bookkeeping not set up for this company yet
+  const acct = (code: string) => accounts.find((a: { code: string }) => a.code === code)?.id;
+
+  const sum = (key: string) => round2(payslips.reduce((s, p) => s + Number(p[key] || 0), 0));
+  const grossPay = sum('gross_pay');
+  const uifEmployer = sum('uif_employer');
+  const uifEmployee = sum('uif_employee');
+  const sdlEmployer = sum('sdl_employer');
+  const paye = sum('paye');
+  const eti = sum('eti_employer');
+  const retirement = sum('retirement_contribution');
+  const otherDeductions = sum('other_deductions');
+  const loanRepayment = sum('loan_repayment');
+  const netPay = sum('net_pay');
+
+  // ETI reduces what's actually owed to SARS, so it comes off both the
+  // expense side and the PAYE liability side — see schema-bookkeeping-v3
+  // comments for the full derivation of why this balances.
+  const lines: Array<{ account_id: string; debit: number; credit: number; description: string }> = [];
+  const push = (code: string, debit: number, credit: number, description: string) => {
+    const id = acct(code);
+    if (!id || round2(debit) === 0 && round2(credit) === 0) return;
+    lines.push({ account_id: id, debit: round2(debit), credit: round2(credit), description });
+  };
+
+  push('5000', round2(grossPay - eti), 0, 'Salaries & wages');
+  push('5100', uifEmployer, 0, 'Employer UIF contribution');
+  push('5200', sdlEmployer, 0, 'Employer SDL contribution');
+  push('2100', 0, round2(paye - eti), 'PAYE payable (net of ETI)');
+  push('2200', 0, round2(uifEmployee + uifEmployer), 'UIF payable');
+  push('2300', 0, sdlEmployer, 'SDL payable');
+  push('2600', 0, retirement, 'Retirement fund payable');
+  push('2700', 0, otherDeductions, 'Other payroll deductions payable');
+  push('1200', 0, loanRepayment, 'Staff loan repayments');
+  push('2500', 0, netPay, 'Net pay payable');
+
+  if (lines.length < 2) return;
+  const totalDebit = round2(lines.reduce((s, l) => s + l.debit, 0));
+  const totalCredit = round2(lines.reduce((s, l) => s + l.credit, 0));
+  if (totalDebit !== totalCredit) {
+    console.error(`Payroll journal entry for run ${run.id} does not balance: debit ${totalDebit}, credit ${totalCredit} — skipped`);
+    return;
+  }
+
+  const { data: entry, error: entryErr } = await sb.from('bk_journal_entries').insert({
+    company_id: run.company_id,
+    entry_date: run.pay_date,
+    description: `Payroll — ${run.period_start} to ${run.period_end}`,
+    source: 'payroll',
+    source_id: run.id,
+  }).select().single();
+  if (entryErr || !entry) {
+    // unique (company_id, source, source_id) — already posted, e.g. a retried finalize
+    if (entryErr?.code !== '23505') console.error('Failed to post payroll journal entry:', entryErr);
+    return;
+  }
+
+  const { error: lineErr } = await sb.from('bk_journal_lines').insert(lines.map(l => ({ ...l, entry_id: entry.id })));
+  if (lineErr) console.error('Failed to post payroll journal lines:', lineErr);
 }
 
 function round2(n: number): number {
