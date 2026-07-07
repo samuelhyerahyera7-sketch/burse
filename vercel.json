@@ -1,20 +1,15 @@
 {
-  "cleanUrls": true,
-  "trailingSlash": false,
   "buildCommand": null,
   "outputDirectory": ".",
   "installCommand": null,
   "framework": null,
-  "rewrites": [
+  "routes": [
     {
-      "source": "/",
+      "src": "/(.*)",
       "has": [{ "type": "host", "value": "bookkeep.burse.co.za" }],
-      "destination": "/bookkeeping-admin.html"
+      "dest": "/bookkeeping-admin.html"
     },
-    {
-      "source": "/((?!bookkeeping-admin\\.html).*)",
-      "has": [{ "type": "host", "value": "bookkeep.burse.co.za" }],
-      "destination": "/bookkeeping-admin.html"
-    }
+    { "handle": "filesystem" },
+    { "src": "/([^./]+)$", "dest": "/$1.html", "check": true }
   ]
 }
