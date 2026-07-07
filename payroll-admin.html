@@ -134,8 +134,8 @@
     .checklist-label { flex:1; font-size:0.85rem; font-weight:600; }
     .checklist-label.done { color:var(--soft); text-decoration:line-through; }
 
-    .subtabs { display:flex; gap:4px; border-bottom:1px solid var(--border); margin-bottom:20px; }
-    .subtab { padding:10px 14px; font-size:0.85rem; font-weight:700; color:var(--soft); cursor:pointer; border-bottom:2px solid transparent; }
+    .subtabs { display:flex; gap:4px; border-bottom:1px solid var(--border); margin-bottom:20px; overflow-x:auto; -webkit-overflow-scrolling:touch; scrollbar-width:thin; }
+    .subtab { padding:10px 14px; font-size:0.85rem; font-weight:700; color:var(--soft); cursor:pointer; border-bottom:2px solid transparent; white-space:nowrap; flex-shrink:0; }
     .subtab.active { color:var(--navy-dark); border-bottom-color:var(--teal); }
     .subtab-panel { display:none; }
     .subtab-panel.active { display:block; }
@@ -206,6 +206,10 @@
           <div class="card-title">Get your company set up</div>
           <p style="font-size:0.85rem;color:var(--soft);margin:10px 0 16px">Work through this checklist to get Burse ready to run your first payroll.</p>
           <div id="setupChecklist"></div>
+        </div>
+        <div class="card">
+          <div class="card-header"><div class="card-title">Payroll Overview</div></div>
+          <div id="payrollOverviewChart"><div class="empty">Run payroll for a few periods to see your trend here.</div></div>
         </div>
         <div class="card">
           <div class="card-header">
@@ -349,6 +353,10 @@
 
       <!-- SETTINGS -->
       <section class="section" id="section-settings">
+        <a onclick="showSection('dashboard')" style="display:inline-flex;align-items:center;gap:6px;font-size:0.82rem;font-weight:700;color:var(--soft);cursor:pointer;margin-bottom:10px">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:15px;height:15px"><path d="M19 12H5"/><polyline points="12 19 5 12 12 5"/></svg>
+          Back to Dashboard
+        </a>
         <div class="page-header"><h1>Settings</h1><p>Company, payroll, tax, roles, notification and security settings.</p></div>
         <div class="subtabs">
           <div class="subtab active" data-subtab="s-company" onclick="switchSettingsTab('s-company')">Company Profile</div>
@@ -1604,9 +1612,44 @@ function renderSetupChecklist() {
   `).join('');
 }
 
+async function renderPayrollOverviewChart() {
+  const wrap = document.getElementById('payrollOverviewChart');
+  const runs = runsCache.slice().sort((a,b) => a.pay_date.localeCompare(b.pay_date)).slice(-6);
+  if (runs.length < 2) { wrap.innerHTML = '<div class="empty">Run payroll for a few periods to see your trend here.</div>'; return; }
+
+  const { data: payslips } = await sb.from('payroll_payslips').select('run_id, net_pay').in('run_id', runs.map(r => r.id));
+  const netByRun = {};
+  (payslips || []).forEach(p => { netByRun[p.run_id] = (netByRun[p.run_id] || 0) + Number(p.net_pay); });
+  const points = runs.map(r => ({ label: r.pay_date, value: netByRun[r.id] || 0 }));
+
+  const w = 640, h = 200, padL = 60, padR = 20, padT = 20, padB = 30;
+  const maxVal = Math.max(...points.map(p => p.value), 1);
+  const stepX = (w - padL - padR) / Math.max(points.length - 1, 1);
+  const xFor = i => padL + i * stepX;
+  const yFor = v => padT + (1 - v / maxVal) * (h - padT - padB);
+
+  const linePoints = points.map((p, i) => `${xFor(i)},${yFor(p.value)}`).join(' ');
+  const dots = points.map((p, i) => `<circle cx="${xFor(i)}" cy="${yFor(p.value)}" r="4" fill="#2ab3b3"/>`).join('');
+  const labels = points.map((p, i) => `<text x="${xFor(i)}" y="${h - 8}" font-size="10" fill="#7a8fb0" text-anchor="middle">${new Date(p.label).toLocaleDateString('en-ZA',{month:'short'})}</text>`).join('');
+  const gridLines = [0, 0.25, 0.5, 0.75, 1].map(f => {
+    const y = padT + f * (h - padT - padB);
+    const val = maxVal * (1 - f);
+    return `<line x1="${padL}" y1="${y}" x2="${w-padR}" y2="${y}" stroke="#e6eaf0" stroke-width="1"/>
+      <text x="${padL - 8}" y="${y + 3}" font-size="10" fill="#7a8fb0" text-anchor="end">R${Math.round(val/1000)}k</text>`;
+  }).join('');
+
+  wrap.innerHTML = `<svg viewBox="0 0 ${w} ${h}" style="width:100%;height:auto;max-width:640px">
+    ${gridLines}
+    <polyline points="${linePoints}" fill="none" stroke="#2ab3b3" stroke-width="2.5"/>
+    ${dots}
+    ${labels}
+  </svg>`;
+}
+
 function renderDashboard() {
   document.getElementById('kpi-employees').textContent = staffCache.filter(s => s.active).length;
   renderSetupChecklist();
+  renderPayrollOverviewChart();
 
   const latest = runsCache.slice().sort((a,b) => b.pay_date.localeCompare(a.pay_date))[0];
   const dashWrap = document.getElementById('dashCurrentRun');

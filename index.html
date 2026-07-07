@@ -126,6 +126,16 @@
     .safe-card-chevron { color: rgba(255,255,255,0.5); flex-shrink: 0; }
     .safe-card-chevron svg { width: 20px; height: 20px; }
 
+    /* ── Pricing ── */
+    .pricing { padding: 60px 0; background: #fff; }
+    .pricing-card { max-width: 460px; margin: 0 auto; background: #fff; border: 1.5px solid var(--navy-dark); border-radius: 16px; padding: 32px; text-align: center; }
+    .pricing-card .price-eyebrow { font-size: 0.78rem; font-weight: 700; letter-spacing: 0.04em; text-transform: uppercase; color: var(--teal-dark); margin-bottom: 10px; }
+    .pricing-card h3 { font-size: 1.3rem; font-weight: 900; color: var(--navy-dark); margin-bottom: 10px; }
+    .pricing-card p { font-size: 0.9rem; color: var(--text-mid); margin-bottom: 22px; line-height: 1.6; }
+    .pricing-list { list-style: none; text-align: left; margin: 0 0 24px; display: grid; gap: 10px; }
+    .pricing-list li { display: flex; align-items: center; gap: 8px; font-size: 0.88rem; color: var(--text-mid); }
+    .pricing-list svg { width: 16px; height: 16px; color: var(--teal); flex-shrink: 0; }
+
     /* ── Trust band ── */
     .trust-band { background: var(--navy-dark); padding: 56px 0; }
     .trust-band-grid { display: grid; grid-template-columns: 1fr; gap: 32px; align-items: center; }
@@ -162,8 +172,7 @@
       <div class="nav-links">
         <a href="#features">Product</a>
         <a href="#trust">Solutions</a>
-        <a href="#features">Resources</a>
-        <a href="#features">Pricing</a>
+        <a href="#pricing">Pricing</a>
         <a href="#trust">About</a>
       </div>
       <div class="nav-right">
@@ -181,8 +190,7 @@
       </button>
       <a href="#features">Product</a>
       <a href="#trust">Solutions</a>
-      <a href="#features">Resources</a>
-      <a href="#features">Pricing</a>
+      <a href="#pricing">Pricing</a>
       <a href="#trust">About</a>
       <a href="/login">Log in</a>
       <a class="btn btn-primary" href="/login">Get Started</a>
@@ -220,6 +228,15 @@
       burger.addEventListener('click', openMenu);
       closeBtn.addEventListener('click', closeMenu);
       backdrop.addEventListener('click', closeMenu);
+
+      // Anchor links (#features, #trust, #pricing) inside the drawer would
+      // silently do nothing otherwise — the scroll-lock (body position:fixed)
+      // is still active at the moment the browser tries to jump to the
+      // anchor, so the page can't actually scroll. Close the menu first so
+      // the jump has somewhere to scroll to.
+      menu.querySelectorAll('a[href^="#"]').forEach(function (a) {
+        a.addEventListener('click', closeMenu);
+      });
     })();
   </script>
 
@@ -294,6 +311,25 @@
           </div>
           <div class="safe-card-chevron"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg></div>
         </a>
+      </div>
+    </section>
+
+    <section class="pricing" id="pricing">
+      <div class="container">
+        <div class="section-head">
+          <h2>Simple, per-employee pricing</h2>
+        </div>
+        <div class="pricing-card">
+          <div class="price-eyebrow">Talk to us</div>
+          <h3>Pricing tailored to your headcount</h3>
+          <p>Every business runs payroll differently. Tell us your employee count and pay frequency, and we'll put together a plan that fits.</p>
+          <ul class="pricing-list">
+            <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>Unlimited payroll runs</li>
+            <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>Payslips, leave and reports included</li>
+            <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>Accountant access at no extra cost</li>
+          </ul>
+          <a class="btn btn-primary btn-lg" href="mailto:hello@burse.co.za?subject=Pricing%20enquiry" style="width:100%">Get a Quote</a>
+        </div>
       </div>
     </section>
 
