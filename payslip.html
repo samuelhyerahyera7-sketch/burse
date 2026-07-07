@@ -89,6 +89,7 @@
           </div>
           <div style="text-align:right">
             <p style="font-weight:700;color:#0e1c40">${esc(company?.trading_name || '')}</p>
+            ${company?.address ? `<p>${esc(company.address)}</p>` : ''}
             <p>PAYE ${esc(company?.paye_reference || '—')}</p>
             <p>UIF ${esc(company?.uif_reference || '—')}</p>
           </div>
