@@ -1,0 +1,996 @@
+<!DOCTYPE html>
+<html lang="en-ZA">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Bookkeeping — Burse</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --navy: #1a2f72; --navy-dark: #0e1c40; --teal: #2ab3b3; --teal-dark: #1e9090; --white: #ffffff;
+    --bg: #f7f9fc; --card: #ffffff; --border: #e6eaf0; --text: #0e1c40; --mid: #3d5070;
+    --soft: #7a8fb0; --red: #dc2626; --green: #16a34a; --orange: #b45309;
+  }
+  html, body { height: 100%; font-family: 'Inter', sans-serif; background: var(--bg); color: var(--text); overflow-x: hidden; }
+  a { text-decoration: none; }
+
+  .layout { min-height: 100vh; }
+  .sidebar { background: var(--navy-dark); position: fixed; top:0; left:0; bottom:0; width:222px; display:flex; flex-direction:column; z-index:220; transition: transform .25s ease; }
+  .sidebar-logo { padding: 22px 20px 18px; font-size:1.4rem; font-weight:900; letter-spacing:-0.04em; border-bottom:1px solid rgba(255,255,255,0.08); display:flex; align-items:center; justify-content:space-between; }
+  .sidebar-logo .b { color: var(--teal); } .sidebar-logo .u { color: var(--white); }
+  .sidebar-logo small { display:block; font-size:0.62rem; font-weight:600; letter-spacing:0.12em; text-transform:uppercase; color:rgba(255,255,255,0.35); margin-top:2px; }
+  .sidebar-close { display:none; width:32px; height:32px; border-radius:8px; border:1px solid rgba(255,255,255,0.15); background:none; color:rgba(255,255,255,0.7); align-items:center; justify-content:center; }
+  .sidebar-close svg { width:16px; height:16px; }
+  .sidebar-nav { flex:1; padding:14px 10px; display:flex; flex-direction:column; gap:1px; overflow-y:auto; }
+  .nav-item { padding:9px 12px; border-radius:7px; font-size:0.85rem; font-weight:500; color:rgba(255,255,255,0.6); cursor:pointer; transition:all .15s; display:flex; align-items:center; gap:10px; }
+  .nav-item:hover { background: rgba(255,255,255,0.06); color: rgba(255,255,255,0.92); }
+  .nav-item.active { background: rgba(42,179,179,0.2); color: var(--teal); font-weight:700; }
+  .nav-item svg { width:16px; height:16px; flex-shrink:0; }
+  .nav-item span.nav-label { flex:1; }
+  .sidebar-footer { padding:14px 10px; border-top:1px solid rgba(255,255,255,0.08); }
+  .sidebar-backdrop { display:none; position:fixed; inset:0; background:rgba(14,28,64,0.4); z-index:210; }
+
+  @media (max-width: 899px) {
+    .sidebar { transform: translateX(-100%); }
+    .sidebar.open { transform: translateX(0); }
+    .sidebar-close { display:flex; }
+    .sidebar-backdrop.open { display:block; }
+    .main { margin-left:0 !important; }
+    .nav-burger { display:flex !important; }
+  }
+
+  .main { margin-left:222px; min-height:100vh; }
+  .topbar { background:var(--card); border-bottom:1px solid var(--border); padding:0 16px; height:60px; display:flex; align-items:center; gap:12px; justify-content:space-between; position:sticky; top:0; z-index:40; }
+  @media (min-width: 900px) { .topbar { padding:0 28px; } }
+  .nav-burger { display:none; align-items:center; justify-content:center; width:36px; height:36px; border-radius:8px; border:1px solid var(--border); background:none; color:var(--navy-dark); flex-shrink:0; }
+  .nav-burger svg { width:18px; height:18px; }
+  .topbar-left { display:flex; align-items:center; gap:12px; }
+  .topbar-title { font-size:1rem; font-weight:700; }
+  .content { padding:28px; max-width:1200px; }
+  .section { display:none; } .section.active { display:block; }
+
+  .page-header { margin-bottom:22px; }
+  .page-header h1 { font-size:1.4rem; font-weight:800; margin-bottom:3px; }
+  .page-header p { font-size:0.83rem; color:var(--soft); }
+
+  .kpi-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:16px; margin-bottom:24px; }
+  @media (max-width:1024px) { .kpi-grid { grid-template-columns:repeat(2,1fr); } .form-row, .form-row-3 { grid-template-columns:1fr; } }
+  .kpi-card { background:var(--card); border:1px solid var(--border); border-radius:14px; padding:20px; }
+  .kpi-label { font-size:0.7rem; font-weight:700; letter-spacing:0.06em; text-transform:uppercase; color:var(--soft); margin-bottom:8px; }
+  .kpi-val { font-size:1.7rem; font-weight:900; letter-spacing:-0.02em; margin-bottom:4px; }
+  .kpi-sub { font-size:0.76rem; color:var(--soft); }
+
+  .card { background:var(--card); border:1px solid var(--border); border-radius:14px; padding:22px; margin-bottom:20px; }
+  .card-header { display:flex; align-items:center; justify-content:space-between; margin-bottom:18px; gap:12px; flex-wrap:wrap; }
+  .card-title { font-size:0.92rem; font-weight:700; }
+
+  table { width:100%; min-width:520px; border-collapse:collapse; }
+  [id$="Wrap"] { overflow-x:auto; -webkit-overflow-scrolling:touch; }
+  th { font-size:0.68rem; font-weight:700; letter-spacing:0.06em; text-transform:uppercase; color:var(--soft); padding:8px 12px; text-align:left; border-bottom:1px solid var(--border); }
+  td { font-size:0.83rem; padding:12px; border-bottom:1px solid var(--border); }
+  td.num, th.num { text-align:right; font-variant-numeric:tabular-nums; }
+  tr:last-child td { border-bottom:none; }
+  tr:hover td { background:#fafbfd; }
+  tr.total-row td { font-weight:800; border-top:2px solid var(--navy-dark); }
+
+  .badge { display:inline-flex; align-items:center; white-space:nowrap; font-size:0.66rem; font-weight:700; padding:3px 8px; border-radius:50px; letter-spacing:0.02em; }
+  .badge-green { background:#dcfce7; color:#15803d; }
+  .badge-red { background:#fee2e2; color:#dc2626; }
+  .badge-yellow { background:#fef3c7; color:#b45309; }
+  .badge-blue { background:#dbeafe; color:#1d4ed8; }
+  .badge-gray { background:#f1f5f9; color:#64748b; }
+  .badge-purple { background:#ede9fe; color:#6d28d9; }
+
+  .form-row { display:grid; grid-template-columns:1fr 1fr; gap:14px; margin-bottom:14px; }
+  .form-row-3 { display:grid; grid-template-columns:1fr 1fr 1fr; gap:14px; margin-bottom:14px; }
+  .form-group label { display:block; font-size:0.78rem; font-weight:600; color:var(--mid); margin-bottom:5px; }
+  .form-group input, .form-group select, .form-group textarea {
+    width:100%; padding:9px 12px; border:1.5px solid var(--border); border-radius:8px;
+    font-size:0.85rem; font-family:'Inter',sans-serif; color:var(--text); outline:none; background:var(--card);
+  }
+  .form-group input:focus, .form-group select:focus, .form-group textarea:focus { border-color:var(--teal); }
+  .form-hint { font-size:0.72rem; color:var(--soft); margin-top:4px; }
+
+  .btn-primary { padding:10px 20px; background:var(--navy-dark); color:white; border:none; border-radius:8px; font-size:0.85rem; font-weight:700; font-family:'Inter',sans-serif; cursor:pointer; }
+  .btn-primary:hover { background:#162050; }
+  .btn-primary:disabled { opacity:0.45; cursor:not-allowed; }
+  .btn-teal { padding:10px 20px; background:var(--teal); color:white; border:none; border-radius:8px; font-size:0.85rem; font-weight:700; font-family:'Inter',sans-serif; cursor:pointer; }
+  .btn-teal:hover { background:var(--teal-dark); }
+  .btn-teal:disabled { opacity:0.45; cursor:not-allowed; }
+  .btn-outline { padding:9px 16px; border:1.5px solid var(--border); border-radius:8px; font-size:0.82rem; font-weight:600; color:var(--mid); cursor:pointer; background:var(--card); font-family:'Inter',sans-serif; }
+  .btn-outline:hover { border-color:var(--teal); color:var(--teal); }
+  .btn-danger { padding:6px 12px; background:#fee2e2; color:var(--red); border:none; border-radius:6px; font-size:0.75rem; font-weight:700; font-family:'Inter',sans-serif; cursor:pointer; }
+  .btn-sm { padding:6px 12px; font-size:0.75rem; }
+
+  .loading { text-align:center; padding:40px; color:var(--soft); font-size:0.85rem; }
+  .empty { text-align:center; padding:30px; color:var(--soft); font-size:0.85rem; }
+
+  .modal-overlay { position:fixed; inset:0; z-index:200; background:rgba(10,20,50,0.6); display:flex; align-items:center; justify-content:center; padding:20px; }
+  .modal-overlay[hidden] { display:none; }
+  .modal-box { background:#fff; border-radius:16px; padding:28px; max-width:640px; width:100%; max-height:88vh; overflow-y:auto; box-shadow:0 32px 80px rgba(0,0,0,0.3); }
+  .modal-box h2 { font-size:1.2rem; font-weight:800; margin-bottom:18px; }
+  .modal-actions { display:flex; justify-content:flex-end; gap:10px; margin-top:18px; }
+  .modal-close { float:right; background:#f0f4f8; border:none; width:28px; height:28px; border-radius:50%; cursor:pointer; }
+
+  .error-box { background:#fff0f0; border:1px solid #fca5a5; color:#dc2626; font-size:0.8rem; padding:10px 14px; border-radius:8px; margin-bottom:14px; display:none; }
+  .info-box { background:#eef4ff; border:1px solid #c7d9fb; color:#1d4ed8; font-size:0.82rem; padding:12px 16px; border-radius:8px; margin-bottom:16px; line-height:1.5; }
+
+  .company-switch-btn { display:flex; align-items:center; gap:6px; font-size:0.82rem; font-weight:700; color:var(--navy-dark); background:none; border:1.5px solid var(--border); border-radius:8px; padding:7px 10px; cursor:pointer; font-family:'Inter',sans-serif; max-width:220px; }
+  .company-switch-btn:hover { border-color:var(--teal); }
+  .company-switch-btn svg { width:14px; height:14px; flex-shrink:0; color:var(--soft); }
+  .company-switch-menu { position:absolute; top:calc(100% + 6px); right:0; background:var(--card); border:1px solid var(--border); border-radius:12px; box-shadow:0 12px 32px rgba(10,20,60,0.14); min-width:240px; z-index:100; padding:6px; }
+  .company-switch-menu[hidden] { display:none; }
+  .company-switch-item { display:flex; flex-direction:column; padding:9px 10px; border-radius:8px; cursor:pointer; font-size:0.85rem; }
+  .company-switch-item:hover { background:var(--bg); }
+  .company-switch-item.active { background:rgba(42,179,179,0.12); }
+  .company-switch-item .name { font-weight:700; color:var(--navy-dark); }
+  .company-switch-item .role { font-size:0.7rem; color:var(--soft); }
+
+  .subtabs { display:flex; gap:4px; border-bottom:1px solid var(--border); margin-bottom:20px; overflow-x:auto; -webkit-overflow-scrolling:touch; scrollbar-width:thin; }
+  .subtab { padding:10px 14px; font-size:0.85rem; font-weight:700; color:var(--soft); cursor:pointer; border-bottom:2px solid transparent; white-space:nowrap; flex-shrink:0; }
+  .subtab.active { color:var(--navy-dark); border-bottom-color:var(--teal); }
+  .subtab-panel { display:none; }
+  .subtab-panel.active { display:block; }
+
+  .je-line-row { display:grid; grid-template-columns:1fr 110px 110px 30px; gap:8px; margin-bottom:8px; align-items:center; }
+  .je-line-row select, .je-line-row input { font-size:0.82rem; }
+  .je-line-remove { width:26px; height:26px; border-radius:6px; border:none; background:#fee2e2; color:var(--red); cursor:pointer; font-weight:700; }
+  .je-totals { display:flex; justify-content:flex-end; gap:20px; font-size:0.85rem; font-weight:700; margin-top:8px; padding-top:10px; border-top:1px solid var(--border); }
+  .je-totals.balanced { color:var(--green); }
+  .je-totals.unbalanced { color:var(--red); }
+
+  .inv-line-row { display:grid; grid-template-columns:1fr 70px 100px 70px 100px 30px; gap:8px; margin-bottom:8px; align-items:center; }
+  .inv-line-row input, .inv-line-row select { font-size:0.82rem; }
+
+  #auth-gate { position:fixed; inset:0; z-index:9999; background:#0e1c40; display:flex; align-items:center; justify-content:center; flex-direction:column; gap:14px; }
+  #auth-gate.hidden { display:none; }
+  .gate-spinner { width:36px; height:36px; border-radius:50%; border:3px solid rgba(42,179,179,0.3); border-top-color:#2ab3b3; animation:spin .7s linear infinite; }
+  @keyframes spin { to { transform:rotate(360deg); } }
+  #auth-gate p { color:rgba(255,255,255,0.5); font-size:0.82rem; }
+  .layout { visibility:hidden; }
+</style>
+</head>
+<body>
+
+<div id="auth-gate"><div class="gate-spinner"></div><p>Loading your books…</p></div>
+
+<div class="layout" id="layout">
+  <div class="sidebar-backdrop" id="sidebarBackdrop"></div>
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-logo">
+      <div><span class="b">B</span><span class="u">urse</span><small>Bookkeeping</small></div>
+      <button class="sidebar-close" id="sidebarClose" type="button" aria-label="Close menu">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+    </div>
+    <nav class="sidebar-nav">
+      <a class="nav-item active" onclick="showSection('dashboard')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg><span class="nav-label">Dashboard</span></a>
+      <a class="nav-item" onclick="showSection('accounts')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg><span class="nav-label">Chart of Accounts</span></a>
+      <a class="nav-item" onclick="showSection('journal')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 17v-6a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v6"/><path d="M9 21h6"/><rect x="3" y="3" width="18" height="18" rx="2"/></svg><span class="nav-label">Journal</span></a>
+      <a class="nav-item" onclick="showSection('invoices')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg><span class="nav-label">Invoices</span></a>
+      <a class="nav-item" onclick="showSection('expenses')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M16 8h-6a2 2 0 1 0 0 4h4a2 2 0 1 1 0 4H8"/><line x1="12" y1="6" x2="12" y2="18"/></svg><span class="nav-label">Expenses</span></a>
+      <a class="nav-item" onclick="showSection('reports')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg><span class="nav-label">Reports</span></a>
+      <a class="nav-item" id="payrollNavLink" href="#"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg><span class="nav-label">Payroll</span></a>
+    </nav>
+    <div class="sidebar-footer">
+      <a class="nav-item" href="/"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5"/><polyline points="12 19 5 12 12 5"/></svg><span class="nav-label">Back to Burse</span></a>
+      <a class="nav-item" onclick="handleLogout()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg><span class="nav-label">Log out</span></a>
+    </div>
+  </aside>
+
+  <div class="main">
+    <div class="topbar">
+      <div class="topbar-left">
+        <button class="nav-burger" id="sidebarBurger" type="button" aria-label="Menu">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+        </button>
+        <div class="topbar-title" id="topbarTitle">Dashboard</div>
+      </div>
+      <div id="companySwitcherRoot" style="position:relative"></div>
+    </div>
+
+    <div class="content">
+
+      <!-- DASHBOARD -->
+      <section class="section active" id="section-dashboard">
+        <div class="page-header"><h1>Dashboard</h1><p>Your books at a glance.</p></div>
+        <div class="kpi-grid">
+          <div class="kpi-card"><div class="kpi-label">Bank balance</div><div class="kpi-val" id="kpi-bank">—</div><div class="kpi-sub">Account 1000</div></div>
+          <div class="kpi-card"><div class="kpi-label">Receivables</div><div class="kpi-val" id="kpi-ar">—</div><div class="kpi-sub">Owed to you</div></div>
+          <div class="kpi-card"><div class="kpi-label">Payables</div><div class="kpi-val" id="kpi-ap">—</div><div class="kpi-sub">You owe</div></div>
+          <div class="kpi-card"><div class="kpi-label">This month</div><div class="kpi-val" id="kpi-net">—</div><div class="kpi-sub" id="kpi-net-sub">Income − expenses</div></div>
+        </div>
+        <div class="card" id="setupPrompt" style="display:none">
+          <div class="card-title">Set up your books</div>
+          <p style="font-size:0.85rem;color:var(--soft);margin:10px 0 16px">Provision the standard chart of accounts to get started — this only needs to happen once.</p>
+          <button class="btn-teal" onclick="setupChartOfAccounts()" id="setupBtn">Set Up Chart of Accounts</button>
+        </div>
+        <div class="card">
+          <div class="card-header"><div class="card-title">Recent journal entries</div><button class="btn-outline btn-sm" onclick="showSection('journal')">View all</button></div>
+          <div id="dashRecentJournal"><div class="loading">Loading…</div></div>
+        </div>
+      </section>
+
+      <!-- CHART OF ACCOUNTS -->
+      <section class="section" id="section-accounts">
+        <div class="page-header"><h1>Chart of Accounts</h1><p>Every account your books are built from.</p></div>
+        <div class="card">
+          <div class="card-header"><div class="card-title">Accounts</div><button class="btn-teal btn-sm" onclick="openAccountModal()">Add Account</button></div>
+          <div id="accountsTableWrap"><div class="loading">Loading…</div></div>
+        </div>
+      </section>
+
+      <!-- JOURNAL -->
+      <section class="section" id="section-journal">
+        <div class="page-header"><h1>Journal</h1><p>Every entry that's ever hit your books — manual, payroll, invoices and expenses.</p></div>
+        <div class="card">
+          <div class="card-header"><div class="card-title">Entries</div><button class="btn-teal btn-sm" onclick="openJournalModal()">New Entry</button></div>
+          <div id="journalTableWrap"><div class="loading">Loading…</div></div>
+        </div>
+      </section>
+
+      <!-- INVOICES -->
+      <section class="section" id="section-invoices">
+        <div class="page-header"><h1>Invoices</h1><p>Bill your customers and track what's outstanding.</p></div>
+        <div class="card">
+          <div class="card-header"><div class="card-title">All invoices</div><button class="btn-teal btn-sm" onclick="openInvoiceModal()">New Invoice</button></div>
+          <div id="invoicesTableWrap"><div class="loading">Loading…</div></div>
+        </div>
+      </section>
+
+      <!-- EXPENSES -->
+      <section class="section" id="section-expenses">
+        <div class="page-header"><h1>Expenses</h1><p>Record what the business spends.</p></div>
+        <div class="card">
+          <div class="card-header"><div class="card-title">All expenses</div><button class="btn-teal btn-sm" onclick="openExpenseModal()">Record Expense</button></div>
+          <div id="expensesTableWrap"><div class="loading">Loading…</div></div>
+        </div>
+      </section>
+
+      <!-- REPORTS -->
+      <section class="section" id="section-reports">
+        <div class="page-header"><h1>Reports</h1><p>Trial balance, income statement and balance sheet.</p></div>
+        <div class="subtabs">
+          <div class="subtab active" data-subtab="trial" onclick="switchReportTab('trial')">Trial Balance</div>
+          <div class="subtab" data-subtab="income" onclick="switchReportTab('income')">Income Statement</div>
+          <div class="subtab" data-subtab="balance" onclick="switchReportTab('balance')">Balance Sheet</div>
+        </div>
+        <div class="subtab-panel active" id="reportpanel-trial">
+          <div class="card"><div class="card-title" style="margin-bottom:14px">Trial balance (as of today)</div><div id="trialBalanceWrap"><div class="loading">Loading…</div></div></div>
+        </div>
+        <div class="subtab-panel" id="reportpanel-income">
+          <div class="card"><div class="card-title" style="margin-bottom:14px">Income statement (all-time)</div><div id="incomeStatementWrap"><div class="loading">Loading…</div></div></div>
+        </div>
+        <div class="subtab-panel" id="reportpanel-balance">
+          <div class="card"><div class="card-title" style="margin-bottom:14px">Balance sheet (as of today)</div><div id="balanceSheetWrap"><div class="loading">Loading…</div></div></div>
+        </div>
+      </section>
+
+    </div>
+  </div>
+</div>
+
+<!-- New Account Modal -->
+<div class="modal-overlay" id="accountModal" hidden>
+  <div class="modal-box" style="max-width:440px">
+    <button class="modal-close" onclick="closeModal('accountModal')">✕</button>
+    <h2>Add Account</h2>
+    <div class="error-box" id="accountError"></div>
+    <div class="form-group" style="margin-bottom:14px"><label>Code</label><input id="acc-code" placeholder="e.g. 6000"></div>
+    <div class="form-group" style="margin-bottom:14px"><label>Name</label><input id="acc-name" placeholder="e.g. Marketing Expense"></div>
+    <div class="form-group" style="margin-bottom:14px"><label>Type</label>
+      <select id="acc-type"><option value="asset">Asset</option><option value="liability">Liability</option><option value="equity">Equity</option><option value="income">Income</option><option value="expense">Expense</option></select>
+    </div>
+    <div class="modal-actions">
+      <button class="btn-outline" onclick="closeModal('accountModal')">Cancel</button>
+      <button class="btn-primary" onclick="createAccount()" id="createAccountBtn">Add Account</button>
+    </div>
+  </div>
+</div>
+
+<!-- New Journal Entry Modal -->
+<div class="modal-overlay" id="journalModal" hidden>
+  <div class="modal-box" style="max-width:640px">
+    <button class="modal-close" onclick="closeModal('journalModal')">✕</button>
+    <h2>New Journal Entry</h2>
+    <div class="error-box" id="journalError"></div>
+    <div class="form-row">
+      <div class="form-group"><label>Date</label><input type="date" id="je-date"></div>
+      <div class="form-group"><label>Description</label><input id="je-description" placeholder="What is this entry for?"></div>
+    </div>
+    <div id="jeLinesWrap"></div>
+    <button type="button" class="btn-outline btn-sm" onclick="addJournalLineRow()" style="margin-top:4px">+ Add line</button>
+    <div class="je-totals" id="jeTotals">Debits R0.00 · Credits R0.00</div>
+    <div class="modal-actions">
+      <button class="btn-outline" onclick="closeModal('journalModal')">Cancel</button>
+      <button class="btn-primary" onclick="submitJournalEntry()" id="submitJournalBtn">Post Entry</button>
+    </div>
+  </div>
+</div>
+
+<!-- New Invoice Modal -->
+<div class="modal-overlay" id="invoiceModal" hidden>
+  <div class="modal-box" style="max-width:680px">
+    <button class="modal-close" onclick="closeModal('invoiceModal')">✕</button>
+    <h2>New Invoice</h2>
+    <div class="error-box" id="invoiceError"></div>
+    <div class="form-row-3">
+      <div class="form-group"><label>Invoice number</label><input id="inv-number"></div>
+      <div class="form-group"><label>Issue date</label><input type="date" id="inv-issuedate"></div>
+      <div class="form-group"><label>Due date</label><input type="date" id="inv-duedate"></div>
+    </div>
+    <div class="form-row">
+      <div class="form-group"><label>Customer name</label><input id="inv-customer"></div>
+      <div class="form-group"><label>Customer email (optional)</label><input type="email" id="inv-email"></div>
+    </div>
+    <div id="invLinesWrap"></div>
+    <button type="button" class="btn-outline btn-sm" onclick="addInvoiceLineRow()" style="margin-top:4px">+ Add line</button>
+    <div class="je-totals" id="invTotals" style="color:var(--text)">Subtotal R0.00 · VAT R0.00 · Total R0.00</div>
+    <div class="modal-actions">
+      <button class="btn-outline" onclick="closeModal('invoiceModal')">Cancel</button>
+      <button class="btn-primary" onclick="submitInvoice()" id="submitInvoiceBtn">Save Draft</button>
+    </div>
+  </div>
+</div>
+
+<!-- New Expense Modal -->
+<div class="modal-overlay" id="expenseModal" hidden>
+  <div class="modal-box" style="max-width:480px">
+    <button class="modal-close" onclick="closeModal('expenseModal')">✕</button>
+    <h2>Record Expense</h2>
+    <div class="error-box" id="expenseError"></div>
+    <div class="form-row">
+      <div class="form-group"><label>Date</label><input type="date" id="exp-date"></div>
+      <div class="form-group"><label>Vendor</label><input id="exp-vendor"></div>
+    </div>
+    <div class="form-group" style="margin-bottom:14px"><label>Expense account</label><select id="exp-account"></select></div>
+    <div class="form-row">
+      <div class="form-group"><label>Amount (excl. VAT)</label><input type="number" id="exp-amount" min="0" step="0.01"></div>
+      <div class="form-group"><label>VAT amount</label><input type="number" id="exp-vat" min="0" step="0.01" value="0"></div>
+    </div>
+    <div class="form-group" style="margin-bottom:14px"><label>Description (optional)</label><input id="exp-description"></div>
+    <div class="modal-actions">
+      <button class="btn-outline" onclick="closeModal('expenseModal')">Cancel</button>
+      <button class="btn-primary" onclick="submitExpense()" id="submitExpenseBtn">Record Expense</button>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+const SUPABASE_URL = 'https://pnpfurfodmejdggnyjof.supabase.co';
+const SUPABASE_KEY = 'sb_publishable_q2fnC5EJrToRNuvUjW619Q_NKMbO0iX';
+const { createClient } = supabase;
+
+// Must match the storage adapter in login.html exactly — see comment there.
+function burseGetRemember() { return localStorage.getItem('burse-remember') !== '0'; }
+
+const burseAuthStorage = (() => {
+  const onProdDomain = location.hostname.endsWith('burse.co.za');
+  if (!onProdDomain) {
+    return {
+      getItem: (key) => (burseGetRemember() ? window.localStorage : window.sessionStorage).getItem(key),
+      setItem: (key, value) => (burseGetRemember() ? window.localStorage : window.sessionStorage).setItem(key, value),
+      removeItem: (key) => (burseGetRemember() ? window.localStorage : window.sessionStorage).removeItem(key),
+    };
+  }
+  const COOKIE_DOMAIN = '.burse.co.za';
+  const CHUNK_SIZE = 3000;
+  function cookieGet(name) {
+    const m = document.cookie.match(new RegExp('(?:^|; )' + name.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + '=([^;]*)'));
+    return m ? decodeURIComponent(m[1]) : null;
+  }
+  function cookieSet(name, value, days) {
+    document.cookie = `${name}=${encodeURIComponent(value)}; path=/; domain=${COOKIE_DOMAIN}; max-age=${days * 86400}; samesite=lax; secure`;
+  }
+  function cookieRemove(name) {
+    document.cookie = `${name}=; path=/; domain=${COOKIE_DOMAIN}; max-age=0`;
+  }
+  return {
+    getItem: (key) => {
+      if (!burseGetRemember()) return sessionStorage.getItem(key);
+      const n = cookieGet(key + '__n');
+      if (n === null) return cookieGet(key);
+      let value = '';
+      for (let i = 0; i < parseInt(n, 10); i++) value += cookieGet(key + '__' + i) || '';
+      return value || null;
+    },
+    setItem: (key, value) => {
+      if (!burseGetRemember()) { sessionStorage.setItem(key, value); return; }
+      cookieRemove(key + '__n');
+      if (value.length <= CHUNK_SIZE) { cookieSet(key, value, 30); return; }
+      cookieRemove(key);
+      const chunks = [];
+      for (let i = 0; i < value.length; i += CHUNK_SIZE) chunks.push(value.slice(i, i + CHUNK_SIZE));
+      chunks.forEach((c, i) => cookieSet(key + '__' + i, c, 30));
+      cookieSet(key + '__n', String(chunks.length), 30);
+    },
+    removeItem: (key) => {
+      sessionStorage.removeItem(key);
+      const n = cookieGet(key + '__n');
+      if (n !== null) { for (let i = 0; i < parseInt(n, 10); i++) cookieRemove(key + '__' + i); cookieRemove(key + '__n'); }
+      cookieRemove(key);
+    },
+  };
+})();
+
+const sb = createClient(SUPABASE_URL, SUPABASE_KEY, { auth: { storage: burseAuthStorage, persistSession: true, autoRefreshToken: true } });
+
+// Cross-product links: on the real bookkeeping subdomain these must be
+// absolute cross-domain URLs; anywhere else (local testing, previews) fall
+// back to the sibling file in the same repo so it still works there.
+const ON_BOOKKEEPING_SUBDOMAIN = location.hostname === 'bookkeep.burse.co.za';
+const LOGIN_URL = ON_BOOKKEEPING_SUBDOMAIN ? 'https://burse.co.za/login' : '/login';
+const PAYROLL_URL = ON_BOOKKEEPING_SUBDOMAIN ? 'https://burse.co.za/payroll-admin' : 'payroll-admin.html';
+document.getElementById('payrollNavLink').href = PAYROLL_URL;
+
+async function fetchWithTimeout(url, options, timeoutMs = 15000) {
+  const controller = new AbortController();
+  const timer = setTimeout(() => controller.abort(), timeoutMs);
+  try { return await fetch(url, { ...options, signal: controller.signal }); }
+  catch (e) { if (e.name === 'AbortError') throw new Error('The request timed out. Check your connection and try again.'); throw e; }
+  finally { clearTimeout(timer); }
+}
+function withTimeout(promise, timeoutMs = 15000) {
+  return Promise.race([promise, new Promise((_, reject) => setTimeout(() => reject(new Error('The request timed out. Check your connection and try again.')), timeoutMs))]);
+}
+
+let session = null;
+let company = null;
+let isOwner = true;
+let allCompanies = [];
+let accountsCache = [];
+
+async function handleLogout() {
+  await sb.auth.signOut();
+  window.location.href = LOGIN_URL;
+}
+
+(async function init() {
+  try {
+    const { data } = await withTimeout(sb.auth.getSession(), 15000);
+    if (!data.session) { window.location.href = LOGIN_URL; return; }
+    session = data.session;
+
+    document.getElementById('auth-gate').classList.add('hidden');
+    document.getElementById('layout').style.visibility = 'visible';
+
+    await withTimeout(loadCompany(), 15000);
+    renderDashboard();
+  } catch (e) {
+    const gate = document.getElementById('auth-gate');
+    gate.innerHTML = `<p style="color:#fff;font-weight:700;margin-bottom:6px">Couldn't load your books</p>
+      <p>${(e && e.message) || 'Something went wrong.'}</p>
+      <button onclick="location.reload()" style="margin-top:14px;padding:10px 20px;background:#2ab3b3;color:#fff;border:none;border-radius:8px;font-weight:700;cursor:pointer;font-family:'Inter',sans-serif">Retry</button>`;
+  }
+})();
+
+async function loadCompany() {
+  const [{ data: owned }, { data: accAccess }] = await Promise.all([
+    sb.from('payroll_companies').select('*').eq('owner_id', session.user.id).order('created_at'),
+    sb.from('payroll_accountants').select('*, payroll_companies(*)').eq('user_id', session.user.id).eq('status', 'accepted'),
+  ]);
+  allCompanies = [
+    ...(owned || []).map(c => ({ ...c, _role: 'owner' })),
+    ...(accAccess || []).filter(a => a.payroll_companies).map(a => ({ ...a.payroll_companies, _role: 'accountant' })),
+  ];
+  if (allCompanies.length === 0) { company = null; isOwner = true; }
+  else {
+    const savedId = localStorage.getItem('burse-active-company');
+    const active = allCompanies.find(c => c.id === savedId) || allCompanies[0];
+    company = active; isOwner = active._role === 'owner';
+    localStorage.setItem('burse-active-company', company.id);
+  }
+  renderCompanySwitcher();
+}
+
+function renderCompanySwitcher() {
+  const wrap = document.getElementById('companySwitcherRoot');
+  if (!company && allCompanies.length === 0) { wrap.innerHTML = '<div class="form-hint">No company set up yet — head to Payroll to create one.</div>'; return; }
+  wrap.innerHTML = `
+    <button class="company-switch-btn" onclick="toggleCompanySwitcher(event)">
+      <span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${esc(company?.trading_name || 'Select company')}</span>
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+    </button>
+    <div class="company-switch-menu" id="companySwitchMenu" hidden>
+      ${allCompanies.map(c => `<div class="company-switch-item ${c.id === company?.id ? 'active' : ''}" onclick="switchCompany('${c.id}')">
+        <span class="name">${esc(c.trading_name)}</span><span class="role">${c._role === 'owner' ? 'Owner' : 'Accountant access'}</span>
+      </div>`).join('')}
+    </div>`;
+}
+function toggleCompanySwitcher(e) {
+  e?.stopPropagation();
+  document.getElementById('companySwitchMenu').hidden = !document.getElementById('companySwitchMenu').hidden;
+}
+document.addEventListener('click', (e) => {
+  const menu = document.getElementById('companySwitchMenu');
+  if (menu && !menu.hidden && !menu.contains(e.target) && !e.target.closest('.company-switch-btn')) menu.hidden = true;
+});
+async function switchCompany(id) {
+  const target = allCompanies.find(c => c.id === id);
+  if (!target || target.id === company?.id) { document.getElementById('companySwitchMenu').hidden = true; return; }
+  company = target; isOwner = target._role === 'owner';
+  localStorage.setItem('burse-active-company', company.id);
+  accountsCache = [];
+  renderCompanySwitcher();
+  const activeSection = document.querySelector('.section.active')?.id.replace('section-', '') || 'dashboard';
+  showSection(activeSection);
+  renderDashboard();
+}
+
+function requireCompany() {
+  if (company) return true;
+  alert(`Set up a company first — head to Payroll to create one, then come back here.`);
+  return false;
+}
+
+function showSection(name) {
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+  document.getElementById('section-' + name).classList.add('active');
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  event?.target?.closest('.nav-item')?.classList.add('active');
+  const titles = { dashboard:'Dashboard', accounts:'Chart of Accounts', journal:'Journal', invoices:'Invoices', expenses:'Expenses', reports:'Reports' };
+  document.getElementById('topbarTitle').textContent = titles[name];
+  if (name === 'accounts') loadAccounts();
+  if (name === 'journal') loadJournal();
+  if (name === 'invoices') loadInvoices();
+  if (name === 'expenses') loadExpenses();
+  if (name === 'reports') { loadTrialBalance(); }
+  closeSidebar();
+}
+
+let lockedScrollY = 0;
+function openSidebar() {
+  lockedScrollY = window.scrollY;
+  document.getElementById('sidebar').classList.add('open');
+  document.getElementById('sidebarBackdrop').classList.add('open');
+  document.body.style.position = 'fixed'; document.body.style.top = -lockedScrollY + 'px'; document.body.style.left = '0'; document.body.style.right = '0';
+}
+function closeSidebar() {
+  document.getElementById('sidebar').classList.remove('open');
+  document.getElementById('sidebarBackdrop').classList.remove('open');
+  document.body.style.position = ''; document.body.style.top = ''; document.body.style.left = ''; document.body.style.right = '';
+  window.scrollTo(0, lockedScrollY);
+}
+document.getElementById('sidebarBurger').addEventListener('click', openSidebar);
+document.getElementById('sidebarClose').addEventListener('click', closeSidebar);
+document.getElementById('sidebarBackdrop').addEventListener('click', closeSidebar);
+
+function closeModal(id) { document.getElementById(id).hidden = true; }
+function esc(str) { return String(str ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+function money(n) { return 'R ' + Number(n || 0).toLocaleString('en-ZA', { minimumFractionDigits: 2 }); }
+function val(id) { return document.getElementById(id).value.trim(); }
+function today() { return new Date().toISOString().slice(0, 10); }
+
+// ── Accounts ──
+async function ensureAccountsLoaded() {
+  if (!company) return [];
+  if (accountsCache.length) return accountsCache;
+  const { data } = await sb.from('bk_accounts').select('*').eq('company_id', company.id).eq('archived', false).order('code');
+  accountsCache = data || [];
+  return accountsCache;
+}
+
+async function setupChartOfAccounts() {
+  if (!requireCompany()) return;
+  const btn = document.getElementById('setupBtn');
+  btn.disabled = true; btn.textContent = 'Setting up…';
+  const { error } = await sb.rpc('ensure_default_chart_of_accounts', { p_company_id: company.id });
+  btn.disabled = false; btn.textContent = 'Set Up Chart of Accounts';
+  if (error) { alert(error.message); return; }
+  accountsCache = [];
+  renderDashboard();
+}
+
+async function loadAccounts() {
+  const wrap = document.getElementById('accountsTableWrap');
+  if (!requireCompany()) { wrap.innerHTML = '<div class="empty">Set up your company first.</div>'; return; }
+  wrap.innerHTML = '<div class="loading">Loading…</div>';
+  const accounts = await ensureAccountsLoaded();
+  if (accounts.length === 0) {
+    wrap.innerHTML = `<div class="empty">No chart of accounts yet. <a onclick="showSection('dashboard')" style="color:var(--teal);cursor:pointer;font-weight:700">Set it up from the Dashboard.</a></div>`;
+    return;
+  }
+  const typeBadge = t => ({ asset:'badge-blue', liability:'badge-yellow', equity:'badge-purple', income:'badge-green', expense:'badge-red' }[t] || 'badge-gray');
+  wrap.innerHTML = `<table><thead><tr><th>Code</th><th>Name</th><th>Type</th><th></th></tr></thead><tbody>
+    ${accounts.map(a => `<tr>
+      <td>${esc(a.code)}</td><td>${esc(a.name)}</td>
+      <td><span class="badge ${typeBadge(a.type)}" style="text-transform:capitalize">${a.type}</span></td>
+      <td>${a.is_system ? '<span class="form-hint">System account</span>' : `<button type="button" class="btn-danger" onclick="archiveAccount('${a.id}')">Archive</button>`}</td>
+    </tr>`).join('')}
+  </tbody></table>`;
+}
+
+function openAccountModal() {
+  if (!requireCompany()) return;
+  document.getElementById('accountError').style.display = 'none';
+  document.getElementById('acc-code').value = '';
+  document.getElementById('acc-name').value = '';
+  document.getElementById('acc-type').value = 'expense';
+  document.getElementById('accountModal').hidden = false;
+}
+async function createAccount() {
+  const errEl = document.getElementById('accountError');
+  errEl.style.display = 'none';
+  const code = val('acc-code'), name = val('acc-name'), type = val('acc-type');
+  if (!code || !name) { errEl.textContent = 'Code and name are required.'; errEl.style.display = 'block'; return; }
+  const btn = document.getElementById('createAccountBtn');
+  btn.disabled = true; btn.textContent = 'Adding…';
+  const { error } = await sb.from('bk_accounts').insert({ company_id: company.id, code, name, type });
+  btn.disabled = false; btn.textContent = 'Add Account';
+  if (error) { errEl.textContent = error.message; errEl.style.display = 'block'; return; }
+  accountsCache = [];
+  closeModal('accountModal');
+  loadAccounts();
+}
+async function archiveAccount(id) {
+  if (!confirm('Archive this account? Past journal entries stay intact.')) return;
+  await sb.from('bk_accounts').update({ archived: true }).eq('id', id);
+  accountsCache = [];
+  loadAccounts();
+}
+
+// ── Journal ──
+async function loadJournal() {
+  const wrap = document.getElementById('journalTableWrap');
+  if (!requireCompany()) { wrap.innerHTML = '<div class="empty">Set up your company first.</div>'; return; }
+  wrap.innerHTML = '<div class="loading">Loading…</div>';
+  const { data, error } = await sb.from('bk_journal_entries').select('*, bk_journal_lines(debit, credit)').eq('company_id', company.id).order('entry_date', { ascending: false }).limit(200);
+  if (error) { wrap.innerHTML = `<div class="empty">${esc(error.message)}</div>`; return; }
+  if (!data || data.length === 0) { wrap.innerHTML = '<div class="empty">No journal entries yet.</div>'; return; }
+  const sourceBadge = s => ({ manual:'badge-gray', payroll:'badge-blue', invoice:'badge-green', invoice_payment:'badge-green', expense:'badge-red' }[s] || 'badge-gray');
+  wrap.innerHTML = `<table><thead><tr><th>Date</th><th>Description</th><th>Source</th><th class="num">Amount</th></tr></thead><tbody>
+    ${data.map(e => {
+      const total = (e.bk_journal_lines || []).reduce((s, l) => s + Number(l.debit || 0), 0);
+      return `<tr><td>${esc(e.entry_date)}</td><td>${esc(e.description)}</td><td><span class="badge ${sourceBadge(e.source)}">${esc(e.source.replace('_',' '))}</span></td><td class="num">${money(total)}</td></tr>`;
+    }).join('')}
+  </tbody></table>`;
+}
+
+function openJournalModal() {
+  if (!requireCompany()) return;
+  document.getElementById('journalError').style.display = 'none';
+  document.getElementById('je-date').value = today();
+  document.getElementById('je-description').value = '';
+  document.getElementById('jeLinesWrap').innerHTML = '';
+  addJournalLineRow(); addJournalLineRow();
+  updateJournalTotals();
+  document.getElementById('journalModal').hidden = false;
+}
+async function addJournalLineRow() {
+  const accounts = await ensureAccountsLoaded();
+  const wrap = document.getElementById('jeLinesWrap');
+  const row = document.createElement('div');
+  row.className = 'je-line-row';
+  row.innerHTML = `
+    <select class="je-account">${accounts.map(a => `<option value="${a.id}">${esc(a.code)} — ${esc(a.name)}</option>`).join('')}</select>
+    <input type="number" class="je-debit" placeholder="Debit" min="0" step="0.01" oninput="updateJournalTotals()">
+    <input type="number" class="je-credit" placeholder="Credit" min="0" step="0.01" oninput="updateJournalTotals()">
+    <button type="button" class="je-line-remove" onclick="this.parentElement.remove(); updateJournalTotals()">✕</button>`;
+  wrap.appendChild(row);
+}
+function updateJournalTotals() {
+  const debits = [...document.querySelectorAll('.je-debit')].reduce((s, i) => s + (parseFloat(i.value) || 0), 0);
+  const credits = [...document.querySelectorAll('.je-credit')].reduce((s, i) => s + (parseFloat(i.value) || 0), 0);
+  const el = document.getElementById('jeTotals');
+  el.textContent = `Debits ${money(debits)} · Credits ${money(credits)}`;
+  el.className = 'je-totals ' + (Math.abs(debits - credits) < 0.005 && debits > 0 ? 'balanced' : 'unbalanced');
+}
+async function submitJournalEntry() {
+  const errEl = document.getElementById('journalError');
+  errEl.style.display = 'none';
+  const rows = [...document.querySelectorAll('#jeLinesWrap .je-line-row')];
+  const lines = rows.map(r => ({
+    account_id: r.querySelector('.je-account').value,
+    debit: parseFloat(r.querySelector('.je-debit').value) || 0,
+    credit: parseFloat(r.querySelector('.je-credit').value) || 0,
+  })).filter(l => l.debit > 0 || l.credit > 0);
+  if (lines.length < 2) { errEl.textContent = 'Add at least two lines.'; errEl.style.display = 'block'; return; }
+  const totalDebit = lines.reduce((s, l) => s + l.debit, 0);
+  const totalCredit = lines.reduce((s, l) => s + l.credit, 0);
+  if (Math.abs(totalDebit - totalCredit) > 0.005) { errEl.textContent = `This entry doesn't balance — debits ${money(totalDebit)}, credits ${money(totalCredit)}.`; errEl.style.display = 'block'; return; }
+
+  const btn = document.getElementById('submitJournalBtn');
+  btn.disabled = true; btn.textContent = 'Posting…';
+  const { error } = await sb.rpc('post_journal_entry', {
+    p_company_id: company.id, p_entry_date: val('je-date') || today(), p_description: val('je-description') || 'Manual entry',
+    p_source: 'manual', p_source_id: null, p_lines: lines,
+  });
+  btn.disabled = false; btn.textContent = 'Post Entry';
+  if (error) { errEl.textContent = error.message; errEl.style.display = 'block'; return; }
+  closeModal('journalModal');
+  loadJournal();
+}
+
+// ── Invoices ──
+async function loadInvoices() {
+  const wrap = document.getElementById('invoicesTableWrap');
+  if (!requireCompany()) { wrap.innerHTML = '<div class="empty">Set up your company first.</div>'; return; }
+  wrap.innerHTML = '<div class="loading">Loading…</div>';
+  const { data, error } = await sb.from('bk_invoices').select('*').eq('company_id', company.id).order('issue_date', { ascending: false });
+  if (error) { wrap.innerHTML = `<div class="empty">${esc(error.message)}</div>`; return; }
+  if (!data || data.length === 0) { wrap.innerHTML = '<div class="empty">No invoices yet.</div>'; return; }
+  const statusBadge = s => ({ draft:'badge-gray', sent:'badge-blue', paid:'badge-green', overdue:'badge-red', void:'badge-gray' }[s] || 'badge-gray');
+  wrap.innerHTML = `<table><thead><tr><th>Number</th><th>Customer</th><th>Issued</th><th class="num">Total</th><th>Status</th><th></th></tr></thead><tbody>
+    ${data.map(inv => `<tr>
+      <td>${esc(inv.invoice_number)}</td><td>${esc(inv.customer_name)}</td><td>${esc(inv.issue_date)}</td>
+      <td class="num">${money(inv.total)}</td><td><span class="badge ${statusBadge(inv.status)}">${inv.status}</span></td>
+      <td style="white-space:nowrap">
+        ${inv.status === 'draft' ? `<button class="btn-outline btn-sm" onclick="issueInvoiceAction('${inv.id}')">Issue</button>` : ''}
+        ${inv.status === 'sent' ? `<button class="btn-outline btn-sm" onclick="markInvoicePaidAction('${inv.id}')">Mark Paid</button>` : ''}
+      </td>
+    </tr>`).join('')}
+  </tbody></table>`;
+}
+
+function openInvoiceModal() {
+  if (!requireCompany()) return;
+  document.getElementById('invoiceError').style.display = 'none';
+  document.getElementById('inv-number').value = 'INV-' + Date.now().toString().slice(-6);
+  document.getElementById('inv-issuedate').value = today();
+  document.getElementById('inv-duedate').value = '';
+  document.getElementById('inv-customer').value = '';
+  document.getElementById('inv-email').value = '';
+  document.getElementById('invLinesWrap').innerHTML = '';
+  addInvoiceLineRow();
+  updateInvoiceTotals();
+  document.getElementById('invoiceModal').hidden = false;
+}
+function addInvoiceLineRow() {
+  const wrap = document.getElementById('invLinesWrap');
+  const row = document.createElement('div');
+  row.className = 'inv-line-row';
+  row.innerHTML = `
+    <input class="inv-desc" placeholder="Description">
+    <input type="number" class="inv-qty" placeholder="Qty" value="1" min="0" step="1" oninput="updateInvoiceTotals()">
+    <input type="number" class="inv-price" placeholder="Unit price" min="0" step="0.01" oninput="updateInvoiceTotals()">
+    <input type="number" class="inv-vatrate" placeholder="VAT %" value="15" min="0" step="0.01" oninput="updateInvoiceTotals()">
+    <span class="inv-linetotal form-hint" style="text-align:right">R0.00</span>
+    <button type="button" class="je-line-remove" onclick="this.parentElement.remove(); updateInvoiceTotals()">✕</button>`;
+  wrap.appendChild(row);
+}
+function updateInvoiceTotals() {
+  let subtotal = 0, vat = 0;
+  document.querySelectorAll('#invLinesWrap .inv-line-row').forEach(r => {
+    const qty = parseFloat(r.querySelector('.inv-qty').value) || 0;
+    const price = parseFloat(r.querySelector('.inv-price').value) || 0;
+    const rate = parseFloat(r.querySelector('.inv-vatrate').value) || 0;
+    const lineSub = qty * price;
+    const lineVat = lineSub * (rate / 100);
+    subtotal += lineSub; vat += lineVat;
+    r.querySelector('.inv-linetotal').textContent = money(lineSub + lineVat);
+  });
+  document.getElementById('invTotals').textContent = `Subtotal ${money(subtotal)} · VAT ${money(vat)} · Total ${money(subtotal + vat)}`;
+  return { subtotal, vat, total: subtotal + vat };
+}
+async function submitInvoice() {
+  const errEl = document.getElementById('invoiceError');
+  errEl.style.display = 'none';
+  const number = val('inv-number'), customer = val('inv-customer');
+  if (!number || !customer) { errEl.textContent = 'Invoice number and customer name are required.'; errEl.style.display = 'block'; return; }
+  const rows = [...document.querySelectorAll('#invLinesWrap .inv-line-row')];
+  const lines = rows.map(r => ({
+    description: r.querySelector('.inv-desc').value.trim() || 'Item',
+    quantity: parseFloat(r.querySelector('.inv-qty').value) || 0,
+    unit_price: parseFloat(r.querySelector('.inv-price').value) || 0,
+    vat_rate: parseFloat(r.querySelector('.inv-vatrate').value) || 0,
+  })).filter(l => l.quantity > 0 && l.unit_price >= 0);
+  if (lines.length === 0) { errEl.textContent = 'Add at least one line item.'; errEl.style.display = 'block'; return; }
+  const totals = updateInvoiceTotals();
+
+  const btn = document.getElementById('submitInvoiceBtn');
+  btn.disabled = true; btn.textContent = 'Saving…';
+  const { data: inv, error } = await sb.from('bk_invoices').insert({
+    company_id: company.id, invoice_number: number, customer_name: customer, customer_email: val('inv-email') || null,
+    issue_date: val('inv-issuedate') || today(), due_date: val('inv-duedate') || null,
+    subtotal: totals.subtotal, vat_amount: totals.vat, total: totals.total,
+  }).select().single();
+  if (!error && inv) {
+    const lineRows = lines.map(l => ({ invoice_id: inv.id, description: l.description, quantity: l.quantity, unit_price: l.unit_price, vat_rate: l.vat_rate, line_total: l.quantity * l.unit_price * (1 + l.vat_rate / 100) }));
+    await sb.from('bk_invoice_lines').insert(lineRows);
+  }
+  btn.disabled = false; btn.textContent = 'Save Draft';
+  if (error) { errEl.textContent = error.message; errEl.style.display = 'block'; return; }
+  closeModal('invoiceModal');
+  loadInvoices();
+}
+async function issueInvoiceAction(id) {
+  if (!confirm('Issue this invoice? This posts it to your journal.')) return;
+  const { error } = await sb.rpc('issue_invoice', { p_invoice_id: id });
+  if (error) { alert(error.message); return; }
+  loadInvoices();
+}
+async function markInvoicePaidAction(id) {
+  const { error } = await sb.rpc('mark_invoice_paid', { p_invoice_id: id, p_paid_date: today() });
+  if (error) { alert(error.message); return; }
+  loadInvoices();
+}
+
+// ── Expenses ──
+async function loadExpenses() {
+  const wrap = document.getElementById('expensesTableWrap');
+  if (!requireCompany()) { wrap.innerHTML = '<div class="empty">Set up your company first.</div>'; return; }
+  wrap.innerHTML = '<div class="loading">Loading…</div>';
+  const { data, error } = await sb.from('bk_expenses').select('*, bk_accounts(name)').eq('company_id', company.id).order('expense_date', { ascending: false });
+  if (error) { wrap.innerHTML = `<div class="empty">${esc(error.message)}</div>`; return; }
+  if (!data || data.length === 0) { wrap.innerHTML = '<div class="empty">No expenses recorded yet.</div>'; return; }
+  wrap.innerHTML = `<table><thead><tr><th>Date</th><th>Vendor</th><th>Account</th><th class="num">Amount</th><th class="num">VAT</th></tr></thead><tbody>
+    ${data.map(e => `<tr><td>${esc(e.expense_date)}</td><td>${esc(e.vendor)}</td><td>${esc(e.bk_accounts?.name || '—')}</td><td class="num">${money(e.amount)}</td><td class="num">${money(e.vat_amount)}</td></tr>`).join('')}
+  </tbody></table>`;
+}
+async function openExpenseModal() {
+  if (!requireCompany()) return;
+  document.getElementById('expenseError').style.display = 'none';
+  document.getElementById('exp-date').value = today();
+  document.getElementById('exp-vendor').value = '';
+  document.getElementById('exp-amount').value = '';
+  document.getElementById('exp-vat').value = '0';
+  document.getElementById('exp-description').value = '';
+  const accounts = (await ensureAccountsLoaded()).filter(a => a.type === 'expense');
+  document.getElementById('exp-account').innerHTML = accounts.map(a => `<option value="${a.id}">${esc(a.code)} — ${esc(a.name)}</option>`).join('');
+  document.getElementById('expenseModal').hidden = false;
+}
+async function submitExpense() {
+  const errEl = document.getElementById('expenseError');
+  errEl.style.display = 'none';
+  const vendor = val('exp-vendor');
+  const amount = parseFloat(val('exp-amount'));
+  if (!vendor) { errEl.textContent = 'Vendor is required.'; errEl.style.display = 'block'; return; }
+  if (!amount || amount <= 0) { errEl.textContent = 'Enter an amount greater than zero.'; errEl.style.display = 'block'; return; }
+
+  const btn = document.getElementById('submitExpenseBtn');
+  btn.disabled = true; btn.textContent = 'Recording…';
+  const { error } = await sb.rpc('record_expense', {
+    p_company_id: company.id, p_expense_date: val('exp-date') || today(), p_vendor: vendor,
+    p_account_id: document.getElementById('exp-account').value, p_amount: amount,
+    p_vat_amount: parseFloat(val('exp-vat')) || 0, p_description: val('exp-description') || null,
+  });
+  btn.disabled = false; btn.textContent = 'Record Expense';
+  if (error) { errEl.textContent = error.message; errEl.style.display = 'block'; return; }
+  closeModal('expenseModal');
+  loadExpenses();
+}
+
+// ── Reports ──
+function switchReportTab(name) {
+  document.querySelectorAll('#section-reports .subtab').forEach(t => t.classList.toggle('active', t.dataset.subtab === name));
+  document.querySelectorAll('#section-reports .subtab-panel').forEach(p => p.classList.toggle('active', p.id === 'reportpanel-' + name));
+  if (name === 'trial') loadTrialBalance();
+  if (name === 'income') loadIncomeStatement();
+  if (name === 'balance') loadBalanceSheet();
+}
+
+async function fetchAllLinesWithAccounts() {
+  const { data } = await sb.from('bk_journal_lines').select('debit, credit, bk_journal_entries!inner(company_id), bk_accounts(id, code, name, type)').eq('bk_journal_entries.company_id', company.id);
+  return data || [];
+}
+
+async function loadTrialBalance() {
+  const wrap = document.getElementById('trialBalanceWrap');
+  if (!requireCompany()) { wrap.innerHTML = '<div class="empty">Set up your company first.</div>'; return; }
+  wrap.innerHTML = '<div class="loading">Loading…</div>';
+  const lines = await fetchAllLinesWithAccounts();
+  if (lines.length === 0) { wrap.innerHTML = '<div class="empty">No journal activity yet.</div>'; return; }
+  const byAccount = new Map();
+  lines.forEach(l => {
+    const acc = l.bk_accounts;
+    if (!acc) return;
+    const cur = byAccount.get(acc.id) || { code: acc.code, name: acc.name, debit: 0, credit: 0 };
+    cur.debit += Number(l.debit || 0); cur.credit += Number(l.credit || 0);
+    byAccount.set(acc.id, cur);
+  });
+  const rows = [...byAccount.values()].sort((a, b) => a.code.localeCompare(b.code));
+  const totalDebit = rows.reduce((s, r) => s + r.debit, 0);
+  const totalCredit = rows.reduce((s, r) => s + r.credit, 0);
+  wrap.innerHTML = `<table><thead><tr><th>Code</th><th>Account</th><th class="num">Debit</th><th class="num">Credit</th></tr></thead><tbody>
+    ${rows.map(r => `<tr><td>${esc(r.code)}</td><td>${esc(r.name)}</td><td class="num">${r.debit ? money(r.debit) : '—'}</td><td class="num">${r.credit ? money(r.credit) : '—'}</td></tr>`).join('')}
+    <tr class="total-row"><td></td><td>Total</td><td class="num">${money(totalDebit)}</td><td class="num">${money(totalCredit)}</td></tr>
+  </tbody></table>`;
+}
+
+async function loadIncomeStatement() {
+  const wrap = document.getElementById('incomeStatementWrap');
+  if (!requireCompany()) { wrap.innerHTML = '<div class="empty">Set up your company first.</div>'; return; }
+  wrap.innerHTML = '<div class="loading">Loading…</div>';
+  const lines = await fetchAllLinesWithAccounts();
+  const byType = { income: new Map(), expense: new Map() };
+  lines.forEach(l => {
+    const acc = l.bk_accounts;
+    if (!acc || !byType[acc.type]) return;
+    const net = acc.type === 'income' ? Number(l.credit || 0) - Number(l.debit || 0) : Number(l.debit || 0) - Number(l.credit || 0);
+    byType[acc.type].set(acc.id, (byType[acc.type].get(acc.id) || { code: acc.code, name: acc.name, amount: 0 }));
+    byType[acc.type].get(acc.id).amount += net;
+  });
+  const income = [...byType.income.values()].sort((a, b) => a.code.localeCompare(b.code));
+  const expenses = [...byType.expense.values()].sort((a, b) => a.code.localeCompare(b.code));
+  const totalIncome = income.reduce((s, r) => s + r.amount, 0);
+  const totalExpense = expenses.reduce((s, r) => s + r.amount, 0);
+  wrap.innerHTML = `
+    <table><thead><tr><th colspan="2">Income</th></tr></thead><tbody>
+      ${income.map(r => `<tr><td>${esc(r.name)}</td><td class="num">${money(r.amount)}</td></tr>`).join('') || '<tr><td colspan="2" class="empty">No income yet.</td></tr>'}
+      <tr class="total-row"><td>Total income</td><td class="num">${money(totalIncome)}</td></tr>
+    </tbody></table>
+    <table style="margin-top:16px"><thead><tr><th colspan="2">Expenses</th></tr></thead><tbody>
+      ${expenses.map(r => `<tr><td>${esc(r.name)}</td><td class="num">${money(r.amount)}</td></tr>`).join('') || '<tr><td colspan="2" class="empty">No expenses yet.</td></tr>'}
+      <tr class="total-row"><td>Total expenses</td><td class="num">${money(totalExpense)}</td></tr>
+    </tbody></table>
+    <div class="je-totals" style="justify-content:flex-start;color:var(--navy-dark)">Net ${totalIncome - totalExpense >= 0 ? 'profit' : 'loss'}: ${money(Math.abs(totalIncome - totalExpense))}</div>
+  `;
+}
+
+async function loadBalanceSheet() {
+  const wrap = document.getElementById('balanceSheetWrap');
+  if (!requireCompany()) { wrap.innerHTML = '<div class="empty">Set up your company first.</div>'; return; }
+  wrap.innerHTML = '<div class="loading">Loading…</div>';
+  const lines = await fetchAllLinesWithAccounts();
+  const groups = { asset: new Map(), liability: new Map(), equity: new Map() };
+  lines.forEach(l => {
+    const acc = l.bk_accounts;
+    if (!acc || !groups[acc.type]) return;
+    const net = acc.type === 'asset' ? Number(l.debit || 0) - Number(l.credit || 0) : Number(l.credit || 0) - Number(l.debit || 0);
+    groups[acc.type].set(acc.id, (groups[acc.type].get(acc.id) || { code: acc.code, name: acc.name, amount: 0 }));
+    groups[acc.type].get(acc.id).amount += net;
+  });
+  const section = (title, map) => {
+    const rows = [...map.values()].sort((a, b) => a.code.localeCompare(b.code));
+    const total = rows.reduce((s, r) => s + r.amount, 0);
+    return `<table style="margin-bottom:16px"><thead><tr><th colspan="2">${title}</th></tr></thead><tbody>
+      ${rows.map(r => `<tr><td>${esc(r.name)}</td><td class="num">${money(r.amount)}</td></tr>`).join('') || `<tr><td colspan="2" class="empty">None yet.</td></tr>`}
+      <tr class="total-row"><td>Total ${title.toLowerCase()}</td><td class="num">${money(total)}</td></tr>
+    </tbody></table>`;
+  };
+  wrap.innerHTML = section('Assets', groups.asset) + section('Liabilities', groups.liability) + section('Equity', groups.equity);
+}
+
+// ── Dashboard ──
+async function renderDashboard() {
+  if (!company) {
+    document.getElementById('kpi-bank').textContent = '—'; document.getElementById('kpi-ar').textContent = '—';
+    document.getElementById('kpi-ap').textContent = '—'; document.getElementById('kpi-net').textContent = '—';
+    document.getElementById('dashRecentJournal').innerHTML = '<div class="empty">No company yet — set one up from Payroll first.</div>';
+    document.getElementById('setupPrompt').style.display = 'none';
+    return;
+  }
+  const accounts = await ensureAccountsLoaded();
+  document.getElementById('setupPrompt').style.display = accounts.length === 0 ? 'block' : 'none';
+  if (accounts.length === 0) {
+    document.getElementById('kpi-bank').textContent = '—'; document.getElementById('kpi-ar').textContent = '—';
+    document.getElementById('kpi-ap').textContent = '—'; document.getElementById('kpi-net').textContent = '—';
+    document.getElementById('dashRecentJournal').innerHTML = '<div class="empty">Set up your chart of accounts to get started.</div>';
+    return;
+  }
+
+  const lines = await fetchAllLinesWithAccounts();
+  let bank = 0, ar = 0, ap = 0;
+  lines.forEach(l => {
+    const acc = l.bk_accounts;
+    if (!acc) return;
+    if (acc.code === '1000') bank += Number(l.debit || 0) - Number(l.credit || 0);
+    if (acc.code === '1100') ar += Number(l.debit || 0) - Number(l.credit || 0);
+    if (acc.type === 'liability') ap += Number(l.credit || 0) - Number(l.debit || 0);
+  });
+  document.getElementById('kpi-bank').textContent = money(bank);
+  document.getElementById('kpi-ar').textContent = money(ar);
+  document.getElementById('kpi-ap').textContent = money(ap);
+
+  const { data: recent } = await sb.from('bk_journal_entries').select('*, bk_journal_lines(debit)').eq('company_id', company.id).order('entry_date', { ascending: false }).limit(5);
+  const wrap = document.getElementById('dashRecentJournal');
+  if (!recent || recent.length === 0) { wrap.innerHTML = '<div class="empty">No journal activity yet.</div>'; document.getElementById('kpi-net').textContent = money(0); return; }
+  wrap.innerHTML = `<table><thead><tr><th>Date</th><th>Description</th><th>Source</th><th class="num">Amount</th></tr></thead><tbody>
+    ${recent.map(e => `<tr><td>${esc(e.entry_date)}</td><td>${esc(e.description)}</td><td><span class="badge badge-gray">${esc(e.source)}</span></td><td class="num">${money((e.bk_journal_lines||[]).reduce((s,l)=>s+Number(l.debit||0),0))}</td></tr>`).join('')}
+  </tbody></table>`;
+
+  const thisMonth = today().slice(0, 7);
+  let income = 0, expense = 0;
+  const monthLines = await sb.from('bk_journal_lines').select('debit, credit, bk_journal_entries!inner(company_id, entry_date), bk_accounts(type)').eq('bk_journal_entries.company_id', company.id).gte('bk_journal_entries.entry_date', thisMonth + '-01');
+  (monthLines.data || []).forEach(l => {
+    if (l.bk_accounts?.type === 'income') income += Number(l.credit || 0) - Number(l.debit || 0);
+    if (l.bk_accounts?.type === 'expense') expense += Number(l.debit || 0) - Number(l.credit || 0);
+  });
+  document.getElementById('kpi-net').textContent = money(income - expense);
+}
+</script>
+</body>
+</html>

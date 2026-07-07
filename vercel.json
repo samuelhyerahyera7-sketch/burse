@@ -4,5 +4,17 @@
   "buildCommand": null,
   "outputDirectory": ".",
   "installCommand": null,
-  "framework": null
+  "framework": null,
+  "rewrites": [
+    {
+      "source": "/",
+      "has": [{ "type": "host", "value": "bookkeep.burse.co.za" }],
+      "destination": "/bookkeeping-admin.html"
+    },
+    {
+      "source": "/((?!bookkeeping-admin\\.html).*)",
+      "has": [{ "type": "host", "value": "bookkeep.burse.co.za" }],
+      "destination": "/bookkeeping-admin.html"
+    }
+  ]
 }
