@@ -126,6 +126,19 @@
     .info-box { background:#eef4ff; border:1px solid #c7d9fb; color:#1d4ed8; font-size:0.82rem; padding:12px 16px; border-radius:8px; margin-bottom:16px; line-height:1.5; }
     .disabled-box { background:#f7f9fc; border:1px dashed var(--border); color:var(--soft); font-size:0.85rem; padding:36px; border-radius:12px; text-align:center; line-height:1.7; }
 
+    .company-switch-btn { display:flex; align-items:center; gap:6px; font-size:0.82rem; font-weight:700; color:var(--navy-dark); background:none; border:1.5px solid var(--border); border-radius:8px; padding:7px 10px; cursor:pointer; font-family:'Inter',sans-serif; max-width:220px; }
+    .company-switch-btn:hover { border-color:var(--teal); }
+    .company-switch-btn .role-tag { font-size:0.68rem; font-weight:700; color:var(--soft); text-transform:none; }
+    .company-switch-btn svg { width:14px; height:14px; flex-shrink:0; color:var(--soft); }
+    .company-switch-menu { position:absolute; top:calc(100% + 6px); right:0; background:var(--card); border:1px solid var(--border); border-radius:12px; box-shadow:0 12px 32px rgba(10,20,60,0.14); min-width:240px; z-index:100; padding:6px; }
+    .company-switch-menu[hidden] { display:none; }
+    .company-switch-item { display:flex; flex-direction:column; padding:9px 10px; border-radius:8px; cursor:pointer; font-size:0.85rem; }
+    .company-switch-item:hover { background:var(--bg); }
+    .company-switch-item.active { background:rgba(42,179,179,0.12); }
+    .company-switch-item .name { font-weight:700; color:var(--navy-dark); }
+    .company-switch-item .role { font-size:0.7rem; color:var(--soft); }
+    .company-switch-add { display:flex; align-items:center; gap:6px; padding:9px 10px; border-radius:8px; cursor:pointer; font-size:0.85rem; font-weight:700; color:var(--teal-dark); border-top:1px solid var(--border); margin-top:4px; }
+    .company-switch-add:hover { background:var(--bg); }
     .checklist-row { display:flex; align-items:center; gap:12px; padding:10px 0; border-bottom:1px solid var(--border); }
     .checklist-row:last-child { border-bottom:none; }
     .checklist-check { width:22px; height:22px; border-radius:50%; flex-shrink:0; display:flex; align-items:center; justify-content:center; }
@@ -229,7 +242,7 @@
         </button>
         <div class="topbar-title" id="topbarTitle">Dashboard</div>
       </div>
-      <div id="companyBadge" style="font-size:0.8rem;color:var(--soft)"></div>
+      <div id="companySwitcherRoot" style="position:relative"></div>
     </div>
 
     <div class="content">
@@ -830,21 +843,31 @@ async function callEngine(action, payload) {
   return data;
 }
 
-// ── Company ──
+// ── Company (an account can own or have accountant-access to several) ──
+let allCompanies = [];
+let creatingNewCompany = false;
+
 async function loadCompany() {
-  const { data } = await sb.from('payroll_companies').select('*').eq('owner_id', session.user.id).maybeSingle();
-  if (data) {
-    company = data;
-    isOwner = true;
+  const [{ data: owned }, { data: accAccess }] = await Promise.all([
+    sb.from('payroll_companies').select('*').eq('owner_id', session.user.id).order('created_at'),
+    sb.from('payroll_accountants').select('*, payroll_companies(*)').eq('user_id', session.user.id).eq('status', 'accepted'),
+  ]);
+  allCompanies = [
+    ...(owned || []).map(c => ({ ...c, _role: 'owner' })),
+    ...(accAccess || []).filter(a => a.payroll_companies).map(a => ({ ...a.payroll_companies, _role: 'accountant' })),
+  ];
+
+  if (allCompanies.length === 0) {
+    company = null; isOwner = true;
   } else {
-    // Not an owner — check for accepted accountant access instead
-    const { data: acc } = await sb.from('payroll_accountants').select('*, payroll_companies(*)').eq('user_id', session.user.id).eq('status', 'accepted').maybeSingle();
-    if (acc) { company = acc.payroll_companies; isOwner = false; }
-    // Neither an owner, an accountant, nor (checked before this ran) a linked
-    // employee — a brand new user who hasn't set up a company yet.
-    else { isOwner = true; }
+    const savedId = localStorage.getItem('burse-active-company');
+    const active = allCompanies.find(c => c.id === savedId) || allCompanies[0];
+    company = active;
+    isOwner = active._role === 'owner';
+    localStorage.setItem('burse-active-company', company.id);
   }
-  document.getElementById('companyBadge').textContent = company ? (company.trading_name + (isOwner ? '' : ' · Accountant view')) : '';
+
+  renderCompanySwitcher();
   if (!isOwner) {
     document.querySelectorAll('.btn-teal, .save-company-btn, #inviteAccountantBtn, #saveNotificationsBtn').forEach(el => el.style.display = 'none');
   }
@@ -874,6 +897,66 @@ async function loadCompany() {
       document.querySelectorAll('#section-settings input, #section-settings select, #section-settings textarea').forEach(el => el.disabled = true);
     }
   }
+}
+
+function renderCompanySwitcher() {
+  const wrap = document.getElementById('companySwitcherRoot');
+  if (!company && allCompanies.length === 0) { wrap.innerHTML = ''; return; }
+
+  const roleLabel = r => r === 'owner' ? '' : ' · Accountant view';
+  wrap.innerHTML = `
+    <button class="company-switch-btn" onclick="toggleCompanySwitcher(event)">
+      <span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${esc(company?.trading_name || 'Select company')}${roleLabel(company?._role)}</span>
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+    </button>
+    <div class="company-switch-menu" id="companySwitchMenu" hidden>
+      ${allCompanies.map(c => `
+        <div class="company-switch-item ${c.id === company?.id ? 'active' : ''}" onclick="switchCompany('${c.id}')">
+          <span class="name">${esc(c.trading_name)}</span>
+          <span class="role">${c._role === 'owner' ? 'Owner' : 'Accountant access'}</span>
+        </div>
+      `).join('')}
+      <div class="company-switch-add" onclick="startNewCompany()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:14px;height:14px"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+        Add another company
+      </div>
+    </div>
+  `;
+}
+
+function toggleCompanySwitcher(e) {
+  e?.stopPropagation();
+  const menu = document.getElementById('companySwitchMenu');
+  menu.hidden = !menu.hidden;
+}
+document.addEventListener('click', (e) => {
+  const menu = document.getElementById('companySwitchMenu');
+  if (menu && !menu.hidden && !menu.contains(e.target) && !e.target.closest('.company-switch-btn')) menu.hidden = true;
+});
+
+async function switchCompany(id) {
+  const target = allCompanies.find(c => c.id === id);
+  if (!target || target.id === company?.id) { document.getElementById('companySwitchMenu').hidden = true; return; }
+  company = target;
+  isOwner = target._role === 'owner';
+  localStorage.setItem('burse-active-company', company.id);
+  staffCache = []; runsCache = []; loansCache = [];
+  await loadCompany();
+  const activeSection = document.querySelector('.section.active')?.id.replace('section-', '') || 'dashboard';
+  showSection(activeSection);
+  renderDashboard();
+}
+
+function startNewCompany() {
+  document.getElementById('companySwitchMenu').hidden = true;
+  creatingNewCompany = true;
+  ['c-trading','c-registered','c-regnum','c-industry','c-paye','c-uif','c-sdl','c-address','c-notes','c-bankname','c-bankacc','c-branchcode','c-annualdays','c-sickdays'].forEach(id => document.getElementById(id).value = '');
+  document.getElementById('c-workdays').value = '5';
+  document.getElementById('c-sdlexempt').checked = false;
+  updateLeavePolicyHints();
+  showSection('settings');
+  switchSettingsTab('s-company');
+  document.getElementById('companyError').style.display = 'none';
 }
 
 function updateLeavePolicyHints() {
@@ -961,14 +1044,23 @@ async function saveCompany() {
   btns.forEach(b => { b.disabled = true; b.textContent = 'Saving…'; });
 
   let result;
-  if (company) result = await sb.from('payroll_companies').update(payload).eq('id', company.id).select().single();
-  else result = await sb.from('payroll_companies').insert(payload).select().single();
+  if (company && !creatingNewCompany) result = await sb.from('payroll_companies').update(payload).eq('id', company.id).select().single();
+  else { payload.owner_id = session.user.id; result = await sb.from('payroll_companies').insert(payload).select().single(); }
 
   btns.forEach(b => { b.disabled = false; b.textContent = 'Save Settings'; });
 
   if (result.error) { errEl.textContent = result.error.message; errEl.style.display = 'block'; return; }
+
+  const wasCreatingNew = creatingNewCompany;
+  creatingNewCompany = false;
   company = result.data;
-  document.getElementById('companyBadge').textContent = company.trading_name;
+  isOwner = true;
+  localStorage.setItem('burse-active-company', company.id);
+  if (wasCreatingNew) allCompanies.push({ ...company, _role: 'owner' }); else {
+    const idx = allCompanies.findIndex(c => c.id === company.id);
+    if (idx >= 0) allCompanies[idx] = { ...company, _role: allCompanies[idx]._role };
+  }
+  renderCompanySwitcher();
   renderDashboard();
 }
 
