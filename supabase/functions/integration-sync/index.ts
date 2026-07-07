@@ -33,46 +33,94 @@ Deno.serve(async (req) => {
     if (!conn || conn.payroll_companies?.owner_id !== uid) return json({ error: 'Connection not found' }, 404);
     if (conn.status === 'disconnected') return json({ error: 'This connection has been disconnected. Reconnect it first.' }, 400);
 
-    if (conn.provider !== 'simplepay') {
+    if (!['simplepay', 'payspace'].includes(conn.provider)) {
       return json({ error: `${conn.provider} syncing isn't wired up yet.` }, 501);
     }
 
     const { data: secretJson } = await sb.rpc('vault_read_secret_for_integration', { p_secret_id: conn.secret_id });
     if (!secretJson) return json({ error: 'Could not retrieve stored credentials.' }, 500);
     const credentials = JSON.parse(secretJson);
-    const apiKey = credentials.api_key;
 
-    const empRes = await fetch(`https://api.payroll.simplepay.cloud/v1/clients/${conn.external_ref}/employees`, {
-      headers: { 'Authorization': apiKey },
-    });
-    if (!empRes.ok) {
-      await sb.from('payroll_integration_connections').update({ status: 'error', last_error: `SimplePay returned ${empRes.status}` }).eq('id', connection_id);
-      return json({ error: `SimplePay returned an error (${empRes.status}). The API key may have been revoked.` }, 400);
+    let employees: any[] = [];
+    let mapEmployee: (e: any) => Record<string, unknown>;
+
+    if (conn.provider === 'simplepay') {
+      const apiKey = credentials.api_key;
+      const empRes = await fetch(`https://api.payroll.simplepay.cloud/v1/clients/${conn.external_ref}/employees`, {
+        headers: { 'Authorization': apiKey },
+      });
+      if (!empRes.ok) {
+        await sb.from('payroll_integration_connections').update({ status: 'error', last_error: `SimplePay returned ${empRes.status}` }).eq('id', connection_id);
+        return json({ error: `SimplePay returned an error (${empRes.status}). The API key may have been revoked.` }, 400);
+      }
+      employees = await empRes.json().catch(() => []);
+      mapEmployee = (row) => {
+        const e = row.employee ?? row;
+        return {
+          employee_number: e.number || null,
+          full_name: [e.first_name, e.last_name].filter(Boolean).join(' ').trim(),
+          id_number: e.identification_type === 'rsa_id' ? (e.id_number || null) : null,
+          tax_number: e.income_tax_number || null,
+          email: e.email || null,
+          job_title: e.job_title || null,
+          start_date: e.appointment_date || null,
+          bank_account_number: e.bank_account?.account_number || null,
+          bank_branch_code: e.bank_account?.branch_code || null,
+        };
+      };
+    } else {
+      const { client_id, client_secret, scope, company_id: pspCompanyId, environment } = credentials;
+      const env = environment === 'apistaging' ? 'apistaging' : 'api';
+      const tokenRes = await fetch('https://identity.yourhcm.com/connect/token', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        body: new URLSearchParams({ grant_type: 'client_credentials', client_id, client_secret, scope }),
+      });
+      if (!tokenRes.ok) {
+        await sb.from('payroll_integration_connections').update({ status: 'error', last_error: 'PaySpace token request failed' }).eq('id', connection_id);
+        return json({ error: 'Could not get a fresh token from PaySpace/Deel Local Payroll. The credentials may have been revoked.' }, 400);
+      }
+      const tokenData = await tokenRes.json().catch(() => ({}));
+      const accessToken = tokenData.access_token;
+      if (!accessToken) return json({ error: 'PaySpace did not return an access token.' }, 400);
+
+      const empRes = await fetch(`https://api.payspace.com/odata/v1.1/${encodeURIComponent(pspCompanyId)}/Employee`, {
+        headers: { 'CustomAuthHeader': accessToken, 'CustomEnvironmentHeader': env },
+      });
+      if (!empRes.ok) {
+        await sb.from('payroll_integration_connections').update({ status: 'error', last_error: `PaySpace returned ${empRes.status}` }).eq('id', connection_id);
+        return json({ error: `PaySpace returned an error (${empRes.status}).` }, 400);
+      }
+      const body = await empRes.json().catch(() => ({}));
+      employees = body.value ?? (Array.isArray(body) ? body : []);
+      mapEmployee = (e) => ({
+        employee_number: e.EmployeeNumber || null,
+        full_name: [e.FirstName, e.LastName].filter(Boolean).join(' ').trim(),
+        id_number: null,
+        tax_number: null,
+        email: e.Email || null,
+        job_title: null,
+        start_date: null,
+        bank_account_number: null,
+        bank_branch_code: null,
+      });
     }
-    const employees: any[] = await empRes.json().catch(() => []);
 
     const { data: job } = await sb.from('payroll_migration_jobs').insert({
-      company_id: conn.company_id, provider: 'simplepay', mode: 'integrate', source_type: 'api',
+      company_id: conn.company_id, provider: conn.provider, mode: 'integrate', source_type: 'api',
       status: 'importing', row_count: employees.length, valid_count: employees.length, created_by: uid,
     }).select().single();
 
     let imported = 0, failed = 0;
     const today = new Date().toISOString().slice(0, 10);
     for (let i = 0; i < employees.length; i++) {
-      const e = (employees[i] as any).employee ?? employees[i];
-      const fullName = [e.first_name, e.last_name].filter(Boolean).join(' ').trim();
-      if (!fullName) { failed++; continue; }
+      const e = employees[i];
+      const mapped = mapEmployee(e);
+      if (!mapped.full_name) { failed++; continue; }
       const payload = {
         company_id: conn.company_id,
-        employee_number: e.number || null,
-        full_name: fullName,
-        id_number: e.identification_type === 'rsa_id' ? (e.id_number || null) : null,
-        tax_number: e.income_tax_number || null,
-        email: e.email || null,
-        job_title: e.job_title || null,
-        start_date: e.appointment_date || today,
-        bank_account_number: e.bank_account?.account_number || null,
-        bank_branch_code: e.bank_account?.branch_code || null,
+        ...mapped,
+        start_date: mapped.start_date || today,
       };
       try {
         let staffId: string | undefined;
@@ -105,12 +153,14 @@ Deno.serve(async (req) => {
     }
     await sb.from('payroll_integration_connections').update({ status: 'connected', last_error: null, last_sync_at: now }).eq('id', connection_id);
     await sb.from('payroll_audit_log').insert({
-      company_id: conn.company_id, actor_id: uid, action: 'integration_synced', meta: { provider: 'simplepay', imported, failed },
+      company_id: conn.company_id, actor_id: uid, action: 'integration_synced', meta: { provider: conn.provider, imported, failed },
     }).catch(() => {});
 
     return json({
       synced: true, imported, failed, total: employees.length,
-      note: 'Salaries and leave balances are not synced yet — SimplePay exposes these via separate rate/leave-type endpoints not yet mapped. Update pay rates manually for now.',
+      note: conn.provider === 'simplepay'
+        ? 'Salaries and leave balances are not synced yet — SimplePay exposes these via separate rate/leave-type endpoints not yet mapped. Update pay rates manually for now.'
+        : 'Only employee identity fields are synced — PaySpace/Deel Local Payroll\'s salary, banking and leave data live on endpoints this connection doesn\'t confirm access to yet. Update pay rates and banking manually for now.',
     });
 
   } catch (err) {

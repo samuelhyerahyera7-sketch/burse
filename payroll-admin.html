@@ -1838,7 +1838,12 @@ async function loadMigrationJobs() {
 
 const LIVE_CONNECTION_PROVIDERS = [
   { key: 'simplepay', name: 'SimplePay', fields: [{ key: 'api_key', label: 'API Key', hint: 'From payroll.simplepay.cloud → Settings → External Users' }] },
-  { key: 'payspace', name: 'PaySpace', fields: [{ key: 'client_id', label: 'Client ID' }, { key: 'client_secret', label: 'Client Secret' }], notYet: true },
+  { key: 'payspace', name: 'PaySpace (Deel Local Payroll)', fields: [
+    { key: 'client_id', label: 'Client ID' },
+    { key: 'client_secret', label: 'Client Secret' },
+    { key: 'scope', label: 'Scope', hint: 'Supplied with your credentials at registration' },
+    { key: 'company_id', label: 'PaySpace Company ID' },
+  ] },
 ];
 
 async function loadIntegrationStatus() {
@@ -1864,7 +1869,7 @@ async function loadIntegrationStatus() {
       </div>`;
     }
     return `<div class="checklist-row" style="justify-content:space-between">
-      <div><strong>${esc(p.name)}</strong>${p.notYet ? '<div class="form-hint">Connect UI is ready — live syncing needs endpoint details confirmed with your PaySpace account manager first.</div>' : ''}</div>
+      <div><strong>${esc(p.name)}</strong></div>
       <button class="btn-outline btn-sm" onclick="openConnectModal('${p.key}')">Connect</button>
     </div>`;
   }).join('');

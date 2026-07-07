@@ -51,11 +51,33 @@ Deno.serve(async (req) => {
       const clients = await res.json().catch(() => []);
       externalRef = Array.isArray(clients) && clients.length ? String(clients[0].id ?? '') : null;
     } else if (provider === 'payspace') {
-      // PaySpace/Deel Local Payroll uses OAuth2 client-credentials, but the exact
-      // token endpoint and data-endpoint paths for the current API version aren't
-      // publicly confirmed — ship this as a clear "not yet available" response
-      // rather than silently storing credentials we can't verify or use.
-      return json({ error: 'PaySpace connections aren\'t live yet — the exact API endpoints need confirming with your PaySpace account manager first. Your credentials have not been saved.' }, 501);
+      const { client_id, client_secret, scope, company_id: pspCompanyId, environment } = credentials;
+      if (!client_id || !client_secret || !scope || !pspCompanyId) {
+        return json({ error: 'Client ID, Client Secret, Scope and PaySpace Company ID are all required.' }, 400);
+      }
+      const env = environment === 'apistaging' ? 'apistaging' : 'api';
+
+      const tokenRes = await fetch('https://identity.yourhcm.com/connect/token', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        body: new URLSearchParams({ grant_type: 'client_credentials', client_id, client_secret, scope }),
+      });
+      if (!tokenRes.ok) {
+        return json({ error: 'PaySpace/Deel Local Payroll rejected those credentials. Double-check the Client ID, Client Secret and Scope you were given at registration.' }, 400);
+      }
+      const tokenData = await tokenRes.json().catch(() => ({}));
+      const accessToken = tokenData.access_token;
+      if (!accessToken) return json({ error: 'PaySpace did not return an access token.' }, 400);
+
+      const empRes = await fetch(`https://api.payspace.com/odata/v1.1/${encodeURIComponent(pspCompanyId)}/Employee`, {
+        headers: { 'CustomAuthHeader': accessToken, 'CustomEnvironmentHeader': env },
+      });
+      if (!empRes.ok) {
+        return json({ error: empRes.status === 404
+          ? 'That PaySpace Company ID could not be found. Check it against your PaySpace account.'
+          : `PaySpace returned an unexpected error (${empRes.status}).` }, 400);
+      }
+      externalRef = String(pspCompanyId);
     }
 
     const secretName = `payroll_integration_${provider}_${company_id}`;
