@@ -121,14 +121,17 @@
           ${Number(p.travel_allowance) ? `<tr><td>Travel allowance</td><td>${money(p.travel_allowance)}</td></tr>` : ''}
           ${Number(p.other_taxable_allowance) ? `<tr><td>Other taxable allowance</td><td>${money(p.other_taxable_allowance)}</td></tr>` : ''}
           ${Number(p.other_nontaxable_allowance) ? `<tr><td>Other allowance (non-taxable)</td><td>${money(p.other_nontaxable_allowance)}</td></tr>` : ''}
+          ${Number(p.once_off_taxable) ? `<tr><td>Bonus / once-off payment</td><td>${money(p.once_off_taxable)}</td></tr>` : ''}
+          ${Number(p.once_off_nontaxable) ? `<tr><td>Bonus / once-off payment (non-taxable)</td><td>${money(p.once_off_nontaxable)}</td></tr>` : ''}
           <tr class="total-row"><td>Gross pay</td><td>${money(p.gross_pay)}</td></tr>
         </table>
 
         <h2 class="section">Deductions</h2>
         <table>
-          <tr><td>PAYE (income tax)</td><td>${money(p.paye)}</td></tr>
+          <tr><td>PAYE (income tax)${Number(p.once_off_tax) ? ` <span style="color:#7a8fb0;font-size:0.75rem">(incl. ${money(p.once_off_tax)} on bonus)</span>` : ''}</td><td>${money(p.paye)}</td></tr>
           <tr><td>UIF contribution</td><td>${money(p.uif_employee)}</td></tr>
           ${Number(p.retirement_contribution) ? `<tr><td>Retirement fund contribution</td><td>${money(p.retirement_contribution)}</td></tr>` : ''}
+          ${Number(p.loan_repayment) ? `<tr><td>Loan repayment</td><td>${money(p.loan_repayment)}</td></tr>` : ''}
           ${otherDeductions.map(d => `<tr><td>${esc(d.label)}</td><td>${money(d.amount)}</td></tr>`).join('')}
           <tr class="total-row"><td>Total deductions</td><td>${money(p.total_deductions)}</td></tr>
         </table>

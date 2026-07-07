@@ -233,6 +233,61 @@ export function calculatePAYE(input: PayeInput): PayeResult {
   };
 }
 
+export interface OnceOffPayeInput extends PayeInput {
+  /** A once-off/irregular amount (bonus, commission, etc.) paid THIS period only —
+   *  never multiplied by periodsPerYear, per SARS's Fourth Schedule treatment of
+   *  irregular income. Adding it to periodTaxable and re-annualising it (the naive
+   *  approach) would tax a single bonus as if it recurred every period all year. */
+  onceOffTaxable: number;
+}
+
+export interface OnceOffPayeResult {
+  /** Extra PAYE owed this period purely because of the once-off amount. */
+  incrementalTax: number;
+  /** Normal recurring PAYE for the period, unaffected by the once-off amount. */
+  recurringPeriodPaye: number;
+  /** recurringPeriodPaye + incrementalTax — the actual amount to deduct this period. */
+  totalPeriodPaye: number;
+  /** The full recurring-income PAYE breakdown (medical credit, threshold flag, etc.) */
+  recurring: PayeResult;
+}
+
+/**
+ * Correct SARS treatment of a once-off/irregular payment: annualise the
+ * recurring income as normal, then separately compute the extra ANNUAL tax
+ * caused by adding the once-off amount on top (bracket-and-rebate delta) —
+ * and charge that whole delta in this one period, since the amount itself
+ * was only paid once. Never multiply the once-off amount by periodsPerYear.
+ */
+export function calculateOnceOffPaye(input: OnceOffPayeInput): OnceOffPayeResult {
+  const table = getTaxTable(input.taxYear);
+  const recurring = calculatePAYE(input);
+
+  const onceOff = Math.max(0, input.onceOffTaxable);
+  if (onceOff <= 0) {
+    return { incrementalTax: 0, recurringPeriodPaye: recurring.periodPaye, totalPeriodPaye: recurring.periodPaye, recurring };
+  }
+
+  const recurringAnnual = Math.max(0, input.periodTaxable) * input.periodsPerYear;
+  const withBonusAnnual = recurringAnnual + onceOff;
+  const threshold = table.thresholds[input.age >= 75 ? 'from75' : input.age >= 65 ? 'from65to74' : 'under65'];
+  const rebate = annualRebate(input.age, table);
+
+  const annualTaxAfterRebate = (annualTaxable: number) => {
+    if (annualTaxable <= threshold) return 0;
+    return Math.max(0, annualTaxBeforeRebates(annualTaxable, table) - rebate);
+  };
+
+  const incrementalTax = round2(Math.max(0, annualTaxAfterRebate(withBonusAnnual) - annualTaxAfterRebate(recurringAnnual)));
+
+  return {
+    incrementalTax,
+    recurringPeriodPaye: recurring.periodPaye,
+    totalPeriodPaye: round2(recurring.periodPaye + incrementalTax),
+    recurring,
+  };
+}
+
 export interface UifResult {
   employee: number;
   employer: number;

@@ -1,13 +1,12 @@
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
 import {
-  calculatePAYE,
+  calculateOnceOffPaye,
   calculateUIF,
   calculateSDL,
   calculateETI,
   deductibleRetirementContribution,
   taxYearForDate,
   bceaLeaveEntitlements,
-  monthlyAnnualLeaveAccrual,
 } from '../_shared/tax-engine.ts';
 
 const corsHeaders = {
@@ -99,10 +98,38 @@ Deno.serve(async (req) => {
           0,
         );
 
+        // Once-off payments (bonus/commission) added for this run only —
+        // never touch the employee's recurring basic_salary/allowances.
+        const { data: adjustmentRows } = await sb
+          .from('payroll_run_adjustments')
+          .select('*')
+          .eq('run_id', run.id);
+        const adjustmentsByStaff = new Map<string, { taxable: number; nonTaxable: number }>();
+        for (const a of adjustmentRows ?? []) {
+          const cur = adjustmentsByStaff.get(a.staff_id) ?? { taxable: 0, nonTaxable: 0 };
+          if (a.taxable) cur.taxable += Number(a.amount || 0); else cur.nonTaxable += Number(a.amount || 0);
+          adjustmentsByStaff.set(a.staff_id, cur);
+        }
+
+        // Active loans — this run's installment is PREVIEWED here (shown on the
+        // payslip) but the balance itself is only decremented at finalize, so a
+        // draft run can be recalculated freely without double-deducting.
+        const { data: activeLoans } = await sb
+          .from('payroll_loans')
+          .select('*')
+          .eq('company_id', run.company_id)
+          .eq('status', 'active');
+        const loanByStaff = new Map<string, { id: string; installment: number }>();
+        for (const l of activeLoans ?? []) {
+          loanByStaff.set(l.staff_id, { id: l.id, installment: Math.min(Number(l.monthly_installment || 0), Number(l.balance || 0)) });
+        }
+
         const results = [];
         for (const staff of staffList ?? []) {
           const ytdBefore = await fetchYtdBefore(sb, staff.id, run);
-          const payslip = computePayslip(staff, run, company, annualPayrollEstimate, ytdBefore);
+          const adjustment = adjustmentsByStaff.get(staff.id) ?? { taxable: 0, nonTaxable: 0 };
+          const loanDeduction = loanByStaff.get(staff.id)?.installment ?? 0;
+          const payslip = computePayslip(staff, run, company, annualPayrollEstimate, ytdBefore, adjustment, loanDeduction);
           const { data: saved, error: upErr } = await sb
             .from('payroll_payslips')
             .upsert({ run_id: run.id, staff_id: staff.id, ...payslip }, { onConflict: 'run_id,staff_id' })
@@ -124,6 +151,23 @@ Deno.serve(async (req) => {
 
         const { data: payslips } = await sb.from('payroll_payslips').select('*').eq('run_id', run_id);
         if (!payslips || payslips.length === 0) return json({ error: 'Nothing to finalize — run calculate first' }, 400);
+
+        // Loan balances only ever move on finalize (never on a recalculable
+        // draft) — each payslip already carries the installment amount it
+        // previewed at calculate time, so we just apply that same figure.
+        for (const p of payslips) {
+          if (!p.loan_repayment || Number(p.loan_repayment) <= 0) continue;
+          const { data: loan } = await sb.from('payroll_loans').select('*').eq('staff_id', p.staff_id).eq('status', 'active').maybeSingle();
+          if (!loan) continue;
+          const { error: repayErr } = await sb.from('payroll_loan_repayments').insert({ loan_id: loan.id, run_id, amount: p.loan_repayment });
+          if (repayErr) continue; // unique (loan_id, run_id) — already applied, e.g. a retried request
+          const newBalance = round2(Math.max(0, Number(loan.balance) - Number(p.loan_repayment)));
+          await sb.from('payroll_loans').update({
+            balance: newBalance,
+            status: newBalance <= 0 ? 'paid_off' : 'active',
+            updated_at: new Date().toISOString(),
+          }).eq('id', loan.id);
+        }
 
         const { error: updErr } = await sb
           .from('payroll_runs')
@@ -192,8 +236,16 @@ Deno.serve(async (req) => {
           .eq('active', true);
 
         const company = await requireOwnedCompany(company_id);
-        const entitlements = bceaLeaveEntitlements(company.work_days_per_week === 6 ? 6 : 5);
-        const monthlyAnnualAccrual = monthlyAnnualLeaveAccrual(company.work_days_per_week === 6 ? 6 : 5);
+        const bceaEntitlements = bceaLeaveEntitlements(company.work_days_per_week === 6 ? 6 : 5);
+        // A company may offer MORE than the BCEA minimum via annual_leave_days_override /
+        // sick_leave_days_override, but never less — the floor is enforced here too, not
+        // just in the admin UI, in case a row was edited directly.
+        const entitlements = {
+          ...bceaEntitlements,
+          annualDaysPerCycle: Math.max(bceaEntitlements.annualDaysPerCycle, Number(company.annual_leave_days_override) || 0),
+          sickDaysPerCycle: Math.max(bceaEntitlements.sickDaysPerCycle, Number(company.sick_leave_days_override) || 0),
+        };
+        const monthlyAnnualAccrual = round2(entitlements.annualDaysPerCycle / 12);
         const today = new Date();
 
         const updates = [];
@@ -276,7 +328,11 @@ async function fetchYtdBefore(sb: any, staffId: string, run: any): Promise<YtdBe
 }
 
 // deno-lint-ignore no-explicit-any
-function computePayslip(staff: any, run: any, company: any, annualPayrollEstimate: number, ytdBefore: YtdBefore) {
+function computePayslip(
+  staff: any, run: any, company: any, annualPayrollEstimate: number, ytdBefore: YtdBefore,
+  adjustment: { taxable: number; nonTaxable: number } = { taxable: 0, nonTaxable: 0 },
+  loanDeduction = 0,
+) {
   const freq = staff.pay_frequency || run.frequency || 'monthly';
   const periods = periodsPerYear(freq);
 
@@ -286,8 +342,10 @@ function computePayslip(staff: any, run: any, company: any, annualPayrollEstimat
   const travelTaxable = travelAllowance * travelTaxablePct;
   const otherTaxableAllowance = Number(staff.other_taxable_allowance || 0);
   const otherNonTaxableAllowance = Number(staff.other_nontaxable_allowance || 0);
+  const onceOffTaxable = round2(adjustment.taxable);
+  const onceOffNonTaxable = round2(adjustment.nonTaxable);
 
-  const grossPay = round2(basic + travelAllowance + otherTaxableAllowance + otherNonTaxableAllowance);
+  const grossPay = round2(basic + travelAllowance + otherTaxableAllowance + otherNonTaxableAllowance + onceOffTaxable + onceOffNonTaxable);
   const remunerationForRetirementCap = grossPay; // greater of remuneration or taxable income; simplified to gross
 
   const retirementContribution = Number(staff.retirement_contribution || 0);
@@ -299,15 +357,18 @@ function computePayslip(staff: any, run: any, company: any, annualPayrollEstimat
     run.tax_year,
   );
 
+  // Recurring taxable income EXCLUDES the once-off amount — it's taxed
+  // separately below via the correct (non-annualising) once-off method.
   const taxableIncome = round2(basic + travelTaxable + otherTaxableAllowance - retirementDeductible);
 
   const age = ageFromStaff(staff);
-  const paye = calculatePAYE({
+  const onceOffPaye = calculateOnceOffPaye({
     periodTaxable: taxableIncome,
     periodsPerYear: periods as 12 | 26 | 52,
     age,
     taxYear: run.tax_year,
     medicalAidDependants: staff.medical_aid_dependants ?? 0,
+    onceOffTaxable,
   });
 
   const remunerationForUifSdl = grossPay;
@@ -329,7 +390,7 @@ function computePayslip(staff: any, run: any, company: any, annualPayrollEstimat
     : [];
   const otherDeductionsTotal = round2(otherDeductionsList.reduce((s, d) => s + Number(d.amount || 0), 0));
 
-  const totalDeductions = round2(paye.periodPaye + uif.employee + retirementContribution + otherDeductionsTotal);
+  const totalDeductions = round2(onceOffPaye.totalPeriodPaye + uif.employee + retirementContribution + otherDeductionsTotal + loanDeduction);
   const netPay = round2(grossPay - totalDeductions);
 
   return {
@@ -337,23 +398,27 @@ function computePayslip(staff: any, run: any, company: any, annualPayrollEstimat
     travel_allowance: travelAllowance,
     other_taxable_allowance: otherTaxableAllowance,
     other_nontaxable_allowance: otherNonTaxableAllowance,
+    once_off_taxable: onceOffTaxable,
+    once_off_nontaxable: onceOffNonTaxable,
+    once_off_tax: onceOffPaye.incrementalTax,
     gross_pay: grossPay,
     retirement_contribution: retirementContribution,
     retirement_deductible: retirementDeductible,
     taxable_income: taxableIncome,
-    paye: paye.periodPaye,
-    medical_credit: paye.medicalCredit,
+    paye: onceOffPaye.totalPeriodPaye,
+    medical_credit: onceOffPaye.recurring.medicalCredit,
     uif_employee: uif.employee,
     uif_employer: uif.employer,
     sdl_employer: sdl,
     eti_employer: eti,
     other_deductions: otherDeductionsTotal,
     other_deductions_json: otherDeductionsList,
+    loan_repayment: round2(loanDeduction),
     total_deductions: totalDeductions,
     net_pay: netPay,
     ytd_gross: round2(ytdBefore.gross + grossPay),
     ytd_taxable: round2(ytdBefore.taxable + taxableIncome),
-    ytd_paye: round2(ytdBefore.paye + paye.periodPaye),
+    ytd_paye: round2(ytdBefore.paye + onceOffPaye.totalPeriodPaye),
     ytd_uif_employee: round2(ytdBefore.uifEmployee + uif.employee),
     ytd_retirement: round2(ytdBefore.retirementDeductible + retirementDeductible),
   };

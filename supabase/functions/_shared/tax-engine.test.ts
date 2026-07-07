@@ -7,6 +7,7 @@
 import { assertEquals, assertAlmostEquals } from "https://deno.land/std@0.224.0/assert/mod.ts";
 import {
   calculatePAYE,
+  calculateOnceOffPaye,
   calculateUIF,
   calculateSDL,
   calculateETI,
@@ -96,6 +97,36 @@ Deno.test("PAYE: top marginal bracket applies above R1,878,600 (2026/2027)", () 
   const top = table.brackets[table.brackets.length - 1];
   assertEquals(top.from, 1878601);
   assertEquals(top.rate, 0.45);
+});
+
+// ── Once-off / bonus PAYE ────────────────────────────────────────────────
+Deno.test("Once-off PAYE: R20,000 bonus on R30,000/month, age 30 (2026/2027)", () => {
+  // Recurring annual 360,000 @ 26% bracket (base 44,118 from 245,101):
+  //   before = 44,118 + (360,000-245,101)*0.26 = 73,991.74; after primary rebate 17,820 = 56,171.74
+  // With bonus annual 380,000, same bracket:
+  //   before = 44,118 + (380,000-245,101)*0.26 = 79,191.74; after rebate = 61,371.74
+  // Incremental tax on the bonus = 61,371.74 - 56,171.74 = 5,200.00
+  const r = calculateOnceOffPaye({ periodTaxable: 30000, periodsPerYear: 12, age: 30, taxYear: "2026/2027", onceOffTaxable: 20000 });
+  assertAlmostEquals(r.incrementalTax, 5200.00, 0.01);
+  assertAlmostEquals(r.recurringPeriodPaye, 4680.98, 0.01);
+  assertAlmostEquals(r.totalPeriodPaye, 9880.98, 0.01);
+});
+
+Deno.test("Once-off PAYE: zero once-off amount matches plain calculatePAYE exactly", () => {
+  const input = { periodTaxable: 30000, periodsPerYear: 12 as const, age: 30, taxYear: "2026/2027" };
+  const plain = calculatePAYE(input);
+  const onceOff = calculateOnceOffPaye({ ...input, onceOffTaxable: 0 });
+  assertEquals(onceOff.incrementalTax, 0);
+  assertEquals(onceOff.totalPeriodPaye, plain.periodPaye);
+});
+
+Deno.test("Once-off PAYE: a bonus never taxed as if it recurred every period", () => {
+  // The naive bug this guards against: multiplying the once-off amount by
+  // periodsPerYear before taxing it, which would wildly over-tax it.
+  const r = calculateOnceOffPaye({ periodTaxable: 30000, periodsPerYear: 12, age: 30, taxYear: "2026/2027", onceOffTaxable: 20000 });
+  // A naively-annualised R20,000 (x12 = R240,000/yr) would add tens of thousands
+  // in phantom tax; the correct incremental tax here is a few thousand rand.
+  assertEquals(r.incrementalTax < 20000, true);
 });
 
 // ── UIF ──────────────────────────────────────────────────────────────────
