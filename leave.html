@@ -149,6 +149,7 @@
       const latestByType = {};
       (balances || []).forEach(b => { if (!latestByType[b.leave_type]) latestByType[b.leave_type] = b; });
       const typeLabels = { annual: 'Annual leave', sick: 'Sick leave', family_responsibility: 'Family responsibility' };
+      const taxYears = [...new Set((payslips || []).map(p => p.payroll_runs?.tax_year).filter(Boolean))].sort().reverse();
 
       app.innerHTML = `
         <div class="page-head"><h1>My Payroll</h1><p>Welcome, ${esc(staff.full_name)}.</p></div>
@@ -156,6 +157,7 @@
         <div class="tabs">
           <div class="tab active" data-tab="payslips" onclick="switchTab('payslips')">Payslips</div>
           <div class="tab" data-tab="leave" onclick="switchTab('leave')">Leave</div>
+          <div class="tab" data-tab="details" onclick="switchTab('details')">My Details</div>
         </div>
 
         <div class="tab-panel active" id="panel-payslips">
@@ -171,6 +173,16 @@
               </tr>`).join('')}
             </tbody></table>`}
           </div>
+          ${taxYears.length ? `<div class="card">
+            <h2>Tax certificates</h2>
+            <p style="font-size:0.82rem;color:var(--text-mid);margin-bottom:14px">A summary of your annual figures in SARS IRP5 format, for completing or checking your official tax return.</p>
+            <table><thead><tr><th>Tax year</th><th></th></tr></thead><tbody>
+              ${taxYears.map(y => `<tr>
+                <td>${esc(y)}</td>
+                <td><a class="btn-outline" href="/tax-certificate.html?staff_id=${staff.id}&tax_year=${encodeURIComponent(y)}" target="_blank">View</a></td>
+              </tr>`).join('')}
+            </tbody></table>
+          </div>` : ''}
         </div>
 
         <div class="tab-panel" id="panel-leave">
@@ -223,6 +235,35 @@
             </div>
           </div>
         </div>
+
+        <div class="tab-panel" id="panel-details">
+          <div class="card">
+            <h2>Contact &amp; banking details</h2>
+            <p style="font-size:0.82rem;color:var(--text-mid);margin-bottom:14px">
+              Changes here go straight into payroll and are logged for your employer to see. Your name, ID/tax number,
+              job title and salary can only be changed by your employer.
+            </p>
+            <div class="error-box" id="detailsError"></div>
+            <div class="error-box" id="detailsSuccess" style="background:#dcfce7;border-color:#86efac;color:#15803d"></div>
+            <div class="form-row">
+              <div class="form-group"><label>Phone</label><input id="det-phone" value="${esc(staff.phone || '')}" placeholder="082 123 4567"></div>
+              <div class="form-group"><label>Email</label><input type="email" id="det-email" value="${esc(staff.email || '')}" placeholder="you@example.com"></div>
+            </div>
+            <div class="form-row">
+              <div class="form-group"><label>Bank name</label><input id="det-bankname" value="${esc(staff.bank_name || '')}" placeholder="e.g. FNB"></div>
+              <div class="form-group"><label>Account type</label>
+                <select id="det-accounttype">
+                  ${['Savings','Cheque','Current','Transmission'].map(t => `<option value="${t}" ${staff.account_type === t ? 'selected' : ''}>${t}</option>`).join('')}
+                </select>
+              </div>
+            </div>
+            <div class="form-row">
+              <div class="form-group"><label>Account number</label><input id="det-accnum" value="${esc(staff.bank_account_number || '')}"></div>
+              <div class="form-group"><label>Branch code</label><input id="det-branchcode" value="${esc(staff.bank_branch_code || '')}"></div>
+            </div>
+            <button class="btn" id="saveDetailsBtn" onclick="saveMyDetails()">Save Changes</button>
+          </div>
+        </div>
       `;
     }
 
@@ -260,6 +301,31 @@
 
       if (error) { errEl.textContent = error.message; errEl.style.display = 'block'; return; }
       await render();
+    }
+
+    async function saveMyDetails() {
+      const errEl = document.getElementById('detailsError');
+      const okEl = document.getElementById('detailsSuccess');
+      errEl.style.display = 'none'; okEl.style.display = 'none';
+
+      const btn = document.getElementById('saveDetailsBtn');
+      btn.disabled = true; btn.textContent = 'Saving…';
+
+      const { data: updated, error } = await sb.rpc('update_my_staff_details', {
+        p_phone: document.getElementById('det-phone').value,
+        p_email: document.getElementById('det-email').value,
+        p_bank_name: document.getElementById('det-bankname').value,
+        p_bank_account_number: document.getElementById('det-accnum').value,
+        p_bank_branch_code: document.getElementById('det-branchcode').value,
+        p_account_type: document.getElementById('det-accounttype').value,
+      });
+
+      btn.disabled = false; btn.textContent = 'Save Changes';
+
+      if (error) { errEl.textContent = error.message; errEl.style.display = 'block'; return; }
+      staff = updated;
+      okEl.textContent = 'Saved.';
+      okEl.style.display = 'block';
     }
   </script>
 </body>

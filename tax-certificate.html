@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en-ZA">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tax Certificate — Burse Payroll</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <style>
+    * { box-sizing: border-box; margin:0; padding:0; }
+    body { font-family:'Inter',sans-serif; background:#fff; color:#0e1c40; padding:0 0 40px; }
+    .topnav { display:flex; align-items:center; gap:16px; padding:16px 20px; border-bottom:1px solid #e6eaf0; margin-bottom:28px; }
+    .topnav .brand { font-size:1.2rem; font-weight:900; letter-spacing:-0.04em; text-decoration:none; color:#0e1c40; }
+    .topnav .brand .b { color:#2ab3b3; }
+    .topnav .back { margin-left:auto; font-size:0.85rem; font-weight:600; color:#3d5070; text-decoration:none; display:flex; align-items:center; gap:6px; }
+    .topnav .back:hover { color:#0e1c40; }
+    .topnav .back svg { width:16px; height:16px; }
+    .sheet { max-width:720px; margin:0 auto; background:#fff; border-radius:14px; padding:36px; box-shadow:0 1px 3px rgba(10,20,60,0.08); border:1px solid #e6eaf0; }
+    .top { display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:20px; border-bottom:2px solid #0e1c40; padding-bottom:18px; }
+    .top h1 { font-size:1.2rem; font-weight:900; }
+    .top .b { color:#2ab3b3; }
+    .top p { font-size:0.78rem; color:#7a8fb0; margin-top:2px; }
+    .notice { background:#eef4ff; border:1px solid #c7d9fb; color:#1d4ed8; font-size:0.78rem; line-height:1.55; padding:12px 15px; border-radius:9px; margin-bottom:22px; }
+    .meta { display:grid; grid-template-columns:1fr 1fr; gap:6px 24px; font-size:0.82rem; margin-bottom:20px; }
+    .meta div span:first-child { color:#7a8fb0; }
+    .meta div { display:flex; justify-content:space-between; }
+    h2.section { font-size:0.75rem; font-weight:700; text-transform:uppercase; letter-spacing:0.06em; color:#7a8fb0; margin:22px 0 8px; }
+    table { width:100%; border-collapse:collapse; font-size:0.85rem; }
+    td { padding:7px 0; border-bottom:1px solid #eef1f6; vertical-align:top; }
+    td.code { color:#7a8fb0; font-variant-numeric:tabular-nums; width:52px; }
+    td:last-child { text-align:right; font-variant-numeric:tabular-nums; }
+    .total-row td { font-weight:800; border-top:2px solid #0e1c40; border-bottom:none; padding-top:10px; }
+    .foot { margin-top:24px; font-size:0.72rem; color:#7a8fb0; line-height:1.7; border-top:1px solid #eef1f6; padding-top:14px; }
+    .actions { max-width:720px; margin:20px auto 0; display:flex; justify-content:center; gap:10px; }
+    .actions button { padding:10px 20px; border-radius:8px; font-weight:700; font-size:0.85rem; font-family:'Inter',sans-serif; cursor:pointer; }
+    .actions .download-btn { background:#0e1c40; color:#fff; border:none; }
+    .actions .print-btn { background:#fff; color:#0e1c40; border:1.5px solid #e6eaf0; }
+    .actions button:disabled { opacity:0.6; cursor:not-allowed; }
+    .loading, .error { text-align:center; padding:60px 20px; color:#7a8fb0; }
+    @media print { .topnav, .actions, .notice { display:none; } body { background:#fff; padding:0; } .sheet { box-shadow:none; border-radius:0; border:none; } }
+  </style>
+</head>
+<body>
+  <nav class="topnav">
+    <a class="brand" href="/"><span class="b">B</span>urse</a>
+    <a class="back" href="/leave">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5"/><polyline points="12 19 5 12 12 5"/></svg>
+      Back to My Payroll
+    </a>
+  </nav>
+  <div class="sheet" id="sheet" style="margin-left:auto;margin-right:auto"><div class="loading">Loading tax certificate…</div></div>
+  <div class="actions" id="actions" style="display:none">
+    <button class="download-btn" id="downloadBtn" onclick="downloadPdf()">Download PDF</button>
+    <button class="print-btn" onclick="window.print()">Print</button>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script>
+    const { createClient } = supabase;
+    const sb = createClient(
+      'https://pnpfurfodmejdggnyjof.supabase.co',
+      'sb_publishable_q2fnC5EJrToRNuvUjW619Q_NKMbO0iX'
+    );
+
+    function money(n) { return 'R ' + Number(n||0).toLocaleString('en-ZA', { minimumFractionDigits: 2 }); }
+    function esc(str) { return String(str??'').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+    function sum(rows, key) { return rows.reduce((t, r) => t + Number(r[key] || 0), 0); }
+
+    (async function () {
+      const { data: sessionData } = await sb.auth.getSession();
+      if (!sessionData.session) { window.location.href = '/login'; return; }
+
+      const params = new URLSearchParams(window.location.search);
+      const staffId = params.get('staff_id');
+      const taxYear = params.get('tax_year');
+      const sheet = document.getElementById('sheet');
+      if (!staffId || !taxYear) { sheet.innerHTML = '<div class="error">No employee or tax year specified.</div>'; return; }
+
+      const { data: staff, error: staffErr } = await sb.from('payroll_staff').select('*, payroll_companies(*)').eq('id', staffId).single();
+      if (staffErr || !staff) { sheet.innerHTML = '<div class="error">Employee not found, or you do not have access.</div>'; return; }
+      const company = staff.payroll_companies;
+
+      const { data: payslips, error: pErr } = await sb
+        .from('payroll_payslips')
+        .select('*, payroll_runs!inner(*)')
+        .eq('staff_id', staffId)
+        .eq('payroll_runs.tax_year', taxYear)
+        .eq('payroll_runs.status', 'finalized')
+        .order('period_start', { foreignTable: 'payroll_runs', ascending: true });
+
+      if (pErr) { sheet.innerHTML = `<div class="error">${esc(pErr.message)}</div>`; return; }
+      if (!payslips || payslips.length === 0) { sheet.innerHTML = '<div class="error">No finalized payslips found for this tax year yet.</div>'; return; }
+
+      const code3601 = sum(payslips, 'basic_salary') + sum(payslips, 'other_taxable_allowance');
+      const code3701 = sum(payslips, 'travel_allowance');
+      const nonTaxableAllowance = sum(payslips, 'other_nontaxable_allowance');
+      const retirementFundType = staff.retirement_fund_type || null;
+      const retirementCode = retirementFundType === 'ra' ? '4006' : '4001';
+      const code4001 = sum(payslips, 'retirement_contribution');
+      const code4102 = sum(payslips, 'paye');
+      const code4116 = sum(payslips, 'medical_credit');
+      const code4141 = sum(payslips, 'uif_employee') + sum(payslips, 'uif_employer');
+      const grossRemuneration = sum(payslips, 'gross_pay');
+      const netPay = sum(payslips, 'net_pay');
+      const periods = payslips.length;
+
+      sheet.innerHTML = `
+        <div class="top">
+          <div>
+            <h1><span class="b">B</span>urse Payroll</h1>
+            <p>Tax certificate summary — ${esc(taxYear)}</p>
+          </div>
+          <div style="text-align:right">
+            <p style="font-weight:700;color:#0e1c40">${esc(company?.trading_name || '')}</p>
+            ${company?.address ? `<p>${esc(company.address)}</p>` : ''}
+            <p>PAYE ${esc(company?.paye_reference || '—')}</p>
+          </div>
+        </div>
+
+        <div class="notice">
+          This is a summary of your payroll figures in standard SARS IRP5 source-code format, generated from
+          ${periods} finalized pay run${periods === 1 ? '' : 's'} this tax year. Use it to complete or check your
+          official IRP5 in e@syFile — Burse does not submit this to SARS on your behalf.
+        </div>
+
+        <div class="meta">
+          <div><span>Employee</span><span style="font-weight:600">${esc(staff.full_name)}</span></div>
+          <div><span>Employee no.</span><span>${esc(staff.employee_number || '—')}</span></div>
+          <div><span>Tax number</span><span>${esc(staff.tax_number || '—')}</span></div>
+          <div><span>ID number</span><span>${esc(staff.id_number || '—')}</span></div>
+          <div><span>Tax year</span><span>${esc(taxYear)}</span></div>
+          <div><span>Pay periods included</span><span>${periods}</span></div>
+        </div>
+
+        <h2 class="section">Income &amp; allowances</h2>
+        <table>
+          <tr><td class="code">3601</td><td>Income (taxable remuneration)</td><td>${money(code3601)}</td></tr>
+          ${code3701 ? `<tr><td class="code">3701</td><td>Travel allowance</td><td>${money(code3701)}</td></tr>` : ''}
+          ${nonTaxableAllowance ? `<tr><td class="code">—</td><td>Other non-taxable allowance <span style="color:#b45309">(confirm exact code with your tax practitioner)</span></td><td>${money(nonTaxableAllowance)}</td></tr>` : ''}
+          <tr class="total-row"><td></td><td>Gross remuneration</td><td>${money(grossRemuneration)}</td></tr>
+        </table>
+
+        <h2 class="section">Deductions &amp; tax credits</h2>
+        <table>
+          ${code4001 ? `<tr><td class="code">${retirementCode}</td><td>Retirement fund contributions${retirementFundType ? ` (${esc(retirementFundType)})` : ''}</td><td>${money(code4001)}</td></tr>` : ''}
+          <tr><td class="code">4102</td><td>PAYE (employees' tax)</td><td>${money(code4102)}</td></tr>
+          <tr><td class="code">4141</td><td>UIF contribution (employee + employer)</td><td>${money(code4141)}</td></tr>
+          ${code4116 ? `<tr><td class="code">4116</td><td>Medical scheme fees tax credit</td><td>${money(code4116)}</td></tr>` : ''}
+        </table>
+
+        <h2 class="section">Summary</h2>
+        <table>
+          <tr class="total-row"><td></td><td>Total net pay for the year</td><td>${money(netPay)}</td></tr>
+        </table>
+
+        <p class="foot">
+          Medical aid contribution amounts (SARS code 4005) are not shown — Burse currently only records the number
+          of medical aid dependants for tax credit purposes, not the rand contribution value. Ask your tax
+          practitioner to add this manually if applicable. This certificate is issued for reference and does not
+          replace the official IRP5 submitted to SARS via e@syFile.
+        </p>
+      `;
+      document.getElementById('actions').style.display = 'flex';
+      window.__certFilename = `Tax-Certificate-${(staff.full_name || 'employee').replace(/[^a-z0-9]+/gi, '-')}-${taxYear.replace('/', '-')}`;
+    })();
+
+    function loadHtml2Pdf() {
+      if (window.html2pdf) return Promise.resolve();
+      if (window.__html2pdfLoading) return window.__html2pdfLoading;
+      window.__html2pdfLoading = new Promise((resolve, reject) => {
+        const s = document.createElement('script');
+        s.src = 'https://cdn.jsdelivr.net/npm/html2pdf.js@0.10.1/dist/html2pdf.bundle.min.js';
+        s.onload = resolve;
+        s.onerror = () => reject(new Error('Could not load the PDF generator. Check your connection and try again.'));
+        document.head.appendChild(s);
+      });
+      return window.__html2pdfLoading;
+    }
+
+    async function downloadPdf() {
+      const btn = document.getElementById('downloadBtn');
+      const original = btn.textContent;
+      btn.disabled = true; btn.textContent = 'Preparing…';
+      try {
+        await loadHtml2Pdf();
+        await window.html2pdf()
+          .set({
+            filename: `${window.__certFilename || 'tax-certificate'}.pdf`,
+            margin: 10,
+            jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' },
+            html2canvas: { scale: 2, useCORS: true },
+          })
+          .from(document.getElementById('sheet'))
+          .save();
+      } catch (e) {
+        alert(e.message || 'Could not generate the PDF. Try Print instead and choose "Save as PDF".');
+      } finally {
+        btn.disabled = false; btn.textContent = original;
+      }
+    }
+  </script>
+</body>
+</html>

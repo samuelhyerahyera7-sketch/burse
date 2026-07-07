@@ -336,6 +336,7 @@
           <div class="subtab active" data-subtab="emp201" onclick="switchReportTab('emp201')">PAYE / UIF / SDL (EMP201)</div>
           <div class="subtab" data-subtab="cost" onclick="switchReportTab('cost')">Employee Cost Report</div>
           <div class="subtab" data-subtab="audit" onclick="switchReportTab('audit')">Payroll Audit Trail</div>
+          <div class="subtab" data-subtab="irp5" onclick="switchReportTab('irp5')">Tax Certificates (IRP5)</div>
         </div>
 
         <div class="subtab-panel active" id="reportpanel-emp201">
@@ -366,6 +367,18 @@
             <div class="card-header"><div class="card-title">Payroll audit trail</div></div>
             <p class="form-hint" style="margin-bottom:14px">Every payroll approval, bank file download, payslip email and accountant access change for this company.</p>
             <div id="auditTrailWrap"><div class="loading">Loading…</div></div>
+          </div>
+        </div>
+
+        <div class="subtab-panel" id="reportpanel-irp5">
+          <div class="card">
+            <div class="card-header"><div class="card-title">Tax certificates (IRP5)</div></div>
+            <p class="form-hint" style="margin-bottom:14px">A per-employee summary of the year's figures in SARS IRP5 source-code format, for completing or checking the official submission in e@syFile. This is a reference certificate — Burse does not submit to SARS.</p>
+            <div class="form-row">
+              <div class="form-group"><label>Select employee</label><select id="irp5StaffSelect"><option value="">— choose an employee —</option></select></div>
+              <div class="form-group"><label>Tax year</label><select id="irp5YearSelect"></select></div>
+              <div class="form-group" style="display:flex;align-items:flex-end"><button class="btn-primary" onclick="openIrp5()">View Certificate</button></div>
+            </div>
           </div>
         </div>
       </section>
@@ -1401,6 +1414,24 @@ function switchReportTab(name) {
   document.querySelectorAll('.subtab').forEach(t => t.classList.toggle('active', t.dataset.subtab === name));
   document.querySelectorAll('.subtab-panel').forEach(p => p.classList.toggle('active', p.id === 'reportpanel-' + name));
   if (name === 'audit') loadAuditTrail();
+  if (name === 'irp5') populateIrp5Selectors();
+}
+
+function populateIrp5Selectors() {
+  const staffSel = document.getElementById('irp5StaffSelect');
+  staffSel.innerHTML = '<option value="">— choose an employee —</option>' + staffCache.map(s => `<option value="${s.id}">${esc(s.full_name)}${s.employee_number ? ' (' + esc(s.employee_number) + ')' : ''}</option>`).join('');
+  const years = [...new Set(runsCache.filter(r => r.status === 'finalized').map(r => r.tax_year))].sort().reverse();
+  const yearSel = document.getElementById('irp5YearSelect');
+  yearSel.innerHTML = years.length
+    ? years.map(y => `<option value="${esc(y)}">${esc(y)}</option>`).join('')
+    : '<option value="">No finalized pay runs yet</option>';
+}
+
+function openIrp5() {
+  const staffId = document.getElementById('irp5StaffSelect').value;
+  const year = document.getElementById('irp5YearSelect').value;
+  if (!staffId || !year) { alert('Choose an employee and a tax year.'); return; }
+  window.open(`/tax-certificate.html?staff_id=${staffId}&tax_year=${encodeURIComponent(year)}`, '_blank');
 }
 
 async function loadCostReport() {
@@ -1456,11 +1487,15 @@ async function loadAuditTrail() {
     accountant_invited: 'Accountant invited',
     accountant_revoked: 'Accountant access revoked',
     payslip_emailed: 'Payslip emailed',
+    migration_imported: 'Employees imported',
+    integration_connected: 'Live connection added',
+    integration_synced: 'Live connection synced',
+    staff_self_updated_details: 'Employee updated their own details',
   };
   wrap.innerHTML = `<table><thead><tr><th>When</th><th>Action</th><th>Details</th></tr></thead><tbody>
-    ${data.map(a => `<tr>
+    ${data.map(a => `<tr${a.action === 'staff_self_updated_details' && a.meta?.bank_changed ? ' style="background:#fef3e2"' : ''}>
       <td style="white-space:nowrap">${new Date(a.created_at).toLocaleString('en-ZA')}</td>
-      <td>${esc(actionLabels[a.action] || a.action)}</td>
+      <td>${esc(actionLabels[a.action] || a.action)}${a.action === 'staff_self_updated_details' && a.meta?.bank_changed ? ' <span class="badge badge-yellow" style="margin-left:6px">Bank details changed</span>' : ''}</td>
       <td style="font-size:0.78rem;color:var(--soft)">${esc(auditMetaSummary(a.meta))}</td>
     </tr>`).join('')}
   </tbody></table>`;
@@ -1468,7 +1503,11 @@ async function loadAuditTrail() {
 
 function auditMetaSummary(meta) {
   if (!meta || typeof meta !== 'object') return '';
-  return Object.entries(meta).map(([k, v]) => `${k}: ${v}`).join(' · ');
+  return Object.entries(meta)
+    .filter(([k]) => !k.endsWith('_id'))
+    .filter(([, v]) => v !== false)
+    .map(([k, v]) => v === true ? k.replace(/_/g, ' ') : `${k.replace(/_/g, ' ')}: ${v}`)
+    .join(' · ');
 }
 
 async function loadEmp201() {
