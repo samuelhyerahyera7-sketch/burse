@@ -71,13 +71,14 @@
     .card-header { display:flex; align-items:center; justify-content:space-between; margin-bottom:18px; gap:12px; flex-wrap:wrap; }
     .card-title { font-size:0.92rem; font-weight:700; }
 
-    table { width:100%; border-collapse:collapse; }
+    table { width:100%; min-width:520px; border-collapse:collapse; }
+    [id$="Wrap"] { overflow-x:auto; -webkit-overflow-scrolling:touch; }
     th { font-size:0.68rem; font-weight:700; letter-spacing:0.06em; text-transform:uppercase; color:var(--soft); padding:8px 12px; text-align:left; border-bottom:1px solid var(--border); }
     td { font-size:0.83rem; padding:12px; border-bottom:1px solid var(--border); }
     tr:last-child td { border-bottom:none; }
     tr:hover td { background:#fafbfd; }
 
-    .badge { display:inline-flex; align-items:center; font-size:0.66rem; font-weight:700; padding:3px 8px; border-radius:50px; letter-spacing:0.02em; }
+    .badge { display:inline-flex; align-items:center; white-space:nowrap; font-size:0.66rem; font-weight:700; padding:3px 8px; border-radius:50px; letter-spacing:0.02em; }
     .badge-green { background:#dcfce7; color:#15803d; }
     .badge-red { background:#fee2e2; color:#dc2626; }
     .badge-yellow { background:#fef3c7; color:#b45309; }
