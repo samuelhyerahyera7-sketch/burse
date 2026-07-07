@@ -140,6 +140,44 @@
     .subtab-panel { display:none; }
     .subtab-panel.active { display:block; }
 
+    /* Migration Wizard */
+    .wiz-steps { display:flex; flex-wrap:wrap; gap:6px 4px; margin-bottom:22px; }
+    .wiz-step { display:flex; align-items:center; gap:6px; font-size:0.72rem; font-weight:700; color:var(--soft); padding:5px 10px 5px 5px; border-radius:50px; background:var(--bg); }
+    .wiz-step .num { width:20px; height:20px; border-radius:50%; background:var(--border); color:var(--soft); display:flex; align-items:center; justify-content:center; font-size:0.68rem; flex-shrink:0; }
+    .wiz-step.active { color:var(--navy-dark); background:rgba(42,179,179,0.14); }
+    .wiz-step.active .num { background:var(--teal); color:#fff; }
+    .wiz-step.done .num { background:var(--green); color:#fff; }
+    .wiz-h { font-size:1rem; font-weight:800; margin-bottom:4px; }
+    .wiz-sub { font-size:0.82rem; color:var(--soft); margin-bottom:18px; }
+    .wiz-provider-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(150px,1fr)); gap:12px; margin-bottom:8px; }
+    .wiz-provider-card { border:1.5px solid var(--border); border-radius:12px; padding:16px 10px; text-align:center; cursor:pointer; font-size:0.82rem; font-weight:700; color:var(--text); }
+    .wiz-provider-card:hover { border-color:var(--teal); }
+    .wiz-provider-card.selected { border-color:var(--teal); background:rgba(42,179,179,0.08); color:var(--teal-dark); }
+    .wiz-provider-card .wp-icon { width:34px; height:34px; margin:0 auto 10px; border-radius:9px; background:var(--navy-dark); color:#fff; display:flex; align-items:center; justify-content:center; font-size:0.9rem; font-weight:800; }
+    .wiz-mode-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(230px,1fr)); gap:14px; }
+    .wiz-mode-card { border:1.5px solid var(--border); border-radius:12px; padding:20px; cursor:pointer; }
+    .wiz-mode-card:hover { border-color:var(--teal); }
+    .wiz-mode-card.selected { border-color:var(--teal); background:rgba(42,179,179,0.08); }
+    .wiz-mode-card h3 { font-size:0.95rem; font-weight:800; margin-bottom:6px; }
+    .wiz-mode-card p { font-size:0.8rem; color:var(--soft); line-height:1.5; }
+    .dropzone { border:2px dashed var(--border); border-radius:12px; padding:40px 20px; text-align:center; cursor:pointer; color:var(--soft); font-size:0.85rem; }
+    .dropzone.dragover { border-color:var(--teal); background:rgba(42,179,179,0.06); color:var(--teal-dark); }
+    .dropzone strong { color:var(--text); }
+    .map-table-wrap { max-height:440px; overflow-y:auto; border:1px solid var(--border); border-radius:10px; }
+    .map-row { display:grid; grid-template-columns:1fr 28px 1fr; align-items:center; gap:10px; padding:9px 12px; border-bottom:1px solid var(--border); font-size:0.82rem; }
+    .map-row:last-child { border-bottom:none; }
+    .map-row .mr-label { font-weight:700; color:var(--text); }
+    .map-row .mr-req { color:var(--red); font-weight:800; }
+    .map-row select { padding:7px 8px; border:1.5px solid var(--border); border-radius:7px; font-size:0.8rem; font-family:'Inter',sans-serif; background:var(--card); }
+    .map-group-hd { padding:8px 12px; font-size:0.68rem; font-weight:800; letter-spacing:0.06em; text-transform:uppercase; color:var(--soft); background:var(--bg); border-bottom:1px solid var(--border); }
+    .val-summary { display:flex; gap:10px; flex-wrap:wrap; margin-bottom:16px; }
+    .val-chip { font-size:0.78rem; font-weight:700; padding:8px 14px; border-radius:10px; }
+    .val-chip.ok { background:#dcfce7; color:#15803d; }
+    .val-chip.warn { background:#fef3c7; color:#b45309; }
+    .val-chip.err { background:#fee2e2; color:#dc2626; }
+    .wiz-progress-track { height:10px; background:var(--border); border-radius:6px; overflow:hidden; margin:16px 0 8px; }
+    .wiz-progress-bar { height:100%; background:var(--teal); width:0%; transition:width 0.2s; }
+
     #auth-gate { position:fixed; inset:0; z-index:9999; background:#0e1c40; display:flex; align-items:center; justify-content:center; flex-direction:column; gap:14px; }
     #auth-gate.hidden { display:none; }
     .gate-spinner { width:36px; height:36px; border-radius:50%; border:3px solid rgba(42,179,179,0.3); border-top-color:#2ab3b3; animation:spin .7s linear infinite; }
@@ -165,13 +203,14 @@
     </div>
     <nav class="sidebar-nav">
       <a class="nav-item active" onclick="showSection('dashboard')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg><span class="nav-label">Dashboard</span></a>
+      <a class="nav-item" onclick="showSection('migrate')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg><span class="nav-label">Migrate</span></a>
       <a class="nav-item" onclick="showSection('employees')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg><span class="nav-label">Employees</span></a>
       <a class="nav-item" onclick="showSection('payroll')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg><span class="nav-label">Payroll</span></a>
       <a class="nav-item" onclick="showSection('payslips')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 17v-6a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v6"/><path d="M9 21h6"/><rect x="3" y="3" width="18" height="18" rx="2"/></svg><span class="nav-label">Payslips</span></a>
       <a class="nav-item" onclick="showSection('leave')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg><span class="nav-label">Leave</span></a>
       <a class="nav-item" onclick="showSection('reports')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg><span class="nav-label">Reports</span></a>
       <a class="nav-item" onclick="showSection('bankfiles')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12V7a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-1"/><path d="M18 12a2 2 0 1 0 0 4 2 2 0 0 0 0-4z"/></svg><span class="nav-label">Bank Payment Files</span></a>
-      <a class="nav-item" onclick="showSection('bankfeeds')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 11a9 9 0 0 1 9 9"/><path d="M4 4a16 16 0 0 1 16 16"/><circle cx="5" cy="19" r="1"/></svg><span class="nav-label">Bank Feeds</span> <span class="nav-soon">Soon</span></a>
+      <a class="nav-item" onclick="showSection('integrations')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 11a9 9 0 0 1 9 9"/><path d="M4 4a16 16 0 0 1 16 16"/><circle cx="5" cy="19" r="1"/></svg><span class="nav-label">Integrations</span></a>
       <a class="nav-item" onclick="showSection('accountants')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg><span class="nav-label">Accountant Access</span></a>
       <a class="nav-item" onclick="showSection('settings')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg><span class="nav-label">Settings</span></a>
     </nav>
@@ -221,6 +260,23 @@
             </div>
           </div>
           <div id="dashCurrentRun"><div class="loading">Loading…</div></div>
+        </div>
+      </section>
+
+      <!-- MIGRATE & IMPORT -->
+      <section class="section" id="section-migrate">
+        <div class="page-header"><h1>Migrate & Import</h1><p>Bring your employees, salaries and leave balances into Burse from another payroll system in minutes.</p></div>
+
+        <div class="card" id="migPastJobsCard">
+          <div class="card-header"><div class="card-title">Import history</div><button class="btn-teal btn-sm" onclick="startMigrationWizard()">Start New Import</button></div>
+          <div id="migJobsWrap"><div class="loading">Loading…</div></div>
+        </div>
+
+        <div class="card" id="migWizardCard" style="display:none">
+          <div class="wiz-steps" id="wizSteps"></div>
+          <div class="error-box" id="wizError"></div>
+          <div id="wizStepBody"></div>
+          <div class="modal-actions" id="wizActions" style="justify-content:space-between"></div>
         </div>
       </section>
 
@@ -322,14 +378,26 @@
         </div>
       </section>
 
-      <!-- BANK FEEDS (disabled) -->
-      <section class="section" id="section-bankfeeds">
-        <div class="page-header"><h1>Bank Feeds</h1><p>Automatic transaction imports for payroll reconciliation.</p></div>
-        <div class="disabled-box">
-          <strong style="display:block;color:var(--text);font-size:1rem;margin-bottom:8px">Bank Feeds — Coming Soon</strong>
-          Bank Feeds will let you import your business bank account transactions on a read-only basis,
-          so payroll payments can be automatically matched and reconciled against what actually left your account.
-          No live bank linking is available yet — this section is a placeholder for a future release.
+      <!-- INTEGRATIONS -->
+      <section class="section" id="section-integrations">
+        <div class="page-header"><h1>Integrations</h1><p>Keep another payroll system as your system of record and sync data into Burse on your own schedule.</p></div>
+        <div class="info-box">
+          Burse doesn't yet hold live API connections to third-party payroll providers. For now, "syncing" means
+          re-running the Migration Wizard's import against a fresh export from your other system — new and changed
+          employees are matched and updated by Employee Number, nothing is duplicated. Run it whenever your source
+          system changes, or set a reminder to do it monthly.
+        </div>
+        <div class="card">
+          <div class="card-header"><div class="card-title">Sync status</div><button class="btn-teal btn-sm" onclick="showSection('migrate')">Sync now</button></div>
+          <div id="integrationStatusWrap"><div class="loading">Loading…</div></div>
+        </div>
+        <div class="card">
+          <div class="card-header"><div class="card-title">Bank Feeds</div></div>
+          <div class="disabled-box">
+            <strong style="display:block;color:var(--text);font-size:1rem;margin-bottom:8px">Bank Feeds — Coming Soon</strong>
+            Automatic, read-only imports of your business bank transactions so payroll payments can be matched and
+            reconciled against what actually left your account. No live bank linking is available yet.
+          </div>
         </div>
       </section>
 
@@ -649,14 +717,16 @@ function showSection(name) {
   document.getElementById('section-' + name).classList.add('active');
   document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
   event?.target?.closest('.nav-item')?.classList.add('active');
-  const titles = { dashboard:'Dashboard', employees:'Employees', payroll:'Payroll', payslips:'Payslips', leave:'Leave', reports:'Reports', bankfiles:'Bank Payment Files', bankfeeds:'Bank Feeds', accountants:'Accountant Access', settings:'Settings' };
+  const titles = { dashboard:'Dashboard', migrate:'Migrate & Import', employees:'Employees', payroll:'Payroll', payslips:'Payslips', leave:'Leave', reports:'Reports', bankfiles:'Bank Payment Files', integrations:'Integrations', accountants:'Accountant Access', settings:'Settings' };
   document.getElementById('topbarTitle').textContent = titles[name];
+  if (name === 'migrate') loadMigrationJobs();
   if (name === 'employees') loadStaff();
   if (name === 'payroll') loadRuns();
   if (name === 'payslips') { populatePayslipsRunSelect(); }
   if (name === 'leave') { loadLeaveBalances(); loadLeaveRequests(); }
   if (name === 'reports') populateReportRunSelect();
   if (name === 'bankfiles') loadBankFiles();
+  if (name === 'integrations') loadIntegrationStatus();
   if (name === 'accountants') loadAccountants();
   closeSidebar();
 }
@@ -1692,6 +1762,533 @@ function renderDashboard() {
       </tr>
     </tbody></table>`;
   });
+}
+
+// ══════════════════════════════════════════════════════════════
+// MIGRATION & INTEGRATION HUB
+// ══════════════════════════════════════════════════════════════
+
+const MIG_PROVIDERS = [
+  { key: 'simplepay',  name: 'SimplePay' },
+  { key: 'sage_payroll', name: 'Sage Payroll' },
+  { key: 'sage_vip',   name: 'Sage VIP' },
+  { key: 'payspace',   name: 'PaySpace' },
+  { key: 'pastel',     name: 'Pastel Payroll' },
+  { key: 'paymaster',  name: 'Paymaster' },
+  { key: 'xero',       name: 'Xero Payroll' },
+  { key: 'quickbooks', name: 'QuickBooks Payroll' },
+  { key: 'other',      name: 'Other / Generic CSV' },
+];
+
+// Target Burse fields the wizard can map source columns onto. `aliases` drive
+// the auto-mapping heuristic — a normalised (lowercase, alphanumeric-only)
+// comparison against each imported column header.
+const MIG_FIELDS = [
+  { key: 'first_name', label: 'First Name', group: 'Identity', aliases: ['firstname','first','name1','givenname'] },
+  { key: 'last_name', label: 'Last Name / Surname', group: 'Identity', aliases: ['lastname','surname','familyname'] },
+  { key: 'full_name', label: 'Full Name (if not split)', group: 'Identity', aliases: ['fullname','name','employeename'] },
+  { key: 'employee_number', label: 'Employee Number', group: 'Identity', required: true, aliases: ['employeenumber','employeecode','empno','empid','payrollnumber','staffnumber','personnelnumber'] },
+  { key: 'id_number', label: 'SA ID Number', group: 'Identity', aliases: ['idnumber','idno','nationalid','said'] },
+  { key: 'tax_number', label: 'Tax Number', group: 'Identity', aliases: ['taxnumber','taxno','incometaxnumber','sarsreference'] },
+  { key: 'email', label: 'Email', group: 'Identity', aliases: ['email','emailaddress'] },
+  { key: 'phone', label: 'Phone', group: 'Identity', aliases: ['phone','cell','cellphone','mobile','telephone'] },
+  { key: 'job_title', label: 'Job Title', group: 'Employment', aliases: ['jobtitle','position','designation','role'] },
+  { key: 'department', label: 'Department / Cost Centre', group: 'Employment', aliases: ['department','costcentre','costcenter','division','branch'] },
+  { key: 'employment_type', label: 'Employment Type', group: 'Employment', aliases: ['employmenttype','contracttype'] },
+  { key: 'start_date', label: 'Start Date', group: 'Employment', required: true, aliases: ['startdate','employmentdate','datestarted','engagementdate','hiredate'] },
+  { key: 'pay_frequency', label: 'Pay Frequency', group: 'Employment', aliases: ['payfrequency','frequency'] },
+  { key: 'basic_salary', label: 'Basic Salary', group: 'Compensation', required: true, aliases: ['basicsalary','salary','basicpay','monthlysalary'] },
+  { key: 'travel_allowance', label: 'Travel Allowance', group: 'Compensation', aliases: ['travelallowance','carallowance'] },
+  { key: 'other_taxable_allowance', label: 'Other Taxable Allowance', group: 'Compensation', aliases: ['othertaxableallowance','taxableallowance'] },
+  { key: 'other_nontaxable_allowance', label: 'Other Non-Taxable Allowance', group: 'Compensation', aliases: ['othernontaxableallowance','nontaxableallowance'] },
+  { key: 'retirement_fund_type', label: 'Retirement Fund Type', group: 'Compensation', aliases: ['retirementfundtype','pensiontype'] },
+  { key: 'retirement_contribution', label: 'Retirement Contribution', group: 'Compensation', aliases: ['retirementcontribution','pensioncontribution'] },
+  { key: 'medical_aid_dependants', label: 'Medical Aid Dependants', group: 'Compensation', aliases: ['medicalaiddependants','medicaldependants','medicalaidmembers'] },
+  { key: 'bank_name', label: 'Bank Name', group: 'Banking', aliases: ['bankname','bank'] },
+  { key: 'bank_account_number', label: 'Bank Account Number', group: 'Banking', aliases: ['bankaccountnumber','accountnumber'] },
+  { key: 'bank_branch_code', label: 'Branch Code', group: 'Banking', aliases: ['branchcode','sortcode'] },
+  { key: 'account_type', label: 'Account Type', group: 'Banking', aliases: ['accounttype'] },
+  { key: 'leave_annual_entitled', label: 'Annual Leave — Entitled Days', group: 'Leave', aliases: ['annualleaveentitled','annualleavedaysentitled','leaveentitlement'] },
+  { key: 'leave_annual_taken', label: 'Annual Leave — Taken Days', group: 'Leave', aliases: ['annualleavetaken','leavedaystaken'] },
+  { key: 'leave_sick_entitled', label: 'Sick Leave — Entitled Days', group: 'Leave', aliases: ['sickleaveentitled'] },
+  { key: 'leave_sick_taken', label: 'Sick Leave — Taken Days', group: 'Leave', aliases: ['sickleavetaken'] },
+];
+
+function normHeader(s) { return String(s || '').toLowerCase().replace(/[^a-z0-9]/g, ''); }
+
+let migState = null;
+function freshMigState() {
+  return { step: 1, provider: null, mode: null, fileName: null, sourceType: null, headers: [], rows: [], fieldMap: {}, jobId: null, importing: false };
+}
+
+async function loadMigrationJobs() {
+  if (!requireCompany()) return;
+  const wrap = document.getElementById('migJobsWrap');
+  const { data, error } = await sb.from('payroll_migration_jobs').select('*').eq('company_id', company.id).order('created_at', { ascending: false });
+  if (error) { wrap.innerHTML = `<div class="empty">Could not load import history.</div>`; return; }
+  if (!data || !data.length) { wrap.innerHTML = `<div class="empty">No imports yet. Click "Start New Import" to bring employees in from another payroll system.</div>`; return; }
+  const providerName = k => MIG_PROVIDERS.find(p => p.key === k)?.name || k;
+  wrap.innerHTML = `<table><thead><tr><th>Date</th><th>Provider</th><th>Mode</th><th>Rows</th><th>Imported</th><th>Status</th></tr></thead><tbody>
+    ${data.map(j => `<tr>
+      <td>${new Date(j.created_at).toLocaleDateString('en-ZA')}</td>
+      <td>${esc(providerName(j.provider))}</td>
+      <td>${j.mode === 'integrate' ? 'Integration sync' : 'Full migration'}</td>
+      <td>${j.row_count}</td>
+      <td>${j.imported_count}</td>
+      <td><span class="badge ${j.status === 'completed' ? 'badge-green' : j.status === 'failed' ? 'badge-red' : 'badge-yellow'}">${j.status}</span></td>
+    </tr>`).join('')}
+  </tbody></table>`;
+}
+
+async function loadIntegrationStatus() {
+  if (!requireCompany()) return;
+  const wrap = document.getElementById('integrationStatusWrap');
+  const { data, error } = await sb.from('payroll_migration_jobs').select('*').eq('company_id', company.id).eq('mode', 'integrate').order('created_at', { ascending: false }).limit(1).maybeSingle();
+  if (error || !data) { wrap.innerHTML = `<div class="empty">Not connected to another payroll system yet. Choose "Keep existing payroll software and integrate with Burse" in the Migration Wizard to set this up.</div>`; return; }
+  const providerName = MIG_PROVIDERS.find(p => p.key === data.provider)?.name || data.provider;
+  wrap.innerHTML = `
+    <div class="checklist-row"><div><strong>${esc(providerName)}</strong><div class="form-hint">Last synced ${data.last_synced_at ? new Date(data.last_synced_at).toLocaleString('en-ZA') : 'never'}</div></div></div>
+    <div class="checklist-row"><div>${data.imported_count} of ${data.row_count} rows synced successfully${data.error_count ? `, ${data.error_count} flagged for review` : ''}.</div></div>
+  `;
+}
+
+function startMigrationWizard() {
+  if (!requireCompany()) return;
+  migState = freshMigState();
+  document.getElementById('migPastJobsCard').style.display = 'none';
+  document.getElementById('migWizardCard').style.display = 'block';
+  renderWizard();
+}
+
+function exitMigrationWizard() {
+  migState = null;
+  document.getElementById('migWizardCard').style.display = 'none';
+  document.getElementById('migPastJobsCard').style.display = 'block';
+  loadMigrationJobs();
+}
+
+const WIZ_STEP_LABELS = ['Provider', 'Migration type', 'Import file', 'Map fields', 'Validate', 'Preview', 'Import'];
+
+function renderWizard() {
+  const stepsEl = document.getElementById('wizSteps');
+  stepsEl.innerHTML = WIZ_STEP_LABELS.map((label, i) => {
+    const n = i + 1;
+    const cls = n === migState.step ? 'active' : n < migState.step ? 'done' : '';
+    return `<div class="wiz-step ${cls}"><span class="num">${n < migState.step ? '✓' : n}</span>${label}</div>`;
+  }).join('');
+  document.getElementById('wizError').style.display = 'none';
+  const renderers = [renderWizStep1, renderWizStep2, renderWizStep3, renderWizStep4, renderWizStep5, renderWizStep6, renderWizStep7];
+  renderers[migState.step - 1]();
+}
+
+function wizErr(msg) { const e = document.getElementById('wizError'); e.textContent = msg; e.style.display = 'block'; }
+
+function renderWizActions({ back, next, nextLabel = 'Continue', nextDisabled = false } = {}) {
+  const actions = document.getElementById('wizActions');
+  actions.innerHTML = `
+    <button class="btn-outline" onclick="${back === false ? 'exitMigrationWizard()' : 'wizBack()'}">${back === false ? 'Cancel' : '← Back'}</button>
+    ${next !== false ? `<button class="btn-teal" id="wizNextBtn" ${nextDisabled ? 'disabled' : ''} onclick="${next || 'wizNext()'}">${nextLabel}</button>` : ''}
+  `;
+}
+
+function wizBack() { if (migState.step > 1) { migState.step--; renderWizard(); } }
+function wizNext() { migState.step++; renderWizard(); }
+
+// ── Step 1: choose provider ──
+function renderWizStep1() {
+  document.getElementById('wizStepBody').innerHTML = `
+    <div class="wiz-h">Where is your payroll data coming from?</div>
+    <div class="wiz-sub">This helps us suggest the right field mapping. Not sure, or none of these fit? Choose "Other".</div>
+    <div class="wiz-provider-grid">
+      ${MIG_PROVIDERS.map(p => `<div class="wiz-provider-card ${migState.provider === p.key ? 'selected' : ''}" onclick="selectMigProvider('${p.key}')">
+        <div class="wp-icon">${esc(p.name.slice(0,2).toUpperCase())}</div>${esc(p.name)}
+      </div>`).join('')}
+    </div>
+  `;
+  renderWizActions({ back: false, nextDisabled: !migState.provider });
+}
+function selectMigProvider(key) { migState.provider = key; renderWizStep1(); document.getElementById('wizNextBtn').disabled = false; }
+
+// ── Step 2: full migration vs integrate ──
+function renderWizStep2() {
+  document.getElementById('wizStepBody').innerHTML = `
+    <div class="wiz-h">How do you want to work with Burse?</div>
+    <div class="wiz-sub">You can change this later — it only affects how this import is labelled and tracked.</div>
+    <div class="wiz-mode-grid">
+      <div class="wiz-mode-card ${migState.mode === 'full_migration' ? 'selected' : ''}" onclick="selectMigMode('full_migration')">
+        <h3>Full Migration to Burse</h3>
+        <p>Move everything across and run payroll from Burse going forward. This import becomes your live employee records.</p>
+      </div>
+      <div class="wiz-mode-card ${migState.mode === 'integrate' ? 'selected' : ''}" onclick="selectMigMode('integrate')">
+        <h3>Keep existing payroll & integrate</h3>
+        <p>Stay on your current system day-to-day, and bring a read-through copy of your data into Burse for reporting, leave and self-service. Re-run this wizard to refresh it.</p>
+      </div>
+    </div>
+  `;
+  renderWizActions({ nextDisabled: !migState.mode });
+}
+function selectMigMode(key) { migState.mode = key; renderWizStep2(); document.getElementById('wizNextBtn').disabled = false; }
+
+// ── Step 3: file import ──
+function renderWizStep3() {
+  document.getElementById('wizStepBody').innerHTML = `
+    <div class="wiz-h">Import your employee data</div>
+    <div class="wiz-sub">Export a CSV or Excel file of your employee list from ${esc(MIG_PROVIDERS.find(p => p.key === migState.provider)?.name || 'your system')} and drop it below.</div>
+    <div class="dropzone" id="wizDropzone">
+      <strong>Drag & drop your file here</strong>, or click to browse.<br>Supports .csv, .xlsx, .xls
+      <input type="file" id="wizFileInput" accept=".csv,.xlsx,.xls" style="display:none">
+    </div>
+    <div id="wizFileStatus" style="margin-top:14px;font-size:0.85rem"></div>
+  `;
+  renderWizActions({ next: false });
+  const zone = document.getElementById('wizDropzone');
+  const input = document.getElementById('wizFileInput');
+  zone.addEventListener('click', () => input.click());
+  input.addEventListener('change', e => e.target.files[0] && handleWizFile(e.target.files[0]));
+  ['dragover','dragenter'].forEach(evt => zone.addEventListener(evt, e => { e.preventDefault(); zone.classList.add('dragover'); }));
+  ['dragleave','drop'].forEach(evt => zone.addEventListener(evt, e => { e.preventDefault(); zone.classList.remove('dragover'); }));
+  zone.addEventListener('drop', e => { const f = e.dataTransfer.files[0]; if (f) handleWizFile(f); });
+}
+
+function loadSheetJS() {
+  if (window.XLSX) return Promise.resolve();
+  if (window.__xlsxLoading) return window.__xlsxLoading;
+  window.__xlsxLoading = new Promise((resolve, reject) => {
+    const s = document.createElement('script');
+    s.src = 'https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js';
+    s.onload = resolve; s.onerror = () => reject(new Error('Could not load the Excel parser. Try a CSV export instead.'));
+    document.head.appendChild(s);
+  });
+  return window.__xlsxLoading;
+}
+
+function parseCSV(text) {
+  const rows = [];
+  let row = [], field = '', inQuotes = false;
+  for (let i = 0; i < text.length; i++) {
+    const c = text[i];
+    if (inQuotes) {
+      if (c === '"') { if (text[i+1] === '"') { field += '"'; i++; } else inQuotes = false; }
+      else field += c;
+    } else if (c === '"') inQuotes = true;
+    else if (c === ',') { row.push(field); field = ''; }
+    else if (c === '\n' || c === '\r') {
+      if (c === '\r' && text[i+1] === '\n') i++;
+      row.push(field); field = '';
+      if (row.some(f => f !== '')) rows.push(row);
+      row = [];
+    } else field += c;
+  }
+  if (field !== '' || row.length) { row.push(field); if (row.some(f => f !== '')) rows.push(row); }
+  if (!rows.length) return { headers: [], data: [] };
+  const headers = rows[0].map(h => h.trim());
+  const data = rows.slice(1).map(r => {
+    const obj = {};
+    headers.forEach((h, i) => obj[h] = (r[i] ?? '').trim());
+    return obj;
+  });
+  return { headers, data };
+}
+
+async function handleWizFile(file) {
+  const status = document.getElementById('wizFileStatus');
+  status.textContent = 'Reading file…';
+  try {
+    const isExcel = /\.xlsx?$/i.test(file.name);
+    let headers, data;
+    if (isExcel) {
+      await loadSheetJS();
+      const buf = await file.arrayBuffer();
+      const wb = XLSX.read(buf, { type: 'array', cellDates: true });
+      const sheet = wb.Sheets[wb.SheetNames[0]];
+      const json = XLSX.utils.sheet_to_json(sheet, { defval: '' });
+      headers = json.length ? Object.keys(json[0]) : [];
+      data = json;
+      migState.sourceType = 'excel';
+    } else {
+      const text = await file.text();
+      const parsed = parseCSV(text);
+      headers = parsed.headers; data = parsed.data;
+      migState.sourceType = 'csv';
+    }
+    if (!data.length) { status.innerHTML = `<span style="color:var(--red)">That file has no data rows.</span>`; return; }
+    migState.fileName = file.name;
+    migState.headers = headers;
+    migState.rows = data.map(d => ({ raw: d, mapped: {}, errors: [], warnings: [], status: 'pending' }));
+    autoMapFields();
+    status.innerHTML = `<span style="color:var(--green)">✓ Loaded <strong>${esc(file.name)}</strong> — ${data.length} rows, ${headers.length} columns.</span>`;
+    renderWizActions({ nextLabel: 'Continue to field mapping' });
+  } catch (e) {
+    status.innerHTML = `<span style="color:var(--red)">${esc(e.message || 'Could not read that file.')}</span>`;
+  }
+}
+
+function autoMapFields() {
+  const normHeaders = migState.headers.map(h => ({ raw: h, norm: normHeader(h) }));
+  const used = new Set();
+  migState.fieldMap = {};
+  MIG_FIELDS.forEach(f => {
+    const aliasSet = [normHeader(f.label), ...(f.aliases || [])];
+    const match = normHeaders.find(h => !used.has(h.raw) && aliasSet.includes(h.norm));
+    if (match) { migState.fieldMap[f.key] = match.raw; used.add(match.raw); }
+  });
+}
+
+// ── Step 4: field mapping ──
+function renderWizStep4() {
+  const groups = [...new Set(MIG_FIELDS.map(f => f.group))];
+  document.getElementById('wizStepBody').innerHTML = `
+    <div class="wiz-h">Check the field mapping</div>
+    <div class="wiz-sub">We've matched what we could from your file's column headers. Fix or add any mappings below — first &amp; last name will be combined automatically if you don't have a single "full name" column.</div>
+    <div class="map-table-wrap">
+      ${groups.map(g => `
+        <div class="map-group-hd">${esc(g)}</div>
+        ${MIG_FIELDS.filter(f => f.group === g).map(f => `
+          <div class="map-row">
+            <div class="mr-label">${esc(f.label)}${f.required ? ' <span class="mr-req">*</span>' : ''}</div>
+            <div style="text-align:center;color:var(--soft)">←</div>
+            <select onchange="setFieldMap('${f.key}', this.value)">
+              <option value="">— not in file —</option>
+              ${migState.headers.map(h => `<option value="${esc(h)}" ${migState.fieldMap[f.key] === h ? 'selected' : ''}>${esc(h)}</option>`).join('')}
+            </select>
+          </div>
+        `).join('')}
+      `).join('')}
+    </div>
+  `;
+  const hasRequired = MIG_FIELDS.filter(f => f.required).every(f => migState.fieldMap[f.key]) || (migState.fieldMap.first_name || migState.fieldMap.full_name);
+  renderWizActions({ nextLabel: 'Validate data', next: 'goToValidation()', nextDisabled: !hasRequired });
+}
+function setFieldMap(key, value) {
+  if (value) migState.fieldMap[key] = value; else delete migState.fieldMap[key];
+  const hasName = migState.fieldMap.first_name || migState.fieldMap.full_name;
+  const hasSalary = migState.fieldMap.basic_salary;
+  document.getElementById('wizNextBtn').disabled = !(hasName && hasSalary);
+}
+function goToValidation() { migState.step = 5; renderWizard(); }
+
+// ── Step 5: validate ──
+function mappedVal(row, key) {
+  const h = migState.fieldMap[key];
+  if (!h) return '';
+  const v = row.raw[h];
+  return v === undefined || v === null ? '' : String(v).trim();
+}
+function validateRows() {
+  const seenEmpNo = new Map();
+  migState.rows.forEach((row, i) => {
+    const errors = [], warnings = [];
+    const firstName = mappedVal(row, 'first_name');
+    const lastName = mappedVal(row, 'last_name');
+    const fullName = mappedVal(row, 'full_name') || [firstName, lastName].filter(Boolean).join(' ');
+    const empNo = mappedVal(row, 'employee_number');
+    const salaryRaw = mappedVal(row, 'basic_salary');
+    const salary = parseFloat(String(salaryRaw).replace(/[^0-9.\-]/g, ''));
+
+    if (!fullName) errors.push('Missing employee name');
+    if (salaryRaw === '' || isNaN(salary)) errors.push('Missing or invalid basic salary');
+    else if (salary < 0) errors.push('Negative basic salary');
+
+    if (empNo) {
+      if (seenEmpNo.has(empNo)) errors.push(`Duplicate employee number "${empNo}" (also row ${seenEmpNo.get(empNo) + 1})`);
+      else seenEmpNo.set(empNo, i);
+    } else warnings.push('No employee number — a new one will need to be assigned manually');
+
+    if (!mappedVal(row, 'tax_number')) warnings.push('Missing tax number');
+    if (!mappedVal(row, 'bank_account_number')) warnings.push('Missing bank account details');
+    if (!mappedVal(row, 'start_date')) warnings.push('Missing start date — today\'s date will be used');
+    const idNo = mappedVal(row, 'id_number');
+    if (!idNo && !mappedVal(row, 'tax_number')) warnings.push('Cannot verify age for UIF/ETI eligibility without an ID or tax number');
+    if (!mappedVal(row, 'leave_annual_entitled')) warnings.push('Missing annual leave balance');
+
+    row.mapped = { fullName, empNo, salary };
+    row.errors = errors;
+    row.warnings = warnings;
+    row.status = errors.length ? 'error' : 'valid';
+  });
+}
+function renderWizStep5() {
+  validateRows();
+  const errCount = migState.rows.filter(r => r.status === 'error').length;
+  const warnCount = migState.rows.filter(r => r.warnings.length).length;
+  const okCount = migState.rows.length - errCount;
+  document.getElementById('wizStepBody').innerHTML = `
+    <div class="wiz-h">Validation results</div>
+    <div class="wiz-sub">Rows with errors will be skipped on import — everything else can be reviewed and fixed afterwards inside Burse.</div>
+    <div class="val-summary">
+      <div class="val-chip ok">${okCount} ready to import</div>
+      <div class="val-chip warn">${warnCount} with warnings</div>
+      <div class="val-chip err">${errCount} blocked by errors</div>
+    </div>
+    <div class="map-table-wrap">
+      <table><thead><tr><th>#</th><th>Name</th><th>Employee No.</th><th>Salary</th><th>Issues</th></tr></thead><tbody>
+        ${migState.rows.map((r, i) => `<tr>
+          <td>${i + 1}</td>
+          <td>${esc(r.mapped.fullName || '—')}</td>
+          <td>${esc(r.mapped.empNo || '—')}</td>
+          <td>${isNaN(r.mapped.salary) ? '—' : 'R ' + r.mapped.salary.toLocaleString('en-ZA')}</td>
+          <td>
+            ${r.errors.map(e => `<div style="color:var(--red)">✕ ${esc(e)}</div>`).join('')}
+            ${r.warnings.map(w => `<div style="color:var(--orange)">⚠ ${esc(w)}</div>`).join('')}
+            ${!r.errors.length && !r.warnings.length ? '<span style="color:var(--green)">✓ Looks good</span>' : ''}
+          </td>
+        </tr>`).join('')}
+      </tbody></table>
+    </div>
+  `;
+  renderWizActions({ nextLabel: 'Preview import', nextDisabled: okCount === 0 });
+}
+
+// ── Step 6: preview ──
+function renderWizStep6() {
+  const importable = migState.rows.filter(r => r.status !== 'error');
+  document.getElementById('wizStepBody').innerHTML = `
+    <div class="wiz-h">Preview</div>
+    <div class="wiz-sub">This is exactly how these ${importable.length} employees will appear inside Burse. Existing employees (matched by employee number) will be updated, not duplicated.</div>
+    <div class="map-table-wrap">
+      <table><thead><tr><th>Name</th><th>Employee No.</th><th>Job Title</th><th>Start Date</th><th>Basic Salary</th><th>Bank</th></tr></thead><tbody>
+        ${importable.slice(0, 100).map(r => `<tr>
+          <td>${esc(r.mapped.fullName)}</td>
+          <td>${esc(r.mapped.empNo || '—')}</td>
+          <td>${esc(mappedVal(r, 'job_title') || '—')}</td>
+          <td>${esc(mappedVal(r, 'start_date') || 'Today')}</td>
+          <td>R ${Number(r.mapped.salary || 0).toLocaleString('en-ZA')}</td>
+          <td>${esc(mappedVal(r, 'bank_name') || '—')}${mappedVal(r,'bank_account_number') ? ' ••••' + mappedVal(r,'bank_account_number').slice(-4) : ''}</td>
+        </tr>`).join('')}
+      </tbody></table>
+      ${importable.length > 100 ? `<div class="empty">+ ${importable.length - 100} more rows not shown</div>` : ''}
+    </div>
+  `;
+  renderWizActions({ nextLabel: `Import ${importable.length} employees`, next: 'runImport()' });
+}
+
+// ── Step 7: import ──
+function renderWizStep7() { runImport(); }
+function parseDateLoose(s) {
+  if (!s) return null;
+  if (s instanceof Date) return s.toISOString().slice(0, 10);
+  const str = String(s).trim();
+  let m = str.match(/^(\d{4})-(\d{2})-(\d{2})/);
+  if (m) return `${m[1]}-${m[2]}-${m[3]}`;
+  m = str.match(/^(\d{1,2})[\/\-](\d{1,2})[\/\-](\d{4})$/);
+  if (m) return `${m[3]}-${String(m[2]).padStart(2,'0')}-${String(m[1]).padStart(2,'0')}`;
+  const d = new Date(str);
+  return isNaN(d) ? null : d.toISOString().slice(0, 10);
+}
+
+async function runImport() {
+  if (migState.importing) return;
+  migState.importing = true;
+  const importable = migState.rows.filter(r => r.status !== 'error');
+  document.getElementById('wizStepBody').innerHTML = `
+    <div class="wiz-h">Importing…</div>
+    <div class="wiz-sub" id="wizProgressLabel">Starting import of ${importable.length} employees.</div>
+    <div class="wiz-progress-track"><div class="wiz-progress-bar" id="wizProgressBar"></div></div>
+  `;
+  renderWizActions({ back: false, next: false });
+
+  const { data: job } = await sb.from('payroll_migration_jobs').insert({
+    company_id: company.id, provider: migState.provider, mode: migState.mode, source_type: migState.sourceType,
+    file_name: migState.fileName, status: 'importing', field_map: migState.fieldMap,
+    row_count: migState.rows.length, valid_count: importable.length,
+    error_count: migState.rows.length - importable.length, created_by: session.user.id,
+  }).select().single();
+  migState.jobId = job?.id;
+
+  let imported = 0, failed = 0;
+  const today = new Date().toISOString().slice(0, 10);
+  for (let i = 0; i < importable.length; i++) {
+    const row = importable[i];
+    const payload = {
+      company_id: company.id,
+      employee_number: row.mapped.empNo || null,
+      full_name: row.mapped.fullName,
+      id_number: mappedVal(row, 'id_number') || null,
+      tax_number: mappedVal(row, 'tax_number') || null,
+      email: mappedVal(row, 'email') || null,
+      phone: mappedVal(row, 'phone') || null,
+      job_title: mappedVal(row, 'job_title') || null,
+      department: mappedVal(row, 'department') || null,
+      employment_type: mappedVal(row, 'employment_type') || 'permanent',
+      start_date: parseDateLoose(mappedVal(row, 'start_date')) || today,
+      pay_frequency: mappedVal(row, 'pay_frequency') || 'monthly',
+      basic_salary: row.mapped.salary || 0,
+      travel_allowance: parseFloat(mappedVal(row, 'travel_allowance')) || 0,
+      other_taxable_allowance: parseFloat(mappedVal(row, 'other_taxable_allowance')) || 0,
+      other_nontaxable_allowance: parseFloat(mappedVal(row, 'other_nontaxable_allowance')) || 0,
+      retirement_fund_type: mappedVal(row, 'retirement_fund_type') || null,
+      retirement_contribution: parseFloat(mappedVal(row, 'retirement_contribution')) || 0,
+      medical_aid_dependants: parseInt(mappedVal(row, 'medical_aid_dependants')) || 0,
+      bank_name: mappedVal(row, 'bank_name') || null,
+      bank_account_number: mappedVal(row, 'bank_account_number') || null,
+      bank_branch_code: mappedVal(row, 'bank_branch_code') || null,
+      account_type: mappedVal(row, 'account_type') || 'Savings',
+    };
+    try {
+      let staffId;
+      if (payload.employee_number) {
+        const { data: existing } = await sb.from('payroll_staff').select('id').eq('company_id', company.id).eq('employee_number', payload.employee_number).maybeSingle();
+        if (existing) {
+          const { data: upd, error } = await sb.from('payroll_staff').update(payload).eq('id', existing.id).select().single();
+          if (error) throw error;
+          staffId = upd.id;
+        }
+      }
+      if (!staffId) {
+        const { data: ins, error } = await sb.from('payroll_staff').insert(payload).select().single();
+        if (error) throw error;
+        staffId = ins.id;
+      }
+      const entitled = parseFloat(mappedVal(row, 'leave_annual_entitled'));
+      if (!isNaN(entitled)) {
+        await sb.from('payroll_leave_balances').upsert({
+          staff_id: staffId, leave_type: 'annual', cycle_start: payload.start_date,
+          entitled_days: entitled, taken_days: parseFloat(mappedVal(row, 'leave_annual_taken')) || 0,
+        }, { onConflict: 'staff_id,leave_type,cycle_start' });
+      }
+      const sickEntitled = parseFloat(mappedVal(row, 'leave_sick_entitled'));
+      if (!isNaN(sickEntitled)) {
+        await sb.from('payroll_leave_balances').upsert({
+          staff_id: staffId, leave_type: 'sick', cycle_start: payload.start_date,
+          entitled_days: sickEntitled, taken_days: parseFloat(mappedVal(row, 'leave_sick_taken')) || 0,
+        }, { onConflict: 'staff_id,leave_type,cycle_start' });
+      }
+      if (migState.jobId) await sb.from('payroll_migration_rows').insert({ job_id: migState.jobId, row_index: i, raw: row.raw, mapped: payload, status: 'imported', staff_id: staffId });
+      imported++;
+    } catch (e) {
+      failed++;
+      if (migState.jobId) await sb.from('payroll_migration_rows').insert({ job_id: migState.jobId, row_index: i, raw: row.raw, mapped: payload, errors: [{ message: e.message }], status: 'error' });
+    }
+    const pct = Math.round(((i + 1) / importable.length) * 100);
+    document.getElementById('wizProgressBar').style.width = pct + '%';
+    document.getElementById('wizProgressLabel').textContent = `Imported ${imported} of ${importable.length}…`;
+  }
+
+  if (migState.jobId) {
+    await sb.from('payroll_migration_jobs').update({
+      status: 'completed', imported_count: imported, error_count: migState.rows.length - importable.length + failed,
+      completed_at: new Date().toISOString(), last_synced_at: new Date().toISOString(),
+    }).eq('id', migState.jobId);
+    await sb.from('payroll_audit_log').insert({
+      company_id: company.id, actor_id: session.user.id, action: 'migration_imported',
+      meta: { provider: migState.provider, mode: migState.mode, imported, failed },
+    }).catch(() => {});
+  }
+
+  document.getElementById('wizStepBody').innerHTML = `
+    <div class="wiz-h">Import complete</div>
+    <div class="val-summary">
+      <div class="val-chip ok">${imported} imported</div>
+      ${failed ? `<div class="val-chip err">${failed} failed</div>` : ''}
+    </div>
+    <p class="form-hint">Head to Employees to review what came in, or Leave to check balances.</p>
+  `;
+  renderWizActions({ back: false, next: false });
+  document.getElementById('wizActions').innerHTML = `
+    <button class="btn-outline" onclick="exitMigrationWizard()">Done</button>
+    <button class="btn-teal" onclick="exitMigrationWizard(); showSection('employees'); loadStaff();">View Employees</button>
+  `;
+  migState.importing = false;
 }
 
 // ── Helpers ──
