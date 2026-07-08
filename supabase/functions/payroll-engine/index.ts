@@ -1,4 +1,5 @@
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
+import { getXeroConnection, xeroFetch } from '../_shared/xero.ts';
 import {
   calculateOnceOffPaye,
   calculateUIF,
@@ -186,8 +187,21 @@ Deno.serve(async (req) => {
         // chart of accounts, and that's fine; payroll finalization must never
         // fail because the sibling product hasn't been set up.
         await postPayrollJournalEntry(sb, run, payslips).catch((e) => console.error('bookkeeping auto-post skipped:', e));
+        await pushXeroJournalForRun(sb, run, payslips).catch((e) => console.error('Xero auto-push skipped:', e));
 
         return json({ ok: true, payslip_count: payslips.length });
+      }
+
+      case 'push_xero_journal': {
+        // Manual retry — e.g. after fixing the account map or reconnecting
+        // Xero following a token error.
+        const { run_id } = body;
+        const { data: run, error: runErr } = await sb.from('payroll_runs').select('*').eq('id', run_id).single();
+        if (runErr || !run) return json({ error: 'Run not found' }, 404);
+        await requireOwnedCompany(run.company_id);
+        const { data: payslips } = await sb.from('payroll_payslips').select('*').eq('run_id', run_id);
+        const result = await pushXeroJournalForRun(sb, run, payslips ?? [], { force: true });
+        return json(result);
       }
 
       case 'emp201_summary': {
@@ -562,6 +576,94 @@ async function postPayrollJournalEntry(sb: any, run: any, payslips: any[]) {
 
 function round2(n: number): number {
   return Math.round((n + Number.EPSILON) * 100) / 100;
+}
+
+// Pushes the same debit/credit derivation as postPayrollJournalEntry into
+// the customer's own Xero organisation as a Manual Journal, instead of (in
+// addition to) Burse's internal bk_journal_entries. Silently no-ops if Xero
+// isn't connected for this company — payroll finalization must never fail
+// because a sibling integration isn't set up. Pass { force: true } from the
+// manual retry action to get a real error back instead of a silent skip.
+async function pushXeroJournalForRun(sb: any, run: any, payslips: any[], opts: { force?: boolean } = {}) {
+  const xero = await getXeroConnection(sb, run.company_id);
+  if (!xero) {
+    if (opts.force) return { pushed: false, error: 'Xero is not connected for this company.' };
+    return;
+  }
+
+  const { data: existing } = await sb.from('payroll_xero_journal_pushes').select('id').eq('run_id', run.id).eq('connection_id', xero.connectionId).maybeSingle();
+  if (existing) return opts.force ? { pushed: false, error: 'This run has already been pushed to Xero.' } : undefined;
+
+  const { data: map } = await sb.from('payroll_integration_account_map').select('bk_account_code, external_account_id').eq('connection_id', xero.connectionId);
+  const xeroCode = (bkCode: string) => map?.find((m: { bk_account_code: string }) => m.bk_account_code === bkCode)?.external_account_id;
+
+  const sum = (key: string) => round2(payslips.reduce((s, p) => s + Number(p[key] || 0), 0));
+  const grossPay = sum('gross_pay');
+  const uifEmployer = sum('uif_employer');
+  const uifEmployee = sum('uif_employee');
+  const sdlEmployer = sum('sdl_employer');
+  const paye = sum('paye');
+  const eti = sum('eti_employer');
+  const retirement = sum('retirement_contribution');
+  const otherDeductions = sum('other_deductions');
+  const loanRepayment = sum('loan_repayment');
+  const netPay = sum('net_pay');
+
+  // Xero ManualJournals use a single signed LineAmount per line — positive
+  // for a debit, negative for a credit — rather than separate columns.
+  const lines: Array<{ AccountCode: string; LineAmount: number; Description: string }> = [];
+  const unmapped = new Set<string>();
+  const push = (code: string, amount: number, description: string) => {
+    if (round2(amount) === 0) return;
+    const acctCode = xeroCode(code);
+    if (!acctCode) { unmapped.add(code); return; }
+    lines.push({ AccountCode: acctCode, LineAmount: round2(amount), Description: description });
+  };
+
+  push('5000', grossPay - eti, 'Salaries & wages');
+  push('5100', uifEmployer, 'Employer UIF contribution');
+  push('5200', sdlEmployer, 'Employer SDL contribution');
+  push('2100', -round2(paye - eti), 'PAYE payable (net of ETI)');
+  push('2200', -round2(uifEmployee + uifEmployer), 'UIF payable');
+  push('2300', -sdlEmployer, 'SDL payable');
+  push('2600', -retirement, 'Retirement fund payable');
+  push('2700', -otherDeductions, 'Other payroll deductions payable');
+  push('1200', -loanRepayment, 'Staff loan repayments');
+  push('2500', -netPay, 'Net pay payable');
+
+  if (unmapped.size > 0) {
+    const msg = `Xero push skipped for run ${run.id} — no account mapping for: ${[...unmapped].join(', ')}. Map these in Integrations → Xero.`;
+    await sb.from('payroll_integration_connections').update({ last_error: msg }).eq('id', xero.connectionId);
+    return opts.force ? { pushed: false, error: msg } : undefined;
+  }
+  if (lines.length < 2) return opts.force ? { pushed: false, error: 'Nothing to push for this run.' } : undefined;
+
+  const res = await xeroFetch(xero.accessToken, xero.tenantId, '/ManualJournals', {
+    method: 'POST',
+    body: JSON.stringify({
+      ManualJournals: [{
+        Narration: `Payroll — ${run.period_start} to ${run.period_end}`,
+        Date: run.pay_date,
+        Status: 'POSTED',
+        JournalLines: lines,
+      }],
+    }),
+  });
+  if (!res.ok) {
+    const errBody = await res.text().catch(() => '');
+    const msg = `Xero rejected the journal push (${res.status}): ${errBody.slice(0, 300)}`;
+    await sb.from('payroll_integration_connections').update({ status: 'error', last_error: msg }).eq('id', xero.connectionId);
+    if (opts.force) return { pushed: false, error: msg };
+    console.error(msg);
+    return;
+  }
+  const data = await res.json().catch(() => ({}));
+  const journalId = data?.ManualJournals?.[0]?.ManualJournalID ?? null;
+
+  await sb.from('payroll_xero_journal_pushes').insert({ run_id: run.id, connection_id: xero.connectionId, xero_manual_journal_id: journalId });
+  await sb.from('payroll_integration_connections').update({ status: 'connected', last_error: null, last_sync_at: new Date().toISOString() }).eq('id', xero.connectionId);
+
+  return { pushed: true, xero_manual_journal_id: journalId };
 }
 
 class HttpError extends Error {

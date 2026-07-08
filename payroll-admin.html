@@ -989,6 +989,7 @@ let isOwner = false; // only set true once loadCompany() confirms real ownership
     await withTimeout(loadCompany(), 15000);
     await withTimeout(Promise.all([loadStaff(), loadRuns()]), 15000).catch(() => {});
     renderDashboard();
+    handleXeroReturn();
   } catch (e) {
     const gate = document.getElementById('auth-gate');
     gate.innerHTML = `<p style="color:#fff;font-weight:700;margin-bottom:6px">Couldn't load your payroll</p>
@@ -2750,6 +2751,23 @@ const LIVE_CONNECTION_PROVIDERS = [
     { key: 'client_secret', label: 'Client Secret' },
     { key: 'company_id', label: 'Sage Company ID' },
   ], notYet: 'Sage\'s payroll API endpoint is region-specific and hasn\'t been confirmed for South Africa yet — talk to your Sage account manager or developer.sage.com. Connecting will show an error until that\'s sorted out; nothing is saved.' },
+  { key: 'xero', name: 'Xero', oauth: true, desc: 'Push a balanced journal entry into your Xero organisation every time you finalize a pay run.' },
+];
+
+// The 10 chart-of-accounts codes payroll journal entries actually use — see
+// postPayrollJournalEntry/pushXeroJournalForRun in payroll-engine for the
+// full derivation. Only these need a Xero mapping, not the full ~18-code chart.
+const XERO_MAP_CODES = [
+  { code: '5000', label: 'Salaries & wages (expense)' },
+  { code: '5100', label: 'Employer UIF contribution (expense)' },
+  { code: '5200', label: 'Employer SDL contribution (expense)' },
+  { code: '2100', label: 'PAYE payable (liability)' },
+  { code: '2200', label: 'UIF payable (liability)' },
+  { code: '2300', label: 'SDL payable (liability)' },
+  { code: '2600', label: 'Retirement fund payable (liability)' },
+  { code: '2700', label: 'Other payroll deductions payable (liability)' },
+  { code: '1200', label: 'Staff loan repayments (asset reduction)' },
+  { code: '2500', label: 'Net pay payable (liability)' },
 ];
 
 async function loadIntegrationStatus() {
@@ -2764,21 +2782,125 @@ async function loadIntegrationStatus() {
     if (c && c.status !== 'disconnected') {
       return `<div class="checklist-row" style="justify-content:space-between">
         <div>
-          <strong>${esc(p.name)}</strong>
+          <strong>${esc(p.name)}</strong>${c.external_ref ? ` <span class="form-hint" style="font-weight:400">(${esc(c.external_ref)})</span>` : ''}
           <span class="badge ${c.status === 'connected' ? 'badge-green' : 'badge-red'}" style="margin-left:8px">${c.status}</span>
           <div class="form-hint">Last synced ${c.last_sync_at ? new Date(c.last_sync_at).toLocaleString('en-ZA') : 'never'}${c.last_error ? ' — ' + esc(c.last_error) : ''}</div>
         </div>
         <div>
-          <button class="btn-teal btn-sm" onclick="syncIntegration('${c.id}', this)">Sync now</button>
+          ${p.oauth
+            ? `<button class="btn-outline btn-sm" onclick="openXeroAccountMapModal('${c.id}')">Map Accounts</button>`
+            : `<button class="btn-teal btn-sm" onclick="syncIntegration('${c.id}', this)">Sync now</button>`}
           <button class="btn-outline btn-sm" style="margin-left:8px" onclick="disconnectIntegration('${c.id}')">Disconnect</button>
         </div>
       </div>`;
     }
     return `<div class="checklist-row" style="justify-content:space-between">
-      <div><strong>${esc(p.name)}</strong>${p.notYet ? `<div class="form-hint">${esc(p.notYet)}</div>` : ''}</div>
-      <button class="btn-outline btn-sm" onclick="openConnectModal('${p.key}')">Connect</button>
+      <div><strong>${esc(p.name)}</strong>${p.desc ? `<div class="form-hint">${esc(p.desc)}</div>` : ''}${p.notYet ? `<div class="form-hint">${esc(p.notYet)}</div>` : ''}</div>
+      <button class="btn-outline btn-sm" onclick="${p.oauth ? `connectXero()` : `openConnectModal('${p.key}')`}">Connect</button>
     </div>`;
   }).join('');
+}
+
+async function connectXero() {
+  if (!requireCompany()) return;
+  document.getElementById('integrationError').style.display = 'none';
+  try {
+    const res = await withTimeout(fetchWithTimeout(`${SUPABASE_URL}/functions/v1/xero-oauth-start`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${session.access_token}` },
+      body: JSON.stringify({ company_id: company.id }),
+    }));
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.error || 'Could not start the Xero connection.');
+    window.location.href = data.url;
+  } catch (e) {
+    const errEl = document.getElementById('integrationError');
+    errEl.textContent = e.message || 'Something went wrong.';
+    errEl.style.display = 'block';
+  }
+}
+
+async function openXeroAccountMapModal(connectionId) {
+  const existing = document.getElementById('xeroMapModalOverlay');
+  if (existing) existing.remove();
+  const overlay = document.createElement('div');
+  overlay.className = 'modal-overlay'; overlay.id = 'xeroMapModalOverlay';
+  overlay.innerHTML = `
+    <div class="modal-box" style="max-width:560px">
+      <button class="modal-close" onclick="document.getElementById('xeroMapModalOverlay').remove()">✕</button>
+      <h2>Map accounts to Xero</h2>
+      <p class="form-hint" style="margin-bottom:14px">Each pay run posts as a journal entry — tell us which Xero account each line should hit. Only the codes payroll actually uses are listed.</p>
+      <div class="error-box" id="xeroMapError"></div>
+      <div id="xeroMapFields"><div class="loading">Loading your Xero accounts…</div></div>
+      <div class="modal-actions">
+        <button class="btn-outline" onclick="document.getElementById('xeroMapModalOverlay').remove()">Cancel</button>
+        <button class="btn-primary" id="xeroMapSaveBtn" onclick="saveXeroAccountMap('${connectionId}')" disabled>Save Mapping</button>
+      </div>
+    </div>`;
+  document.body.appendChild(overlay);
+
+  const errEl = document.getElementById('xeroMapError');
+  const fieldsEl = document.getElementById('xeroMapFields');
+  try {
+    const [accRes, mapRes] = await Promise.all([
+      withTimeout(fetchWithTimeout(`${SUPABASE_URL}/functions/v1/xero-accounts`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${session.access_token}` },
+        body: JSON.stringify({ company_id: company.id }),
+      })),
+      sb.from('payroll_integration_account_map').select('bk_account_code, external_account_id').eq('connection_id', connectionId),
+    ]);
+    const accData = await accRes.json();
+    if (!accRes.ok) throw new Error(accData.error || 'Could not load your Xero accounts.');
+    const xeroAccounts = accData.accounts || [];
+    const existingMap = {}; (mapRes.data || []).forEach(m => existingMap[m.bk_account_code] = m.external_account_id);
+
+    fieldsEl.innerHTML = XERO_MAP_CODES.map(f => `
+      <div class="form-group" style="margin-bottom:12px">
+        <label>${esc(f.code)} — ${esc(f.label)}</label>
+        <select id="xero-map-${f.code}">
+          <option value="">— not mapped —</option>
+          ${xeroAccounts.map(a => `<option value="${esc(a.code)}" ${existingMap[f.code] === a.code ? 'selected' : ''}>${esc(a.code)} — ${esc(a.name)}</option>`).join('')}
+        </select>
+      </div>`).join('');
+    document.getElementById('xeroMapSaveBtn').disabled = false;
+  } catch (e) {
+    fieldsEl.innerHTML = '';
+    errEl.textContent = e.message || 'Something went wrong.';
+    errEl.style.display = 'block';
+  }
+}
+
+async function saveXeroAccountMap(connectionId) {
+  const errEl = document.getElementById('xeroMapError');
+  errEl.style.display = 'none';
+  const btn = document.getElementById('xeroMapSaveBtn');
+  btn.disabled = true; btn.textContent = 'Saving…';
+
+  const rows = XERO_MAP_CODES.map(f => {
+    const v = document.getElementById(`xero-map-${f.code}`).value;
+    return v ? { connection_id: connectionId, company_id: company.id, bk_account_code: f.code, external_account_id: v } : null;
+  }).filter(Boolean);
+
+  await sb.from('payroll_integration_account_map').delete().eq('connection_id', connectionId);
+  const { error } = rows.length ? await sb.from('payroll_integration_account_map').insert(rows) : { error: null };
+
+  btn.disabled = false; btn.textContent = 'Save Mapping';
+  if (error) { errEl.textContent = error.message; errEl.style.display = 'block'; return; }
+  document.getElementById('xeroMapModalOverlay').remove();
+}
+
+// After the Xero OAuth redirect lands back here (?xero=connected|error&xero_message=...)
+function handleXeroReturn() {
+  const params = new URLSearchParams(window.location.search);
+  const xeroStatus = params.get('xero');
+  if (!xeroStatus) return;
+  const message = params.get('xero_message') || '';
+  alert(xeroStatus === 'connected' ? `Xero: ${message}` : `Xero connection failed: ${message}`);
+  params.delete('xero'); params.delete('xero_message');
+  const newSearch = params.toString();
+  window.history.replaceState({}, '', window.location.pathname + (newSearch ? '?' + newSearch : ''));
+  showSection('integrations');
 }
 
 const SA_BANKS = ['FNB', 'Standard Bank', 'ABSA', 'Nedbank', 'Capitec', 'Investec', 'TymeBank', 'Bidvest Bank'];
