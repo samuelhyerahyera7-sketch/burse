@@ -1,5 +1,6 @@
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
 import { getXeroConnection, xeroFetch } from '../_shared/xero.ts';
+import { getQuickBooksConnection, qboFetch } from '../_shared/quickbooks.ts';
 import {
   calculateOnceOffPaye,
   calculateUIF,
@@ -188,6 +189,7 @@ Deno.serve(async (req) => {
         // fail because the sibling product hasn't been set up.
         await postPayrollJournalEntry(sb, run, payslips).catch((e) => console.error('bookkeeping auto-post skipped:', e));
         await pushXeroJournalForRun(sb, run, payslips).catch((e) => console.error('Xero auto-push skipped:', e));
+        await pushQuickBooksJournalForRun(sb, run, payslips).catch((e) => console.error('QuickBooks auto-push skipped:', e));
 
         return json({ ok: true, payslip_count: payslips.length });
       }
@@ -201,6 +203,16 @@ Deno.serve(async (req) => {
         await requireOwnedCompany(run.company_id);
         const { data: payslips } = await sb.from('payroll_payslips').select('*').eq('run_id', run_id);
         const result = await pushXeroJournalForRun(sb, run, payslips ?? [], { force: true });
+        return json(result);
+      }
+
+      case 'push_quickbooks_journal': {
+        const { run_id } = body;
+        const { data: run, error: runErr } = await sb.from('payroll_runs').select('*').eq('id', run_id).single();
+        if (runErr || !run) return json({ error: 'Run not found' }, 404);
+        await requireOwnedCompany(run.company_id);
+        const { data: payslips } = await sb.from('payroll_payslips').select('*').eq('run_id', run_id);
+        const result = await pushQuickBooksJournalForRun(sb, run, payslips ?? [], { force: true });
         return json(result);
       }
 
@@ -664,6 +676,87 @@ async function pushXeroJournalForRun(sb: any, run: any, payslips: any[], opts: {
   await sb.from('payroll_integration_connections').update({ status: 'connected', last_error: null, last_sync_at: new Date().toISOString() }).eq('id', xero.connectionId);
 
   return { pushed: true, xero_manual_journal_id: journalId };
+}
+
+// Same derivation as pushXeroJournalForRun, retargeted to QuickBooks Online's
+// JournalEntry shape: each line needs an explicit PostingType ("Debit" or
+// "Credit") and an unsigned Amount, and AccountRef.value is QuickBooks'
+// internal Account.Id (not an account code/number the way Xero uses).
+async function pushQuickBooksJournalForRun(sb: any, run: any, payslips: any[], opts: { force?: boolean } = {}) {
+  const qbo = await getQuickBooksConnection(sb, run.company_id);
+  if (!qbo) {
+    if (opts.force) return { pushed: false, error: 'QuickBooks is not connected for this company.' };
+    return;
+  }
+
+  const { data: existing } = await sb.from('payroll_quickbooks_journal_pushes').select('id').eq('run_id', run.id).eq('connection_id', qbo.connectionId).maybeSingle();
+  if (existing) return opts.force ? { pushed: false, error: 'This run has already been pushed to QuickBooks.' } : undefined;
+
+  const { data: map } = await sb.from('payroll_integration_account_map').select('bk_account_code, external_account_id').eq('connection_id', qbo.connectionId);
+  const qboAccountId = (bkCode: string) => map?.find((m: { bk_account_code: string }) => m.bk_account_code === bkCode)?.external_account_id;
+
+  const sum = (key: string) => round2(payslips.reduce((s, p) => s + Number(p[key] || 0), 0));
+  const grossPay = sum('gross_pay');
+  const uifEmployer = sum('uif_employer');
+  const uifEmployee = sum('uif_employee');
+  const sdlEmployer = sum('sdl_employer');
+  const paye = sum('paye');
+  const eti = sum('eti_employer');
+  const retirement = sum('retirement_contribution');
+  const otherDeductions = sum('other_deductions');
+  const loanRepayment = sum('loan_repayment');
+  const netPay = sum('net_pay');
+
+  const lines: Array<{ Amount: number; DetailType: string; JournalEntryLineDetail: { PostingType: string; AccountRef: { value: string } }; Description: string }> = [];
+  const unmapped = new Set<string>();
+  const push = (code: string, amount: number, description: string) => {
+    if (round2(amount) === 0) return;
+    const acctId = qboAccountId(code);
+    if (!acctId) { unmapped.add(code); return; }
+    lines.push({
+      Amount: Math.abs(round2(amount)), DetailType: 'JournalEntryLineDetail',
+      JournalEntryLineDetail: { PostingType: amount > 0 ? 'Debit' : 'Credit', AccountRef: { value: acctId } },
+      Description: description,
+    });
+  };
+
+  push('5000', grossPay - eti, 'Salaries & wages');
+  push('5100', uifEmployer, 'Employer UIF contribution');
+  push('5200', sdlEmployer, 'Employer SDL contribution');
+  push('2100', -round2(paye - eti), 'PAYE payable (net of ETI)');
+  push('2200', -round2(uifEmployee + uifEmployer), 'UIF payable');
+  push('2300', -sdlEmployer, 'SDL payable');
+  push('2600', -retirement, 'Retirement fund payable');
+  push('2700', -otherDeductions, 'Other payroll deductions payable');
+  push('1200', -loanRepayment, 'Staff loan repayments');
+  push('2500', -netPay, 'Net pay payable');
+
+  if (unmapped.size > 0) {
+    const msg = `QuickBooks push skipped for run ${run.id} — no account mapping for: ${[...unmapped].join(', ')}. Map these in Integrations → QuickBooks.`;
+    await sb.from('payroll_integration_connections').update({ last_error: msg }).eq('id', qbo.connectionId);
+    return opts.force ? { pushed: false, error: msg } : undefined;
+  }
+  if (lines.length < 2) return opts.force ? { pushed: false, error: 'Nothing to push for this run.' } : undefined;
+
+  const res = await qboFetch(qbo.accessToken, qbo.realmId, '/journalentry', {
+    method: 'POST',
+    body: JSON.stringify({ TxnDate: run.pay_date, PrivateNote: `Payroll — ${run.period_start} to ${run.period_end}`, Line: lines }),
+  });
+  if (!res.ok) {
+    const errBody = await res.text().catch(() => '');
+    const msg = `QuickBooks rejected the journal push (${res.status}): ${errBody.slice(0, 300)}`;
+    await sb.from('payroll_integration_connections').update({ status: 'error', last_error: msg }).eq('id', qbo.connectionId);
+    if (opts.force) return { pushed: false, error: msg };
+    console.error(msg);
+    return;
+  }
+  const data = await res.json().catch(() => ({}));
+  const journalId = data?.JournalEntry?.Id ?? null;
+
+  await sb.from('payroll_quickbooks_journal_pushes').insert({ run_id: run.id, connection_id: qbo.connectionId, qbo_journal_entry_id: journalId });
+  await sb.from('payroll_integration_connections').update({ status: 'connected', last_error: null, last_sync_at: new Date().toISOString() }).eq('id', qbo.connectionId);
+
+  return { pushed: true, qbo_journal_entry_id: journalId };
 }
 
 class HttpError extends Error {
