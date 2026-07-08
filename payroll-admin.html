@@ -383,6 +383,7 @@
         <div class="subtab-panel active" id="reportpanel-emp201">
           <div class="card">
             <div class="card-header"><div class="card-title">Monthly reconciliation (EMP201)</div></div>
+            <div class="info-box" id="emp201NoRunsHint" style="display:none">EMP201 is calculated from an <strong>approved</strong> pay run — draft runs aren't included since their figures can still change. <a onclick="showSection('payroll')" style="color:#1d4ed8;cursor:pointer;font-weight:700">Approve a pay run</a> first, then come back here.</div>
             <div class="form-row">
               <div class="form-group"><label>Select approved pay run</label><select id="reportRunSelect"><option value="">— choose a run —</option></select></div>
               <div class="form-group" style="display:flex;align-items:flex-end"><button class="btn-primary" onclick="loadEmp201()">Generate EMP201</button></div>
@@ -612,6 +613,25 @@
         </div>
       </section>
 
+    </div>
+  </div>
+</div>
+
+<!-- ADJUST LEAVE MODAL -->
+<div class="modal-overlay" id="adjustLeaveModal" hidden>
+  <div class="modal-box" style="max-width:440px">
+    <button class="modal-close" onclick="closeModal('adjustLeaveModal')">✕</button>
+    <h2 id="adjLeaveTitle">Adjust leave</h2>
+    <div class="error-box" id="adjustLeaveError"></div>
+    <input type="hidden" id="adj-leave-id">
+    <div class="form-row">
+      <div class="form-group"><label>Entitled days</label><input type="number" id="adj-leave-entitled" min="0" step="0.5"></div>
+      <div class="form-group"><label>Taken days</label><input type="number" id="adj-leave-taken" min="0" step="0.5"></div>
+    </div>
+    <div class="form-group" style="margin-bottom:14px"><label>Reason <span style="font-weight:400;color:var(--soft)">(recorded in the audit trail)</span></label><input id="adj-leave-reason" placeholder="e.g. Carried over 3 days from last cycle"></div>
+    <div class="modal-actions">
+      <button class="btn-outline" onclick="closeModal('adjustLeaveModal')">Cancel</button>
+      <button class="btn-primary" onclick="submitAdjustLeave()" id="submitAdjustLeaveBtn">Save Adjustment</button>
     </div>
   </div>
 </div>
@@ -2022,7 +2042,7 @@ async function loadLeaveBalances() {
     wrap.innerHTML = '<div class="empty">No leave balances yet. Click "Recalculate accruals" to generate them.</div>';
     return;
   }
-  wrap.innerHTML = `<table><thead><tr><th>Employee</th><th>Leave type</th><th>Cycle start</th><th>Entitled</th><th>Taken</th><th>Balance</th></tr></thead><tbody>
+  wrap.innerHTML = `<table><thead><tr><th>Employee</th><th>Leave type</th><th>Cycle start</th><th>Entitled</th><th>Taken</th><th>Balance</th><th></th></tr></thead><tbody>
     ${balances.map(b => `<tr>
       <td>${esc(nameOf(b.staff_id))}</td>
       <td style="text-transform:capitalize">${b.leave_type.replace('_',' ')}</td>
@@ -2030,8 +2050,53 @@ async function loadLeaveBalances() {
       <td>${Number(b.entitled_days).toFixed(2)}</td>
       <td>${Number(b.taken_days).toFixed(2)}</td>
       <td><strong>${(Number(b.entitled_days)-Number(b.taken_days)).toFixed(2)}</strong></td>
+      <td>${isOwner ? `<button type="button" class="btn-outline btn-sm" onclick='openAdjustLeaveModal(${JSON.stringify({ id: b.id, name: nameOf(b.staff_id), leaveType: b.leave_type, entitled: Number(b.entitled_days), taken: Number(b.taken_days) })})'>Adjust</button>` : ''}</td>
     </tr>`).join('')}
   </tbody></table>`;
+}
+
+function openAdjustLeaveModal(b) {
+  document.getElementById('adj-leave-id').value = b.id;
+  document.getElementById('adjLeaveTitle').textContent = `Adjust ${b.name}'s ${b.leaveType.replace('_',' ')} leave`;
+  document.getElementById('adj-leave-entitled').value = b.entitled;
+  document.getElementById('adj-leave-taken').value = b.taken;
+  document.getElementById('adj-leave-reason').value = '';
+  document.getElementById('adjustLeaveError').style.display = 'none';
+  document.getElementById('adjustLeaveModal').hidden = false;
+}
+
+async function submitAdjustLeave() {
+  const errEl = document.getElementById('adjustLeaveError');
+  errEl.style.display = 'none';
+  const id = document.getElementById('adj-leave-id').value;
+  const entitled = parseFloat(document.getElementById('adj-leave-entitled').value);
+  const taken = parseFloat(document.getElementById('adj-leave-taken').value);
+  const reason = val('adj-leave-reason');
+  if (isNaN(entitled) || entitled < 0 || isNaN(taken) || taken < 0) {
+    errEl.textContent = 'Entitled and taken days must both be zero or more.'; errEl.style.display = 'block'; return;
+  }
+  if (!reason) { errEl.textContent = 'A reason is required — it\'s recorded in the audit trail.'; errEl.style.display = 'block'; return; }
+
+  const btn = document.getElementById('submitAdjustLeaveBtn');
+  btn.disabled = true; btn.textContent = 'Saving…';
+  const { data: before } = await sb.from('payroll_leave_balances').select('entitled_days, taken_days, staff_id, leave_type').eq('id', id).single();
+  const { error } = await sb.from('payroll_leave_balances').update({ entitled_days: entitled, taken_days: taken, updated_at: new Date().toISOString() }).eq('id', id);
+  btn.disabled = false; btn.textContent = 'Save Adjustment';
+  if (error) { errEl.textContent = error.message; errEl.style.display = 'block'; return; }
+
+  await sb.from('payroll_audit_log').insert({
+    company_id: company.id,
+    actor_id: session.user.id,
+    action: 'leave_balance_adjusted',
+    meta: {
+      staff_id: before?.staff_id, leave_type: before?.leave_type, reason,
+      entitled_before: before?.entitled_days, entitled_after: entitled,
+      taken_before: before?.taken_days, taken_after: taken,
+    },
+  });
+
+  closeModal('adjustLeaveModal');
+  loadLeaveBalances();
 }
 
 async function runLeaveAccrual() {
@@ -2090,6 +2155,7 @@ function populateReportRunSelect() {
   sel.innerHTML = '<option value="">— choose a run —</option>' + finalized.map(r => `<option value="${r.id}">${r.period_start} – ${r.period_end}</option>`).join('');
   const costSel = document.getElementById('costReportRunSelect');
   costSel.innerHTML = '<option value="">— choose a run —</option>' + runsCache.map(r => `<option value="${r.id}">${r.period_start} – ${r.period_end}</option>`).join('');
+  document.getElementById('emp201NoRunsHint').style.display = finalized.length === 0 ? 'block' : 'none';
 }
 
 function switchReportTab(name) {
@@ -2173,6 +2239,7 @@ async function loadAuditTrail() {
     integration_connected: 'Live connection added',
     integration_synced: 'Live connection synced',
     staff_self_updated_details: 'Employee updated their own details',
+    leave_balance_adjusted: 'Leave balance manually adjusted',
   };
   wrap.innerHTML = `<table><thead><tr><th>When</th><th>Action</th><th>Details</th></tr></thead><tbody>
     ${data.map(a => `<tr${a.action === 'staff_self_updated_details' && a.meta?.bank_changed ? ' style="background:#fef3e2"' : ''}>
@@ -2195,7 +2262,7 @@ function auditMetaSummary(meta) {
 async function loadEmp201() {
   const runId = document.getElementById('reportRunSelect').value;
   const wrap = document.getElementById('emp201Wrap');
-  if (!runId) { wrap.innerHTML = ''; return; }
+  if (!runId) { wrap.innerHTML = '<div class="empty">Choose an approved pay run above, then click Generate EMP201.</div>'; return; }
   wrap.innerHTML = '<div class="loading">Calculating…</div>';
   try {
     const r = await callEngine('emp201_summary', { run_id: runId });
@@ -2614,18 +2681,18 @@ const MIG_PROVIDERS = [
 // the auto-mapping heuristic — a normalised (lowercase, alphanumeric-only)
 // comparison against each imported column header.
 const MIG_FIELDS = [
-  { key: 'first_name', label: 'First Name', group: 'Identity', aliases: ['firstname','first','name1','givenname'] },
+  { key: 'first_name', label: 'First Name', group: 'Identity', aliases: ['firstname','first','name1','givenname','forename','forenames','initials'] },
   { key: 'last_name', label: 'Last Name / Surname', group: 'Identity', aliases: ['lastname','surname','familyname'] },
   { key: 'full_name', label: 'Full Name (if not split)', group: 'Identity', aliases: ['fullname','name','employeename'] },
-  { key: 'employee_number', label: 'Employee Number', group: 'Identity', required: true, aliases: ['employeenumber','employeecode','empno','empid','payrollnumber','staffnumber','personnelnumber'] },
-  { key: 'id_number', label: 'SA ID Number', group: 'Identity', aliases: ['idnumber','idno','nationalid','said'] },
-  { key: 'tax_number', label: 'Tax Number', group: 'Identity', aliases: ['taxnumber','taxno','incometaxnumber','sarsreference'] },
+  { key: 'employee_number', label: 'Employee Number', group: 'Identity', required: true, aliases: ['employeenumber','employeecode','empno','empid','payrollnumber','staffnumber','personnelnumber','employeeref','employeereference','payrollid'] },
+  { key: 'id_number', label: 'SA ID Number', group: 'Identity', aliases: ['idnumber','idno','nationalid','said','rsaid','rsaidnumber'] },
+  { key: 'tax_number', label: 'Tax Number', group: 'Identity', aliases: ['taxnumber','taxno','incometaxnumber','sarsreference','taxref','taxreferencenumber'] },
   { key: 'email', label: 'Email', group: 'Identity', aliases: ['email','emailaddress'] },
   { key: 'phone', label: 'Phone', group: 'Identity', aliases: ['phone','cell','cellphone','mobile','telephone'] },
-  { key: 'job_title', label: 'Job Title', group: 'Employment', aliases: ['jobtitle','position','designation','role'] },
+  { key: 'job_title', label: 'Job Title', group: 'Employment', aliases: ['jobtitle','position','designation','role','occupation'] },
   { key: 'department', label: 'Department / Cost Centre', group: 'Employment', aliases: ['department','costcentre','costcenter','division','branch'] },
   { key: 'employment_type', label: 'Employment Type', group: 'Employment', aliases: ['employmenttype','contracttype'] },
-  { key: 'start_date', label: 'Start Date', group: 'Employment', required: true, aliases: ['startdate','employmentdate','datestarted','engagementdate','hiredate'] },
+  { key: 'start_date', label: 'Start Date', group: 'Employment', required: true, aliases: ['startdate','employmentdate','datestarted','engagementdate','hiredate','dateofappointment','appointmentdate'] },
   { key: 'pay_frequency', label: 'Pay Frequency', group: 'Employment', aliases: ['payfrequency','frequency'] },
   { key: 'basic_salary', label: 'Basic Salary', group: 'Compensation', required: true, aliases: ['basicsalary','salary','basicpay','monthlysalary'] },
   { key: 'travel_allowance', label: 'Travel Allowance', group: 'Compensation', aliases: ['travelallowance','carallowance'] },
@@ -2918,15 +2985,24 @@ function renderWizStep3() {
   zone.addEventListener('drop', e => { const f = e.dataTransfer.files[0]; if (f) handleWizFile(f); });
 }
 
+function loadScript(src) {
+  return new Promise((resolve, reject) => {
+    const s = document.createElement('script');
+    s.src = src;
+    s.onload = resolve; s.onerror = () => reject(new Error(`load failed: ${src}`));
+    document.head.appendChild(s);
+  });
+}
+
+// Vendored same-origin first (some networks block third-party CDNs outright),
+// falling back to the CDN copy so this keeps working even if the local file
+// is ever missing from a deploy.
 function loadSheetJS() {
   if (window.XLSX) return Promise.resolve();
   if (window.__xlsxLoading) return window.__xlsxLoading;
-  window.__xlsxLoading = new Promise((resolve, reject) => {
-    const s = document.createElement('script');
-    s.src = 'https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js';
-    s.onload = resolve; s.onerror = () => reject(new Error('Could not load the Excel parser. Try a CSV export instead.'));
-    document.head.appendChild(s);
-  });
+  window.__xlsxLoading = loadScript('vendor/xlsx.full.min.js')
+    .catch(() => loadScript('https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js'))
+    .catch(() => { throw new Error('Could not load the Excel parser. Try a CSV export instead.'); });
   return window.__xlsxLoading;
 }
 
