@@ -6,23 +6,30 @@
   <title>Tax Certificate — Burse Payroll</title>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
   <style>
-    * { box-sizing: border-box; margin:0; padding:0; }
+    * { box-sizing: border-box; margin:0; padding:0; overflow-wrap: break-word; }
     body { font-family:'Inter',sans-serif; background:#fff; color:#0e1c40; padding:0 0 40px; }
     .topnav { display:flex; align-items:center; gap:16px; padding:16px 20px; border-bottom:1px solid #e6eaf0; margin-bottom:28px; }
     .topnav .brand { font-size:1.2rem; font-weight:900; letter-spacing:-0.04em; text-decoration:none; color:#0e1c40; }
     .topnav .brand .b { color:#2ab3b3; }
     .topnav .back { margin-left:auto; font-size:0.85rem; font-weight:600; color:#3d5070; text-decoration:none; display:flex; align-items:center; gap:6px; }
     .topnav .back:hover { color:#0e1c40; }
-    .topnav .back svg { width:16px; height:16px; }
+    .topnav .back svg { width:16px; height:16px; flex-shrink:0; }
     .sheet { max-width:720px; margin:0 auto; background:#fff; border-radius:14px; padding:36px; box-shadow:0 1px 3px rgba(10,20,60,0.08); border:1px solid #e6eaf0; }
-    .top { display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:20px; border-bottom:2px solid #0e1c40; padding-bottom:18px; }
+    .top { display:flex; flex-wrap:wrap; justify-content:space-between; align-items:flex-start; gap:12px; margin-bottom:20px; border-bottom:2px solid #0e1c40; padding-bottom:18px; }
+    .top > div { min-width:0; }
+    .top > div:last-child { text-align:right; }
     .top h1 { font-size:1.2rem; font-weight:900; }
     .top .b { color:#2ab3b3; }
     .top p { font-size:0.78rem; color:#7a8fb0; margin-top:2px; }
     .notice { background:#eef4ff; border:1px solid #c7d9fb; color:#1d4ed8; font-size:0.78rem; line-height:1.55; padding:12px 15px; border-radius:9px; margin-bottom:22px; }
     .meta { display:grid; grid-template-columns:1fr 1fr; gap:6px 24px; font-size:0.82rem; margin-bottom:20px; }
-    .meta div span:first-child { color:#7a8fb0; }
-    .meta div { display:flex; justify-content:space-between; }
+    .meta div span:first-child { color:#7a8fb0; padding-right:10px; }
+    .meta div span:last-child { text-align:right; min-width:0; }
+    .meta div { display:flex; justify-content:space-between; min-width:0; }
+    @media (max-width:520px) {
+      .sheet { padding:20px; }
+      .meta { grid-template-columns:1fr; }
+    }
     h2.section { font-size:0.75rem; font-weight:700; text-transform:uppercase; letter-spacing:0.06em; color:#7a8fb0; margin:22px 0 8px; }
     table { width:100%; border-collapse:collapse; font-size:0.85rem; }
     td { padding:7px 0; border-bottom:1px solid #eef1f6; vertical-align:top; }
