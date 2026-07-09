@@ -473,9 +473,19 @@
       try {
         if (currentMode === 'signup') {
           btn.textContent = 'Creating account...';
-          const { error } = await withTimeout(sb.auth.signUp({ email, password }));
+          const { data, error } = await withTimeout(sb.auth.signUp({ email, password }));
           if (error) {
             errorMsg.textContent = error.message;
+            errorMsg.style.display = 'block';
+            return;
+          }
+          // Supabase deliberately returns no error for an email that's
+          // already registered (to avoid leaking which emails exist) — the
+          // only signal is an empty identities array on the returned user.
+          // Without this check we'd wrongly tell an existing user to go
+          // check their email for a confirmation that was never sent.
+          if (data?.user && Array.isArray(data.user.identities) && data.user.identities.length === 0) {
+            errorMsg.textContent = 'An account with this email already exists. Log in instead, or use "Forgot password" if you don\'t remember it.';
             errorMsg.style.display = 'block';
             return;
           }
