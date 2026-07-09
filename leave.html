@@ -236,7 +236,7 @@
       const [
         { data: balances }, { data: requests }, { data: payslips },
         { data: advanceReqs }, { data: overtimeReqs }, { data: clockEvents },
-        { data: announcements }, { data: documents },
+        { data: announcements }, { data: documents }, { data: expenseClaims },
       ] = await Promise.all([
         sb.from('payroll_leave_balances').select('*').eq('staff_id', staff.id).order('cycle_start', { ascending: false }),
         sb.from('payroll_leave_requests').select('*').eq('staff_id', staff.id).order('requested_at', { ascending: false }),
@@ -246,6 +246,7 @@
         sb.from('payroll_clock_events').select('*').eq('staff_id', staff.id).order('occurred_at', { ascending: false }).limit(30),
         sb.from('payroll_announcements').select('*').eq('company_id', staff.company_id).order('created_at', { ascending: false }).limit(10),
         sb.from('payroll_staff_documents').select('*').eq('staff_id', staff.id).order('uploaded_at', { ascending: false }),
+        sb.from('payroll_expense_claims').select('*').eq('staff_id', staff.id).order('requested_at', { ascending: false }),
       ]);
 
       dashData = { balances, requests, payslips, advanceReqs, overtimeReqs, clockEvents, announcements, documents };
@@ -453,6 +454,32 @@
           </div>
 
           <div class="card">
+            <h2>Submit an expense or travel claim</h2>
+            <div class="error-box" id="expError"></div>
+            <div class="form-row">
+              <div class="form-group"><label>Type</label><select id="exp-type"><option value="expense">Expense</option><option value="travel">Travel</option></select></div>
+              <div class="form-group"><label>Amount (R)</label><input type="number" min="0.01" step="0.01" id="exp-amount"></div>
+            </div>
+            <div class="form-row">
+              <div class="form-group"><label>Date</label><input type="date" id="exp-date"></div>
+              <div class="form-group"><label>Description</label><input id="exp-desc"></div>
+            </div>
+            <button class="btn" id="submitExpBtn" onclick="submitExpenseClaim()">Submit Claim</button>
+          </div>
+          <div class="card">
+            <h2>Your expense &amp; travel claims</h2>
+            ${(!expenseClaims || expenseClaims.length === 0) ? '<div class="empty">No claims yet.</div>' : `
+            <table><thead><tr><th>Type</th><th>Description</th><th>Amount</th><th>Status</th></tr></thead><tbody>
+              ${expenseClaims.map(c => `<tr>
+                <td style="text-transform:capitalize">${c.claim_type}</td>
+                <td>${esc(c.description)}</td>
+                <td>${money(c.amount)}</td>
+                <td>${leaveBadge(c.status === 'approved' ? 'approved' : c.status === 'declined' ? 'rejected' : 'pending')}</td>
+              </tr>`).join('')}
+            </tbody></table>`}
+          </div>
+
+          <div class="card">
             <h2>Submit overtime</h2>
             <div class="error-box" id="otError"></div>
             <div class="form-row">
@@ -549,11 +576,113 @@
             <p style="font-size:0.82rem;color:var(--text-mid);margin-bottom:14px" id="bioHint">Use Face ID, Touch ID or your fingerprint to unlock your "stay logged in" session on this device, instead of typing your password each time.</p>
             <button class="btn-outline" id="bioToggleBtn" onclick="toggleBiometricUnlock()">Enable on this device</button>
           </div>
+
+          <div id="myRecordsWrap"><div class="loading">Loading…</div></div>
         </div>
       `;
       await loadSignDocsForEmployee();
       updateBiometricButtonState();
       await loadTeamData();
+      await loadMyRecords();
+    }
+
+    // ── My Records (emergency contacts, qualifications, skills, training, assets, history, HR events) ──
+    async function loadMyRecords() {
+      const wrap = document.getElementById('myRecordsWrap');
+      if (!wrap) return;
+      const [{ data: contacts }, { data: quals }, { data: skills }, { data: training }, { data: assets }, { data: history }, { data: events }] = await Promise.all([
+        sb.from('payroll_emergency_contacts').select('*').eq('staff_id', staff.id).order('created_at', { ascending: false }),
+        sb.from('payroll_qualifications').select('*').eq('staff_id', staff.id).order('year_completed', { ascending: false }),
+        sb.from('payroll_skills').select('*').eq('staff_id', staff.id).order('created_at', { ascending: false }),
+        sb.from('payroll_training_records').select('*').eq('staff_id', staff.id).order('completed_date', { ascending: false }),
+        sb.from('payroll_assets').select('*').eq('staff_id', staff.id).order('assigned_date', { ascending: false }),
+        sb.from('payroll_employment_history').select('*').eq('staff_id', staff.id).order('effective_date', { ascending: false }),
+        sb.from('payroll_hr_events').select('*').eq('staff_id', staff.id).order('event_date', { ascending: false }),
+      ]);
+
+      wrap.innerHTML = `
+        <div class="card"><h2>Emergency contacts</h2>
+          ${(contacts||[]).length ? `<table><thead><tr><th>Name</th><th>Relationship</th><th>Phone</th><th></th></tr></thead><tbody>
+            ${contacts.map(c => `<tr><td>${esc(c.name)}</td><td>${esc(c.relationship||'—')}</td><td>${esc(c.phone||'—')}</td><td><a class="btn-outline" onclick="deleteEmergencyContact('${c.id}')">Remove</a></td></tr>`).join('')}
+          </tbody></table>` : '<div class="empty">None added.</div>'}
+          <div class="form-row" style="margin-top:14px">
+            <div class="form-group"><label>Name</label><input id="ec-name"></div>
+            <div class="form-group"><label>Relationship</label><input id="ec-rel" placeholder="e.g. Spouse"></div>
+          </div>
+          <div class="form-group" style="margin-bottom:12px"><label>Phone</label><input id="ec-phone"></div>
+          <button class="btn-outline" onclick="addEmergencyContact()">Add Contact</button>
+        </div>
+
+        <div class="card"><h2>Qualifications</h2>
+          ${(quals||[]).length ? `<table><thead><tr><th>Qualification</th><th>Institution</th><th>Year</th></tr></thead><tbody>
+            ${quals.map(q => `<tr><td>${esc(q.qualification)}</td><td>${esc(q.institution||'—')}</td><td>${q.year_completed||'—'}</td></tr>`).join('')}
+          </tbody></table>` : '<div class="empty">None added.</div>'}
+          <div class="form-row" style="margin-top:14px">
+            <div class="form-group"><label>Qualification</label><input id="qual-name" placeholder="e.g. BCom Accounting"></div>
+            <div class="form-group"><label>Institution</label><input id="qual-inst"></div>
+          </div>
+          <div class="form-group" style="margin-bottom:12px"><label>Year completed</label><input type="number" id="qual-year"></div>
+          <button class="btn-outline" onclick="addQualification()">Add Qualification</button>
+        </div>
+
+        <div class="card"><h2>Skills</h2>
+          ${(skills||[]).length ? `<table><thead><tr><th>Skill</th><th>Proficiency</th></tr></thead><tbody>
+            ${skills.map(s => `<tr><td>${esc(s.skill)}</td><td style="text-transform:capitalize">${esc(s.proficiency||'—')}</td></tr>`).join('')}
+          </tbody></table>` : '<div class="empty">None added.</div>'}
+          <div class="form-row" style="margin-top:14px">
+            <div class="form-group"><label>Skill</label><input id="skill-name"></div>
+            <div class="form-group"><label>Proficiency</label>
+              <select id="skill-level"><option value="beginner">Beginner</option><option value="intermediate">Intermediate</option><option value="advanced">Advanced</option><option value="expert">Expert</option></select>
+            </div>
+          </div>
+          <button class="btn-outline" onclick="addSkill()">Add Skill</button>
+        </div>
+
+        <div class="card"><h2>Training &amp; certificates</h2>
+          ${(training||[]).length ? `<table><thead><tr><th>Course</th><th>Completed</th><th>Expires</th></tr></thead><tbody>
+            ${training.map(t => `<tr><td>${esc(t.course_name)}</td><td>${t.completed_date||'—'}</td><td>${t.expiry_date||'—'}</td></tr>`).join('')}
+          </tbody></table>` : '<div class="empty">None recorded.</div>'}
+        </div>
+
+        <div class="card"><h2>Assets assigned to you</h2>
+          ${(assets||[]).length ? `<table><thead><tr><th>Asset</th><th>Assigned</th></tr></thead><tbody>
+            ${assets.map(a => `<tr><td>${esc(a.asset_name)}</td><td>${a.assigned_date}</td></tr>`).join('')}
+          </tbody></table>` : '<div class="empty">None assigned.</div>'}
+        </div>
+
+        <div class="card"><h2>Employment history</h2>
+          ${(history||[]).length ? `<table><thead><tr><th>Event</th><th>Date</th><th>Note</th></tr></thead><tbody>
+            ${history.map(h => `<tr><td style="text-transform:capitalize">${h.event_type.replace('_',' ')}</td><td>${h.effective_date}</td><td>${esc(h.note||'—')}</td></tr>`).join('')}
+          </tbody></table>` : '<div class="empty">None recorded.</div>'}
+        </div>
+      `;
+    }
+
+    async function addEmergencyContact() {
+      const name = document.getElementById('ec-name').value.trim();
+      if (!name) return;
+      await sb.from('payroll_emergency_contacts').insert({ staff_id: staff.id, company_id: staff.company_id, name, relationship: document.getElementById('ec-rel').value.trim() || null, phone: document.getElementById('ec-phone').value.trim() || null });
+      await loadMyRecords();
+    }
+    async function deleteEmergencyContact(id) {
+      await sb.from('payroll_emergency_contacts').delete().eq('id', id);
+      await loadMyRecords();
+    }
+    async function addQualification() {
+      const qualification = document.getElementById('qual-name').value.trim();
+      if (!qualification) return;
+      await sb.from('payroll_qualifications').insert({
+        staff_id: staff.id, company_id: staff.company_id, qualification,
+        institution: document.getElementById('qual-inst').value.trim() || null,
+        year_completed: parseInt(document.getElementById('qual-year').value) || null,
+      });
+      await loadMyRecords();
+    }
+    async function addSkill() {
+      const skill = document.getElementById('skill-name').value.trim();
+      if (!skill) return;
+      await sb.from('payroll_skills').insert({ staff_id: staff.id, company_id: staff.company_id, skill, proficiency: document.getElementById('skill-level').value });
+      await loadMyRecords();
     }
 
     // ── Team (manager approvals + delegation) ──
@@ -772,6 +901,26 @@
       switchTab('requests');
     }
 
+    async function submitExpenseClaim() {
+      const errEl = document.getElementById('expError');
+      errEl.style.display = 'none';
+      const claim_type = document.getElementById('exp-type').value;
+      const amount = parseFloat(document.getElementById('exp-amount').value);
+      const claim_date = document.getElementById('exp-date').value;
+      const description = document.getElementById('exp-desc').value.trim();
+      if (!claim_date) { errEl.textContent = 'Choose a date.'; errEl.style.display = 'block'; return; }
+      if (isNaN(amount) || amount <= 0) { errEl.textContent = 'Enter a valid amount.'; errEl.style.display = 'block'; return; }
+      if (!description) { errEl.textContent = 'Add a short description.'; errEl.style.display = 'block'; return; }
+
+      const btn = document.getElementById('submitExpBtn');
+      btn.disabled = true; btn.textContent = 'Submitting…';
+      const { error } = await sb.from('payroll_expense_claims').insert({ staff_id: staff.id, company_id: staff.company_id, claim_type, amount, claim_date, description });
+      btn.disabled = false; btn.textContent = 'Submit Claim';
+      if (error) { errEl.textContent = error.message; errEl.style.display = 'block'; return; }
+      await render();
+      switchTab('requests');
+    }
+
     function getLocationBestEffort() {
       return new Promise(resolve => {
         if (!navigator.geolocation) { resolve(null); return; }
@@ -817,7 +966,7 @@
       wrap.innerHTML = signDocsCache.map(d => {
         const sig = (mySigs || []).find(s => s.document_id === d.id);
         return `<div class="ann-item">
-          <div class="t">${esc(d.title)}</div>
+          <div class="t">${esc(d.title)} <span class="badge badge-gray" style="text-transform:capitalize">${(d.category||'document').replace('_',' ')}</span></div>
           <div class="b">${esc(d.description || '')}</div>
           <div class="d">${sig ? 'Signed ' + new Date(sig.signed_at).toLocaleString() : `<button class="btn-outline" style="margin-top:6px" onclick="openSignModal('${d.id}')">Review &amp; Sign</button>`}</div>
         </div>`;

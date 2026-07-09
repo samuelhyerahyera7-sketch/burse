@@ -32,11 +32,58 @@ Deno.serve(async (req) => {
       return json({ error: "The AI assistant isn't set up yet — ask your Burse administrator to configure it." }, 400);
     }
 
-    const { question } = await req.json();
+    const { question, company_id } = await req.json();
     if (!question || typeof question !== 'string' || !question.trim()) return json({ error: 'Ask a question first.' }, 400);
     if (question.length > 500) return json({ error: 'Keep your question under 500 characters.' }, 400);
 
     const sb = createClient(Deno.env.get('SUPABASE_URL')!, Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!);
+
+    // Owner asking about the whole company (e.g. "who has birthdays this
+    // month", "who has overtime pending") gets a company-wide HR context
+    // instead of the personal payslip context below.
+    if (company_id) {
+      const { data: company } = await sb.from('payroll_companies').select('id, name, owner_id').eq('id', company_id).maybeSingle();
+      if (!company || company.owner_id !== uid) return json({ error: 'Not authorised for this company.' }, 403);
+
+      const [{ data: staff }, { data: pendingOvertime }, { data: pendingLeave }, { data: pendingExpenses }, { data: pendingAdvances }] = await Promise.all([
+        sb.from('payroll_staff').select('full_name, job_title, date_of_birth, probation_end_date, contract_end_date, active').eq('company_id', company_id).eq('active', true),
+        sb.from('payroll_overtime_requests').select('staff_id, work_date, hours, payroll_staff(full_name)').eq('company_id', company_id).eq('status', 'pending'),
+        sb.from('payroll_leave_requests').select('staff_id, leave_type, start_date, end_date, payroll_staff(full_name)').in('staff_id', (staff || []).map((s: any) => s.id)).eq('status', 'pending'),
+        sb.from('payroll_expense_claims').select('staff_id, claim_type, amount, payroll_staff(full_name)').eq('company_id', company_id).eq('status', 'pending'),
+        sb.from('payroll_advance_requests').select('staff_id, amount, payroll_staff(full_name)').eq('company_id', company_id).eq('status', 'pending'),
+      ]);
+
+      const context = {
+        company_name: company.name,
+        active_employees: staff || [],
+        pending_overtime_requests: pendingOvertime || [],
+        pending_leave_requests: pendingLeave || [],
+        pending_expense_claims: pendingExpenses || [],
+        pending_advance_requests: pendingAdvances || [],
+        today: new Date().toISOString().slice(0, 10),
+      };
+      const system = `You are Burse's HR/payroll assistant, helping the owner/manager of a South African company answer questions about their team.
+Rules:
+- Only use the JSON data provided below — never invent names or figures.
+- For birthday/probation/contract questions, compare dates against "today".
+- Keep answers short and to the point, formatted as a brief list when there are multiple results.
+- If the data doesn't answer the question, say so and suggest where in Burse they'd find it.
+
+Company data:
+${JSON.stringify(context)}`;
+
+      const aiRes = await fetch('https://api.anthropic.com/v1/messages', {
+        method: 'POST',
+        headers: { 'x-api-key': apiKey, 'anthropic-version': '2023-06-01', 'content-type': 'application/json' },
+        body: JSON.stringify({ model: 'claude-haiku-4-5-20251001', max_tokens: 500, system, messages: [{ role: 'user', content: question.trim() }] }),
+      });
+      if (!aiRes.ok) {
+        console.error('Anthropic API error:', aiRes.status, await aiRes.text().catch(() => ''));
+        return json({ error: 'The assistant is temporarily unavailable — try again shortly.' }, 502);
+      }
+      const aiData = await aiRes.json();
+      return json({ answer: aiData.content?.[0]?.text || "I couldn't work out an answer to that — try rephrasing." });
+    }
 
     const { data: staffRow } = await sb.from('payroll_staff').select('*').eq('user_id', uid).maybeSingle();
     if (!staffRow) return json({ error: "You're not linked to a Burse Payroll profile yet." }, 404);

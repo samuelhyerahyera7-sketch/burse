@@ -248,6 +248,7 @@
       <a class="nav-item" onclick="showSection('payroll')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg><span class="nav-label">Payroll</span></a>
       <a class="nav-item" onclick="showSection('payslips')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 17v-6a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v6"/><path d="M9 21h6"/><rect x="3" y="3" width="18" height="18" rx="2"/></svg><span class="nav-label">Payslips</span></a>
       <a class="nav-item" onclick="showSection('leave')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg><span class="nav-label">Leave</span></a>
+      <a class="nav-item" onclick="showSection('hr')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/><line x1="19" y1="8" x2="19" y2="14"/><line x1="16" y1="11" x2="22" y2="11"/></svg><span class="nav-label">HR</span></a>
       <a class="nav-item" onclick="showSection('announcements')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11l18-5v12L3 14v-3z"/><path d="M11.6 16.8a2 2 0 0 1-3.2 2.4L6 15"/></svg><span class="nav-label">Announcements</span></a>
       <a class="nav-item" onclick="showSection('reports')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg><span class="nav-label">Reports</span></a>
       <a class="nav-item" onclick="showSection('analytics')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg><span class="nav-label">Analytics</span></a>
@@ -309,6 +310,16 @@
           <div class="card-header"><div class="card-title">Pending requests</div><button class="btn-outline btn-sm" onclick="showSection('leave')">Go to Leave &amp; Requests</button></div>
           <div id="dashPendingWrap"><div class="loading">Loading…</div></div>
         </div>
+        <div class="card">
+          <div class="card-header"><div class="card-title">Ask about your team</div></div>
+          <p class="form-hint" style="margin-bottom:14px">e.g. "Who has birthdays this month?" or "Who has overtime pending?"</p>
+          <div class="chat-log" id="ownerChatLog" style="max-height:300px;overflow-y:auto;margin-bottom:14px"></div>
+          <div class="error-box" id="ownerChatError"></div>
+          <div class="form-row" style="grid-template-columns:1fr auto">
+            <div class="form-group"><input id="owner-chat-question" placeholder="Ask a question…" onkeydown="if(event.key==='Enter')askOwnerAssistant()"></div>
+            <div class="form-group"><button class="btn-primary" id="ownerAskBtn" onclick="askOwnerAssistant()">Ask</button></div>
+          </div>
+        </div>
       </section>
 
       <!-- MIGRATE & IMPORT -->
@@ -369,6 +380,7 @@
           <div class="subtab active" data-subtab="lr-leave" onclick="switchLeaveHubTab('lr-leave')">Leave</div>
           <div class="subtab" data-subtab="lr-advance" onclick="switchLeaveHubTab('lr-advance')">Advance Requests</div>
           <div class="subtab" data-subtab="lr-overtime" onclick="switchLeaveHubTab('lr-overtime')">Overtime</div>
+          <div class="subtab" data-subtab="lr-expenses" onclick="switchLeaveHubTab('lr-expenses')">Expenses &amp; Travel</div>
           <div class="subtab" data-subtab="lr-clock" onclick="switchLeaveHubTab('lr-clock')">Time &amp; Attendance</div>
         </div>
 
@@ -399,10 +411,90 @@
           </div>
         </div>
 
+        <div class="subtab-panel" id="leavehub-lr-expenses">
+          <div class="card">
+            <div class="card-header"><div class="card-title">Expense &amp; travel claims</div></div>
+            <div id="expenseClaimsWrap"><div class="loading">Loading…</div></div>
+          </div>
+        </div>
+
         <div class="subtab-panel" id="leavehub-lr-clock">
           <div class="card">
             <div class="card-header"><div class="card-title">Clock in / out log</div></div>
             <div id="clockLogWrap"><div class="loading">Loading…</div></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- HR -->
+      <section class="section" id="section-hr">
+        <div class="page-header"><h1>HR</h1><p>Departments, org structure, employee records and compliance.</p></div>
+        <div class="subtabs">
+          <div class="subtab active" data-subtab="hr-depts" onclick="switchHrTab('hr-depts')">Departments</div>
+          <div class="subtab" data-subtab="hr-org" onclick="switchHrTab('hr-org')">Org Chart</div>
+          <div class="subtab" data-subtab="hr-records" onclick="switchHrTab('hr-records')">Employee Records</div>
+          <div class="subtab" data-subtab="hr-compliance" onclick="switchHrTab('hr-compliance')">Compliance</div>
+          <div class="subtab" data-subtab="hr-templates" onclick="switchHrTab('hr-templates')">Document Templates</div>
+        </div>
+
+        <div class="subtab-panel active" id="hrpanel-hr-depts">
+          <div class="card">
+            <div class="card-header"><div class="card-title">Add a department</div></div>
+            <div class="form-row">
+              <div class="form-group"><label>Name</label><input id="dept-name" placeholder="e.g. Finance"></div>
+              <div class="form-group"><label>Cost centre code</label><input id="dept-cc" placeholder="e.g. CC-100"></div>
+            </div>
+            <div class="form-group"><label>Business unit <span style="font-weight:400;color:var(--soft)">(optional)</span></label><input id="dept-bu" placeholder="e.g. Retail Division"></div>
+            <div class="error-box" id="deptError"></div>
+            <button class="btn-teal btn-sm" id="addDeptBtn" onclick="addDepartment()">Add Department</button>
+          </div>
+          <div class="card">
+            <div class="card-header"><div class="card-title">Departments</div></div>
+            <div id="departmentsWrap"><div class="loading">Loading…</div></div>
+          </div>
+        </div>
+
+        <div class="subtab-panel" id="hrpanel-hr-org">
+          <div class="card">
+            <div class="card-header"><div class="card-title">Org chart</div></div>
+            <div id="orgChartWrap"><div class="loading">Loading…</div></div>
+          </div>
+        </div>
+
+        <div class="subtab-panel" id="hrpanel-hr-records">
+          <div class="card">
+            <div class="card-header"><div class="card-title">Employee Records</div></div>
+            <div class="form-group"><label>Employee</label><select id="hr-records-staff" onchange="loadEmployeeRecords()"><option value="">— choose an employee —</option></select></div>
+          </div>
+          <div id="employeeRecordsWrap"></div>
+        </div>
+
+        <div class="subtab-panel" id="hrpanel-hr-compliance">
+          <div class="card">
+            <div class="card-header"><div class="card-title">Compliance &amp; reminders</div></div>
+            <div id="complianceWrap"><div class="loading">Loading…</div></div>
+          </div>
+        </div>
+
+        <div class="subtab-panel" id="hrpanel-hr-templates">
+          <div class="card">
+            <div class="card-header"><div class="card-title">Create a template</div></div>
+            <div class="form-row">
+              <div class="form-group"><label>Name</label><input id="tpl-name" placeholder="e.g. Standard Employment Contract"></div>
+              <div class="form-group"><label>Category</label>
+                <select id="tpl-category"><option value="contract">Contract</option><option value="policy">Policy</option><option value="offer_letter">Offer Letter</option><option value="warning">Warning</option><option value="document">Other Document</option></select>
+              </div>
+            </div>
+            <div class="form-group">
+              <label>Body <span style="font-weight:400;color:var(--soft)">— use {{full_name}}, {{job_title}}, {{basic_salary}}, {{start_date}}, {{company_name}} as placeholders</span></label>
+              <textarea id="tpl-body" rows="8" placeholder="This letter confirms that {{full_name}} is employed as {{job_title}}..."></textarea>
+            </div>
+            <div class="error-box" id="tplError"></div>
+            <button class="btn-teal btn-sm" id="addTplBtn" onclick="addTemplate()">Save Template</button>
+          </div>
+          <div class="card">
+            <div class="card-header"><div class="card-title">Templates</div></div>
+            <div id="templatesWrap"><div class="loading">Loading…</div></div>
           </div>
         </div>
       </section>
@@ -698,6 +790,23 @@
   </div>
 </div>
 
+<!-- GENERATE DOCUMENT MODAL -->
+<div class="modal-overlay" id="genDocModal" hidden>
+  <div class="modal-box">
+    <button class="modal-close" onclick="closeModal('genDocModal')">✕</button>
+    <h2>Generate &amp; send for signing</h2>
+    <input type="hidden" id="gd-template-id">
+    <div class="form-group"><label>Employee</label><select id="gd-staff"></select></div>
+    <div class="form-group"><label>Title</label><input id="gd-title"></div>
+    <div class="form-group"><label>Preview</label><textarea id="gd-preview" rows="8"></textarea></div>
+    <div class="error-box" id="genDocError"></div>
+    <div class="modal-actions">
+      <button class="btn-outline" onclick="closeModal('genDocModal')">Cancel</button>
+      <button class="btn-primary" id="sendGenDocBtn" onclick="sendGeneratedDocument()">Send for Signing</button>
+    </div>
+  </div>
+</div>
+
 <!-- ADJUST LEAVE MODAL -->
 <div class="modal-overlay" id="adjustLeaveModal" hidden>
   <div class="modal-box" style="max-width:440px">
@@ -852,6 +961,14 @@
       <div class="form-group"><label>Manager <span style="font-weight:400;color:var(--soft)">(can approve this employee's requests)</span></label>
         <select id="s-manager"><option value="">— none —</option></select>
       </div>
+    </div>
+    <div class="form-row">
+      <div class="form-group"><label>Department</label><select id="s-department"><option value="">— none —</option></select></div>
+      <div class="form-group"></div>
+    </div>
+    <div class="form-row">
+      <div class="form-group"><label>Probation end date <span style="font-weight:400;color:var(--soft)">(optional)</span></label><input type="date" id="s-probation"></div>
+      <div class="form-group"><label>Contract end date <span style="font-weight:400;color:var(--soft)">(fixed-term only)</span></label><input type="date" id="s-contractend"></div>
     </div>
     <div class="form-group" style="margin-bottom:14px">
       <label>Other deductions <span style="font-weight:400;color:var(--soft)">(recurring — garnishee, loan repayment, union fee, etc.)</span></label>
@@ -1049,6 +1166,7 @@ function withTimeout(promise, timeoutMs = 15000) {
 let session = null;
 let company = null;
 let staffCache = [];
+let departmentsCache = [];
 let runsCache = [];
 let isOwner = false; // only set true once loadCompany() confirms real ownership
 
@@ -1098,7 +1216,7 @@ function showSection(name) {
   document.getElementById('section-' + name).classList.add('active');
   document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
   event?.target?.closest('.nav-item')?.classList.add('active');
-  const titles = { dashboard:'Dashboard', migrate:'Migrate & Import', employees:'Employees', payroll:'Payroll', payslips:'Payslips', leave:'Leave', announcements:'Announcements', reports:'Reports', analytics:'Analytics', bankfiles:'Bank Payment Files', integrations:'Integrations', accountants:'Accountant Access', settings:'Settings' };
+  const titles = { dashboard:'Dashboard', migrate:'Migrate & Import', employees:'Employees', payroll:'Payroll', payslips:'Payslips', leave:'Leave', hr:'HR', announcements:'Announcements', reports:'Reports', analytics:'Analytics', bankfiles:'Bank Payment Files', integrations:'Integrations', accountants:'Accountant Access', settings:'Settings' };
   document.getElementById('topbarTitle').textContent = titles[name];
   if (name === 'migrate') loadMigrationJobs();
   if (name === 'employees') loadStaff();
@@ -1106,6 +1224,7 @@ function showSection(name) {
   if (name === 'payslips') { populatePayslipsRunSelect(); }
   if (name === 'leave') { loadLeaveBalances(); loadLeaveRequests(); }
   if (name === 'announcements') loadAnnouncements();
+  if (name === 'hr') loadDepartments();
   if (name === 'reports') populateReportRunSelect();
   if (name === 'analytics') loadAnalytics();
   if (name === 'bankfiles') loadBankFiles();
@@ -1747,6 +1866,11 @@ function openStaffModal(id) {
   const mgrSel = document.getElementById('s-manager');
   mgrSel.innerHTML = '<option value="">— none —</option>' + staffCache.filter(x => x.id !== id).map(x => `<option value="${x.id}">${esc(x.full_name)}</option>`).join('');
   mgrSel.value = s?.manager_id || '';
+  const deptSel = document.getElementById('s-department');
+  deptSel.innerHTML = '<option value="">— none —</option>' + departmentsCache.map(d => `<option value="${d.id}">${esc(d.name)}</option>`).join('');
+  deptSel.value = s?.department_id || '';
+  document.getElementById('s-probation').value = s?.probation_end_date || '';
+  document.getElementById('s-contractend').value = s?.contract_end_date || '';
   document.getElementById('staffModal').hidden = false;
   updateEtiAgeWarning();
 
@@ -1811,6 +1935,9 @@ async function saveStaff() {
     medical_aid_dependants: parseInt(document.getElementById('s-medical').value || '0'),
     tax_number: val('s-taxnum') || null,
     manager_id: document.getElementById('s-manager').value || null,
+    department_id: document.getElementById('s-department').value || null,
+    probation_end_date: val('s-probation') || null,
+    contract_end_date: val('s-contractend') || null,
     other_deductions_json: collectDeductionRows(),
     bank_name: val('s-bankname') || null,
     bank_account_number: val('s-bankacc') || null,
@@ -2304,7 +2431,36 @@ function switchLeaveHubTab(name) {
   document.querySelectorAll('.subtab-panel').forEach(p => p.classList.toggle('active', p.id === 'leavehub-' + name));
   if (name === 'lr-advance') loadAdvanceRequests();
   if (name === 'lr-overtime') loadOvertimeRequests();
+  if (name === 'lr-expenses') loadExpenseClaims();
   if (name === 'lr-clock') loadClockLog();
+}
+
+async function loadExpenseClaims() {
+  const wrap = document.getElementById('expenseClaimsWrap');
+  if (!company) { wrap.innerHTML = '<div class="empty">Set up your company first.</div>'; return; }
+  const { data: staffIds } = await sb.from('payroll_staff').select('id, full_name').eq('company_id', company.id);
+  if (!staffIds || staffIds.length === 0) { wrap.innerHTML = '<div class="empty">No employees yet.</div>'; return; }
+  const ids = staffIds.map(s => s.id);
+  const { data: claims } = await sb.from('payroll_expense_claims').select('*').in('staff_id', ids).order('requested_at', { ascending: false });
+  const nameOf = id => staffIds.find(s => s.id === id)?.full_name || '—';
+
+  if (!claims || claims.length === 0) { wrap.innerHTML = '<div class="empty">No expense or travel claims yet.</div>'; return; }
+  wrap.innerHTML = `<table><thead><tr><th>Employee</th><th>Type</th><th>Description</th><th>Amount</th><th>Date</th><th>Status</th><th></th></tr></thead><tbody>
+    ${claims.map(c => `<tr>
+      <td>${esc(nameOf(c.staff_id))}</td>
+      <td style="text-transform:capitalize">${c.claim_type}</td>
+      <td>${esc(c.description)}</td>
+      <td>R ${Number(c.amount).toFixed(2)}</td>
+      <td>${c.claim_date}</td>
+      <td>${leaveStatusBadge(c.status === 'approved' ? 'approved' : c.status === 'declined' ? 'rejected' : 'pending')}</td>
+      <td>${(c.status === 'pending' && isOwner) ? `<a class="btn-outline btn-sm" onclick="decideExpenseClaim('${c.id}','approved')">Approve</a> <a class="btn-danger btn-sm" onclick="decideExpenseClaim('${c.id}','declined')">Decline</a>` : ''}</td>
+    </tr>`).join('')}
+  </tbody></table>`;
+}
+async function decideExpenseClaim(id, decision) {
+  const { error } = await sb.from('payroll_expense_claims').update({ status: decision, decided_at: new Date().toISOString(), decided_by: session.user.id }).eq('id', id);
+  if (error) { alert(error.message); return; }
+  await loadExpenseClaims();
 }
 
 async function loadAdvanceRequests() {
@@ -2467,6 +2623,297 @@ async function deleteSignDocument(id) {
   const { error } = await sb.from('payroll_sign_documents').delete().eq('id', id);
   if (error) { alert(error.message); return; }
   await loadSignDocuments();
+}
+
+// ── HR ──
+function switchHrTab(name) {
+  document.querySelectorAll('.subtab').forEach(t => t.classList.toggle('active', t.dataset.subtab === name));
+  document.querySelectorAll('.subtab-panel').forEach(p => p.classList.toggle('active', p.id === 'hrpanel-' + name));
+  if (name === 'hr-org') loadOrgChart();
+  if (name === 'hr-records') populateEmployeeRecordsSelect();
+  if (name === 'hr-compliance') loadCompliance();
+  if (name === 'hr-templates') loadTemplates();
+}
+
+async function loadDepartments() {
+  const wrap = document.getElementById('departmentsWrap');
+  if (!company) { wrap.innerHTML = '<div class="empty">Set up your company first.</div>'; return; }
+  const { data } = await sb.from('payroll_departments').select('*').eq('company_id', company.id).order('name');
+  departmentsCache = data || [];
+  if (departmentsCache.length === 0) { wrap.innerHTML = '<div class="empty">No departments yet.</div>'; return; }
+  wrap.innerHTML = `<table><thead><tr><th>Name</th><th>Cost centre</th><th>Business unit</th><th>Employees</th><th></th></tr></thead><tbody>
+    ${departmentsCache.map(d => `<tr>
+      <td>${esc(d.name)}</td>
+      <td>${esc(d.cost_centre_code || '—')}</td>
+      <td>${esc(d.business_unit || '—')}</td>
+      <td>${staffCache.filter(s => s.department_id === d.id).length}</td>
+      <td><a class="btn-danger btn-sm" onclick="deleteDepartment('${d.id}')">Delete</a></td>
+    </tr>`).join('')}
+  </tbody></table>`;
+}
+async function addDepartment() {
+  const errEl = document.getElementById('deptError');
+  errEl.style.display = 'none';
+  const name = val('dept-name');
+  if (!name) { errEl.textContent = 'A name is required.'; errEl.style.display = 'block'; return; }
+  const btn = document.getElementById('addDeptBtn');
+  btn.disabled = true; btn.textContent = 'Adding…';
+  const { error } = await sb.from('payroll_departments').insert({ company_id: company.id, name, cost_centre_code: val('dept-cc') || null, business_unit: val('dept-bu') || null });
+  btn.disabled = false; btn.textContent = 'Add Department';
+  if (error) { errEl.textContent = error.message; errEl.style.display = 'block'; return; }
+  document.getElementById('dept-name').value = ''; document.getElementById('dept-cc').value = ''; document.getElementById('dept-bu').value = '';
+  await loadDepartments();
+}
+async function deleteDepartment(id) {
+  if (!confirm('Delete this department? Employees assigned to it will be unassigned.')) return;
+  const { error } = await sb.from('payroll_departments').delete().eq('id', id);
+  if (error) { alert(error.message); return; }
+  await loadDepartments();
+}
+
+function loadOrgChart() {
+  const wrap = document.getElementById('orgChartWrap');
+  if (staffCache.length === 0) { wrap.innerHTML = '<div class="empty">No employees yet.</div>'; return; }
+  const byManager = {};
+  staffCache.forEach(s => { const k = s.manager_id || '__root__'; (byManager[k] = byManager[k] || []).push(s); });
+  function renderNode(s, depth) {
+    const reports = byManager[s.id] || [];
+    return `<div style="margin-left:${depth * 28}px;padding:8px 0;border-left:${depth ? '2px solid var(--border)' : 'none'};padding-left:${depth ? '14px' : '0'}">
+      <strong>${esc(s.full_name)}</strong>${s.job_title ? ` <span style="color:var(--soft);font-weight:400">— ${esc(s.job_title)}</span>` : ''}
+      ${reports.map(r => renderNode(r, depth + 1)).join('')}
+    </div>`;
+  }
+  const roots = byManager['__root__'] || [];
+  wrap.innerHTML = roots.length ? roots.map(r => renderNode(r, 0)).join('') : '<div class="empty">No manager relationships set up yet — assign managers from the Employees section.</div>';
+}
+
+function populateEmployeeRecordsSelect() {
+  const sel = document.getElementById('hr-records-staff');
+  const current = sel.value;
+  sel.innerHTML = '<option value="">— choose an employee —</option>' + staffCache.map(s => `<option value="${s.id}">${esc(s.full_name)}</option>`).join('');
+  sel.value = current;
+}
+
+async function loadEmployeeRecords() {
+  const staffId = document.getElementById('hr-records-staff').value;
+  const wrap = document.getElementById('employeeRecordsWrap');
+  if (!staffId) { wrap.innerHTML = ''; return; }
+  wrap.innerHTML = '<div class="loading">Loading…</div>';
+
+  const [{ data: quals }, { data: skills }, { data: training }, { data: assets }, { data: contacts }, { data: history }, { data: events }] = await Promise.all([
+    sb.from('payroll_qualifications').select('*').eq('staff_id', staffId).order('year_completed', { ascending: false }),
+    sb.from('payroll_skills').select('*').eq('staff_id', staffId).order('created_at', { ascending: false }),
+    sb.from('payroll_training_records').select('*').eq('staff_id', staffId).order('completed_date', { ascending: false }),
+    sb.from('payroll_assets').select('*').eq('staff_id', staffId).order('assigned_date', { ascending: false }),
+    sb.from('payroll_emergency_contacts').select('*').eq('staff_id', staffId).order('created_at', { ascending: false }),
+    sb.from('payroll_employment_history').select('*').eq('staff_id', staffId).order('effective_date', { ascending: false }),
+    sb.from('payroll_hr_events').select('*').eq('staff_id', staffId).order('event_date', { ascending: false }),
+  ]);
+
+  wrap.innerHTML = `
+    <div class="card"><div class="card-header"><div class="card-title">Qualifications</div></div>
+      ${(quals||[]).length ? `<table><thead><tr><th>Qualification</th><th>Institution</th><th>Year</th></tr></thead><tbody>
+        ${quals.map(q => `<tr><td>${esc(q.qualification)}</td><td>${esc(q.institution||'—')}</td><td>${q.year_completed||'—'}</td></tr>`).join('')}
+      </tbody></table>` : '<div class="empty">None recorded.</div>'}
+    </div>
+    <div class="card"><div class="card-header"><div class="card-title">Skills</div></div>
+      ${(skills||[]).length ? `<table><thead><tr><th>Skill</th><th>Proficiency</th></tr></thead><tbody>
+        ${skills.map(s => `<tr><td>${esc(s.skill)}</td><td style="text-transform:capitalize">${esc(s.proficiency||'—')}</td></tr>`).join('')}
+      </tbody></table>` : '<div class="empty">None recorded.</div>'}
+    </div>
+    <div class="card"><div class="card-header"><div class="card-title">Training records</div></div>
+      ${(training||[]).length ? `<table><thead><tr><th>Course</th><th>Provider</th><th>Completed</th><th>Expires</th></tr></thead><tbody>
+        ${training.map(t => `<tr><td>${esc(t.course_name)}</td><td>${esc(t.provider||'—')}</td><td>${t.completed_date||'—'}</td><td>${t.expiry_date||'—'}</td></tr>`).join('')}
+      </tbody></table>` : '<div class="empty">None recorded.</div>'}
+      <div class="form-row" style="margin-top:14px">
+        <div class="form-group"><label>Course name</label><input id="tr-course"></div>
+        <div class="form-group"><label>Provider</label><input id="tr-provider"></div>
+      </div>
+      <div class="form-row">
+        <div class="form-group"><label>Completed date</label><input type="date" id="tr-completed"></div>
+        <div class="form-group"><label>Expiry date</label><input type="date" id="tr-expiry"></div>
+      </div>
+      <button class="btn-outline btn-sm" onclick="addTrainingRecord('${staffId}')">Add Training Record</button>
+    </div>
+    <div class="card"><div class="card-header"><div class="card-title">Assets assigned</div></div>
+      ${(assets||[]).length ? `<table><thead><tr><th>Asset</th><th>Tag</th><th>Assigned</th><th>Returned</th></tr></thead><tbody>
+        ${assets.map(a => `<tr><td>${esc(a.asset_name)}</td><td>${esc(a.asset_tag||'—')}</td><td>${a.assigned_date}</td><td>${a.returned_date||'—'}</td></tr>`).join('')}
+      </tbody></table>` : '<div class="empty">None recorded.</div>'}
+      <div class="form-row" style="margin-top:14px">
+        <div class="form-group"><label>Asset name</label><input id="as-name" placeholder="e.g. MacBook Pro"></div>
+        <div class="form-group"><label>Asset tag</label><input id="as-tag"></div>
+      </div>
+      <button class="btn-outline btn-sm" onclick="addAsset('${staffId}')">Add Asset</button>
+    </div>
+    <div class="card"><div class="card-header"><div class="card-title">Emergency contacts</div></div>
+      ${(contacts||[]).length ? `<table><thead><tr><th>Name</th><th>Relationship</th><th>Phone</th></tr></thead><tbody>
+        ${contacts.map(c => `<tr><td>${esc(c.name)}</td><td>${esc(c.relationship||'—')}</td><td>${esc(c.phone||'—')}</td></tr>`).join('')}
+      </tbody></table>` : '<div class="empty">None recorded.</div>'}
+    </div>
+    <div class="card"><div class="card-header"><div class="card-title">Employment history</div></div>
+      ${(history||[]).length ? `<table><thead><tr><th>Event</th><th>Date</th><th>Note</th></tr></thead><tbody>
+        ${history.map(h => `<tr><td style="text-transform:capitalize">${h.event_type.replace('_',' ')}</td><td>${h.effective_date}</td><td>${esc(h.note||'—')}</td></tr>`).join('')}
+      </tbody></table>` : '<div class="empty">None recorded.</div>'}
+      <div class="form-row" style="margin-top:14px">
+        <div class="form-group"><label>Event type</label>
+          <select id="eh-type"><option value="salary_change">Salary change</option><option value="promotion">Promotion</option><option value="transfer">Transfer</option><option value="title_change">Title change</option></select>
+        </div>
+        <div class="form-group"><label>Effective date</label><input type="date" id="eh-date"></div>
+      </div>
+      <div class="form-group"><label>Note</label><input id="eh-note" placeholder="e.g. Promoted to Senior Analyst"></div>
+      <button class="btn-outline btn-sm" onclick="addEmploymentHistory('${staffId}')">Add Record</button>
+    </div>
+    <div class="card"><div class="card-header"><div class="card-title">HR events</div></div>
+      ${(events||[]).length ? `<table><thead><tr><th>Type</th><th>Date</th><th>Details</th></tr></thead><tbody>
+        ${events.map(e => `<tr><td style="text-transform:capitalize">${e.event_type.replace('_',' ')}</td><td>${e.event_date}</td><td>${esc(e.details||'—')}</td></tr>`).join('')}
+      </tbody></table>` : '<div class="empty">None recorded.</div>'}
+      <div class="form-row" style="margin-top:14px">
+        <div class="form-group"><label>Event type</label>
+          <select id="he-type"><option value="warning">Warning</option><option value="disciplinary_hearing">Disciplinary hearing</option><option value="pip">Performance Improvement Plan</option><option value="resignation">Resignation</option><option value="exit_interview">Exit interview</option><option value="termination">Termination</option></select>
+        </div>
+        <div class="form-group"><label>Date</label><input type="date" id="he-date"></div>
+      </div>
+      <div class="form-group"><label>Details</label><textarea id="he-details" rows="2"></textarea></div>
+      <button class="btn-outline btn-sm" onclick="addHrEvent('${staffId}')">Add Event</button>
+    </div>
+  `;
+}
+
+async function addTrainingRecord(staffId) {
+  const course_name = val('tr-course');
+  if (!course_name) return;
+  await sb.from('payroll_training_records').insert({
+    staff_id: staffId, company_id: company.id, course_name, provider: val('tr-provider') || null,
+    completed_date: val('tr-completed') || null, expiry_date: val('tr-expiry') || null,
+  });
+  await loadEmployeeRecords();
+}
+async function addAsset(staffId) {
+  const asset_name = val('as-name');
+  if (!asset_name) return;
+  await sb.from('payroll_assets').insert({ staff_id: staffId, company_id: company.id, asset_name, asset_tag: val('as-tag') || null });
+  await loadEmployeeRecords();
+}
+async function addEmploymentHistory(staffId) {
+  const effective_date = val('eh-date');
+  if (!effective_date) { alert('Choose an effective date.'); return; }
+  await sb.from('payroll_employment_history').insert({
+    staff_id: staffId, company_id: company.id, event_type: document.getElementById('eh-type').value,
+    effective_date, note: val('eh-note') || null, created_by: session.user.id,
+  });
+  await loadEmployeeRecords();
+}
+async function addHrEvent(staffId) {
+  const event_date = val('he-date');
+  if (!event_date) { alert('Choose a date.'); return; }
+  await sb.from('payroll_hr_events').insert({
+    staff_id: staffId, company_id: company.id, event_type: document.getElementById('he-type').value,
+    event_date, details: val('he-details') || null, created_by: session.user.id,
+  });
+  await loadEmployeeRecords();
+}
+
+async function loadCompliance() {
+  const wrap = document.getElementById('complianceWrap');
+  if (!company) { wrap.innerHTML = '<div class="empty">Set up your company first.</div>'; return; }
+  const today = new Date();
+  const in60 = new Date(today.getTime() + 60 * 86400000);
+  const thisMonth = today.getMonth();
+
+  const birthdays = staffCache.filter(s => s.date_of_birth && new Date(s.date_of_birth + 'T00:00:00').getMonth() === thisMonth && s.active);
+  const probations = staffCache.filter(s => s.probation_end_date && new Date(s.probation_end_date) <= in60 && s.active);
+  const contracts = staffCache.filter(s => s.contract_end_date && new Date(s.contract_end_date) <= in60 && s.active);
+
+  const { data: training } = await sb.from('payroll_training_records').select('*, payroll_staff(full_name)').eq('company_id', company.id).not('expiry_date', 'is', null).lte('expiry_date', in60.toISOString().slice(0,10));
+
+  wrap.innerHTML = `
+    <div class="card" style="background:var(--bg)"><div class="card-title" style="margin-bottom:10px">Birthdays this month</div>
+      ${birthdays.length ? birthdays.map(s => `<div style="padding:6px 0">${esc(s.full_name)} — ${new Date(s.date_of_birth+'T00:00:00').toLocaleDateString('en-ZA',{day:'numeric',month:'long'})}</div>`).join('') : '<div class="empty">None this month.</div>'}
+    </div>
+    <div class="card" style="background:var(--bg)"><div class="card-title" style="margin-bottom:10px">Probation ending within 60 days</div>
+      ${probations.length ? probations.map(s => `<div style="padding:6px 0">${esc(s.full_name)} — ${s.probation_end_date}</div>`).join('') : '<div class="empty">None.</div>'}
+    </div>
+    <div class="card" style="background:var(--bg)"><div class="card-title" style="margin-bottom:10px">Contracts ending within 60 days</div>
+      ${contracts.length ? contracts.map(s => `<div style="padding:6px 0">${esc(s.full_name)} — ${s.contract_end_date}</div>`).join('') : '<div class="empty">None.</div>'}
+    </div>
+    <div class="card" style="background:var(--bg)"><div class="card-title" style="margin-bottom:10px">Training/certificates expiring within 60 days</div>
+      ${(training||[]).length ? training.map(t => `<div style="padding:6px 0">${esc(t.payroll_staff?.full_name || '—')} — ${esc(t.course_name)} (${t.expiry_date})</div>`).join('') : '<div class="empty">None.</div>'}
+    </div>
+  `;
+}
+
+async function loadTemplates() {
+  const wrap = document.getElementById('templatesWrap');
+  if (!company) { wrap.innerHTML = '<div class="empty">Set up your company first.</div>'; return; }
+  const { data } = await sb.from('payroll_document_templates').select('*').eq('company_id', company.id).order('created_at', { ascending: false });
+  templatesCache = data || [];
+  if (templatesCache.length === 0) { wrap.innerHTML = '<div class="empty">No templates yet.</div>'; return; }
+  wrap.innerHTML = templatesCache.map(t => `<div class="card" style="margin-bottom:10px">
+    <div class="card-header"><div class="card-title">${esc(t.name)} <span class="badge badge-gray" style="text-transform:capitalize">${t.category.replace('_',' ')}</span></div>
+      <div><button class="btn-outline btn-sm" onclick="openGenDocModal('${t.id}')">Generate &amp; Send</button> <button class="btn-danger btn-sm" onclick="deleteTemplate('${t.id}')">Delete</button></div>
+    </div>
+  </div>`).join('');
+}
+async function addTemplate() {
+  const errEl = document.getElementById('tplError');
+  errEl.style.display = 'none';
+  const name = val('tpl-name'); const body = val('tpl-body');
+  if (!name || !body) { errEl.textContent = 'Name and body are both required.'; errEl.style.display = 'block'; return; }
+  const btn = document.getElementById('addTplBtn');
+  btn.disabled = true; btn.textContent = 'Saving…';
+  const { error } = await sb.from('payroll_document_templates').insert({ company_id: company.id, name, category: document.getElementById('tpl-category').value, body });
+  btn.disabled = false; btn.textContent = 'Save Template';
+  if (error) { errEl.textContent = error.message; errEl.style.display = 'block'; return; }
+  document.getElementById('tpl-name').value = ''; document.getElementById('tpl-body').value = '';
+  await loadTemplates();
+}
+async function deleteTemplate(id) {
+  if (!confirm('Delete this template?')) return;
+  await sb.from('payroll_document_templates').delete().eq('id', id);
+  await loadTemplates();
+}
+
+let templatesCache = [];
+function renderTemplateBody(body, staffRow) {
+  return body
+    .replaceAll('{{full_name}}', staffRow?.full_name || '')
+    .replaceAll('{{job_title}}', staffRow?.job_title || '')
+    .replaceAll('{{basic_salary}}', staffRow ? money(staffRow.basic_salary) : '')
+    .replaceAll('{{start_date}}', staffRow?.start_date || '')
+    .replaceAll('{{company_name}}', company?.name || '');
+}
+function openGenDocModal(templateId) {
+  const tpl = templatesCache.find(t => t.id === templateId);
+  if (!tpl) return;
+  document.getElementById('gd-template-id').value = templateId;
+  document.getElementById('gd-title').value = tpl.name;
+  document.getElementById('gd-staff').innerHTML = staffCache.map(s => `<option value="${s.id}">${esc(s.full_name)}</option>`).join('');
+  document.getElementById('gd-staff').onchange = () => {
+    const staffRow = staffCache.find(s => s.id === document.getElementById('gd-staff').value);
+    document.getElementById('gd-preview').value = renderTemplateBody(tpl.body, staffRow);
+  };
+  document.getElementById('gd-preview').value = renderTemplateBody(tpl.body, staffCache[0]);
+  document.getElementById('genDocError').style.display = 'none';
+  document.getElementById('genDocModal').hidden = false;
+}
+async function sendGeneratedDocument() {
+  const errEl = document.getElementById('genDocError');
+  errEl.style.display = 'none';
+  const templateId = document.getElementById('gd-template-id').value;
+  const tpl = templatesCache.find(t => t.id === templateId);
+  const staffId = document.getElementById('gd-staff').value;
+  const title = val('gd-title');
+  const description = document.getElementById('gd-preview').value;
+  if (!staffId || !title) { errEl.textContent = 'Choose an employee and a title.'; errEl.style.display = 'block'; return; }
+
+  const btn = document.getElementById('sendGenDocBtn');
+  btn.disabled = true; btn.textContent = 'Sending…';
+  const { error } = await sb.from('payroll_sign_documents').insert({
+    company_id: company.id, title, description, category: tpl?.category || 'document', staff_id: staffId, created_by: session.user.id,
+  });
+  btn.disabled = false; btn.textContent = 'Send for Signing';
+  if (error) { errEl.textContent = error.message; errEl.style.display = 'block'; return; }
+  closeModal('genDocModal');
 }
 
 // ── Reports ──
@@ -2935,6 +3382,27 @@ async function loadAnalytics() {
 
 function money(n) { return 'R ' + Number(n || 0).toLocaleString('en-ZA', { minimumFractionDigits: 2, maximumFractionDigits: 2 }); }
 
+async function askOwnerAssistant() {
+  const input = document.getElementById('owner-chat-question');
+  const question = input.value.trim();
+  const errEl = document.getElementById('ownerChatError');
+  errEl.style.display = 'none';
+  if (!question || !company) return;
+  const log = document.getElementById('ownerChatLog');
+  log.innerHTML += `<div style="background:var(--navy,#1a2f72);color:#fff;padding:8px 14px;border-radius:12px;margin-bottom:8px;max-width:85%;margin-left:auto;font-size:0.85rem">${esc(question)}</div>`;
+  log.scrollTop = log.scrollHeight;
+  input.value = '';
+  const btn = document.getElementById('ownerAskBtn');
+  btn.disabled = true; btn.textContent = '…';
+
+  const { data, error } = await sb.functions.invoke('ai-payroll-assistant', { body: { question, company_id: company.id } });
+  btn.disabled = false; btn.textContent = 'Ask';
+
+  if (error || data?.error) { errEl.textContent = data?.error || error.message; errEl.style.display = 'block'; return; }
+  log.innerHTML += `<div style="background:var(--teal-light,#e6f7f7);color:#0e1c40;padding:8px 14px;border-radius:12px;margin-bottom:8px;max-width:85%;font-size:0.85rem">${esc(data.answer)}</div>`;
+  log.scrollTop = log.scrollHeight;
+}
+
 async function loadDashPending() {
   const card = document.getElementById('dashPendingCard');
   const wrap = document.getElementById('dashPendingWrap');
@@ -2944,16 +3412,18 @@ async function loadDashPending() {
   const ids = staffIds.map(s => s.id);
   const nameOf = id => staffIds.find(s => s.id === id)?.full_name || '—';
 
-  const [{ data: leave }, { data: advance }, { data: overtime }] = await Promise.all([
+  const [{ data: leave }, { data: advance }, { data: overtime }, { data: expenses }] = await Promise.all([
     sb.from('payroll_leave_requests').select('id, staff_id, leave_type, start_date, end_date').in('staff_id', ids).eq('status', 'pending'),
     sb.from('payroll_advance_requests').select('id, staff_id, amount').in('staff_id', ids).eq('status', 'pending'),
     sb.from('payroll_overtime_requests').select('id, staff_id, work_date, hours').in('staff_id', ids).eq('status', 'pending'),
+    sb.from('payroll_expense_claims').select('id, staff_id, claim_type, amount').in('staff_id', ids).eq('status', 'pending'),
   ]);
 
   const rows = [
     ...(leave || []).map(r => ({ kind: 'Leave', who: nameOf(r.staff_id), detail: `${r.leave_type.replace('_',' ')}, ${r.start_date} – ${r.end_date}`, tab: 'lr-leave' })),
     ...(advance || []).map(r => ({ kind: 'Advance', who: nameOf(r.staff_id), detail: money(r.amount), tab: 'lr-advance' })),
     ...(overtime || []).map(r => ({ kind: 'Overtime', who: nameOf(r.staff_id), detail: `${r.work_date}, ${Number(r.hours).toFixed(2)}h`, tab: 'lr-overtime' })),
+    ...(expenses || []).map(r => ({ kind: 'Expense', who: nameOf(r.staff_id), detail: `${r.claim_type}, ${money(r.amount)}`, tab: 'lr-expenses' })),
   ];
 
   if (rows.length === 0) { card.style.display = 'none'; return; }
