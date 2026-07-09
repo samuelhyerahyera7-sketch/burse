@@ -409,17 +409,39 @@
 
       <!-- ANNOUNCEMENTS -->
       <section class="section" id="section-announcements">
-        <div class="page-header"><h1>Announcements</h1><p>Post a notice and every employee sees it on their dashboard.</p></div>
-        <div class="card">
-          <div class="card-header"><div class="card-title">Post an announcement</div></div>
-          <div class="form-group"><label>Title</label><input type="text" id="ann-title" placeholder="e.g. Office closed 25 December"></div>
-          <div class="form-group"><label>Message</label><textarea id="ann-body" rows="3" placeholder="Details for your team…"></textarea></div>
-          <div class="error-box" id="annError"></div>
-          <button class="btn-teal btn-sm" id="postAnnBtn" onclick="postAnnouncement()">Post Announcement</button>
+        <div class="page-header"><h1>Announcements</h1><p>Post a notice, or send a document out for employees to sign.</p></div>
+        <div class="subtabs">
+          <div class="subtab active" data-subtab="ann-notices" onclick="switchAnnouncementsTab('ann-notices')">Announcements</div>
+          <div class="subtab" data-subtab="ann-sign" onclick="switchAnnouncementsTab('ann-sign')">Documents to Sign</div>
         </div>
-        <div class="card">
-          <div class="card-header"><div class="card-title">All announcements</div></div>
-          <div id="announcementsWrap"><div class="loading">Loading…</div></div>
+
+        <div class="subtab-panel active" id="annpanel-ann-notices">
+          <div class="card">
+            <div class="card-header"><div class="card-title">Post an announcement</div></div>
+            <div class="form-group"><label>Title</label><input type="text" id="ann-title" placeholder="e.g. Office closed 25 December"></div>
+            <div class="form-group"><label>Message</label><textarea id="ann-body" rows="3" placeholder="Details for your team…"></textarea></div>
+            <div class="error-box" id="annError"></div>
+            <button class="btn-teal btn-sm" id="postAnnBtn" onclick="postAnnouncement()">Post Announcement</button>
+          </div>
+          <div class="card">
+            <div class="card-header"><div class="card-title">All announcements</div></div>
+            <div id="announcementsWrap"><div class="loading">Loading…</div></div>
+          </div>
+        </div>
+
+        <div class="subtab-panel" id="annpanel-ann-sign">
+          <div class="card">
+            <div class="card-header"><div class="card-title">Send a document for signing</div></div>
+            <p class="form-hint" style="margin-bottom:14px">Every active employee can view and sign it from their dashboard. This is a lightweight acknowledgement signature (typed name, drawn signature and timestamp) — not a notarised legal e-signature service.</p>
+            <div class="form-group"><label>Title</label><input type="text" id="sd-title" placeholder="e.g. 2026 Leave Policy Acknowledgement"></div>
+            <div class="form-group"><label>Description</label><textarea id="sd-desc" rows="3" placeholder="What are they signing, and why?"></textarea></div>
+            <div class="error-box" id="sdError"></div>
+            <button class="btn-teal btn-sm" id="postSdBtn" onclick="postSignDocument()">Send for Signing</button>
+          </div>
+          <div class="card">
+            <div class="card-header"><div class="card-title">Documents sent</div></div>
+            <div id="signDocumentsWrap"><div class="loading">Loading…</div></div>
+          </div>
         </div>
       </section>
 
@@ -653,6 +675,12 @@
               <div class="form-group"><label>Confirm new password</label><input type="password" id="sec-confirmpass" placeholder="Repeat new password"></div>
             </div>
             <button class="btn-primary" onclick="changePassword()" id="changePasswordBtn">Update Password</button>
+          </div>
+
+          <div class="card">
+            <div class="card-header"><div class="card-title">Biometric unlock</div></div>
+            <p class="form-hint" style="margin-bottom:16px" id="bioHint">Use Face ID, Touch ID or your device fingerprint reader to unlock a "stay logged in" session on this browser, so you don't have to type your password every time. This is a convenience for this device only — it doesn't replace your password, and doesn't work on a device where you haven't logged in normally first.</p>
+            <button class="btn-outline btn-sm" id="bioToggleBtn" onclick="toggleBiometricUnlock()">Enable on this device</button>
           </div>
         </div>
 
@@ -1383,6 +1411,66 @@ function switchSettingsTab(name) {
   document.querySelectorAll('#section-settings .subtab').forEach(t => t.classList.toggle('active', t.dataset.subtab === name));
   document.querySelectorAll('#section-settings .subtab-panel').forEach(p => p.classList.toggle('active', p.id === 'settingspanel-' + name));
   if (name === 's-api') loadApiKeys();
+  if (name === 's-security') updateBiometricButtonState();
+}
+
+// ── Biometric unlock (WebAuthn platform authenticator, device-local only) ──
+// This does NOT add a server-verified passwordless login. It registers a
+// platform credential (Face ID/Touch ID/fingerprint) purely as a local gate:
+// if the assertion succeeds, we trust the browser's already-stored
+// "stay logged in" session (localStorage/cookie) rather than making the
+// user retype their password. The credential id lives in localStorage only
+// — nothing is sent to or verified by the server.
+function b64urlEncode(buf) {
+  return btoa(String.fromCharCode(...new Uint8Array(buf))).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
+}
+function b64urlDecode(str) {
+  const pad = str.length % 4 === 0 ? '' : '='.repeat(4 - (str.length % 4));
+  const bin = atob(str.replace(/-/g, '+').replace(/_/g, '/') + pad);
+  return Uint8Array.from(bin, c => c.charCodeAt(0));
+}
+function biometricSupported() {
+  return !!(window.PublicKeyCredential && navigator.credentials);
+}
+function updateBiometricButtonState() {
+  const btn = document.getElementById('bioToggleBtn');
+  const hint = document.getElementById('bioHint');
+  if (!btn) return;
+  if (!biometricSupported()) {
+    btn.disabled = true; btn.textContent = 'Not supported on this device';
+    return;
+  }
+  const enabled = !!localStorage.getItem('burse-biometric-cred');
+  btn.textContent = enabled ? 'Disable on this device' : 'Enable on this device';
+}
+async function toggleBiometricUnlock() {
+  const btn = document.getElementById('bioToggleBtn');
+  if (localStorage.getItem('burse-biometric-cred')) {
+    localStorage.removeItem('burse-biometric-cred');
+    updateBiometricButtonState();
+    return;
+  }
+  try {
+    btn.disabled = true; btn.textContent = 'Follow the prompt…';
+    const challenge = crypto.getRandomValues(new Uint8Array(32));
+    const userId = crypto.getRandomValues(new Uint8Array(16));
+    const cred = await navigator.credentials.create({
+      publicKey: {
+        challenge, rp: { name: 'Burse' },
+        user: { id: userId, name: session.user.email, displayName: session.user.email },
+        pubKeyCredParams: [{ type: 'public-key', alg: -7 }, { type: 'public-key', alg: -257 }],
+        authenticatorSelection: { authenticatorAttachment: 'platform', userVerification: 'required' },
+        timeout: 60000,
+      },
+    });
+    if (!cred) throw new Error('No credential returned.');
+    localStorage.setItem('burse-biometric-cred', JSON.stringify({ id: b64urlEncode(cred.rawId), email: session.user.email }));
+  } catch (e) {
+    alert('Could not enable biometric unlock: ' + e.message);
+  } finally {
+    btn.disabled = false;
+    updateBiometricButtonState();
+  }
 }
 
 async function saveNotificationPrefs() {
@@ -2320,6 +2408,57 @@ async function deleteAnnouncement(id) {
   const { error } = await sb.from('payroll_announcements').delete().eq('id', id);
   if (error) { alert(error.message); return; }
   await loadAnnouncements();
+}
+
+function switchAnnouncementsTab(name) {
+  document.querySelectorAll('.subtab').forEach(t => t.classList.toggle('active', t.dataset.subtab === name));
+  document.querySelectorAll('.subtab-panel').forEach(p => p.classList.toggle('active', p.id === 'annpanel-' + name));
+  if (name === 'ann-sign') loadSignDocuments();
+}
+
+async function loadSignDocuments() {
+  const wrap = document.getElementById('signDocumentsWrap');
+  if (!company) { wrap.innerHTML = '<div class="empty">Set up your company first.</div>'; return; }
+  const { data: docs } = await sb.from('payroll_sign_documents').select('*').eq('company_id', company.id).order('created_at', { ascending: false });
+  if (!docs || docs.length === 0) { wrap.innerHTML = '<div class="empty">No documents sent yet.</div>'; return; }
+  const { data: staffIds } = await sb.from('payroll_staff').select('id').eq('company_id', company.id).eq('active', true);
+  const totalStaff = (staffIds || []).length;
+  const { data: sigs } = await sb.from('payroll_document_signatures').select('document_id, staff_id, typed_name, signed_at').in('document_id', docs.map(d => d.id));
+
+  wrap.innerHTML = docs.map(d => {
+    const docSigs = (sigs || []).filter(s => s.document_id === d.id);
+    return `<div class="card" style="margin-bottom:10px">
+      <div class="card-header"><div class="card-title">${esc(d.title)}</div><button class="btn-danger btn-sm" onclick="deleteSignDocument('${d.id}')">Delete</button></div>
+      <p style="font-size:0.85rem;color:var(--soft)">${esc(d.description || '')}</p>
+      <p style="font-size:0.8rem;color:var(--soft);margin-top:8px"><strong>${docSigs.length} of ${totalStaff}</strong> employees have signed.</p>
+      ${docSigs.length ? `<table style="margin-top:10px"><thead><tr><th>Signed by</th><th>When</th></tr></thead><tbody>
+        ${docSigs.map(s => `<tr><td>${esc(s.typed_name)}</td><td>${new Date(s.signed_at).toLocaleString()}</td></tr>`).join('')}
+      </tbody></table>` : ''}
+    </div>`;
+  }).join('');
+}
+
+async function postSignDocument() {
+  const errEl = document.getElementById('sdError');
+  errEl.style.display = 'none';
+  const title = val('sd-title');
+  const description = val('sd-desc');
+  if (!title) { errEl.textContent = 'A title is required.'; errEl.style.display = 'block'; return; }
+  const btn = document.getElementById('postSdBtn');
+  btn.disabled = true; btn.textContent = 'Sending…';
+  const { error } = await sb.from('payroll_sign_documents').insert({ company_id: company.id, title, description: description || null, created_by: session.user.id });
+  btn.disabled = false; btn.textContent = 'Send for Signing';
+  if (error) { errEl.textContent = error.message; errEl.style.display = 'block'; return; }
+  document.getElementById('sd-title').value = '';
+  document.getElementById('sd-desc').value = '';
+  await loadSignDocuments();
+}
+
+async function deleteSignDocument(id) {
+  if (!confirm('Delete this document and all signatures collected for it?')) return;
+  const { error } = await sb.from('payroll_sign_documents').delete().eq('id', id);
+  if (error) { alert(error.message); return; }
+  await loadSignDocuments();
 }
 
 // ── Reports ──

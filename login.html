@@ -193,6 +193,8 @@
           Account created! Check your email to confirm, then log in.
         </div>
 
+        <button type="button" class="btn-login" id="bioUnlockBtn" style="display:none;margin-bottom:14px;background:#fff;color:#0e1c40;border:1.5px solid #e6eaf0" onclick="handleBiometricUnlock()">Unlock with Face ID / Touch ID</button>
+
         <form id="loginForm" onsubmit="handleAuth(event)">
           <div class="form-group">
             <label for="email">Email address</label>
@@ -386,12 +388,61 @@
       }
     });
 
-    // Redirect if already logged in — but never during a recovery flow
+    // Redirect if already logged in — but never during a recovery flow.
+    // If biometric unlock is enabled on this device, gate the redirect
+    // behind a Face ID/Touch ID prompt first (useful on a shared device);
+    // "Use password instead" always falls back to the normal form.
+    function b64urlDecode(str) {
+      const pad = str.length % 4 === 0 ? '' : '='.repeat(4 - (str.length % 4));
+      const bin = atob(str.replace(/-/g, '+').replace(/_/g, '/') + pad);
+      return Uint8Array.from(bin, c => c.charCodeAt(0));
+    }
     sb.auth.getSession().then(({ data }) => {
-      if (data.session && !_isRecovery) {
+      if (!data.session || _isRecovery) return;
+      const stored = localStorage.getItem('burse-biometric-cred');
+      if (!stored || !(window.PublicKeyCredential && navigator.credentials)) {
         window.location.href = postLoginDestination();
+        return;
       }
+      document.getElementById('loginForm').style.display = 'none';
+      document.getElementById('authTitle').textContent = 'Welcome back';
+      document.getElementById('loginSubtitle').textContent = 'Unlock this device to continue.';
+      const btn = document.getElementById('bioUnlockBtn');
+      btn.style.display = 'block';
+      const fallback = document.createElement('a');
+      fallback.href = '#'; fallback.textContent = 'Use password instead';
+      fallback.style.cssText = 'display:block;text-align:center;font-size:0.85rem;color:#3d5070;margin-top:10px';
+      fallback.onclick = (e) => {
+        e.preventDefault();
+        document.getElementById('loginForm').style.display = 'block';
+        btn.style.display = 'none';
+        fallback.remove();
+      };
+      btn.insertAdjacentElement('afterend', fallback);
     });
+
+    async function handleBiometricUnlock() {
+      const btn = document.getElementById('bioUnlockBtn');
+      const errorMsg = document.getElementById('errorMsg');
+      errorMsg.style.display = 'none';
+      try {
+        const stored = JSON.parse(localStorage.getItem('burse-biometric-cred') || 'null');
+        if (!stored) throw new Error('Biometric unlock is not set up on this device.');
+        btn.disabled = true; btn.textContent = 'Follow the prompt…';
+        const challenge = crypto.getRandomValues(new Uint8Array(32));
+        await navigator.credentials.get({
+          publicKey: {
+            challenge, userVerification: 'required', timeout: 60000,
+            allowCredentials: [{ id: b64urlDecode(stored.id), type: 'public-key' }],
+          },
+        });
+        window.location.href = postLoginDestination();
+      } catch (e) {
+        errorMsg.textContent = 'Could not unlock with biometrics: ' + e.message;
+        errorMsg.style.display = 'block';
+        btn.disabled = false; btn.textContent = 'Unlock with Face ID / Touch ID';
+      }
+    }
 
     // Races a promise against a hard deadline so a stalled connection can
     // never leave the button stuck on "Logging in..."/"Creating account..."

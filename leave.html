@@ -78,10 +78,21 @@
     .clock-status { display: flex; align-items: center; gap: 14px; padding: 18px; background: var(--teal-light); border-radius: 14px; margin-bottom: 16px; }
     .clock-dot { width: 12px; height: 12px; border-radius: 50%; background: #94a3b8; }
     .clock-dot.in { background: #15803d; }
+    .sigpad-canvas { border: 1.5px dashed var(--border); border-radius: 10px; width: 100%; height: 140px; touch-action: none; cursor: crosshair; }
+    .chat-log { max-height: 340px; overflow-y: auto; margin-bottom: 14px; }
+    .chat-msg { padding: 10px 14px; border-radius: 12px; margin-bottom: 8px; font-size: 0.85rem; max-width: 85%; }
+    .chat-msg.user { background: var(--navy-dark); color: #fff; margin-left: auto; }
+    .chat-msg.ai { background: var(--teal-light); color: var(--text); }
     .empty { text-align: center; padding: 24px; color: var(--text-soft); font-size: 0.85rem; }
     .error-box { display: none; background: #fff0f0; border: 1px solid #fca5a5; color: #dc2626; font-size: 0.8rem; padding: 10px 14px; border-radius: 8px; margin-bottom: 12px; }
     .gate { text-align: center; padding: 80px 20px; color: var(--text-soft); }
     .gate a { color: var(--teal); font-weight: 700; }
+
+    .modal-overlay { display: none; position: fixed; inset: 0; background: rgba(14,28,64,0.5); z-index: 100; align-items: center; justify-content: center; padding: 20px; }
+    .modal-overlay.open { display: flex; }
+    .modal-box { background: #fff; border-radius: 16px; padding: 24px; max-width: 460px; width: 100%; }
+    .modal-box h3 { font-size: 1.05rem; font-weight: 800; margin-bottom: 6px; color: var(--navy-dark); }
+    .modal-actions { display: flex; gap: 10px; justify-content: flex-end; margin-top: 16px; }
   </style>
 </head>
 <body>
@@ -92,6 +103,23 @@
 
   <div class="wrap" id="app">
     <div class="gate">Loading your payroll information…</div>
+  </div>
+
+  <div class="modal-overlay" id="signModal">
+    <div class="modal-box">
+      <h3 id="signModalTitle">Sign document</h3>
+      <p style="font-size:0.82rem;color:var(--text-mid);margin-bottom:14px" id="signModalDesc"></p>
+      <div class="form-group"><label>Type your full name to confirm</label><input id="sig-typed-name" placeholder="Your full name"></div>
+      <div class="form-group"><label>Draw your signature (optional)</label>
+        <canvas id="sigCanvas" class="sigpad-canvas"></canvas>
+        <button type="button" class="btn-outline" style="margin-top:6px" onclick="clearSignaturePad()">Clear</button>
+      </div>
+      <div class="error-box" id="signModalError"></div>
+      <div class="modal-actions">
+        <button class="btn-outline" onclick="closeSignModal()">Cancel</button>
+        <button class="btn" id="submitSignBtn" onclick="submitSignature()">Sign</button>
+      </div>
+    </div>
   </div>
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -160,6 +188,7 @@
 
     let staff = null;
     let dashData = null;
+    let authSession = null;
 
     document.getElementById('logoutBtn').addEventListener('click', async () => {
       await sb.auth.signOut();
@@ -178,6 +207,7 @@
     (async function init() {
       const { data } = await sb.auth.getSession();
       if (!data.session) { window.location.href = '/login'; return; }
+      authSession = data.session;
 
       await sb.rpc('claim_payroll_staff_invites');
 
@@ -287,6 +317,17 @@
                 <div class="b">${esc(a.body)}</div>
                 <div class="d">${new Date(a.created_at).toLocaleString()}</div>
               </div>`).join('')}
+          </div>
+
+          <div class="card">
+            <h2>Ask about your pay or leave</h2>
+            <p style="font-size:0.82rem;color:var(--text-mid);margin-bottom:14px">e.g. "Why was my PAYE higher this month?" or "How many leave days do I have left?"</p>
+            <div class="chat-log" id="chatLog"></div>
+            <div class="error-box" id="chatError"></div>
+            <div class="form-row" style="grid-template-columns:1fr auto">
+              <div class="form-group"><input id="chat-question" placeholder="Ask a question…" onkeydown="if(event.key==='Enter')askAssistant()"></div>
+              <div class="form-group"><button class="btn" id="askBtn" onclick="askAssistant()">Ask</button></div>
+            </div>
           </div>
         </div>
 
@@ -435,6 +476,10 @@
 
         <div class="tab-panel" id="panel-documents">
           <div class="card">
+            <h2>Documents to sign</h2>
+            <div id="signDocsWrap"><div class="loading">Loading…</div></div>
+          </div>
+          <div class="card">
             <h2>Your documents</h2>
             <p style="font-size:0.82rem;color:var(--text-mid);margin-bottom:14px">Employment documents your employer has shared with you.</p>
             ${(!documents || documents.length === 0) ? '<div class="empty">No documents yet.</div>' : `
@@ -475,8 +520,61 @@
             </div>
             <button class="btn" id="saveDetailsBtn" onclick="saveMyDetails()">Save Changes</button>
           </div>
+
+          <div class="card">
+            <h2>Biometric unlock</h2>
+            <p style="font-size:0.82rem;color:var(--text-mid);margin-bottom:14px" id="bioHint">Use Face ID, Touch ID or your fingerprint to unlock your "stay logged in" session on this device, instead of typing your password each time.</p>
+            <button class="btn-outline" id="bioToggleBtn" onclick="toggleBiometricUnlock()">Enable on this device</button>
+          </div>
         </div>
       `;
+      await loadSignDocsForEmployee();
+      updateBiometricButtonState();
+    }
+
+    // ── Biometric unlock (WebAuthn platform authenticator, device-local only) ──
+    // Registers a Face ID/Touch ID/fingerprint credential as a local gate on
+    // this browser. It does not add server-verified passwordless login — a
+    // successful assertion just means we trust the already-stored "stay
+    // logged in" session instead of asking for the password again.
+    function b64urlEncode(buf) {
+      return btoa(String.fromCharCode(...new Uint8Array(buf))).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
+    }
+    function biometricSupported() { return !!(window.PublicKeyCredential && navigator.credentials); }
+    function updateBiometricButtonState() {
+      const btn = document.getElementById('bioToggleBtn');
+      if (!btn) return;
+      if (!biometricSupported()) { btn.disabled = true; btn.textContent = 'Not supported on this device'; return; }
+      btn.textContent = localStorage.getItem('burse-biometric-cred') ? 'Disable on this device' : 'Enable on this device';
+    }
+    async function toggleBiometricUnlock() {
+      const btn = document.getElementById('bioToggleBtn');
+      if (localStorage.getItem('burse-biometric-cred')) {
+        localStorage.removeItem('burse-biometric-cred');
+        updateBiometricButtonState();
+        return;
+      }
+      try {
+        btn.disabled = true; btn.textContent = 'Follow the prompt…';
+        const challenge = crypto.getRandomValues(new Uint8Array(32));
+        const userId = crypto.getRandomValues(new Uint8Array(16));
+        const cred = await navigator.credentials.create({
+          publicKey: {
+            challenge, rp: { name: 'Burse' },
+            user: { id: userId, name: authSession.user.email, displayName: authSession.user.email },
+            pubKeyCredParams: [{ type: 'public-key', alg: -7 }, { type: 'public-key', alg: -257 }],
+            authenticatorSelection: { authenticatorAttachment: 'platform', userVerification: 'required' },
+            timeout: 60000,
+          },
+        });
+        if (!cred) throw new Error('No credential returned.');
+        localStorage.setItem('burse-biometric-cred', JSON.stringify({ id: b64urlEncode(cred.rawId), email: authSession.user.email }));
+      } catch (e) {
+        alert('Could not enable biometric unlock: ' + e.message);
+      } finally {
+        btn.disabled = false;
+        updateBiometricButtonState();
+      }
     }
 
     function businessDaysBetween(startStr, endStr) {
@@ -577,6 +675,107 @@
       const { data, error } = await sb.storage.from('staff-documents').createSignedUrl(path, 60);
       if (error) { alert(error.message); return; }
       window.open(data.signedUrl, '_blank');
+    }
+
+    // ── Documents to sign ──
+    let signDocsCache = [];
+    async function loadSignDocsForEmployee() {
+      const wrap = document.getElementById('signDocsWrap');
+      if (!wrap) return;
+      const [{ data: docs }, { data: mySigs }] = await Promise.all([
+        sb.from('payroll_sign_documents').select('*').eq('company_id', staff.company_id).order('created_at', { ascending: false }),
+        sb.from('payroll_document_signatures').select('document_id, signed_at').eq('staff_id', staff.id),
+      ]);
+      signDocsCache = docs || [];
+      const signedIds = new Set((mySigs || []).map(s => s.document_id));
+      if (signDocsCache.length === 0) { wrap.innerHTML = '<div class="empty">Nothing to sign right now.</div>'; return; }
+      wrap.innerHTML = signDocsCache.map(d => {
+        const sig = (mySigs || []).find(s => s.document_id === d.id);
+        return `<div class="ann-item">
+          <div class="t">${esc(d.title)}</div>
+          <div class="b">${esc(d.description || '')}</div>
+          <div class="d">${sig ? 'Signed ' + new Date(sig.signed_at).toLocaleString() : `<button class="btn-outline" style="margin-top:6px" onclick="openSignModal('${d.id}')">Review &amp; Sign</button>`}</div>
+        </div>`;
+      }).join('');
+    }
+
+    let sigPadDrawing = false, sigPadCtx = null;
+    function setupSignaturePad() {
+      const canvas = document.getElementById('sigCanvas');
+      canvas.width = canvas.clientWidth; canvas.height = canvas.clientHeight;
+      sigPadCtx = canvas.getContext('2d');
+      sigPadCtx.strokeStyle = '#0e1c40'; sigPadCtx.lineWidth = 2; sigPadCtx.lineCap = 'round';
+      const pos = e => {
+        const r = canvas.getBoundingClientRect();
+        const p = e.touches ? e.touches[0] : e;
+        return { x: p.clientX - r.left, y: p.clientY - r.top };
+      };
+      canvas.onpointerdown = e => { sigPadDrawing = true; const p = pos(e); sigPadCtx.beginPath(); sigPadCtx.moveTo(p.x, p.y); };
+      canvas.onpointermove = e => { if (!sigPadDrawing) return; const p = pos(e); sigPadCtx.lineTo(p.x, p.y); sigPadCtx.stroke(); };
+      window.addEventListener('pointerup', () => { sigPadDrawing = false; });
+    }
+    function clearSignaturePad() {
+      const canvas = document.getElementById('sigCanvas');
+      sigPadCtx?.clearRect(0, 0, canvas.width, canvas.height);
+    }
+
+    let signingDocId = null;
+    function openSignModal(docId) {
+      const doc = signDocsCache.find(d => d.id === docId);
+      if (!doc) return;
+      signingDocId = docId;
+      document.getElementById('signModalTitle').textContent = doc.title;
+      document.getElementById('signModalDesc').textContent = doc.description || '';
+      document.getElementById('sig-typed-name').value = staff.full_name || '';
+      document.getElementById('signModalError').style.display = 'none';
+      document.getElementById('signModal').classList.add('open');
+      setTimeout(setupSignaturePad, 0);
+    }
+    function closeSignModal() {
+      document.getElementById('signModal').classList.remove('open');
+      signingDocId = null;
+    }
+    async function submitSignature() {
+      const errEl = document.getElementById('signModalError');
+      errEl.style.display = 'none';
+      const typedName = document.getElementById('sig-typed-name').value.trim();
+      if (!typedName) { errEl.textContent = 'Type your full name to confirm.'; errEl.style.display = 'block'; return; }
+      const canvas = document.getElementById('sigCanvas');
+      const signatureImage = canvas.toDataURL('image/png');
+
+      const btn = document.getElementById('submitSignBtn');
+      btn.disabled = true; btn.textContent = 'Signing…';
+      const { error } = await sb.from('payroll_document_signatures').insert({
+        document_id: signingDocId, staff_id: staff.id, typed_name: typedName, signature_image: signatureImage,
+      });
+      btn.disabled = false; btn.textContent = 'Sign';
+      if (error) { errEl.textContent = error.message; errEl.style.display = 'block'; return; }
+      closeSignModal();
+      await loadSignDocsForEmployee();
+    }
+
+    // ── AI payroll assistant ──
+    async function askAssistant() {
+      const input = document.getElementById('chat-question');
+      const question = input.value.trim();
+      const errEl = document.getElementById('chatError');
+      errEl.style.display = 'none';
+      if (!question) return;
+      const log = document.getElementById('chatLog');
+      log.innerHTML += `<div class="chat-msg user">${esc(question)}</div>`;
+      log.scrollTop = log.scrollHeight;
+      input.value = '';
+      const btn = document.getElementById('askBtn');
+      btn.disabled = true; btn.textContent = '…';
+
+      const { data, error } = await sb.functions.invoke('ai-payroll-assistant', { body: { question } });
+      btn.disabled = false; btn.textContent = 'Ask';
+
+      if (error || data?.error) {
+        errEl.textContent = data?.error || error.message; errEl.style.display = 'block'; return;
+      }
+      log.innerHTML += `<div class="chat-msg ai">${esc(data.answer)}</div>`;
+      log.scrollTop = log.scrollHeight;
     }
 
     async function saveMyDetails() {
