@@ -3306,8 +3306,24 @@ async function downloadBankFile(runId) {
     ];
   });
 
+  // Fold in any approved-but-not-yet-reimbursed expense/travel claims for
+  // this company's staff, paid out through the same bank file.
+  const staffIds = payslips.map(p => p.staff_id);
+  const { data: claims } = await sb.from('payroll_expense_claims').select('*, payroll_staff(*)').in('staff_id', staffIds).eq('status', 'approved').is('reimbursed_at', null);
+  (claims || []).forEach(c => {
+    const s = c.payroll_staff || {};
+    rows.push([
+      s.full_name || '', s.bank_name || '', s.full_name || '', s.bank_account_number || '', s.bank_branch_code || '', s.account_type || '',
+      Number(c.amount).toFixed(2), `REIMBURSEMENT-${run.pay_date}`,
+    ]);
+  });
+
   const csvEscape = (v) => /[",\n]/.test(v) ? `"${String(v).replace(/"/g,'""')}"` : v;
   const csv = [header, ...rows].map(row => row.map(csvEscape).join(',')).join('\r\n');
+
+  if (claims && claims.length) {
+    await sb.from('payroll_expense_claims').update({ reimbursed_at: new Date().toISOString() }).in('id', claims.map(c => c.id));
+  }
 
   const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
   const url = URL.createObjectURL(blob);
