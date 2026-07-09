@@ -32,7 +32,7 @@ Deno.serve(async (req) => {
     const { data: company } = await sb.from('payroll_companies').select('id, owner_id').eq('id', company_id).maybeSingle();
     if (!company || company.owner_id !== uid) return json({ error: 'Not authorised for this company' }, 404);
 
-    if (!['simplepay', 'payspace', 'sage_payroll'].includes(provider)) return json({ error: 'Unsupported provider' }, 400);
+    if (!['simplepay', 'payspace', 'sage_payroll', 'bank_feeds', 'ozow', 'recruitfriend'].includes(provider)) return json({ error: 'Unsupported provider' }, 400);
 
     // ── Validate the credentials against the real provider before storing anything ──
     let externalRef: string | null = null;
@@ -89,6 +89,20 @@ Deno.serve(async (req) => {
       // API rather than just being unavailable, so this stays off until a real
       // Sage-confirmed endpoint is available.
       return json({ error: 'Sage Payroll isn\'t connected yet — Sage\'s API endpoint is region-specific and needs confirming with your Sage account manager or developer.sage.com before this can go live. Your details have not been saved.' }, 501);
+    } else if (provider === 'bank_feeds') {
+      // Real bank feed aggregation (Investec Programmable Banking, Stitch,
+      // or a direct bank API) needs a registered application with the bank
+      // or aggregator, which has to be set up by the business owner — this
+      // isn't something to guess or fake a connection for.
+      return json({ error: 'Bank feeds aren\'t connected yet — this needs a registered application with your bank or an aggregator (e.g. Stitch, Investec Programmable Banking) tied to your business. Your details have not been saved.' }, 501);
+    } else if (provider === 'ozow') {
+      // Ozow requires real merchant credentials (Site Code, Private Key, API
+      // Key) issued after a merchant application at ozow.com — same reason.
+      return json({ error: 'Ozow isn\'t connected yet — you\'ll need merchant credentials from ozow.com (Site Code, Private Key, API Key) first. Your details have not been saved.' }, 501);
+    } else if (provider === 'recruitfriend') {
+      // Recruitfriend integration needs a real API key issued by
+      // Recruitfriend to this Burse company — same reason.
+      return json({ error: 'Recruitfriend isn\'t connected yet — you\'ll need an API key from your Recruitfriend account first. Your details have not been saved.' }, 501);
     }
 
     const secretName = `payroll_integration_${provider}_${company_id}`;

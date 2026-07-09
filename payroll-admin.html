@@ -3805,6 +3805,19 @@ const LIVE_CONNECTION_PROVIDERS = [
   ], notYet: 'Sage\'s payroll API endpoint is region-specific and hasn\'t been confirmed for South Africa yet — talk to your Sage account manager or developer.sage.com. Connecting will show an error until that\'s sorted out; nothing is saved.' },
   { key: 'xero', name: 'Xero', oauth: true, desc: 'Push a balanced journal entry into your Xero organisation every time you finalize a pay run.' },
   { key: 'quickbooks', name: 'QuickBooks Online', oauth: true, desc: 'Push a balanced journal entry into QuickBooks Online every time you finalize a pay run.' },
+  { key: 'bank_feeds', name: 'Bank Feeds', fields: [
+    { key: 'provider_name', label: 'Bank / aggregator', hint: 'e.g. Investec Programmable Banking, Stitch' },
+    { key: 'client_id', label: 'Client ID' },
+    { key: 'client_secret', label: 'Client Secret' },
+  ], notYet: 'Bank feeds need a registered application with your bank or an aggregator like Stitch or Investec Programmable Banking — that has to be set up on your business\'s behalf first. Connecting will show an error until that\'s in place; nothing is saved.' },
+  { key: 'ozow', name: 'Ozow', fields: [
+    { key: 'site_code', label: 'Site Code' },
+    { key: 'api_key', label: 'API Key' },
+    { key: 'private_key', label: 'Private Key' },
+  ], notYet: 'Ozow needs merchant credentials issued after a merchant application at ozow.com. Connecting will show an error until you have those; nothing is saved.' },
+  { key: 'recruitfriend', name: 'Recruitfriend', fields: [
+    { key: 'api_key', label: 'API Key' },
+  ], desc: 'Automatically onboard a candidate into Burse Payroll as soon as they\'re hired in Recruitfriend.', notYet: 'Recruitfriend isn\'t connected yet — you\'ll need an API key from your Recruitfriend account. Connecting will show an error until you have one; nothing is saved.' },
 ];
 
 // The 10 chart-of-accounts codes payroll journal entries actually use — see
