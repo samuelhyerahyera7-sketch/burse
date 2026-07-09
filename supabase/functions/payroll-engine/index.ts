@@ -126,12 +126,32 @@ Deno.serve(async (req) => {
           loanByStaff.set(l.staff_id, { id: l.id, installment: Math.min(Number(l.monthly_installment || 0), Number(l.balance || 0)) });
         }
 
+        // Active garnishees — like loans, this run's instalment is previewed
+        // here (folded into other_deductions_json for that staff member) but
+        // the balance is only decremented at finalize.
+        const { data: activeGarnishees } = await sb
+          .from('payroll_garnishees')
+          .select('*')
+          .eq('company_id', run.company_id)
+          .eq('status', 'active');
+        const garnisheesByStaff = new Map<string, Array<{ id: string; label: string; amount: number }>>();
+        for (const g of activeGarnishees ?? []) {
+          const list = garnisheesByStaff.get(g.staff_id) ?? [];
+          const amount = Math.min(Number(g.monthly_amount || 0), Number(g.balance ?? Infinity));
+          if (amount > 0) list.push({ id: g.id, label: `Garnishee — ${g.case_reference || 'order'}`, amount });
+          garnisheesByStaff.set(g.staff_id, list);
+        }
+
         const results = [];
         for (const staff of staffList ?? []) {
           const ytdBefore = await fetchYtdBefore(sb, staff.id, run);
           const adjustment = adjustmentsByStaff.get(staff.id) ?? { taxable: 0, nonTaxable: 0 };
           const loanDeduction = loanByStaff.get(staff.id)?.installment ?? 0;
-          const payslip = computePayslip(staff, run, company, annualPayrollEstimate, ytdBefore, adjustment, loanDeduction);
+          const garnisheeItems = garnisheesByStaff.get(staff.id) ?? [];
+          const staffWithGarnishees = garnisheeItems.length
+            ? { ...staff, other_deductions_json: [...(Array.isArray(staff.other_deductions_json) ? staff.other_deductions_json : []), ...garnisheeItems.map(g => ({ label: g.label, amount: g.amount }))] }
+            : staff;
+          const payslip = computePayslip(staffWithGarnishees, run, company, annualPayrollEstimate, ytdBefore, adjustment, loanDeduction);
           const { data: saved, error: upErr } = await sb
             .from('payroll_payslips')
             .upsert({ run_id: run.id, staff_id: staff.id, ...payslip }, { onConflict: 'run_id,staff_id' })
@@ -169,6 +189,32 @@ Deno.serve(async (req) => {
             status: newBalance <= 0 ? 'paid_off' : 'active',
             updated_at: new Date().toISOString(),
           }).eq('id', loan.id);
+        }
+
+        // Garnishee balances, same idea as loans: the payslip's
+        // other_deductions_json entries tagged "Garnishee — <case>" were
+        // computed from the active garnishee at calculate time, and its
+        // balance hasn't moved since, so we recompute the same instalment
+        // deterministically and apply it now.
+        const { data: activeGarnisheesAtFinalize } = await sb
+          .from('payroll_garnishees')
+          .select('*')
+          .eq('company_id', run.company_id)
+          .eq('status', 'active');
+        for (const p of payslips) {
+          const staffGarnishees = (activeGarnisheesAtFinalize ?? []).filter((g: any) => g.staff_id === p.staff_id);
+          for (const g of staffGarnishees) {
+            const instalment = round2(Math.min(Number(g.monthly_amount || 0), Number(g.balance ?? Infinity)));
+            if (instalment <= 0) continue;
+            const { error: repayErr } = await sb.from('payroll_garnishee_repayments').insert({ garnishee_id: g.id, run_id, amount: instalment });
+            if (repayErr) continue; // unique (garnishee_id, run_id) — already applied
+            const newBalance = g.total_amount == null ? null : round2(Math.max(0, Number(g.balance) - instalment));
+            await sb.from('payroll_garnishees').update({
+              balance: newBalance,
+              status: (newBalance !== null && newBalance <= 0) ? 'completed' : 'active',
+              updated_at: new Date().toISOString(),
+            }).eq('id', g.id);
+          }
         }
 
         const { error: updErr } = await sb
@@ -252,6 +298,74 @@ Deno.serve(async (req) => {
             sdl_payable: round2(totals.sdl),
             eti_used: round2(totals.eti),
             total_payable: round2(paye_payable + uif_payable + totals.sdl),
+          },
+        });
+      }
+
+      case 'emp501_summary': {
+        // Annual reconciliation: EMP501 checks the sum of your monthly
+        // EMP201 declarations against your actual annual liability and the
+        // IRP5/IT3(a) certificates issued for the tax year.
+        const { company_id, tax_year } = body;
+        const company = await requireOwnedCompany(company_id);
+        if (!tax_year) return json({ error: 'tax_year is required' }, 400);
+
+        const { data: runs } = await sb.from('payroll_runs').select('*').eq('company_id', company_id).eq('tax_year', tax_year).in('status', ['finalized', 'paid']).order('period_start');
+        const runIds = (runs ?? []).map((r: any) => r.id);
+        const { data: payslips } = runIds.length
+          ? await sb.from('payroll_payslips').select('*').in('run_id', runIds)
+          : { data: [] as any[] };
+
+        const byRun = new Map<string, any>();
+        (payslips ?? []).forEach((p: any) => {
+          const acc = byRun.get(p.run_id) || { gross_remuneration: 0, paye: 0, uif_employee: 0, uif_employer: 0, sdl: 0, eti: 0, headcount: new Set() };
+          acc.gross_remuneration += Number(p.gross_pay);
+          acc.paye += Number(p.paye);
+          acc.uif_employee += Number(p.uif_employee);
+          acc.uif_employer += Number(p.uif_employer);
+          acc.sdl += Number(p.sdl_employer);
+          acc.eti += Number(p.eti_employer);
+          acc.headcount.add(p.staff_id);
+          byRun.set(p.run_id, acc);
+        });
+
+        const monthly = (runs ?? []).map((r: any) => {
+          const t = byRun.get(r.id) || { gross_remuneration: 0, paye: 0, uif_employee: 0, uif_employer: 0, sdl: 0, eti: 0, headcount: new Set() };
+          const paye_payable = Math.max(0, t.paye - t.eti);
+          const uif_payable = t.uif_employee + t.uif_employer;
+          return {
+            period_start: r.period_start, period_end: r.period_end, pay_date: r.pay_date,
+            employee_count: t.headcount.size,
+            gross_remuneration: round2(t.gross_remuneration),
+            paye_payable: round2(paye_payable), uif_payable: round2(uif_payable), sdl_payable: round2(t.sdl),
+            total_payable: round2(paye_payable + uif_payable + t.sdl),
+          };
+        });
+
+        const annual = monthly.reduce((acc: any, m: any) => ({
+          gross_remuneration: acc.gross_remuneration + m.gross_remuneration,
+          paye_payable: acc.paye_payable + m.paye_payable,
+          uif_payable: acc.uif_payable + m.uif_payable,
+          sdl_payable: acc.sdl_payable + m.sdl_payable,
+          total_payable: acc.total_payable + m.total_payable,
+        }), { gross_remuneration: 0, paye_payable: 0, uif_payable: 0, sdl_payable: 0, total_payable: 0 });
+
+        const distinctStaff = new Set((payslips ?? []).map((p: any) => p.staff_id));
+
+        return json({
+          company: company.trading_name,
+          paye_reference: company.paye_reference,
+          uif_reference: company.uif_reference,
+          sdl_reference: company.sdl_reference,
+          tax_year,
+          irp5_certificates_issuable: distinctStaff.size,
+          monthly,
+          annual: {
+            gross_remuneration: round2(annual.gross_remuneration),
+            paye_payable: round2(annual.paye_payable),
+            uif_payable: round2(annual.uif_payable),
+            sdl_payable: round2(annual.sdl_payable),
+            total_payable: round2(annual.total_payable),
           },
         });
       }
@@ -388,9 +502,19 @@ function computePayslip(
     run.tax_year,
   );
 
+  // Fringe benefits (company car, low-interest loan, subsidised
+  // accommodation, etc.) are itemised with an employer-entered monthly
+  // taxable value — added to taxable income for PAYE, same as any other
+  // taxable benefit. Non-cash, so deliberately excluded from gross_pay/
+  // net_pay and from the UIF/SDL remuneration base below.
+  const fringeBenefitsList: Array<{ label: string; amount: number }> = Array.isArray(staff.fringe_benefits_json)
+    ? staff.fringe_benefits_json
+    : [];
+  const fringeBenefitsTotal = round2(fringeBenefitsList.reduce((s, f) => s + Number(f.amount || 0), 0));
+
   // Recurring taxable income EXCLUDES the once-off amount — it's taxed
   // separately below via the correct (non-annualising) once-off method.
-  const taxableIncome = round2(basic + travelTaxable + otherTaxableAllowance - retirementDeductible);
+  const taxableIncome = round2(basic + travelTaxable + otherTaxableAllowance + fringeBenefitsTotal - retirementDeductible);
 
   const age = ageFromStaff(staff);
   const onceOffPaye = calculateOnceOffPaye({
@@ -444,6 +568,8 @@ function computePayslip(
     eti_employer: eti,
     other_deductions: otherDeductionsTotal,
     other_deductions_json: otherDeductionsList,
+    fringe_benefits_total: fringeBenefitsTotal,
+    fringe_benefits_json: fringeBenefitsList,
     loan_repayment: round2(loanDeduction),
     total_deductions: totalDeductions,
     net_pay: netPay,

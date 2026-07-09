@@ -144,6 +144,7 @@
       const company = run.payroll_companies;
 
       const otherDeductions = Array.isArray(p.other_deductions_json) ? p.other_deductions_json : [];
+      const fringeBenefits = Array.isArray(p.fringe_benefits_json) ? p.fringe_benefits_json : [];
 
       sheet.innerHTML = `
         <div class="top">
@@ -180,6 +181,12 @@
           ${Number(p.once_off_nontaxable) ? `<tr><td>Bonus / once-off payment (non-taxable)</td><td>${money(p.once_off_nontaxable)}</td></tr>` : ''}
           <tr class="total-row"><td>Gross pay</td><td>${money(p.gross_pay)}</td></tr>
         </table>
+
+        ${fringeBenefits.length ? `
+        <h2 class="section">Taxable fringe benefits <span style="font-weight:400;font-size:0.72rem;color:#7a8fb0">(non-cash, added to taxable income only)</span></h2>
+        <table>
+          ${fringeBenefits.map(f => `<tr><td>${esc(f.label)}</td><td>${money(f.amount)}</td></tr>`).join('')}
+        </table>` : ''}
 
         <h2 class="section">Deductions</h2>
         <table>

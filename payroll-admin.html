@@ -542,9 +542,11 @@
         <div class="page-header"><h1>Reports</h1><p>Monthly summaries, statutory figures and the payroll audit trail.</p></div>
         <div class="subtabs">
           <div class="subtab active" data-subtab="emp201" onclick="switchReportTab('emp201')">PAYE / UIF / SDL (EMP201)</div>
+          <div class="subtab" data-subtab="emp501" onclick="switchReportTab('emp501')">Annual Reconciliation (EMP501)</div>
           <div class="subtab" data-subtab="cost" onclick="switchReportTab('cost')">Employee Cost Report</div>
           <div class="subtab" data-subtab="audit" onclick="switchReportTab('audit')">Payroll Audit Trail</div>
           <div class="subtab" data-subtab="irp5" onclick="switchReportTab('irp5')">Tax Certificates (IRP5)</div>
+          <div class="subtab" data-subtab="builder" onclick="switchReportTab('builder')">Custom Report Builder</div>
         </div>
 
         <div class="subtab-panel active" id="reportpanel-emp201">
@@ -556,6 +558,18 @@
               <div class="form-group" style="display:flex;align-items:flex-end"><button class="btn-primary" onclick="loadEmp201()">Generate EMP201</button></div>
             </div>
             <div id="emp201Wrap"></div>
+          </div>
+        </div>
+
+        <div class="subtab-panel" id="reportpanel-emp501">
+          <div class="card">
+            <div class="card-header"><div class="card-title">Annual reconciliation (EMP501)</div></div>
+            <p class="form-hint" style="margin-bottom:14px">Reconciles the tax year's monthly EMP201 liabilities against the annual total and the number of IRP5/IT3(a) certificates issuable — for capturing on SARS e@syFile during the reconciliation window.</p>
+            <div class="form-row">
+              <div class="form-group"><label>Tax year</label><select id="emp501YearSelect"></select></div>
+              <div class="form-group" style="display:flex;align-items:flex-end"><button class="btn-primary" onclick="loadEmp501()">Generate EMP501</button></div>
+            </div>
+            <div id="emp501Wrap"></div>
           </div>
         </div>
 
@@ -588,6 +602,33 @@
               <div class="form-group"><label>Tax year</label><select id="irp5YearSelect"></select></div>
               <div class="form-group" style="display:flex;align-items:flex-end"><button class="btn-primary" onclick="openIrp5()">View Certificate</button></div>
             </div>
+          </div>
+        </div>
+
+        <div class="subtab-panel" id="reportpanel-builder">
+          <div class="card">
+            <div class="card-header"><div class="card-title">Custom report builder</div></div>
+            <div class="form-row">
+              <div class="form-group"><label>Data source</label>
+                <select id="rb-source" onchange="rbPopulateColumns()">
+                  <option value="staff">Employees</option>
+                  <option value="payslips">Payslips</option>
+                  <option value="leave_requests">Leave requests</option>
+                  <option value="expense_claims">Expense &amp; travel claims</option>
+                  <option value="hr_events">HR events</option>
+                </select>
+              </div>
+              <div class="form-group"></div>
+            </div>
+            <div class="form-group" style="margin-bottom:14px">
+              <label>Columns</label>
+              <div id="rb-columns" style="display:flex;flex-wrap:wrap;gap:10px"></div>
+            </div>
+            <div class="error-box" id="rbError"></div>
+            <button class="btn-primary btn-sm" onclick="runReportBuilder()">Run Report</button>
+            <button class="btn-outline btn-sm" onclick="exportReportCsv()" id="rbExportBtn" style="display:none">Export CSV</button>
+            <button class="btn-outline btn-sm" onclick="window.print()" id="rbPrintBtn" style="display:none">Print / Save as PDF</button>
+            <div id="rbResultWrap" style="margin-top:16px"></div>
           </div>
         </div>
       </section>
@@ -971,9 +1012,14 @@
       <div class="form-group"><label>Contract end date <span style="font-weight:400;color:var(--soft)">(fixed-term only)</span></label><input type="date" id="s-contractend"></div>
     </div>
     <div class="form-group" style="margin-bottom:14px">
-      <label>Other deductions <span style="font-weight:400;color:var(--soft)">(recurring — garnishee, loan repayment, union fee, etc.)</span></label>
+      <label>Other deductions <span style="font-weight:400;color:var(--soft)">(recurring — loan repayment, union fee, etc. For court-ordered garnishees with a balance to track, use Garnishees in Employee Records instead.)</span></label>
       <div id="s-deductions-list"></div>
       <button type="button" class="btn-outline btn-sm" style="margin-top:6px" onclick="addDeductionRow()">+ Add deduction</button>
+    </div>
+    <div class="form-group" style="margin-bottom:14px">
+      <label>Fringe benefits <span style="font-weight:400;color:var(--soft)">(company car, low-interest loan, subsidised housing, etc. — monthly taxable value, added to PAYE)</span></label>
+      <div id="s-fringe-list"></div>
+      <button type="button" class="btn-outline btn-sm" style="margin-top:6px" onclick="addFringeRow()">+ Add fringe benefit</button>
     </div>
     <p class="form-hint" style="margin-bottom:8px">Banking details — only visible to you as the account owner, masked to the last 4 digits everywhere else in the app.</p>
     <div class="form-row">
@@ -1863,6 +1909,7 @@ function openStaffModal(id) {
   document.getElementById('s-eti').checked = s ? !!s.is_eti_eligible : true;
   document.getElementById('s-active').checked = s ? !!s.active : true;
   renderDeductionRows(Array.isArray(s?.other_deductions_json) ? s.other_deductions_json : []);
+  renderFringeRows(Array.isArray(s?.fringe_benefits_json) ? s.fringe_benefits_json : []);
   const mgrSel = document.getElementById('s-manager');
   mgrSel.innerHTML = '<option value="">— none —</option>' + staffCache.filter(x => x.id !== id).map(x => `<option value="${x.id}">${esc(x.full_name)}</option>`).join('');
   mgrSel.value = s?.manager_id || '';
@@ -1909,6 +1956,29 @@ function collectDeductionRows() {
   })).filter(d => d.label && d.amount > 0);
 }
 
+function renderFringeRows(rows) {
+  const wrap = document.getElementById('s-fringe-list');
+  wrap.innerHTML = '';
+  (rows.length ? rows : []).forEach(r => addFringeRow(r.label, r.amount));
+}
+function addFringeRow(label, amount) {
+  const wrap = document.getElementById('s-fringe-list');
+  const row = document.createElement('div');
+  row.className = 'deduction-row';
+  row.innerHTML = `
+    <input placeholder="Label, e.g. Company car" class="ded-label" value="${label ? esc(label) : ''}">
+    <input type="number" step="0.01" placeholder="Monthly taxable value" class="amount ded-amount" value="${amount ?? ''}">
+    <button type="button" class="btn-danger" onclick="this.closest('.deduction-row').remove()">Remove</button>
+  `;
+  wrap.appendChild(row);
+}
+function collectFringeRows() {
+  return Array.from(document.querySelectorAll('#s-fringe-list .deduction-row')).map(row => ({
+    label: row.querySelector('.ded-label').value.trim(),
+    amount: parseFloat(row.querySelector('.ded-amount').value) || 0,
+  })).filter(d => d.label && d.amount > 0);
+}
+
 async function saveStaff() {
   const errEl = document.getElementById('staffError');
   errEl.style.display = 'none';
@@ -1936,6 +2006,7 @@ async function saveStaff() {
     tax_number: val('s-taxnum') || null,
     manager_id: document.getElementById('s-manager').value || null,
     department_id: document.getElementById('s-department').value || null,
+    fringe_benefits_json: collectFringeRows(),
     probation_end_date: val('s-probation') || null,
     contract_end_date: val('s-contractend') || null,
     other_deductions_json: collectDeductionRows(),
@@ -2700,7 +2771,7 @@ async function loadEmployeeRecords() {
   if (!staffId) { wrap.innerHTML = ''; return; }
   wrap.innerHTML = '<div class="loading">Loading…</div>';
 
-  const [{ data: quals }, { data: skills }, { data: training }, { data: assets }, { data: contacts }, { data: history }, { data: events }] = await Promise.all([
+  const [{ data: quals }, { data: skills }, { data: training }, { data: assets }, { data: contacts }, { data: history }, { data: events }, { data: garnishees }] = await Promise.all([
     sb.from('payroll_qualifications').select('*').eq('staff_id', staffId).order('year_completed', { ascending: false }),
     sb.from('payroll_skills').select('*').eq('staff_id', staffId).order('created_at', { ascending: false }),
     sb.from('payroll_training_records').select('*').eq('staff_id', staffId).order('completed_date', { ascending: false }),
@@ -2708,6 +2779,7 @@ async function loadEmployeeRecords() {
     sb.from('payroll_emergency_contacts').select('*').eq('staff_id', staffId).order('created_at', { ascending: false }),
     sb.from('payroll_employment_history').select('*').eq('staff_id', staffId).order('effective_date', { ascending: false }),
     sb.from('payroll_hr_events').select('*').eq('staff_id', staffId).order('event_date', { ascending: false }),
+    sb.from('payroll_garnishees').select('*').eq('staff_id', staffId).order('created_at', { ascending: false }),
   ]);
 
   wrap.innerHTML = `
@@ -2745,6 +2817,19 @@ async function loadEmployeeRecords() {
       </div>
       <button class="btn-outline btn-sm" onclick="addAsset('${staffId}')">Add Asset</button>
     </div>
+    <div class="card"><div class="card-header"><div class="card-title">Garnishees</div></div>
+      ${(garnishees||[]).length ? `<table><thead><tr><th>Case reference</th><th>Monthly</th><th>Balance</th><th>Status</th><th></th></tr></thead><tbody>
+        ${garnishees.map(g => `<tr><td>${esc(g.case_reference||'—')}</td><td>R ${Number(g.monthly_amount).toFixed(2)}</td><td>${g.balance != null ? 'R ' + Number(g.balance).toFixed(2) : 'Ongoing'}</td>
+          <td style="text-transform:capitalize">${g.status}</td>
+          <td>${g.status === 'active' ? `<a class="btn-outline btn-sm" onclick="cancelGarnishee('${g.id}')">Cancel</a>` : ''}</td></tr>`).join('')}
+      </tbody></table>` : '<div class="empty">None recorded.</div>'}
+      <div class="form-row" style="margin-top:14px">
+        <div class="form-group"><label>Case reference</label><input id="gn-ref" placeholder="e.g. Maintenance Court Case 123/2026"></div>
+        <div class="form-group"><label>Monthly amount</label><input type="number" step="0.01" id="gn-monthly"></div>
+      </div>
+      <div class="form-group" style="margin-bottom:12px"><label>Total amount <span style="font-weight:400;color:var(--soft)">(leave blank for an ongoing order with no cap)</span></label><input type="number" step="0.01" id="gn-total"></div>
+      <button class="btn-outline btn-sm" onclick="addGarnishee('${staffId}')">Add Garnishee</button>
+    </div>
     <div class="card"><div class="card-header"><div class="card-title">Emergency contacts</div></div>
       ${(contacts||[]).length ? `<table><thead><tr><th>Name</th><th>Relationship</th><th>Phone</th></tr></thead><tbody>
         ${contacts.map(c => `<tr><td>${esc(c.name)}</td><td>${esc(c.relationship||'—')}</td><td>${esc(c.phone||'—')}</td></tr>`).join('')}
@@ -2777,6 +2862,24 @@ async function loadEmployeeRecords() {
       <button class="btn-outline btn-sm" onclick="addHrEvent('${staffId}')">Add Event</button>
     </div>
   `;
+}
+
+async function addGarnishee(staffId) {
+  const monthly_amount = parseFloat(val('gn-monthly'));
+  if (isNaN(monthly_amount) || monthly_amount <= 0) { alert('Enter a valid monthly amount.'); return; }
+  const totalRaw = val('gn-total');
+  const total_amount = totalRaw ? parseFloat(totalRaw) : null;
+  const { error } = await sb.from('payroll_garnishees').insert({
+    staff_id: staffId, company_id: company.id, case_reference: val('gn-ref') || null,
+    monthly_amount, total_amount, balance: total_amount,
+  });
+  if (error) { alert(error.message); return; }
+  await loadEmployeeRecords();
+}
+async function cancelGarnishee(id) {
+  if (!confirm('Cancel this garnishee? It will stop being deducted from future payslips.')) return;
+  await sb.from('payroll_garnishees').update({ status: 'cancelled' }).eq('id', id);
+  await loadEmployeeRecords();
 }
 
 async function addTrainingRecord(staffId) {
@@ -2931,6 +3034,101 @@ function switchReportTab(name) {
   document.querySelectorAll('.subtab-panel').forEach(p => p.classList.toggle('active', p.id === 'reportpanel-' + name));
   if (name === 'audit') loadAuditTrail();
   if (name === 'irp5') populateIrp5Selectors();
+  if (name === 'emp501') populateEmp501Selector();
+  if (name === 'builder') rbPopulateColumns();
+}
+
+function populateEmp501Selector() {
+  const years = [...new Set(runsCache.filter(r => r.status !== 'draft').map(r => r.tax_year))].sort().reverse();
+  const sel = document.getElementById('emp501YearSelect');
+  sel.innerHTML = years.length ? years.map(y => `<option value="${esc(y)}">${esc(y)}</option>`).join('') : '<option value="">No finalized pay runs yet</option>';
+}
+
+async function loadEmp501() {
+  const taxYear = document.getElementById('emp501YearSelect').value;
+  const wrap = document.getElementById('emp501Wrap');
+  if (!taxYear) { wrap.innerHTML = '<div class="empty">No tax year available yet.</div>'; return; }
+  wrap.innerHTML = '<div class="loading">Loading…</div>';
+  try {
+    const r = await callEngine('emp501_summary', { company_id: company.id, tax_year: taxYear });
+    wrap.innerHTML = `
+      <table><thead><tr><th>Period</th><th>Employees</th><th>Gross</th><th>PAYE</th><th>UIF</th><th>SDL</th><th>Total</th></tr></thead><tbody>
+        ${r.monthly.map(m => `<tr>
+          <td>${m.period_start} – ${m.period_end}</td>
+          <td>${m.employee_count}</td>
+          <td>R ${m.gross_remuneration.toLocaleString('en-ZA',{minimumFractionDigits:2})}</td>
+          <td>R ${m.paye_payable.toLocaleString('en-ZA',{minimumFractionDigits:2})}</td>
+          <td>R ${m.uif_payable.toLocaleString('en-ZA',{minimumFractionDigits:2})}</td>
+          <td>R ${m.sdl_payable.toLocaleString('en-ZA',{minimumFractionDigits:2})}</td>
+          <td><strong>R ${m.total_payable.toLocaleString('en-ZA',{minimumFractionDigits:2})}</strong></td>
+        </tr>`).join('')}
+        <tr style="border-top:2px solid var(--border)">
+          <td><strong>Annual total</strong></td><td>${r.irp5_certificates_issuable}</td>
+          <td><strong>R ${r.annual.gross_remuneration.toLocaleString('en-ZA',{minimumFractionDigits:2})}</strong></td>
+          <td><strong>R ${r.annual.paye_payable.toLocaleString('en-ZA',{minimumFractionDigits:2})}</strong></td>
+          <td><strong>R ${r.annual.uif_payable.toLocaleString('en-ZA',{minimumFractionDigits:2})}</strong></td>
+          <td><strong>R ${r.annual.sdl_payable.toLocaleString('en-ZA',{minimumFractionDigits:2})}</strong></td>
+          <td><strong>R ${r.annual.total_payable.toLocaleString('en-ZA',{minimumFractionDigits:2})}</strong></td>
+        </tr>
+      </tbody></table>
+      <p class="form-hint" style="margin-top:14px">${r.irp5_certificates_issuable} IRP5/IT3(a) certificates issuable for ${esc(taxYear)}. Reconcile these totals against your submitted EMP201s in SARS e@syFile.</p>
+    `;
+  } catch (e) { wrap.innerHTML = `<div class="empty">${esc(e.message)}</div>`; }
+}
+
+// ── Custom report builder ──
+const REPORT_SOURCES = {
+  staff: { table: 'payroll_staff', columns: ['full_name','employee_number','job_title','pay_frequency','basic_salary','active','start_date'] },
+  payslips: { table: 'payroll_payslips', columns: ['staff_id','gross_pay','paye','uif_employee','net_pay','created_at'] },
+  leave_requests: { table: 'payroll_leave_requests', columns: ['staff_id','leave_type','start_date','end_date','days','status'] },
+  expense_claims: { table: 'payroll_expense_claims', columns: ['staff_id','claim_type','description','amount','claim_date','status'] },
+  hr_events: { table: 'payroll_hr_events', columns: ['staff_id','event_type','event_date','details'] },
+};
+let rbLastResult = null;
+function rbPopulateColumns() {
+  const source = document.getElementById('rb-source').value;
+  const wrap = document.getElementById('rb-columns');
+  wrap.innerHTML = REPORT_SOURCES[source].columns.map(c => `<label style="display:flex;align-items:center;gap:6px;font-size:0.8rem;font-weight:600"><input type="checkbox" class="rb-col" value="${c}" checked>${c.replace('_',' ')}</label>`).join('');
+}
+async function runReportBuilder() {
+  const errEl = document.getElementById('rbError');
+  errEl.style.display = 'none';
+  if (!company) { errEl.textContent = 'Set up your company first.'; errEl.style.display = 'block'; return; }
+  const source = document.getElementById('rb-source').value;
+  const cols = Array.from(document.querySelectorAll('.rb-col:checked')).map(c => c.value);
+  if (cols.length === 0) { errEl.textContent = 'Choose at least one column.'; errEl.style.display = 'block'; return; }
+  const { table } = REPORT_SOURCES[source];
+  let query = sb.from(table).select(cols.join(','));
+  if (source === 'payslips') {
+    const runIds = runsCache.map(r => r.id);
+    query = query.in('run_id', runIds.length ? runIds : ['00000000-0000-0000-0000-000000000000']);
+  } else if (source === 'leave_requests') {
+    const staffIds = staffCache.map(s => s.id);
+    query = query.in('staff_id', staffIds.length ? staffIds : ['00000000-0000-0000-0000-000000000000']);
+  } else {
+    query = query.eq('company_id', company.id);
+  }
+  const { data, error } = await query.limit(1000);
+  const wrap = document.getElementById('rbResultWrap');
+  if (error) { errEl.textContent = error.message; errEl.style.display = 'block'; wrap.innerHTML = ''; return; }
+  rbLastResult = { cols, rows: data || [] };
+  document.getElementById('rbExportBtn').style.display = data && data.length ? '' : 'none';
+  document.getElementById('rbPrintBtn').style.display = data && data.length ? '' : 'none';
+  if (!data || data.length === 0) { wrap.innerHTML = '<div class="empty">No rows found.</div>'; return; }
+  wrap.innerHTML = `<table><thead><tr>${cols.map(c => `<th>${esc(c.replace('_',' '))}</th>`).join('')}</tr></thead><tbody>
+    ${data.map(row => `<tr>${cols.map(c => `<td>${esc(row[c] ?? '—')}</td>`).join('')}</tr>`).join('')}
+  </tbody></table>`;
+}
+function exportReportCsv() {
+  if (!rbLastResult || rbLastResult.rows.length === 0) return;
+  const { cols, rows } = rbLastResult;
+  const escCsv = v => `"${String(v ?? '').replace(/"/g, '""')}"`;
+  const lines = [cols.join(','), ...rows.map(r => cols.map(c => escCsv(r[c])).join(','))];
+  const blob = new Blob([lines.join('\n')], { type: 'text/csv' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url; a.download = 'burse-report.csv'; a.click();
+  URL.revokeObjectURL(url);
 }
 
 function populateIrp5Selectors() {
