@@ -63,6 +63,21 @@
     .btn-outline { padding: 7px 14px; border: 1.5px solid var(--border); border-radius: 8px; font-weight: 700; font-size: 0.78rem; color: var(--navy-dark); cursor: pointer; background: #fff; }
     .btn-outline:hover { border-color: var(--navy-dark); }
 
+    .qa-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 10px; margin-bottom: 20px; }
+    .qa-btn { background: var(--teal-light); border: 1px solid var(--border); border-radius: 12px; padding: 14px; font-weight: 700; font-size: 0.82rem; color: var(--navy-dark); cursor: pointer; text-align: left; font-family: inherit; }
+    .qa-btn:hover { border-color: var(--teal); }
+    .hi-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 14px; margin-bottom: 20px; }
+    .hi-card { background: #fff; border: 1px solid var(--border); border-radius: 14px; padding: 16px 18px; }
+    .hi-card .lbl { font-size: 0.7rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; color: var(--text-soft); margin-bottom: 6px; }
+    .hi-card .val { font-size: 1.25rem; font-weight: 900; color: var(--navy-dark); }
+    .ann-item { padding: 12px 0; border-bottom: 1px solid var(--border); }
+    .ann-item:last-child { border-bottom: none; }
+    .ann-item .t { font-weight: 800; font-size: 0.88rem; color: var(--navy-dark); }
+    .ann-item .b { font-size: 0.82rem; color: var(--text-mid); margin-top: 4px; white-space: pre-wrap; }
+    .ann-item .d { font-size: 0.7rem; color: var(--text-soft); margin-top: 6px; }
+    .clock-status { display: flex; align-items: center; gap: 14px; padding: 18px; background: var(--teal-light); border-radius: 14px; margin-bottom: 16px; }
+    .clock-dot { width: 12px; height: 12px; border-radius: 50%; background: #94a3b8; }
+    .clock-dot.in { background: #15803d; }
     .empty { text-align: center; padding: 24px; color: var(--text-soft); font-size: 0.85rem; }
     .error-box { display: none; background: #fff0f0; border: 1px solid #fca5a5; color: #dc2626; font-size: 0.8rem; padding: 10px 14px; border-radius: 8px; margin-bottom: 12px; }
     .gate { text-align: center; padding: 80px 20px; color: var(--text-soft); }
@@ -144,6 +159,7 @@
     );
 
     let staff = null;
+    let dashData = null;
 
     document.getElementById('logoutBtn').addEventListener('click', async () => {
       await sb.auth.signOut();
@@ -187,27 +203,94 @@
 
     async function render() {
       const app = document.getElementById('app');
-      const [{ data: balances }, { data: requests }, { data: payslips }] = await Promise.all([
+      const [
+        { data: balances }, { data: requests }, { data: payslips },
+        { data: advanceReqs }, { data: overtimeReqs }, { data: clockEvents },
+        { data: announcements }, { data: documents },
+      ] = await Promise.all([
         sb.from('payroll_leave_balances').select('*').eq('staff_id', staff.id).order('cycle_start', { ascending: false }),
         sb.from('payroll_leave_requests').select('*').eq('staff_id', staff.id).order('requested_at', { ascending: false }),
         sb.from('payroll_payslips').select('*, payroll_runs(*)').eq('staff_id', staff.id).order('created_at', { ascending: false }),
+        sb.from('payroll_advance_requests').select('*').eq('staff_id', staff.id).order('requested_at', { ascending: false }),
+        sb.from('payroll_overtime_requests').select('*').eq('staff_id', staff.id).order('requested_at', { ascending: false }),
+        sb.from('payroll_clock_events').select('*').eq('staff_id', staff.id).order('occurred_at', { ascending: false }).limit(30),
+        sb.from('payroll_announcements').select('*').eq('company_id', staff.company_id).order('created_at', { ascending: false }).limit(10),
+        sb.from('payroll_staff_documents').select('*').eq('staff_id', staff.id).order('uploaded_at', { ascending: false }),
       ]);
+
+      dashData = { balances, requests, payslips, advanceReqs, overtimeReqs, clockEvents, announcements, documents };
 
       const latestByType = {};
       (balances || []).forEach(b => { if (!latestByType[b.leave_type]) latestByType[b.leave_type] = b; });
       const typeLabels = { annual: 'Annual leave', sick: 'Sick leave', family_responsibility: 'Family responsibility' };
       const taxYears = [...new Set((payslips || []).map(p => p.payroll_runs?.tax_year).filter(Boolean))].sort().reverse();
+      const latestPayslip = (payslips || [])[0];
+      const lastClockEvent = (clockEvents || [])[0];
+      const isClockedIn = lastClockEvent?.event_type === 'in';
+      const pendingCount = (requests || []).filter(r => r.status === 'pending').length
+        + (advanceReqs || []).filter(r => r.status === 'pending').length
+        + (overtimeReqs || []).filter(r => r.status === 'pending').length;
 
       app.innerHTML = `
         <div class="page-head"><h1>My Payroll</h1><p>Welcome, ${esc(staff.full_name)}.</p></div>
 
         <div class="tabs">
-          <div class="tab active" data-tab="payslips" onclick="switchTab('payslips')">Payslips</div>
+          <div class="tab active" data-tab="dashboard" onclick="switchTab('dashboard')">Dashboard</div>
+          <div class="tab" data-tab="payslips" onclick="switchTab('payslips')">Payslips</div>
           <div class="tab" data-tab="leave" onclick="switchTab('leave')">Leave</div>
+          <div class="tab" data-tab="requests" onclick="switchTab('requests')">Requests &amp; Time</div>
+          <div class="tab" data-tab="documents" onclick="switchTab('documents')">Documents</div>
           <div class="tab" data-tab="details" onclick="switchTab('details')">My Details</div>
         </div>
 
-        <div class="tab-panel active" id="panel-payslips">
+        <div class="tab-panel active" id="panel-dashboard">
+          <div class="hi-grid">
+            <div class="hi-card"><div class="lbl">Latest net pay</div><div class="val">${latestPayslip ? money(latestPayslip.net_pay) : '—'}</div></div>
+            <div class="hi-card"><div class="lbl">Last pay date</div><div class="val" style="font-size:1.05rem">${latestPayslip?.payroll_runs?.pay_date || '—'}</div></div>
+            <div class="hi-card"><div class="lbl">Pending requests</div><div class="val">${pendingCount}</div></div>
+            <div class="hi-card"><div class="lbl">Clock status</div><div class="val" style="font-size:1.05rem;display:flex;align-items:center;gap:8px"><span class="clock-dot ${isClockedIn ? 'in' : ''}"></span>${isClockedIn ? 'Clocked in' : 'Clocked out'}</div></div>
+          </div>
+
+          <div class="qa-grid">
+            <button class="qa-btn" onclick="switchTab('leave')">Request Leave</button>
+            <button class="qa-btn" onclick="switchTab('requests')">Request Advance</button>
+            <button class="qa-btn" onclick="switchTab('requests')">Submit Overtime</button>
+            <button class="qa-btn" onclick="switchTab('requests')">${isClockedIn ? 'Clock Out' : 'Clock In'}</button>
+          </div>
+
+          <div class="bal-grid">
+            ${Object.keys(typeLabels).map(t => {
+              const b = latestByType[t];
+              const balance = b ? (Number(b.entitled_days) - Number(b.taken_days)).toFixed(1) : '—';
+              return `<div class="bal-card">
+                <div class="lbl">${typeLabels[t]}</div>
+                <div class="val">${balance}</div>
+                <div class="sub">${b ? `${Number(b.taken_days).toFixed(1)} taken of ${Number(b.entitled_days).toFixed(1)}` : 'Not yet calculated'}</div>
+              </div>`;
+            }).join('')}
+          </div>
+
+          ${latestPayslip ? `<div class="card">
+            <h2>Your benefits (this payslip)</h2>
+            <div class="bal-grid" style="margin-bottom:0">
+              <div class="bal-card"><div class="lbl">Retirement fund</div><div class="val" style="font-size:1.1rem">${money(latestPayslip.retirement_contribution)}</div><div class="sub">${esc(staff.retirement_fund_type || 'none')}</div></div>
+              <div class="bal-card"><div class="lbl">UIF (your share)</div><div class="val" style="font-size:1.1rem">${money(latestPayslip.uif_employee)}</div><div class="sub">1% of remuneration</div></div>
+              <div class="bal-card"><div class="lbl">Medical aid</div><div class="val" style="font-size:1.1rem">${staff.medical_aid_dependants > 0 ? staff.medical_aid_dependants + ' member(s)' : 'None'}</div><div class="sub">On record</div></div>
+            </div>
+          </div>` : ''}
+
+          <div class="card">
+            <h2>Company announcements</h2>
+            ${(!announcements || announcements.length === 0) ? '<div class="empty">No announcements yet.</div>' :
+              announcements.map(a => `<div class="ann-item">
+                <div class="t">${esc(a.title)}</div>
+                <div class="b">${esc(a.body)}</div>
+                <div class="d">${new Date(a.created_at).toLocaleString()}</div>
+              </div>`).join('')}
+          </div>
+        </div>
+
+        <div class="tab-panel" id="panel-payslips">
           <div class="card">
             <h2>Your payslips</h2>
             ${(!payslips || payslips.length === 0) ? '<div class="empty">No payslips yet.</div>' : `
@@ -283,6 +366,88 @@
           </div>
         </div>
 
+        <div class="tab-panel" id="panel-requests">
+          <div class="clock-status">
+            <span class="clock-dot ${isClockedIn ? 'in' : ''}"></span>
+            <div style="flex:1">
+              <div style="font-weight:800;font-size:0.92rem">${isClockedIn ? 'You are clocked in' : 'You are clocked out'}</div>
+              <div style="font-size:0.78rem;color:var(--text-mid)">${lastClockEvent ? 'Last event: ' + new Date(lastClockEvent.occurred_at).toLocaleString() : 'No clock events yet'}</div>
+            </div>
+            <button class="btn" id="clockBtn" onclick="doClock('${isClockedIn ? 'out' : 'in'}')">${isClockedIn ? 'Clock Out' : 'Clock In'}</button>
+          </div>
+
+          <div class="card">
+            <h2>Recent clock events</h2>
+            ${(!clockEvents || clockEvents.length === 0) ? '<div class="empty">No clock in/out events yet.</div>' : `
+            <table><thead><tr><th>Event</th><th>When</th><th>Location</th></tr></thead><tbody>
+              ${clockEvents.slice(0, 10).map(e => `<tr>
+                <td>${e.event_type === 'in' ? '<span class="badge badge-green">In</span>' : '<span class="badge badge-gray">Out</span>'}</td>
+                <td>${new Date(e.occurred_at).toLocaleString()}</td>
+                <td>${e.lat != null ? Number(e.lat).toFixed(4) + ', ' + Number(e.lng).toFixed(4) : '—'}</td>
+              </tr>`).join('')}
+            </tbody></table>`}
+          </div>
+
+          <div class="card">
+            <h2>Request a salary advance</h2>
+            <p style="font-size:0.82rem;color:var(--text-mid);margin-bottom:14px">If approved, this is recovered in full from your next payslip.</p>
+            <div class="error-box" id="advError"></div>
+            <div class="form-row">
+              <div class="form-group"><label>Amount (R)</label><input type="number" min="1" step="0.01" id="adv-amount"></div>
+              <div class="form-group"><label>Reason (optional)</label><input id="adv-reason"></div>
+            </div>
+            <button class="btn" id="submitAdvBtn" onclick="submitAdvanceRequest()">Submit Request</button>
+          </div>
+          <div class="card">
+            <h2>Your advance requests</h2>
+            ${(!advanceReqs || advanceReqs.length === 0) ? '<div class="empty">No advance requests yet.</div>' : `
+            <table><thead><tr><th>Amount</th><th>Reason</th><th>Status</th></tr></thead><tbody>
+              ${advanceReqs.map(r => `<tr>
+                <td>${money(r.amount)}</td>
+                <td>${esc(r.reason || '—')}</td>
+                <td>${leaveBadge(r.status === 'approved' ? 'approved' : r.status === 'declined' ? 'rejected' : 'pending')}</td>
+              </tr>`).join('')}
+            </tbody></table>`}
+          </div>
+
+          <div class="card">
+            <h2>Submit overtime</h2>
+            <div class="error-box" id="otError"></div>
+            <div class="form-row">
+              <div class="form-group"><label>Date</label><input type="date" id="ot-date"></div>
+              <div class="form-group"><label>Hours</label><input type="number" min="0.25" step="0.25" id="ot-hours"></div>
+            </div>
+            <div class="form-group" style="margin-bottom:12px"><label>Note (optional)</label><input id="ot-note"></div>
+            <button class="btn" id="submitOtBtn" onclick="submitOvertimeRequest()">Submit</button>
+          </div>
+          <div class="card">
+            <h2>Your overtime requests</h2>
+            ${(!overtimeReqs || overtimeReqs.length === 0) ? '<div class="empty">No overtime requests yet.</div>' : `
+            <table><thead><tr><th>Date</th><th>Hours</th><th>Status</th></tr></thead><tbody>
+              ${overtimeReqs.map(r => `<tr>
+                <td>${r.work_date}</td>
+                <td>${Number(r.hours).toFixed(2)}</td>
+                <td>${leaveBadge(r.status === 'approved' ? 'approved' : r.status === 'declined' ? 'rejected' : 'pending')}</td>
+              </tr>`).join('')}
+            </tbody></table>`}
+          </div>
+        </div>
+
+        <div class="tab-panel" id="panel-documents">
+          <div class="card">
+            <h2>Your documents</h2>
+            <p style="font-size:0.82rem;color:var(--text-mid);margin-bottom:14px">Employment documents your employer has shared with you.</p>
+            ${(!documents || documents.length === 0) ? '<div class="empty">No documents yet.</div>' : `
+            <table><thead><tr><th>File</th><th>Uploaded</th><th></th></tr></thead><tbody>
+              ${documents.map(d => `<tr>
+                <td>${esc(d.file_name)}</td>
+                <td>${new Date(d.uploaded_at).toLocaleDateString()}</td>
+                <td><a class="btn-outline" onclick="downloadDocument('${d.storage_path}','${esc(d.file_name)}')">Download</a></td>
+              </tr>`).join('')}
+            </tbody></table>`}
+          </div>
+        </div>
+
         <div class="tab-panel" id="panel-details">
           <div class="card">
             <h2>Contact &amp; banking details</h2>
@@ -348,6 +513,70 @@
 
       if (error) { errEl.textContent = error.message; errEl.style.display = 'block'; return; }
       await render();
+    }
+
+    async function submitAdvanceRequest() {
+      const errEl = document.getElementById('advError');
+      errEl.style.display = 'none';
+      const amount = parseFloat(document.getElementById('adv-amount').value);
+      const reason = document.getElementById('adv-reason').value.trim() || null;
+      if (isNaN(amount) || amount <= 0) { errEl.textContent = 'Enter a valid amount.'; errEl.style.display = 'block'; return; }
+
+      const btn = document.getElementById('submitAdvBtn');
+      btn.disabled = true; btn.textContent = 'Submitting…';
+      const { error } = await sb.from('payroll_advance_requests').insert({ staff_id: staff.id, company_id: staff.company_id, amount, reason });
+      btn.disabled = false; btn.textContent = 'Submit Request';
+      if (error) { errEl.textContent = error.message; errEl.style.display = 'block'; return; }
+      await render();
+      switchTab('requests');
+    }
+
+    async function submitOvertimeRequest() {
+      const errEl = document.getElementById('otError');
+      errEl.style.display = 'none';
+      const work_date = document.getElementById('ot-date').value;
+      const hours = parseFloat(document.getElementById('ot-hours').value);
+      const note = document.getElementById('ot-note').value.trim() || null;
+      if (!work_date) { errEl.textContent = 'Choose a date.'; errEl.style.display = 'block'; return; }
+      if (isNaN(hours) || hours <= 0) { errEl.textContent = 'Enter a valid number of hours.'; errEl.style.display = 'block'; return; }
+
+      const btn = document.getElementById('submitOtBtn');
+      btn.disabled = true; btn.textContent = 'Submitting…';
+      const { error } = await sb.from('payroll_overtime_requests').insert({ staff_id: staff.id, company_id: staff.company_id, work_date, hours, note });
+      btn.disabled = false; btn.textContent = 'Submit';
+      if (error) { errEl.textContent = error.message; errEl.style.display = 'block'; return; }
+      await render();
+      switchTab('requests');
+    }
+
+    function getLocationBestEffort() {
+      return new Promise(resolve => {
+        if (!navigator.geolocation) { resolve(null); return; }
+        navigator.geolocation.getCurrentPosition(
+          pos => resolve({ lat: pos.coords.latitude, lng: pos.coords.longitude }),
+          () => resolve(null),
+          { timeout: 4000 },
+        );
+      });
+    }
+
+    async function doClock(eventType) {
+      const btn = document.getElementById('clockBtn');
+      btn.disabled = true; btn.textContent = 'Please wait…';
+      const loc = await getLocationBestEffort();
+      const { error } = await sb.from('payroll_clock_events').insert({
+        staff_id: staff.id, company_id: staff.company_id, event_type: eventType,
+        lat: loc?.lat ?? null, lng: loc?.lng ?? null,
+      });
+      if (error) { alert(error.message); btn.disabled = false; return; }
+      await render();
+      switchTab('requests');
+    }
+
+    async function downloadDocument(path, fileName) {
+      const { data, error } = await sb.storage.from('staff-documents').createSignedUrl(path, 60);
+      if (error) { alert(error.message); return; }
+      window.open(data.signedUrl, '_blank');
     }
 
     async function saveMyDetails() {
