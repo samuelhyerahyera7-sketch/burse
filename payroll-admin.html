@@ -849,7 +849,9 @@
     </div>
     <div class="form-row">
       <div class="form-group"><label>Tax number <span style="font-weight:400;color:var(--soft)">(SARS income tax reference)</span></label><input id="s-taxnum" placeholder="e.g. 9012345678"></div>
-      <div class="form-group"></div>
+      <div class="form-group"><label>Manager <span style="font-weight:400;color:var(--soft)">(can approve this employee's requests)</span></label>
+        <select id="s-manager"><option value="">— none —</option></select>
+      </div>
     </div>
     <div class="form-group" style="margin-bottom:14px">
       <label>Other deductions <span style="font-weight:400;color:var(--soft)">(recurring — garnishee, loan repayment, union fee, etc.)</span></label>
@@ -1653,12 +1655,14 @@ async function loadStaff() {
   loansCache = loans || [];
   if (staffCache.length === 0) { wrap.innerHTML = '<div class="empty">No employees yet. Click "Add Employee" to get started.</div>'; return; }
 
-  wrap.innerHTML = `<table><thead><tr><th>Name</th><th>Job title</th><th>Basic salary</th><th>Frequency</th><th>Bank account</th><th>Loan</th><th>Status</th><th></th></tr></thead><tbody>
+  wrap.innerHTML = `<table><thead><tr><th>Name</th><th>Job title</th><th>Manager</th><th>Basic salary</th><th>Frequency</th><th>Bank account</th><th>Loan</th><th>Status</th><th></th></tr></thead><tbody>
     ${staffCache.map(s => {
       const loan = loansCache.find(l => l.staff_id === s.id);
+      const manager = staffCache.find(x => x.id === s.manager_id);
       return `<tr>
       <td>${esc(s.full_name)}</td>
       <td>${esc(s.job_title||'—')}</td>
+      <td>${manager ? esc(manager.full_name) : '—'}</td>
       <td>R ${Number(s.basic_salary||0).toLocaleString('en-ZA',{minimumFractionDigits:2})}</td>
       <td style="text-transform:capitalize">${s.pay_frequency}</td>
       <td>${esc(maskAccount(s.bank_account_number))}</td>
@@ -1740,6 +1744,9 @@ function openStaffModal(id) {
   document.getElementById('s-eti').checked = s ? !!s.is_eti_eligible : true;
   document.getElementById('s-active').checked = s ? !!s.active : true;
   renderDeductionRows(Array.isArray(s?.other_deductions_json) ? s.other_deductions_json : []);
+  const mgrSel = document.getElementById('s-manager');
+  mgrSel.innerHTML = '<option value="">— none —</option>' + staffCache.filter(x => x.id !== id).map(x => `<option value="${x.id}">${esc(x.full_name)}</option>`).join('');
+  mgrSel.value = s?.manager_id || '';
   document.getElementById('staffModal').hidden = false;
   updateEtiAgeWarning();
 
@@ -1803,6 +1810,7 @@ async function saveStaff() {
     retirement_contribution: numOr0('s-retirement'),
     medical_aid_dependants: parseInt(document.getElementById('s-medical').value || '0'),
     tax_number: val('s-taxnum') || null,
+    manager_id: document.getElementById('s-manager').value || null,
     other_deductions_json: collectDeductionRows(),
     bank_name: val('s-bankname') || null,
     bank_account_number: val('s-bankacc') || null,

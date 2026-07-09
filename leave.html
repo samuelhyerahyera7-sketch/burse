@@ -270,6 +270,7 @@
           <div class="tab" data-tab="leave" onclick="switchTab('leave')">Leave</div>
           <div class="tab" data-tab="requests" onclick="switchTab('requests')">Requests &amp; Time</div>
           <div class="tab" data-tab="documents" onclick="switchTab('documents')">Documents</div>
+          <div class="tab" id="teamTab" style="display:none" data-tab="team" onclick="switchTab('team')">Team</div>
           <div class="tab" data-tab="details" onclick="switchTab('details')">My Details</div>
         </div>
 
@@ -474,6 +475,28 @@
           </div>
         </div>
 
+        <div class="tab-panel" id="panel-team">
+          <div id="teamWrap"><div class="loading">Loading…</div></div>
+          <div class="card">
+            <h2>Delegate my approvals</h2>
+            <p style="font-size:0.82rem;color:var(--text-mid);margin-bottom:14px">While you're away, route your team's approvals to a colleague for a date range.</p>
+            <div class="error-box" id="delegError"></div>
+            <div class="form-row">
+              <div class="form-group"><label>Delegate to</label><select id="deleg-to"></select></div>
+              <div class="form-group"></div>
+            </div>
+            <div class="form-row">
+              <div class="form-group"><label>Starts</label><input type="date" id="deleg-start"></div>
+              <div class="form-group"><label>Ends</label><input type="date" id="deleg-end"></div>
+            </div>
+            <button class="btn" id="submitDelegBtn" onclick="submitDelegation()">Delegate</button>
+          </div>
+          <div class="card">
+            <h2>Your delegations</h2>
+            <div id="delegationsWrap"><div class="loading">Loading…</div></div>
+          </div>
+        </div>
+
         <div class="tab-panel" id="panel-documents">
           <div class="card">
             <h2>Documents to sign</h2>
@@ -530,6 +553,108 @@
       `;
       await loadSignDocsForEmployee();
       updateBiometricButtonState();
+      await loadTeamData();
+    }
+
+    // ── Team (manager approvals + delegation) ──
+    let teamReportsCache = [];
+    let companyStaffCache = [];
+    async function loadTeamData() {
+      const { data: reports } = await sb.from('payroll_staff').select('id, full_name').eq('manager_id', staff.id);
+      teamReportsCache = reports || [];
+      const teamTab = document.getElementById('teamTab');
+      if (teamReportsCache.length === 0) { teamTab.style.display = 'none'; return; }
+      teamTab.style.display = '';
+
+      const ids = teamReportsCache.map(r => r.id);
+      const nameOf = id => teamReportsCache.find(r => r.id === id)?.full_name || '—';
+      const [{ data: leaveReqs }, { data: advReqs }, { data: otReqs }] = await Promise.all([
+        sb.from('payroll_leave_requests').select('*').in('staff_id', ids).eq('status', 'pending').order('requested_at', { ascending: false }),
+        sb.from('payroll_advance_requests').select('*').in('staff_id', ids).eq('status', 'pending').order('requested_at', { ascending: false }),
+        sb.from('payroll_overtime_requests').select('*').in('staff_id', ids).eq('status', 'pending').order('requested_at', { ascending: false }),
+      ]);
+
+      const rows = [
+        ...(leaveReqs || []).map(r => `<tr><td>Leave</td><td>${esc(nameOf(r.staff_id))}</td><td>${r.leave_type.replace('_',' ')}, ${r.start_date} – ${r.end_date} (${r.days}d)</td>
+          <td><a class="btn-outline" onclick="teamDecideLeave('${r.id}','approved')">Approve</a> <a class="btn-outline" onclick="teamDecideLeave('${r.id}','rejected')">Reject</a></td></tr>`),
+        ...(advReqs || []).map(r => `<tr><td>Advance</td><td>${esc(nameOf(r.staff_id))}</td><td>${money(r.amount)}${r.reason ? ' — ' + esc(r.reason) : ''}</td>
+          <td><a class="btn-outline" onclick="teamDecideAdvance('${r.id}','approved')">Approve</a> <a class="btn-outline" onclick="teamDecideAdvance('${r.id}','declined')">Decline</a></td></tr>`),
+        ...(otReqs || []).map(r => `<tr><td>Overtime</td><td>${esc(nameOf(r.staff_id))}</td><td>${r.work_date}, ${Number(r.hours).toFixed(2)}h</td>
+          <td><a class="btn-outline" onclick="teamDecideOvertime('${r.id}','approved')">Approve</a> <a class="btn-outline" onclick="teamDecideOvertime('${r.id}','declined')">Decline</a></td></tr>`),
+      ];
+
+      const wrap = document.getElementById('teamWrap');
+      wrap.innerHTML = `<div class="card">
+        <h2>Your team's pending requests</h2>
+        ${rows.length === 0 ? '<div class="empty">Nothing pending from your team.</div>' :
+          `<table><thead><tr><th>Type</th><th>Employee</th><th>Detail</th><th></th></tr></thead><tbody>${rows.join('')}</tbody></table>`}
+      </div>`;
+
+      const delegSel = document.getElementById('deleg-to');
+      if (delegSel) {
+        const { data: colleagues } = await sb.from('payroll_staff').select('id, full_name').eq('company_id', staff.company_id).neq('id', staff.id);
+        companyStaffCache = colleagues || [];
+        delegSel.innerHTML = companyStaffCache.map(c => `<option value="${c.id}">${esc(c.full_name)}</option>`).join('');
+      }
+      await loadDelegations();
+    }
+
+    async function teamDecideLeave(id, decision) {
+      const { error } = await sb.from('payroll_leave_requests').update({ status: decision, decided_at: new Date().toISOString(), decided_by: authSession.user.id }).eq('id', id);
+      if (error) { alert(error.message); return; }
+      if (decision === 'approved') {
+        const { data: req } = await sb.from('payroll_leave_requests').select('*').eq('id', id).single();
+        const { data: bal } = await sb.from('payroll_leave_balances').select('*').eq('staff_id', req.staff_id).eq('leave_type', req.leave_type).order('cycle_start', { ascending: false }).limit(1).maybeSingle();
+        if (bal) await sb.from('payroll_leave_balances').update({ taken_days: Number(bal.taken_days) + Number(req.days) }).eq('id', bal.id);
+      }
+      await loadTeamData();
+    }
+    async function teamDecideAdvance(id, decision) {
+      const { error } = await sb.rpc('decide_advance_request', { p_request_id: id, p_decision: decision });
+      if (error) { alert(error.message); return; }
+      await loadTeamData();
+    }
+    async function teamDecideOvertime(id, decision) {
+      const { error } = await sb.from('payroll_overtime_requests').update({ status: decision, decided_at: new Date().toISOString(), decided_by: authSession.user.id }).eq('id', id);
+      if (error) { alert(error.message); return; }
+      await loadTeamData();
+    }
+
+    async function loadDelegations() {
+      const wrap = document.getElementById('delegationsWrap');
+      if (!wrap) return;
+      const { data: delegs } = await sb.from('payroll_approval_delegations').select('*').eq('delegator_staff_id', staff.id).order('starts_on', { ascending: false });
+      if (!delegs || delegs.length === 0) { wrap.innerHTML = '<div class="empty">No delegations set up.</div>'; return; }
+      wrap.innerHTML = `<table><thead><tr><th>Delegate</th><th>From</th><th>To</th><th></th></tr></thead><tbody>
+        ${delegs.map(d => {
+          const name = companyStaffCache.find(r => r.id === d.delegate_staff_id)?.full_name;
+          return `<tr><td>${esc(name || d.delegate_staff_id)}</td><td>${d.starts_on}</td><td>${d.ends_on}</td>
+            <td><a class="btn-outline" onclick="deleteDelegation('${d.id}')">Remove</a></td></tr>`;
+        }).join('')}
+      </tbody></table>`;
+    }
+
+    async function submitDelegation() {
+      const errEl = document.getElementById('delegError');
+      errEl.style.display = 'none';
+      const delegate_staff_id = document.getElementById('deleg-to').value;
+      const starts_on = document.getElementById('deleg-start').value;
+      const ends_on = document.getElementById('deleg-end').value;
+      if (!delegate_staff_id) { errEl.textContent = 'Choose a colleague to delegate to.'; errEl.style.display = 'block'; return; }
+      if (!starts_on || !ends_on || ends_on < starts_on) { errEl.textContent = 'Choose a valid date range.'; errEl.style.display = 'block'; return; }
+
+      const btn = document.getElementById('submitDelegBtn');
+      btn.disabled = true; btn.textContent = 'Saving…';
+      const { error } = await sb.from('payroll_approval_delegations').insert({ company_id: staff.company_id, delegator_staff_id: staff.id, delegate_staff_id, starts_on, ends_on });
+      btn.disabled = false; btn.textContent = 'Delegate';
+      if (error) { errEl.textContent = error.message; errEl.style.display = 'block'; return; }
+      await loadDelegations();
+    }
+
+    async function deleteDelegation(id) {
+      const { error } = await sb.from('payroll_approval_delegations').delete().eq('id', id);
+      if (error) { alert(error.message); return; }
+      await loadDelegations();
     }
 
     // ── Biometric unlock (WebAuthn platform authenticator, device-local only) ──
