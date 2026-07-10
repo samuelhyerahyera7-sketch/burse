@@ -626,8 +626,10 @@
             </div>
             <div class="error-box" id="rbError"></div>
             <button class="btn-primary btn-sm" onclick="runReportBuilder()">Run Report</button>
-            <button class="btn-outline btn-sm" onclick="exportReportCsv()" id="rbExportBtn" style="display:none">Export CSV</button>
-            <button class="btn-outline btn-sm" onclick="window.print()" id="rbPrintBtn" style="display:none">Print / Save as PDF</button>
+            <button class="btn-outline btn-sm" onclick="exportReportCsv()" id="rbExportBtn" style="display:none">Download CSV</button>
+            <button class="btn-outline btn-sm" onclick="downloadTableXlsx('rbResultWrap','burse-custom-report.xlsx','Custom Report')" id="rbExcelBtn" style="display:none">Download Excel</button>
+            <button class="btn-outline btn-sm" onclick="downloadTablePdf('rbResultWrap','burse-custom-report.pdf')" id="rbPdfBtn" style="display:none">Download PDF</button>
+            <button class="btn-outline btn-sm" onclick="window.print()" id="rbPrintBtn" style="display:none">Print</button>
             <div id="rbResultWrap" style="margin-top:16px"></div>
           </div>
         </div>
@@ -3072,8 +3074,7 @@ async function loadEmp501() {
         </tr>
       </tbody></table>
       <p class="form-hint" style="margin-top:14px">${r.irp5_certificates_issuable} IRP5/IT3(a) certificates issuable for ${esc(taxYear)}. Reconcile these totals against your submitted EMP201s in SARS e@syFile.</p>
-      <button class="btn-primary btn-sm" style="margin-top:10px" onclick="downloadTableCsv('emp501Wrap','burse-emp501-${esc(taxYear).replace('/','-')}.csv')">Download CSV</button>
-      <button class="btn-outline btn-sm" style="margin-top:10px" onclick="window.print()">Print</button>
+      ${exportButtonsHtml('emp501Wrap', `burse-emp501-${taxYear.replace('/','-')}`, `EMP501 ${taxYear}`)}
     `;
   } catch (e) { wrap.innerHTML = `<div class="empty">${esc(e.message)}</div>`; }
 }
@@ -3114,8 +3115,11 @@ async function runReportBuilder() {
   const wrap = document.getElementById('rbResultWrap');
   if (error) { errEl.textContent = error.message; errEl.style.display = 'block'; wrap.innerHTML = ''; return; }
   rbLastResult = { cols, rows: data || [] };
-  document.getElementById('rbExportBtn').style.display = data && data.length ? '' : 'none';
-  document.getElementById('rbPrintBtn').style.display = data && data.length ? '' : 'none';
+  const hasRows = !!(data && data.length);
+  document.getElementById('rbExportBtn').style.display = hasRows ? '' : 'none';
+  document.getElementById('rbExcelBtn').style.display = hasRows ? '' : 'none';
+  document.getElementById('rbPdfBtn').style.display = hasRows ? '' : 'none';
+  document.getElementById('rbPrintBtn').style.display = hasRows ? '' : 'none';
   if (!data || data.length === 0) { wrap.innerHTML = '<div class="empty">No rows found.</div>'; return; }
   wrap.innerHTML = `<table><thead><tr>${cols.map(c => `<th>${esc(c.replace('_',' '))}</th>`).join('')}</tr></thead><tbody>
     ${data.map(row => `<tr>${cols.map(c => `<td>${esc(row[c] ?? '—')}</td>`).join('')}</tr>`).join('')}
@@ -3167,6 +3171,105 @@ function downloadTableCsv(containerId, filename) {
   URL.revokeObjectURL(url);
 }
 
+// Real .xlsx and .pdf exports, loaded on demand so pages that never touch
+// a report don't pay for either library. xlsx-js-style (not plain SheetJS)
+// is used specifically because it supports cell styling — plain CSV opened
+// in Excel has no bold headers, no column widths and no number formatting,
+// which is what made the old "Excel" export look bad.
+function loadScriptOnce(src, isLoaded) {
+  return new Promise((resolve, reject) => {
+    if (isLoaded()) return resolve();
+    const existing = document.querySelector(`script[src="${src}"]`);
+    if (existing) { existing.addEventListener('load', resolve); existing.addEventListener('error', () => reject(new Error('Could not load a required library. Check your connection and try again.'))); return; }
+    const s = document.createElement('script');
+    s.src = src;
+    s.onload = resolve;
+    s.onerror = () => reject(new Error('Could not load a required library. Check your connection and try again.'));
+    document.head.appendChild(s);
+  });
+}
+function loadXlsxLib() { return loadScriptOnce('https://cdn.jsdelivr.net/npm/xlsx-js-style@1.2.0/dist/xlsx.bundle.js', () => !!window.XLSX); }
+function loadHtml2PdfLib() { return loadScriptOnce('https://cdn.jsdelivr.net/npm/html2pdf.js@0.10.1/dist/html2pdf.bundle.min.js', () => !!window.html2pdf); }
+
+// Reads the rendered table back into typed cells — money values become
+// real numbers with a currency format instead of "R 1,234.56" text, so
+// they sort/sum correctly in Excel, and header/total rows come out bold.
+function parseTableForExport(containerId) {
+  const table = document.querySelector(`#${containerId} table`);
+  if (!table) return null;
+  return Array.from(table.querySelectorAll('tr')).map(tr => Array.from(tr.querySelectorAll('th,td')).map(cell => {
+    const text = cell.textContent.trim();
+    const isHeader = cell.tagName === 'TH';
+    const isBold = isHeader || !!cell.querySelector('strong');
+    const negative = /^[-–]/.test(text);
+    const moneyMatch = text.replace(/^[-–]\s?/, '').match(/^R\s?([\d,]+\.\d{2})$/);
+    if (moneyMatch) return { value: parseFloat(moneyMatch[1].replace(/,/g, '')) * (negative ? -1 : 1), isMoney: true, isBold, isHeader };
+    if (!isHeader && /^-?\d+(\.\d+)?$/.test(text)) return { value: parseFloat(text), isMoney: false, isBold, isHeader };
+    return { value: text, isMoney: false, isBold, isHeader };
+  }));
+}
+
+async function downloadTableXlsx(containerId, filename, sheetName) {
+  const rows = parseTableForExport(containerId);
+  if (!rows || rows.length === 0) return;
+  try {
+    await loadXlsxLib();
+    const colCount = Math.max(...rows.map(r => r.length));
+    const ws = {};
+    rows.forEach((row, r) => {
+      row.forEach((cell, c) => {
+        const addr = XLSX.utils.encode_cell({ r, c });
+        const cellObj = { v: cell.value, t: typeof cell.value === 'number' ? 'n' : 's' };
+        if (cell.isMoney) cellObj.z = 'R #,##0.00;[Red]-R #,##0.00';
+        cellObj.s = {
+          font: r === 0 ? { bold: true, color: { rgb: 'FFFFFF' } } : { bold: cell.isBold },
+          fill: r === 0 ? { fgColor: { rgb: '0E1C40' } } : undefined,
+          alignment: { horizontal: typeof cell.value === 'number' ? 'right' : 'left', vertical: 'center' },
+        };
+        ws[addr] = cellObj;
+      });
+    });
+    ws['!ref'] = XLSX.utils.encode_range({ s: { r: 0, c: 0 }, e: { r: rows.length - 1, c: colCount - 1 } });
+    ws['!cols'] = Array.from({ length: colCount }, (_, c) => ({
+      wch: Math.min(Math.max(...rows.map(r => String(r[c]?.value ?? '').length), 8) + 2, 40),
+    }));
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, sheetName || 'Report');
+    XLSX.writeFile(wb, filename);
+  } catch (e) {
+    alert(e.message || 'Could not generate the Excel file.');
+  }
+}
+
+// Everyone has a different preference for how they want a report — some
+// want it in Excel, some want a PDF to attach to an email, some just want
+// the on-screen table (already there) or a quick print. Offer all of them.
+function exportButtonsHtml(containerId, baseFilename, sheetName) {
+  return `
+    <div style="display:flex;flex-wrap:wrap;gap:8px;margin-top:14px">
+      <button class="btn-outline btn-sm" onclick="downloadTableCsv('${containerId}','${baseFilename}.csv')">Download CSV</button>
+      <button class="btn-outline btn-sm" onclick="downloadTableXlsx('${containerId}','${baseFilename}.xlsx','${esc(sheetName || 'Report')}')">Download Excel</button>
+      <button class="btn-outline btn-sm" onclick="downloadTablePdf('${containerId}','${baseFilename}.pdf')">Download PDF</button>
+      <button class="btn-outline btn-sm" onclick="window.print()">Print</button>
+    </div>`;
+}
+
+async function downloadTablePdf(containerId, filename) {
+  const el = document.getElementById(containerId);
+  if (!el) return;
+  try {
+    await loadHtml2PdfLib();
+    await window.html2pdf().set({
+      filename,
+      margin: 10,
+      jsPDF: { unit: 'mm', format: 'a4', orientation: 'landscape' },
+      html2canvas: { scale: 2, useCORS: true, ignoreElements: (node) => node.tagName === 'BUTTON' },
+    }).from(el).save();
+  } catch (e) {
+    alert(e.message || 'Could not generate the PDF.');
+  }
+}
+
 async function loadCostReport() {
   const runId = document.getElementById('costReportRunSelect').value;
   const wrap = document.getElementById('costReportWrap');
@@ -3202,8 +3305,7 @@ async function loadCostReport() {
         </tr>`).join('')}
         <tr><td><strong>Total</strong></td><td><strong>${money(totals.gross)}</strong></td><td><strong>${money(totals.uif)}</strong></td><td><strong>${money(totals.sdl)}</strong></td><td><strong>– ${money(totals.eti)}</strong></td><td><strong>${money(totals.cost)}</strong></td></tr>
       </tbody></table>
-      <button class="btn-primary btn-sm" style="margin-top:14px" onclick="downloadTableCsv('costReportWrap','burse-employee-cost-report.csv')">Download CSV</button>
-      <button class="btn-outline btn-sm" style="margin-top:14px" onclick="window.print()">Print</button>
+      ${exportButtonsHtml('costReportWrap', 'burse-employee-cost-report', 'Employee Cost Report')}
     </div>`;
 }
 
@@ -3234,8 +3336,7 @@ async function loadAuditTrail() {
       <td style="font-size:0.78rem;color:var(--soft)">${esc(auditMetaSummary(a.meta))}</td>
     </tr>`).join('')}
   </tbody></table>
-  <button class="btn-primary btn-sm" style="margin-top:14px" onclick="downloadTableCsv('auditTrailWrap','burse-audit-trail.csv')">Download CSV</button>
-  <button class="btn-outline btn-sm" style="margin-top:14px" onclick="window.print()">Print</button>`;
+  ${exportButtonsHtml('auditTrailWrap', 'burse-audit-trail', 'Audit Trail')}`;
 }
 
 function auditMetaSummary(meta) {
@@ -3268,8 +3369,7 @@ async function loadEmp201() {
           <tr><td><strong>Total payable to SARS</strong></td><td style="text-align:right"><strong>R ${r.emp201.total_payable.toLocaleString('en-ZA',{minimumFractionDigits:2})}</strong></td></tr>
         </tbody></table>
         <p class="form-hint" style="margin-top:14px">These figures are for you to capture on SARS eFiling / e@syFile — Burse does not submit EMP201s directly to SARS.</p>
-        <button class="btn-primary btn-sm" style="margin-top:10px" onclick="downloadTableCsv('emp201Wrap','burse-emp201-${esc(r.period_start)}.csv')">Download CSV</button>
-        <button class="btn-outline btn-sm" style="margin-top:10px" onclick="window.print()">Print</button>
+        ${exportButtonsHtml('emp201Wrap', `burse-emp201-${r.period_start}`, `EMP201 ${r.period_start}`)}
       </div>`;
   } catch (e) {
     wrap.innerHTML = `<div class="error-box" style="display:block">${e.message}</div>`;
@@ -3539,8 +3639,8 @@ function buildMultiLineChart(points, seriesKeys, colors) {
 function buildBarChart(points, color) {
   const w = 640, h = 200, padL = 40, padR = 20, padT = 20, padB = 30;
   const maxVal = Math.max(...points.map(p => p.value), 1);
-  const barW = (w - padL - padR) / points.length * 0.6;
   const gap = (w - padL - padR) / points.length;
+  const barW = Math.min(gap * 0.6, 60);
   const yFor = v => padT + (1 - v / maxVal) * (h - padT - padB);
   const bars = points.map((p, i) => {
     const x = padL + i * gap + (gap - barW) / 2;
