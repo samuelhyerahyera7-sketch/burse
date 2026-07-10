@@ -3072,6 +3072,8 @@ async function loadEmp501() {
         </tr>
       </tbody></table>
       <p class="form-hint" style="margin-top:14px">${r.irp5_certificates_issuable} IRP5/IT3(a) certificates issuable for ${esc(taxYear)}. Reconcile these totals against your submitted EMP201s in SARS e@syFile.</p>
+      <button class="btn-primary btn-sm" style="margin-top:10px" onclick="downloadTableCsv('emp501Wrap','burse-emp501-${esc(taxYear).replace('/','-')}.csv')">Download CSV</button>
+      <button class="btn-outline btn-sm" style="margin-top:10px" onclick="window.print()">Print</button>
     `;
   } catch (e) { wrap.innerHTML = `<div class="empty">${esc(e.message)}</div>`; }
 }
@@ -3148,6 +3150,23 @@ function openIrp5() {
   window.open(`/tax-certificate.html?staff_id=${staffId}&tax_year=${encodeURIComponent(year)}`, '_blank');
 }
 
+// Scrapes a rendered report <table> straight into a CSV download — used
+// wherever a report only offered "Print" (which just opens the browser's
+// print dialog, not an actual file) or nothing at all.
+function downloadTableCsv(containerId, filename) {
+  const table = document.querySelector(`#${containerId} table`);
+  if (!table) return;
+  const escCsv = v => /[",\n]/.test(v) ? `"${v.replace(/"/g, '""')}"` : v;
+  const rows = Array.from(table.querySelectorAll('tr')).map(tr =>
+    Array.from(tr.querySelectorAll('th,td')).map(cell => escCsv(cell.textContent.trim())).join(',')
+  );
+  const blob = new Blob([rows.join('\r\n')], { type: 'text/csv;charset=utf-8;' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url; a.download = filename; a.click();
+  URL.revokeObjectURL(url);
+}
+
 async function loadCostReport() {
   const runId = document.getElementById('costReportRunSelect').value;
   const wrap = document.getElementById('costReportWrap');
@@ -3183,6 +3202,7 @@ async function loadCostReport() {
         </tr>`).join('')}
         <tr><td><strong>Total</strong></td><td><strong>${money(totals.gross)}</strong></td><td><strong>${money(totals.uif)}</strong></td><td><strong>${money(totals.sdl)}</strong></td><td><strong>– ${money(totals.eti)}</strong></td><td><strong>${money(totals.cost)}</strong></td></tr>
       </tbody></table>
+      <button class="btn-primary btn-sm" style="margin-top:14px" onclick="downloadTableCsv('costReportWrap','burse-employee-cost-report.csv')">Download CSV</button>
       <button class="btn-outline btn-sm" style="margin-top:14px" onclick="window.print()">Print</button>
     </div>`;
 }
@@ -3213,7 +3233,9 @@ async function loadAuditTrail() {
       <td>${esc(actionLabels[a.action] || a.action)}${a.action === 'staff_self_updated_details' && a.meta?.bank_changed ? ' <span class="badge badge-yellow" style="margin-left:6px">Bank details changed</span>' : ''}</td>
       <td style="font-size:0.78rem;color:var(--soft)">${esc(auditMetaSummary(a.meta))}</td>
     </tr>`).join('')}
-  </tbody></table>`;
+  </tbody></table>
+  <button class="btn-primary btn-sm" style="margin-top:14px" onclick="downloadTableCsv('auditTrailWrap','burse-audit-trail.csv')">Download CSV</button>
+  <button class="btn-outline btn-sm" style="margin-top:14px" onclick="window.print()">Print</button>`;
 }
 
 function auditMetaSummary(meta) {
@@ -3246,6 +3268,7 @@ async function loadEmp201() {
           <tr><td><strong>Total payable to SARS</strong></td><td style="text-align:right"><strong>R ${r.emp201.total_payable.toLocaleString('en-ZA',{minimumFractionDigits:2})}</strong></td></tr>
         </tbody></table>
         <p class="form-hint" style="margin-top:14px">These figures are for you to capture on SARS eFiling / e@syFile — Burse does not submit EMP201s directly to SARS.</p>
+        <button class="btn-primary btn-sm" style="margin-top:10px" onclick="downloadTableCsv('emp201Wrap','burse-emp201-${esc(r.period_start)}.csv')">Download CSV</button>
         <button class="btn-outline btn-sm" style="margin-top:10px" onclick="window.print()">Print</button>
       </div>`;
   } catch (e) {
