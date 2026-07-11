@@ -192,6 +192,7 @@
     let staff = null;
     let dashData = null;
     let authSession = null;
+    let activeLoan = null;
 
     document.getElementById('logoutBtn').addEventListener('click', async () => {
       await sb.auth.signOut();
@@ -240,7 +241,7 @@
         { data: balances }, { data: requests }, { data: payslips },
         { data: advanceReqs }, { data: overtimeReqs }, { data: clockEvents },
         { data: announcements }, { data: documents }, { data: expenseClaims },
-        { data: timesheets }, { data: departments },
+        { data: timesheets }, { data: departments }, { data: loanRow },
       ] = await Promise.all([
         sb.from('payroll_leave_balances').select('*').eq('staff_id', staff.id).order('cycle_start', { ascending: false }),
         sb.from('payroll_leave_requests').select('*').eq('staff_id', staff.id).order('requested_at', { ascending: false }),
@@ -253,8 +254,10 @@
         sb.from('payroll_expense_claims').select('*').eq('staff_id', staff.id).order('requested_at', { ascending: false }),
         sb.from('payroll_timesheets').select('*, payroll_departments(name)').eq('staff_id', staff.id).order('work_date', { ascending: false }),
         sb.from('payroll_departments').select('id, name').eq('company_id', staff.company_id).order('name'),
+        sb.from('payroll_loans').select('*').eq('staff_id', staff.id).eq('status', 'active').maybeSingle(),
       ]);
 
+      activeLoan = loanRow;
       dashData = { balances, requests, payslips, advanceReqs, overtimeReqs, clockEvents, announcements, documents };
 
       const latestByType = {};
@@ -442,9 +445,10 @@
             <p style="font-size:0.82rem;color:var(--text-mid);margin-bottom:14px">If approved, this is recovered in full from your next payslip.</p>
             <div class="error-box" id="advError"></div>
             <div class="form-row">
-              <div class="form-group"><label>Amount (R)</label><input type="number" min="1" step="0.01" id="adv-amount"></div>
+              <div class="form-group"><label>Amount (R)</label><input type="number" min="1" step="0.01" id="adv-amount" oninput="updateAdvanceForecast()"></div>
               <div class="form-group"><label>Reason (optional)</label><input id="adv-reason"></div>
             </div>
+            <div id="advForecast" style="font-size:0.82rem;color:var(--text-mid);background:var(--bg-soft,#f7f9fc);border:1px solid var(--border);border-radius:10px;padding:12px 14px;margin-bottom:14px"></div>
             <button class="btn" id="submitAdvBtn" onclick="submitAdvanceRequest()">Submit Request</button>
           </div>
           <div class="card">
@@ -616,6 +620,7 @@
       updateBiometricButtonState();
       await loadTeamData();
       await loadMyRecords();
+      updateAdvanceForecast();
     }
 
     // ── My Records (emergency contacts, qualifications, skills, training, assets, history, HR events) ──
@@ -897,6 +902,23 @@
 
       if (error) { errEl.textContent = error.message; errEl.style.display = 'block'; return; }
       await render();
+    }
+
+    function updateAdvanceForecast() {
+      const box = document.getElementById('advForecast');
+      if (!box) return;
+      const amount = parseFloat(document.getElementById('adv-amount').value) || 0;
+      const basicSalary = Number(staff?.basic_salary || 0);
+      const existingInstallment = Number(activeLoan?.monthly_installment || 0);
+      const totalDeduction = amount + existingInstallment;
+      if (!basicSalary) { box.innerHTML = ''; return; }
+      let html = `Your basic salary: <strong>${money(basicSalary)}</strong>.`;
+      if (existingInstallment > 0) html += ` You already have an active loan/advance with a <strong>${money(existingInstallment)}</strong> instalment due next payslip.`;
+      if (amount > 0) {
+        html += ` Adding this request, <strong>${money(totalDeduction)}</strong> would be deducted before tax next payslip — your actual take-home will be lower still once PAYE, UIF and any other deductions are calculated at payroll run time.`;
+        if (totalDeduction > basicSalary * 0.5) html += ` <span style="color:var(--red);font-weight:700">That's over half your basic salary — check this leaves you enough to cover your usual expenses.</span>`;
+      }
+      box.innerHTML = html;
     }
 
     async function submitAdvanceRequest() {

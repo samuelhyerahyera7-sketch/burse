@@ -558,6 +558,7 @@
           <div class="subtab" data-subtab="coid" onclick="switchReportTab('coid')">COID Return of Earnings</div>
           <div class="subtab" data-subtab="jobcost" onclick="switchReportTab('jobcost')">Job Costing</div>
           <div class="subtab" data-subtab="cost" onclick="switchReportTab('cost')">Employee Cost Report</div>
+          <div class="subtab" data-subtab="recon" onclick="switchReportTab('recon')">Bank &amp; Books Reconciliation</div>
           <div class="subtab" data-subtab="audit" onclick="switchReportTab('audit')">Payroll Audit Trail</div>
           <div class="subtab" data-subtab="irp5" onclick="switchReportTab('irp5')">Tax Certificates (IRP5)</div>
           <div class="subtab" data-subtab="builder" onclick="switchReportTab('builder')">Custom Report Builder</div>
@@ -621,6 +622,14 @@
               <div class="form-group" style="display:flex;align-items:flex-end"><button class="btn-primary" onclick="loadCostReport()">Generate Report</button></div>
             </div>
             <div id="costReportWrap"></div>
+          </div>
+        </div>
+
+        <div class="subtab-panel" id="reportpanel-recon">
+          <div class="card">
+            <div class="card-header"><div class="card-title">Bank &amp; books reconciliation</div></div>
+            <p class="form-hint" style="margin-bottom:14px">For each approved pay run: what payroll calculated as net pay, whether a bank payment file has been generated for it, and whether it's been posted to your Bookkeeping journal — with the amounts cross-checked. A mismatch usually means a run was edited after its bank file was generated, or Bookkeeping isn't set up yet.</p>
+            <div id="reconWrap"></div>
           </div>
         </div>
 
@@ -3126,6 +3135,7 @@ function switchReportTab(name) {
   if (name === 'irp5') populateIrp5Selectors();
   if (name === 'emp501') populateEmp501Selector();
   if (name === 'coid') populateCoidYearSelector();
+  if (name === 'recon') loadReconciliation();
   if (name === 'builder') rbPopulateColumns();
 }
 
@@ -3450,6 +3460,59 @@ async function loadCostReport() {
       </tbody></table>
       ${exportButtonsHtml('costReportWrap', 'burse-employee-cost-report', 'Employee Cost Report')}
     </div>`;
+}
+
+async function loadReconciliation() {
+  const wrap = document.getElementById('reconWrap');
+  if (!company) { wrap.innerHTML = '<div class="empty">Set up your company first.</div>'; return; }
+  const approved = runsCache.filter(r => r.status !== 'draft');
+  if (approved.length === 0) { wrap.innerHTML = '<div class="empty">No approved pay runs yet.</div>'; return; }
+  wrap.innerHTML = '<div class="loading">Loading…</div>';
+
+  const [{ data: payslips }, { data: downloads }, { data: journalEntries }] = await Promise.all([
+    sb.from('payroll_payslips').select('run_id, net_pay').in('run_id', approved.map(r => r.id)),
+    sb.from('payroll_audit_log').select('meta, created_at').eq('company_id', company.id).eq('action', 'bank_file_downloaded').order('created_at', { ascending: false }),
+    sb.from('bk_journal_entries').select('id, source_id').eq('company_id', company.id).eq('source', 'payroll').in('source_id', approved.map(r => r.id)),
+  ]);
+
+  const netByRun = {};
+  (payslips || []).forEach(p => { netByRun[p.run_id] = (netByRun[p.run_id] || 0) + Number(p.net_pay); });
+  const lastDownloadByRun = {};
+  (downloads || []).forEach(d => { const rid = d.meta?.run_id; if (rid && !lastDownloadByRun[rid]) lastDownloadByRun[rid] = d.created_at; });
+  const entryByRun = {};
+  (journalEntries || []).forEach(e => { entryByRun[e.source_id] = e.id; });
+
+  let journalNetByRun = {};
+  const entryIds = Object.values(entryByRun);
+  if (entryIds.length) {
+    const { data: lines } = await sb.from('bk_journal_lines').select('entry_id, credit, bk_accounts!inner(code)').in('entry_id', entryIds).eq('bk_accounts.code', '2500');
+    (lines || []).forEach(l => {
+      const runId = Object.keys(entryByRun).find(rid => entryByRun[rid] === l.entry_id);
+      if (runId) journalNetByRun[runId] = (journalNetByRun[runId] || 0) + Number(l.credit || 0);
+    });
+  }
+
+  const money = n => 'R ' + Number(n || 0).toLocaleString('en-ZA', { minimumFractionDigits: 2 });
+  const rows = approved.map(r => {
+    const payrollNet = netByRun[r.id] || 0;
+    const bankGenerated = !!lastDownloadByRun[r.id];
+    const journalPosted = r.id in entryByRun;
+    const journalNet = journalNetByRun[r.id];
+    const mismatch = journalPosted && Math.abs((journalNet || 0) - payrollNet) > 0.01;
+    return { r, payrollNet, bankGenerated, journalPosted, journalNet, mismatch };
+  });
+
+  wrap.innerHTML = `<table><thead><tr><th>Period</th><th>Pay date</th><th class="num-th" style="text-align:right">Payroll net pay</th><th>Bank file</th><th>Posted to Bookkeeping</th><th></th></tr></thead><tbody>
+    ${rows.map(x => `<tr>
+      <td>${x.r.period_start} – ${x.r.period_end}</td>
+      <td>${x.r.pay_date}</td>
+      <td style="text-align:right">${money(x.payrollNet)}</td>
+      <td>${x.bankGenerated ? '<span class="badge badge-green">Generated</span>' : '<span class="badge badge-gray">Not yet generated</span>'}</td>
+      <td>${x.journalPosted ? `<span class="badge ${x.mismatch ? 'badge-red' : 'badge-green'}">${money(x.journalNet)}</span>` : '<span class="badge badge-gray">Not posted</span>'}</td>
+      <td>${x.mismatch ? '<span style="color:var(--red);font-weight:700;font-size:0.78rem">⚠ Mismatch</span>' : ''}</td>
+    </tr>`).join('')}
+  </tbody></table>
+  <p class="form-hint" style="margin-top:12px">"Not posted" is expected if you haven't set up Bookkeeping for this company yet — journal posting happens automatically the moment a run is finalized, provided a chart of accounts exists.</p>`;
 }
 
 async function loadAuditTrail() {
