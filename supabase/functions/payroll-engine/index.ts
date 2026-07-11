@@ -311,6 +311,57 @@ Deno.serve(async (req) => {
         });
       }
 
+      case 'job_costing_report': {
+        // Allocates approved timesheet hours to departments/cost centres at
+        // each employee's derived hourly rate (annual salary ÷ a standard
+        // 45-hour week Ć— 52 weeks — the BCEA default ordinary-hours week —
+        // not their actual contracted hours, which Burse doesn't track per
+        // employee today; flagged as an approximation in the UI).
+        const { company_id, start_date, end_date } = body;
+        const company = await requireOwnedCompany(company_id);
+        if (!start_date || !end_date) return json({ error: 'start_date and end_date are required' }, 400);
+
+        const { data: timesheets } = await sb
+          .from('payroll_timesheets')
+          .select('hours, department_id, staff_id, payroll_staff(full_name, basic_salary, pay_frequency), payroll_departments(name)')
+          .eq('company_id', company_id)
+          .eq('status', 'approved')
+          .gte('work_date', start_date)
+          .lte('work_date', end_date);
+
+        const hourlyRate = (staff: any) => {
+          const annual = Number(staff?.basic_salary || 0) * periodsPerYear(staff?.pay_frequency || 'monthly');
+          return annual / (45 * 52);
+        };
+
+        const byDept = new Map<string, { department: string; hours: number; cost: number }>();
+        const byStaff = new Map<string, { name: string; department: string; hours: number; cost: number }>();
+        for (const t of timesheets ?? []) {
+          const rate = hourlyRate(t.payroll_staff);
+          const cost = round2(Number(t.hours) * rate);
+          const deptName = (t as any).payroll_departments?.name || 'Unassigned';
+          const deptKey = t.department_id || 'unassigned';
+          const d = byDept.get(deptKey) || { department: deptName, hours: 0, cost: 0 };
+          d.hours = round2(d.hours + Number(t.hours)); d.cost = round2(d.cost + cost);
+          byDept.set(deptKey, d);
+
+          const s = byStaff.get(t.staff_id) || { name: (t as any).payroll_staff?.full_name || '—', department: deptName, hours: 0, cost: 0 };
+          s.hours = round2(s.hours + Number(t.hours)); s.cost = round2(s.cost + cost);
+          byStaff.set(t.staff_id, s);
+        }
+
+        const departments = Array.from(byDept.values());
+        const employees = Array.from(byStaff.values());
+        return json({
+          company: company.trading_name,
+          start_date, end_date,
+          departments,
+          employees,
+          total_hours: round2(departments.reduce((s, d) => s + d.hours, 0)),
+          total_cost: round2(departments.reduce((s, d) => s + d.cost, 0)),
+        });
+      }
+
       case 'coid_roe': {
         // COID Return of Earnings: annual earnings per employee for the
         // Compensation Fund submission. Burse totals actual gross earnings

@@ -240,6 +240,7 @@
         { data: balances }, { data: requests }, { data: payslips },
         { data: advanceReqs }, { data: overtimeReqs }, { data: clockEvents },
         { data: announcements }, { data: documents }, { data: expenseClaims },
+        { data: timesheets }, { data: departments },
       ] = await Promise.all([
         sb.from('payroll_leave_balances').select('*').eq('staff_id', staff.id).order('cycle_start', { ascending: false }),
         sb.from('payroll_leave_requests').select('*').eq('staff_id', staff.id).order('requested_at', { ascending: false }),
@@ -250,6 +251,8 @@
         sb.from('payroll_announcements').select('*').eq('company_id', staff.company_id).order('created_at', { ascending: false }).limit(10),
         sb.from('payroll_staff_documents').select('*').eq('staff_id', staff.id).order('uploaded_at', { ascending: false }),
         sb.from('payroll_expense_claims').select('*').eq('staff_id', staff.id).order('requested_at', { ascending: false }),
+        sb.from('payroll_timesheets').select('*, payroll_departments(name)').eq('staff_id', staff.id).order('work_date', { ascending: false }),
+        sb.from('payroll_departments').select('id, name').eq('company_id', staff.company_id).order('name'),
       ]);
 
       dashData = { balances, requests, payslips, advanceReqs, overtimeReqs, clockEvents, announcements, documents };
@@ -500,6 +503,32 @@
                 <td>${r.work_date}</td>
                 <td>${Number(r.hours).toFixed(2)}</td>
                 <td>${leaveBadge(r.status === 'approved' ? 'approved' : r.status === 'declined' ? 'rejected' : 'pending')}</td>
+              </tr>`).join('')}
+            </tbody></table>`}
+          </div>
+
+          <div class="card">
+            <h2>Submit a timesheet entry</h2>
+            <div class="error-box" id="tsError"></div>
+            <div class="form-row">
+              <div class="form-group"><label>Date</label><input type="date" id="ts-date"></div>
+              <div class="form-group"><label>Hours</label><input type="number" min="0.25" step="0.25" max="24" id="ts-hours"></div>
+            </div>
+            <div class="form-row">
+              <div class="form-group"><label>Department <span style="font-weight:400;color:var(--text-mid)">(optional)</span></label><select id="ts-department"><option value="">— none —</option>${(departments||[]).map(d => `<option value="${d.id}">${esc(d.name)}</option>`).join('')}</select></div>
+              <div class="form-group"><label>Task <span style="font-weight:400;color:var(--text-mid)">(optional)</span></label><input id="ts-task"></div>
+            </div>
+            <button class="btn" id="submitTsBtn" onclick="submitTimesheet()">Submit</button>
+          </div>
+          <div class="card">
+            <h2>Your timesheet entries</h2>
+            ${(!timesheets || timesheets.length === 0) ? '<div class="empty">No timesheet entries yet.</div>' : `
+            <table><thead><tr><th>Date</th><th>Hours</th><th>Department</th><th>Status</th></tr></thead><tbody>
+              ${timesheets.map(t => `<tr>
+                <td>${t.work_date}</td>
+                <td>${Number(t.hours).toFixed(2)}</td>
+                <td>${esc(t.payroll_departments?.name || '—')}</td>
+                <td>${leaveBadge(t.status === 'approved' ? 'approved' : t.status === 'declined' ? 'rejected' : 'pending')}</td>
               </tr>`).join('')}
             </tbody></table>`}
           </div>
@@ -898,6 +927,25 @@
       const btn = document.getElementById('submitOtBtn');
       btn.disabled = true; btn.textContent = 'Submitting…';
       const { error } = await sb.from('payroll_overtime_requests').insert({ staff_id: staff.id, company_id: staff.company_id, work_date, hours, note });
+      btn.disabled = false; btn.textContent = 'Submit';
+      if (error) { errEl.textContent = error.message; errEl.style.display = 'block'; return; }
+      await render();
+      switchTab('requests');
+    }
+
+    async function submitTimesheet() {
+      const errEl = document.getElementById('tsError');
+      errEl.style.display = 'none';
+      const work_date = document.getElementById('ts-date').value;
+      const hours = parseFloat(document.getElementById('ts-hours').value);
+      const department_id = document.getElementById('ts-department').value || null;
+      const task = document.getElementById('ts-task').value.trim() || null;
+      if (!work_date) { errEl.textContent = 'Choose a date.'; errEl.style.display = 'block'; return; }
+      if (isNaN(hours) || hours <= 0 || hours > 24) { errEl.textContent = 'Enter a valid number of hours (up to 24).'; errEl.style.display = 'block'; return; }
+
+      const btn = document.getElementById('submitTsBtn');
+      btn.disabled = true; btn.textContent = 'Submitting…';
+      const { error } = await sb.from('payroll_timesheets').insert({ staff_id: staff.id, company_id: staff.company_id, work_date, hours, department_id, task });
       btn.disabled = false; btn.textContent = 'Submit';
       if (error) { errEl.textContent = error.message; errEl.style.display = 'block'; return; }
       await render();

@@ -384,6 +384,7 @@
           <div class="subtab" data-subtab="lr-advance" onclick="switchLeaveHubTab('lr-advance')">Advance Requests</div>
           <div class="subtab" data-subtab="lr-overtime" onclick="switchLeaveHubTab('lr-overtime')">Overtime</div>
           <div class="subtab" data-subtab="lr-expenses" onclick="switchLeaveHubTab('lr-expenses')">Expenses &amp; Travel</div>
+          <div class="subtab" data-subtab="lr-timesheets" onclick="switchLeaveHubTab('lr-timesheets')">Timesheets</div>
           <div class="subtab" data-subtab="lr-clock" onclick="switchLeaveHubTab('lr-clock')">Time &amp; Attendance</div>
         </div>
 
@@ -418,6 +419,14 @@
           <div class="card">
             <div class="card-header"><div class="card-title">Expense &amp; travel claims</div></div>
             <div id="expenseClaimsWrap"><div class="loading">Loading…</div></div>
+          </div>
+        </div>
+
+        <div class="subtab-panel" id="leavehub-lr-timesheets">
+          <div class="card">
+            <div class="card-header"><div class="card-title">Timesheets</div></div>
+            <p class="form-hint" style="margin-bottom:14px">Approved hours feed the Job Costing Report under Reports.</p>
+            <div id="timesheetsWrap"><div class="loading">Loading…</div></div>
           </div>
         </div>
 
@@ -547,6 +556,7 @@
           <div class="subtab active" data-subtab="emp201" onclick="switchReportTab('emp201')">PAYE / UIF / SDL (EMP201)</div>
           <div class="subtab" data-subtab="emp501" onclick="switchReportTab('emp501')">Annual Reconciliation (EMP501)</div>
           <div class="subtab" data-subtab="coid" onclick="switchReportTab('coid')">COID Return of Earnings</div>
+          <div class="subtab" data-subtab="jobcost" onclick="switchReportTab('jobcost')">Job Costing</div>
           <div class="subtab" data-subtab="cost" onclick="switchReportTab('cost')">Employee Cost Report</div>
           <div class="subtab" data-subtab="audit" onclick="switchReportTab('audit')">Payroll Audit Trail</div>
           <div class="subtab" data-subtab="irp5" onclick="switchReportTab('irp5')">Tax Certificates (IRP5)</div>
@@ -586,6 +596,19 @@
               <div class="form-group" style="display:flex;align-items:flex-end"><button class="btn-primary" onclick="loadCoidRoe()">Generate Report</button></div>
             </div>
             <div id="coidWrap"></div>
+          </div>
+        </div>
+
+        <div class="subtab-panel" id="reportpanel-jobcost">
+          <div class="card">
+            <div class="card-header"><div class="card-title">Job costing report</div></div>
+            <p class="form-hint" style="margin-bottom:14px">Allocates approved timesheet hours to departments/cost centres, valued at each employee's derived hourly rate (annual salary ÷ a standard 45-hour week — an approximation, since Burse doesn't track individual contracted hours).</p>
+            <div class="form-row">
+              <div class="form-group"><label>Start date</label><input type="date" id="jc-start"></div>
+              <div class="form-group"><label>End date</label><input type="date" id="jc-end"></div>
+              <div class="form-group" style="display:flex;align-items:flex-end"><button class="btn-primary" onclick="loadJobCostingReport()">Generate Report</button></div>
+            </div>
+            <div id="jobCostWrap"></div>
           </div>
         </div>
 
@@ -2541,6 +2564,7 @@ function switchLeaveHubTab(name) {
   if (name === 'lr-advance') loadAdvanceRequests();
   if (name === 'lr-overtime') loadOvertimeRequests();
   if (name === 'lr-expenses') loadExpenseClaims();
+  if (name === 'lr-timesheets') loadTimesheets();
   if (name === 'lr-clock') loadClockLog();
 }
 
@@ -2570,6 +2594,34 @@ async function decideExpenseClaim(id, decision) {
   const { error } = await sb.from('payroll_expense_claims').update({ status: decision, decided_at: new Date().toISOString(), decided_by: session.user.id }).eq('id', id);
   if (error) { alert(error.message); return; }
   await loadExpenseClaims();
+}
+
+async function loadTimesheets() {
+  const wrap = document.getElementById('timesheetsWrap');
+  if (!company) { wrap.innerHTML = '<div class="empty">Set up your company first.</div>'; return; }
+  const { data: staffIds } = await sb.from('payroll_staff').select('id, full_name').eq('company_id', company.id);
+  if (!staffIds || staffIds.length === 0) { wrap.innerHTML = '<div class="empty">No employees yet.</div>'; return; }
+  const ids = staffIds.map(s => s.id);
+  const { data: entries } = await sb.from('payroll_timesheets').select('*, payroll_departments(name)').in('staff_id', ids).order('work_date', { ascending: false });
+  const nameOf = id => staffIds.find(s => s.id === id)?.full_name || '—';
+
+  if (!entries || entries.length === 0) { wrap.innerHTML = '<div class="empty">No timesheet entries yet.</div>'; return; }
+  wrap.innerHTML = `<table><thead><tr><th>Employee</th><th>Date</th><th>Hours</th><th>Department</th><th>Task</th><th>Status</th><th></th></tr></thead><tbody>
+    ${entries.map(t => `<tr>
+      <td>${esc(nameOf(t.staff_id))}</td>
+      <td>${t.work_date}</td>
+      <td>${Number(t.hours).toFixed(2)}</td>
+      <td>${esc(t.payroll_departments?.name || '—')}</td>
+      <td>${esc(t.task || '—')}</td>
+      <td>${leaveStatusBadge(t.status === 'approved' ? 'approved' : t.status === 'declined' ? 'rejected' : 'pending')}</td>
+      <td>${(t.status === 'pending' && isOwner) ? `<a class="btn-outline btn-sm" onclick="decideTimesheet('${t.id}','approved')">Approve</a> <a class="btn-danger btn-sm" onclick="decideTimesheet('${t.id}','declined')">Decline</a>` : ''}</td>
+    </tr>`).join('')}
+  </tbody></table>`;
+}
+async function decideTimesheet(id, decision) {
+  const { error } = await sb.from('payroll_timesheets').update({ status: decision, decided_at: new Date().toISOString(), decided_by: session.user.id }).eq('id', id);
+  if (error) { alert(error.message); return; }
+  await loadTimesheets();
 }
 
 async function loadAdvanceRequests() {
@@ -3144,6 +3196,28 @@ async function loadCoidRoe() {
       </tbody></table>
       ${r.estimated_assessment != null ? `<p class="form-hint" style="margin-top:14px">Estimated assessment at ${r.assessment_rate_per_100}/R100: <strong>R ${r.estimated_assessment.toLocaleString('en-ZA',{minimumFractionDigits:2})}</strong> — remember to apply the Compensation Fund's current annual earnings ceiling per employee before submitting.</p>` : `<p class="form-hint" style="margin-top:14px">Set an assessment rate in Settings → Payroll to see an estimated assessment amount.</p>`}
       ${exportButtonsHtml('coidWrap', `burse-coid-roe-${taxYear.replace('/','-')}`, `COID ROE ${taxYear}`)}
+    `;
+  } catch (e) { wrap.innerHTML = `<div class="empty">${esc(e.message)}</div>`; }
+}
+
+async function loadJobCostingReport() {
+  const start = val('jc-start'), end = val('jc-end');
+  const wrap = document.getElementById('jobCostWrap');
+  if (!start || !end) { wrap.innerHTML = '<div class="empty">Choose a start and end date.</div>'; return; }
+  wrap.innerHTML = '<div class="loading">Loading…</div>';
+  try {
+    const r = await callEngine('job_costing_report', { company_id: company.id, start_date: start, end_date: end });
+    wrap.innerHTML = `
+      <h3 style="font-size:0.9rem;margin-bottom:10px">By department</h3>
+      ${r.departments.length ? `<table><thead><tr><th>Department</th><th>Hours</th><th>Cost</th></tr></thead><tbody>
+        ${r.departments.map(d => `<tr><td>${esc(d.department)}</td><td>${d.hours.toFixed(2)}</td><td>R ${d.cost.toLocaleString('en-ZA',{minimumFractionDigits:2})}</td></tr>`).join('')}
+        <tr style="border-top:2px solid var(--border)"><td><strong>Total</strong></td><td><strong>${r.total_hours.toFixed(2)}</strong></td><td><strong>R ${r.total_cost.toLocaleString('en-ZA',{minimumFractionDigits:2})}</strong></td></tr>
+      </tbody></table>` : '<div class="empty">No approved timesheet entries in this range.</div>'}
+      ${r.employees.length ? `<h3 style="font-size:0.9rem;margin:18px 0 10px">By employee</h3>
+      <table><thead><tr><th>Employee</th><th>Department</th><th>Hours</th><th>Cost</th></tr></thead><tbody>
+        ${r.employees.map(e => `<tr><td>${esc(e.name)}</td><td>${esc(e.department)}</td><td>${e.hours.toFixed(2)}</td><td>R ${e.cost.toLocaleString('en-ZA',{minimumFractionDigits:2})}</td></tr>`).join('')}
+      </tbody></table>` : ''}
+      ${r.departments.length ? exportButtonsHtml('jobCostWrap', `burse-job-costing-${start}-to-${end}`, 'Job Costing') : ''}
     `;
   } catch (e) { wrap.innerHTML = `<div class="empty">${esc(e.message)}</div>`; }
 }
@@ -3818,11 +3892,12 @@ async function loadDashPending() {
   const ids = staffIds.map(s => s.id);
   const nameOf = id => staffIds.find(s => s.id === id)?.full_name || '—';
 
-  const [{ data: leave }, { data: advance }, { data: overtime }, { data: expenses }] = await Promise.all([
+  const [{ data: leave }, { data: advance }, { data: overtime }, { data: expenses }, { data: timesheets }] = await Promise.all([
     sb.from('payroll_leave_requests').select('id, staff_id, leave_type, start_date, end_date').in('staff_id', ids).eq('status', 'pending'),
     sb.from('payroll_advance_requests').select('id, staff_id, amount').in('staff_id', ids).eq('status', 'pending'),
     sb.from('payroll_overtime_requests').select('id, staff_id, work_date, hours').in('staff_id', ids).eq('status', 'pending'),
     sb.from('payroll_expense_claims').select('id, staff_id, claim_type, amount').in('staff_id', ids).eq('status', 'pending'),
+    sb.from('payroll_timesheets').select('id, staff_id, work_date, hours').in('staff_id', ids).eq('status', 'pending'),
   ]);
 
   const rows = [
@@ -3830,6 +3905,7 @@ async function loadDashPending() {
     ...(advance || []).map(r => ({ kind: 'Advance', who: nameOf(r.staff_id), detail: money(r.amount), tab: 'lr-advance' })),
     ...(overtime || []).map(r => ({ kind: 'Overtime', who: nameOf(r.staff_id), detail: `${r.work_date}, ${Number(r.hours).toFixed(2)}h`, tab: 'lr-overtime' })),
     ...(expenses || []).map(r => ({ kind: 'Expense', who: nameOf(r.staff_id), detail: `${r.claim_type}, ${money(r.amount)}`, tab: 'lr-expenses' })),
+    ...(timesheets || []).map(r => ({ kind: 'Timesheet', who: nameOf(r.staff_id), detail: `${r.work_date}, ${Number(r.hours).toFixed(2)}h`, tab: 'lr-timesheets' })),
   ];
 
   if (rows.length === 0) { card.style.display = 'none'; return; }
@@ -3997,11 +4073,11 @@ const LIVE_CONNECTION_PROVIDERS = [
   ], notYet: 'Sage\'s payroll API endpoint is region-specific and hasn\'t been confirmed for South Africa yet — talk to your Sage account manager or developer.sage.com. Connecting will show an error until that\'s sorted out; nothing is saved.' },
   { key: 'xero', name: 'Xero', oauth: true, desc: 'Push a balanced journal entry into your Xero organisation every time you finalize a pay run.' },
   { key: 'quickbooks', name: 'QuickBooks Online', oauth: true, desc: 'Push a balanced journal entry into QuickBooks Online every time you finalize a pay run.' },
-  { key: 'bank_feeds', name: 'Bank Feeds', fields: [
-    { key: 'provider_name', label: 'Bank / aggregator', hint: 'e.g. Investec Programmable Banking, Stitch' },
+  { key: 'bank_feeds', name: 'Bank Feeds & Instant EFT', fields: [
+    { key: 'provider_name', label: 'Bank / aggregator', hint: 'e.g. Investec Programmable Banking, Stitch, PayShap' },
     { key: 'client_id', label: 'Client ID' },
     { key: 'client_secret', label: 'Client Secret' },
-  ], notYet: 'Bank feeds need a registered application with your bank or an aggregator like Stitch or Investec Programmable Banking — that has to be set up on your business\'s behalf first. Connecting will show an error until that\'s in place; nothing is saved.' },
+  ], desc: 'The same connection covers two things once it\'s live: pulling in bank transactions for reconciliation, and initiating same-day/instant salary payments (PayShap or your bank\'s payment rail) instead of exporting a CSV to upload manually.', notYet: 'Needs a registered application with your bank or an aggregator like Stitch, Investec Programmable Banking, or PayShap — that has to be set up on your business\'s behalf first. Connecting will show an error until that\'s in place; nothing is saved. Until then, use Bank Payment Files to export a CSV for your own banking portal.' },
   { key: 'ozow', name: 'Ozow', fields: [
     { key: 'site_code', label: 'Site Code' },
     { key: 'api_key', label: 'API Key' },
