@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="en-ZA">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Accountant Portal — Burse</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --navy: #1a2f72; --navy-dark: #0e1c40; --teal: #2ab3b3; --teal-dark: #1e9090; --white: #ffffff;
+    --bg: #f7f9fc; --card: #ffffff; --border: #e6eaf0; --text: #0e1c40; --mid: #3d5070;
+    --soft: #7a8fb0; --red: #dc2626; --green: #16a34a; --orange: #b45309;
+  }
+  html, body { min-height: 100%; font-family: 'Inter', sans-serif; background: var(--bg); color: var(--text); }
+  a { text-decoration: none; }
+  .topbar { background:var(--navy-dark); padding:16px 24px; display:flex; align-items:center; justify-content:space-between; }
+  .topbar .logo { font-size:1.3rem; font-weight:900; letter-spacing:-0.04em; }
+  .topbar .logo .b { color: var(--teal); } .topbar .logo .u { color: var(--white); }
+  .topbar .logo small { display:block; font-size:0.6rem; font-weight:600; letter-spacing:0.12em; text-transform:uppercase; color:rgba(255,255,255,0.4); margin-top:2px; }
+  .topbar-actions { display:flex; align-items:center; gap:14px; }
+  .topbar-actions a, .topbar-actions button { color:rgba(255,255,255,0.75); font-size:0.85rem; font-weight:600; background:none; border:none; cursor:pointer; font-family:'Inter',sans-serif; }
+  .topbar-actions a:hover, .topbar-actions button:hover { color:#fff; }
+
+  .content { max-width:1000px; margin:0 auto; padding:32px 20px 60px; }
+  .page-header { margin-bottom:24px; }
+  .page-header h1 { font-size:1.5rem; font-weight:800; margin-bottom:4px; }
+  .page-header p { font-size:0.88rem; color:var(--soft); }
+
+  .card { background:var(--card); border:1px solid var(--border); border-radius:14px; padding:22px; margin-bottom:18px; }
+  .company-card-header { display:flex; align-items:center; justify-content:space-between; gap:12px; flex-wrap:wrap; margin-bottom:14px; }
+  .company-name { font-size:1.05rem; font-weight:800; }
+  .badge { display:inline-flex; align-items:center; white-space:nowrap; font-size:0.66rem; font-weight:700; padding:3px 8px; border-radius:50px; letter-spacing:0.02em; }
+  .badge-blue { background:#dbeafe; color:#1d4ed8; }
+  .badge-gray { background:#f1f5f9; color:#64748b; }
+
+  .btn-primary { padding:9px 16px; background:var(--navy-dark); color:white; border:none; border-radius:8px; font-size:0.82rem; font-weight:700; font-family:'Inter',sans-serif; cursor:pointer; }
+  .btn-primary:hover { background:#162050; }
+  .btn-outline { padding:9px 16px; border:1.5px solid var(--border); border-radius:8px; font-size:0.82rem; font-weight:600; color:var(--mid); cursor:pointer; background:var(--card); font-family:'Inter',sans-serif; }
+  .btn-outline:hover { border-color:var(--teal); color:var(--teal); }
+  .btn-teal { padding:9px 16px; background:var(--teal); color:white; border:none; border-radius:8px; font-size:0.82rem; font-weight:700; font-family:'Inter',sans-serif; cursor:pointer; }
+  .btn-teal:hover { background:var(--teal-dark); }
+
+  .pack-actions { display:flex; gap:8px; flex-wrap:wrap; margin-bottom:16px; }
+  .comments-list { border-top:1px solid var(--border); padding-top:14px; margin-top:4px; }
+  .comment-row { padding:10px 0; border-bottom:1px solid var(--border); font-size:0.85rem; }
+  .comment-row:last-child { border-bottom:none; }
+  .comment-meta { font-size:0.72rem; color:var(--soft); margin-top:3px; }
+  .comment-form { display:flex; gap:8px; margin-top:12px; }
+  .comment-form textarea { flex:1; padding:8px 10px; border:1.5px solid var(--border); border-radius:8px; font-family:'Inter',sans-serif; font-size:0.85rem; resize:vertical; min-height:44px; }
+
+  .empty { text-align:center; padding:50px 20px; color:var(--soft); font-size:0.9rem; }
+  .loading { text-align:center; padding:50px; color:var(--soft); font-size:0.85rem; }
+
+  #auth-gate { position:fixed; inset:0; z-index:9999; background:#0e1c40; display:flex; align-items:center; justify-content:center; flex-direction:column; gap:14px; }
+  #auth-gate.hidden { display:none; }
+  .gate-spinner { width:36px; height:36px; border-radius:50%; border:3px solid rgba(42,179,179,0.3); border-top-color:#2ab3b3; animation:spin .7s linear infinite; }
+  @keyframes spin { to { transform:rotate(360deg); } }
+  #auth-gate p { color:rgba(255,255,255,0.5); font-size:0.82rem; }
+  #app { visibility:hidden; }
+</style>
+</head>
+<body>
+
+<div id="auth-gate"><div class="gate-spinner"></div><p>Loading your client list…</p></div>
+
+<div id="app">
+  <div class="topbar">
+    <div class="logo"><span class="b">B</span><span class="u">urse</span><small>Accountant Portal</small></div>
+    <div class="topbar-actions">
+      <a href="/">Back to Burse</a>
+      <button onclick="handleLogout()">Log out</button>
+    </div>
+  </div>
+  <div class="content">
+    <div class="page-header">
+      <h1>Your clients</h1>
+      <p>Every company that's granted you accountant access. Payroll and Bookkeeping open in read-enforced mode — changes stay with the owner.</p>
+    </div>
+    <div id="clientsWrap"><div class="loading">Loading…</div></div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+const SUPABASE_URL = 'https://pnpfurfodmejdggnyjof.supabase.co';
+const SUPABASE_KEY = 'sb_publishable_q2fnC5EJrToRNuvUjW619Q_NKMbO0iX';
+const { createClient } = supabase;
+
+function burseGetRemember() { return localStorage.getItem('burse-remember') !== '0'; }
+
+const burseAuthStorage = (() => {
+  const onProdDomain = location.hostname.endsWith('burse.co.za');
+  if (!onProdDomain) {
+    return {
+      getItem: (key) => (burseGetRemember() ? window.localStorage : window.sessionStorage).getItem(key),
+      setItem: (key, value) => (burseGetRemember() ? window.localStorage : window.sessionStorage).setItem(key, value),
+      removeItem: (key) => (burseGetRemember() ? window.localStorage : window.sessionStorage).removeItem(key),
+    };
+  }
+  const COOKIE_DOMAIN = '.burse.co.za';
+  const CHUNK_SIZE = 3000;
+  function cookieGet(name) {
+    const m = document.cookie.match(new RegExp('(?:^|; )' + name.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + '=([^;]*)'));
+    return m ? decodeURIComponent(m[1]) : null;
+  }
+  function cookieSet(name, value, days) {
+    document.cookie = `${name}=${encodeURIComponent(value)}; path=/; domain=${COOKIE_DOMAIN}; max-age=${days * 86400}; samesite=lax; secure`;
+  }
+  function cookieRemove(name) {
+    document.cookie = `${name}=; path=/; domain=${COOKIE_DOMAIN}; max-age=0`;
+  }
+  return {
+    getItem: (key) => {
+      if (!burseGetRemember()) return sessionStorage.getItem(key);
+      const n = cookieGet(key + '__n');
+      if (n === null) return cookieGet(key);
+      let value = '';
+      for (let i = 0; i < parseInt(n, 10); i++) value += cookieGet(key + '__' + i) || '';
+      return value || null;
+    },
+    setItem: (key, value) => {
+      if (!burseGetRemember()) { sessionStorage.setItem(key, value); return; }
+      cookieRemove(key + '__n');
+      if (value.length <= CHUNK_SIZE) { cookieSet(key, value, 30); return; }
+      cookieRemove(key);
+      const chunks = [];
+      for (let i = 0; i < value.length; i += CHUNK_SIZE) chunks.push(value.slice(i, i + CHUNK_SIZE));
+      chunks.forEach((c, i) => cookieSet(key + '__' + i, c, 30));
+      cookieSet(key + '__n', String(chunks.length), 30);
+    },
+    removeItem: (key) => {
+      sessionStorage.removeItem(key);
+      const n = cookieGet(key + '__n');
+      if (n !== null) { for (let i = 0; i < parseInt(n, 10); i++) cookieRemove(key + '__' + i); cookieRemove(key + '__n'); }
+      cookieRemove(key);
+    },
+  };
+})();
+
+const sb = createClient(SUPABASE_URL, SUPABASE_KEY, { auth: { storage: burseAuthStorage, persistSession: true, autoRefreshToken: true } });
+
+const ON_PROD = location.hostname.endsWith('burse.co.za');
+const LOGIN_URL = ON_PROD ? 'https://burse.co.za/login' : '/login';
+const PAYROLL_URL = ON_PROD ? 'https://burse.co.za/payroll-admin' : 'payroll-admin.html';
+const BOOKKEEPING_URL = ON_PROD ? 'https://bookkeep.burse.co.za/' : 'bookkeeping-admin.html';
+
+function esc(str) { return String(str ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+
+let session = null;
+
+async function handleLogout() {
+  await sb.auth.signOut();
+  window.location.href = LOGIN_URL;
+}
+
+function openCompany(companyId, url) {
+  localStorage.setItem('burse-active-company', companyId);
+  window.location.href = url;
+}
+
+async function loadComments(companyId) {
+  const { data } = await sb.from('payroll_accountant_comments').select('*').eq('company_id', companyId).order('created_at', { ascending: false }).limit(20);
+  return data || [];
+}
+
+async function submitComment(companyId, textareaId) {
+  const body = document.getElementById(textareaId).value.trim();
+  if (!body) return;
+  const { error } = await sb.from('payroll_accountant_comments').insert({ company_id: companyId, accountant_id: session.user.id, body });
+  if (error) { alert(error.message); return; }
+  document.getElementById(textareaId).value = '';
+  renderClients();
+}
+
+let clientsCache = [];
+async function renderClients() {
+  const wrap = document.getElementById('clientsWrap');
+  const { data: access } = await sb.from('payroll_accountants').select('*, payroll_companies(*)').eq('user_id', session.user.id).eq('status', 'accepted');
+  clientsCache = (access || []).filter(a => a.payroll_companies);
+
+  if (clientsCache.length === 0) {
+    wrap.innerHTML = `<div class="empty">No companies have granted you accountant access yet.<br>Ask the business owner to invite you from their Burse account's Accountant Access settings, using this account's email address.</div>`;
+    return;
+  }
+
+  const cards = await Promise.all(clientsCache.map(async (a) => {
+    const c = a.payroll_companies;
+    const comments = await loadComments(c.id);
+    const taId = `comment-${c.id}`;
+    return `
+      <div class="card">
+        <div class="company-card-header">
+          <div class="company-name">${esc(c.trading_name)}</div>
+          <span class="badge badge-blue">Accountant access — read-only</span>
+        </div>
+        <div class="pack-actions">
+          <button class="btn-primary" onclick="openCompany('${c.id}', '${PAYROLL_URL}')">Open Payroll Console</button>
+          <button class="btn-teal" onclick="openCompany('${c.id}', '${BOOKKEEPING_URL}')">Open Bookkeeping</button>
+        </div>
+        <div class="comments-list">
+          <div style="font-size:0.78rem;font-weight:700;color:var(--mid);margin-bottom:8px">Notes for ${esc(c.trading_name)}</div>
+          ${comments.length === 0 ? '<div class="form-hint" style="font-size:0.8rem;color:var(--soft)">No notes yet — leave one for the owner below.</div>' : comments.map(cm => `
+            <div class="comment-row">
+              ${esc(cm.body)}
+              <div class="comment-meta">${new Date(cm.created_at).toLocaleString('en-ZA')}</div>
+            </div>`).join('')}
+          <div class="comment-form">
+            <textarea id="${taId}" placeholder="Leave a note for the owner…"></textarea>
+            <button class="btn-outline" onclick="submitComment('${c.id}', '${taId}')">Post</button>
+          </div>
+        </div>
+      </div>`;
+  }));
+  wrap.innerHTML = cards.join('');
+}
+
+(async function init() {
+  try {
+    const { data } = await sb.auth.getSession();
+    if (!data.session) { window.location.href = LOGIN_URL; return; }
+    session = data.session;
+    document.getElementById('auth-gate').classList.add('hidden');
+    document.getElementById('app').style.visibility = 'visible';
+    await renderClients();
+  } catch (e) {
+    const gate = document.getElementById('auth-gate');
+    gate.innerHTML = `<p style="color:#fff;font-weight:700;margin-bottom:6px">Couldn't load your client list</p>
+      <p>${esc((e && e.message) || 'Something went wrong.')}</p>
+      <button onclick="location.reload()" style="margin-top:14px;padding:10px 20px;background:#2ab3b3;color:#fff;border:none;border-radius:8px;font-weight:700;cursor:pointer;font-family:'Inter',sans-serif">Retry</button>`;
+  }
+})();
+</script>
+</body>
+</html>

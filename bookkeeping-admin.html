@@ -175,6 +175,7 @@
       <a class="nav-item" onclick="showSection('customers')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg><span class="nav-label">Customers</span></a>
       <a class="nav-item" onclick="showSection('vendors')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="3" width="15" height="13"/><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg><span class="nav-label">Vendors &amp; Bills</span></a>
       <a class="nav-item" onclick="showSection('stock')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16Z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg><span class="nav-label">Stock</span></a>
+      <a class="nav-item" onclick="showSection('reconcile')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12V7a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-1"/><path d="M18 12a2 2 0 1 0 0 4 2 2 0 0 0 0-4z"/></svg><span class="nav-label">Bank Reconciliation</span></a>
       <a class="nav-item" onclick="showSection('reports')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg><span class="nav-label">Reports</span></a>
       <a class="nav-item" onclick="showSection('analytics')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg><span class="nav-label">Analytics</span></a>
       <a class="nav-item" id="payrollNavLink" href="#"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg><span class="nav-label">Payroll</span></a>
@@ -304,6 +305,28 @@
         <div class="card">
           <div class="card-header"><div class="card-title">All items</div><button class="btn-teal btn-sm" onclick="openItemModal()">Add Item</button></div>
           <div id="itemsTableWrap"><div class="loading">Loading…</div></div>
+        </div>
+      </section>
+
+      <!-- BANK RECONCILIATION -->
+      <section class="section" id="section-reconcile">
+        <div class="page-header"><h1>Bank Reconciliation</h1><p>Import your bank statement and match each line to what's already in your books.</p></div>
+        <div class="card">
+          <div class="card-header"><div class="card-title">Import a statement</div></div>
+          <p class="form-hint" style="margin-bottom:14px">Upload a CSV with columns <strong>Date, Description, Amount</strong> (positive for money in, negative for money out) — most banks let you export this from online banking. No bank login or credentials are ever sent to Burse.</p>
+          <input type="file" id="bankCsvInput" accept=".csv" onchange="importBankCsv(event)">
+          <div class="error-box" id="bankImportError"></div>
+        </div>
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title">Transactions</div>
+            <div class="subtabs" style="border-bottom:none;margin-bottom:0">
+              <div class="subtab active" data-reconcile-tab="unmatched" onclick="switchReconcileTab('unmatched')">Unmatched</div>
+              <div class="subtab" data-reconcile-tab="matched" onclick="switchReconcileTab('matched')">Matched</div>
+              <div class="subtab" data-reconcile-tab="ignored" onclick="switchReconcileTab('ignored')">Ignored</div>
+            </div>
+          </div>
+          <div id="bankTxnsWrap"><div class="loading">Loading…</div></div>
         </div>
       </section>
 
@@ -841,7 +864,7 @@ function showSection(name) {
   document.getElementById('section-' + name).classList.add('active');
   document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
   event?.target?.closest('.nav-item')?.classList.add('active');
-  const titles = { dashboard:'Dashboard', accounts:'Chart of Accounts', journal:'Journal', invoices:'Invoices', expenses:'Expenses', estimates:'Estimates', customers:'Customers', vendors:'Vendors & Bills', stock:'Stock', reports:'Reports', analytics:'Analytics' };
+  const titles = { dashboard:'Dashboard', accounts:'Chart of Accounts', journal:'Journal', invoices:'Invoices', expenses:'Expenses', estimates:'Estimates', customers:'Customers', vendors:'Vendors & Bills', stock:'Stock', reconcile:'Bank Reconciliation', reports:'Reports', analytics:'Analytics' };
   document.getElementById('topbarTitle').textContent = titles[name];
   if (name === 'accounts') loadAccounts();
   if (name === 'journal') loadJournal();
@@ -851,6 +874,7 @@ function showSection(name) {
   if (name === 'customers') loadCustomers();
   if (name === 'vendors') { loadBills(); loadVendors(); }
   if (name === 'stock') loadItems();
+  if (name === 'reconcile') loadBankTxns();
   if (name === 'reports') { loadTrialBalance(); populateVatPeriodSelector(); }
   if (name === 'analytics') { loadAnalytics(); }
   closeSidebar();
@@ -1919,6 +1943,122 @@ async function submitStockAdjustment() {
   if (error) { errEl.textContent = error.message; errEl.style.display = 'block'; return; }
   closeModal('stockAdjModal');
   loadItems();
+}
+
+// ── Bank Reconciliation ──
+let reconcileTab = 'unmatched';
+function switchReconcileTab(name) {
+  reconcileTab = name;
+  document.querySelectorAll('[data-reconcile-tab]').forEach(t => t.classList.toggle('active', t.dataset.reconcileTab === name));
+  loadBankTxns();
+}
+
+function parseBankCsv(text) {
+  const lines = text.split(/\r?\n/).filter(l => l.trim().length);
+  if (lines.length < 2) return [];
+  const splitLine = l => l.match(/(".*?"|[^,]+)(?=,|$)/g)?.map(c => c.replace(/^"|"$/g, '').trim()) || [];
+  const header = splitLine(lines[0]).map(h => h.toLowerCase());
+  const dateIdx = header.findIndex(h => h.includes('date'));
+  const descIdx = header.findIndex(h => h.includes('desc') || h.includes('narration') || h.includes('reference'));
+  const amountIdx = header.findIndex(h => h === 'amount');
+  const debitIdx = header.findIndex(h => h.includes('debit'));
+  const creditIdx = header.findIndex(h => h.includes('credit'));
+  if (dateIdx === -1 || (amountIdx === -1 && debitIdx === -1 && creditIdx === -1)) return null;
+
+  const toIsoDate = (s) => {
+    if (!s) return null;
+    if (/^\d{4}-\d{2}-\d{2}/.test(s)) return s.slice(0, 10);
+    const m = s.match(/^(\d{1,2})[\/\-](\d{1,2})[\/\-](\d{4})$/);
+    if (m) return `${m[3]}-${m[2].padStart(2,'0')}-${m[1].padStart(2,'0')}`;
+    const d = new Date(s);
+    return isNaN(d) ? null : d.toISOString().slice(0, 10);
+  };
+
+  return lines.slice(1).map(l => {
+    const cols = splitLine(l);
+    const txn_date = toIsoDate(cols[dateIdx]);
+    const description = descIdx > -1 ? cols[descIdx] : 'Bank transaction';
+    let amount;
+    if (amountIdx > -1) amount = parseFloat((cols[amountIdx] || '0').replace(/[R,\s]/g, ''));
+    else amount = (parseFloat((cols[creditIdx] || '0').replace(/[R,\s]/g, '')) || 0) - (parseFloat((cols[debitIdx] || '0').replace(/[R,\s]/g, '')) || 0);
+    return { txn_date, description, amount };
+  }).filter(t => t.txn_date && !isNaN(t.amount) && t.amount !== 0);
+}
+
+async function importBankCsv(event) {
+  const errEl = document.getElementById('bankImportError');
+  errEl.style.display = 'none';
+  const file = event.target.files[0];
+  if (!file || !requireCompany()) return;
+  const text = await file.text();
+  const rows = parseBankCsv(text);
+  if (rows === null) { errEl.textContent = "Couldn't find Date and Amount (or Debit/Credit) columns in that file."; errEl.style.display = 'block'; event.target.value = ''; return; }
+  if (rows.length === 0) { errEl.textContent = 'No usable transaction rows found in that file.'; errEl.style.display = 'block'; event.target.value = ''; return; }
+  const { error } = await sb.from('bk_bank_transactions').insert(rows.map(r => ({ company_id: company.id, ...r })));
+  event.target.value = '';
+  if (error) { errEl.textContent = error.message; errEl.style.display = 'block'; return; }
+  switchReconcileTab('unmatched');
+}
+
+async function loadBankTxns() {
+  const wrap = document.getElementById('bankTxnsWrap');
+  if (!requireCompany()) { wrap.innerHTML = '<div class="empty">Set up your company first.</div>'; return; }
+  wrap.innerHTML = '<div class="loading">Loading…</div>';
+
+  const [{ data: bankAcct }, { data: txns }] = await Promise.all([
+    sb.from('bk_accounts').select('id').eq('company_id', company.id).eq('code', '1000').maybeSingle(),
+    sb.from('bk_bank_transactions').select('*').eq('company_id', company.id).eq('status', reconcileTab).order('txn_date', { ascending: false }),
+  ]);
+  if (!txns || txns.length === 0) { wrap.innerHTML = `<div class="empty">No ${reconcileTab} transactions.</div>`; return; }
+
+  let journalLines = [];
+  let matchedLineIds = new Set();
+  if (bankAcct) {
+    const [{ data: lines }, { data: matched }] = await Promise.all([
+      sb.from('bk_journal_lines').select('id, debit, credit, description, bk_journal_entries!inner(company_id, entry_date)').eq('account_id', bankAcct.id).eq('bk_journal_entries.company_id', company.id),
+      sb.from('bk_bank_transactions').select('matched_journal_line_id').eq('company_id', company.id).eq('status', 'matched'),
+    ]);
+    journalLines = lines || [];
+    matchedLineIds = new Set((matched || []).map(m => m.matched_journal_line_id).filter(Boolean));
+  }
+
+  const candidatesFor = (txn) => journalLines.filter(l => {
+    if (matchedLineIds.has(l.id)) return false;
+    const lineAmount = Number(l.debit || 0) - Number(l.credit || 0);
+    if (Math.abs(lineAmount - Number(txn.amount)) > 0.01) return false;
+    const days = Math.abs((new Date(txn.txn_date) - new Date(l.bk_journal_entries.entry_date)) / 86400000);
+    return days <= 10;
+  });
+
+  wrap.innerHTML = `<table><thead><tr><th>Date</th><th>Description</th><th class="num">Amount</th><th></th></tr></thead><tbody>
+    ${txns.map(t => {
+      const candidates = reconcileTab === 'unmatched' ? candidatesFor(t) : [];
+      return `<tr>
+        <td>${esc(t.txn_date)}</td><td>${esc(t.description)}</td>
+        <td class="num" style="color:${t.amount >= 0 ? 'var(--green)' : 'var(--red)'}">${money(t.amount)}</td>
+        <td style="white-space:nowrap">
+          ${reconcileTab === 'unmatched' ? `
+            ${candidates.length ? candidates.map(c => `<button class="btn-outline btn-sm" onclick="matchBankTxn('${t.id}','${c.id}')">Match: ${esc(c.description || c.bk_journal_entries.entry_date)}</button>`).join(' ') : '<span class="form-hint">No candidate found</span>'}
+            <button class="btn-danger" onclick="ignoreBankTxn('${t.id}')">Ignore</button>
+          ` : reconcileTab === 'matched' ? `<button class="btn-outline btn-sm" onclick="unmatchBankTxn('${t.id}')">Undo match</button>`
+          : `<button class="btn-outline btn-sm" onclick="unmatchBankTxn('${t.id}')">Restore</button>`}
+        </td>
+      </tr>`;
+    }).join('')}
+  </tbody></table>`;
+}
+
+async function matchBankTxn(txnId, journalLineId) {
+  await sb.from('bk_bank_transactions').update({ status: 'matched', matched_journal_line_id: journalLineId }).eq('id', txnId);
+  loadBankTxns();
+}
+async function ignoreBankTxn(txnId) {
+  await sb.from('bk_bank_transactions').update({ status: 'ignored', matched_journal_line_id: null }).eq('id', txnId);
+  loadBankTxns();
+}
+async function unmatchBankTxn(txnId) {
+  await sb.from('bk_bank_transactions').update({ status: 'unmatched', matched_journal_line_id: null }).eq('id', txnId);
+  loadBankTxns();
 }
 
 // ── New reports: VAT201, AR/AP aging, sales/expenses by contact ──

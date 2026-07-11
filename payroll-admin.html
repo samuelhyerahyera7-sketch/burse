@@ -254,6 +254,7 @@
       <a class="nav-item" onclick="showSection('hr')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/><line x1="19" y1="8" x2="19" y2="14"/><line x1="16" y1="11" x2="22" y2="11"/></svg><span class="nav-label">HR</span></a>
       <a class="nav-item" onclick="showSection('announcements')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11l18-5v12L3 14v-3z"/><path d="M11.6 16.8a2 2 0 0 1-3.2 2.4L6 15"/></svg><span class="nav-label">Announcements</span></a>
       <a class="nav-item" onclick="showSection('reports')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg><span class="nav-label">Reports</span></a>
+      <a class="nav-item" onclick="showSection('compliance')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10Z"/><path d="M9 12l2 2 4-4"/></svg><span class="nav-label">Compliance Centre</span></a>
       <a class="nav-item" onclick="showSection('analytics')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg><span class="nav-label">Analytics</span></a>
       <a class="nav-item" onclick="showSection('bankfiles')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12V7a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-1"/><path d="M18 12a2 2 0 1 0 0 4 2 2 0 0 0 0-4z"/></svg><span class="nav-label">Bank Payment Files</span></a>
       <a class="nav-item" onclick="showSection('integrations')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 11a9 9 0 0 1 9 9"/><path d="M4 4a16 16 0 0 1 16 16"/><circle cx="5" cy="19" r="1"/></svg><span class="nav-label">Integrations</span></a>
@@ -262,6 +263,7 @@
       <a class="nav-item" id="bookkeepingNavLink" href="#" style="border-top:1px solid rgba(255,255,255,0.08);margin-top:5px;padding-top:14px"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 2v20l2-1 2 1 2-1 2 1 2-1 2 1 2-1 2 1V2l-2 1-2-1-2 1-2-1-2 1-2-1-2 1Z"/><path d="M8 7h8"/><path d="M8 11h8"/><path d="M8 15h5"/></svg><span class="nav-label">Bookkeeping</span></a>
     </nav>
     <div class="sidebar-footer">
+      <a class="nav-item" id="accountantPortalLink" href="accountant-portal.html" style="display:none"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg><span class="nav-label">Accountant Portal</span></a>
       <a class="nav-item" href="/"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5"/><polyline points="12 19 5 12 12 5"/></svg><span class="nav-label">Back to Burse</span></a>
       <a class="nav-item" onclick="handleLogout()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg><span class="nav-label">Log out</span></a>
     </div>
@@ -293,6 +295,17 @@
           <div class="card-title">Get your company set up</div>
           <p style="font-size:0.85rem;color:var(--soft);margin:10px 0 16px">Work through this checklist to get Burse ready to run your first payroll.</p>
           <div id="setupChecklist"></div>
+        </div>
+        <div class="card" id="healthScoreCard" style="display:none">
+          <div class="card-header"><div class="card-title">Payroll Health Score</div><button class="btn-outline btn-sm" onclick="showSection('compliance')">Open Compliance Centre</button></div>
+          <div style="display:flex;align-items:center;gap:22px;flex-wrap:wrap;margin-bottom:16px">
+            <div style="width:88px;height:88px;border-radius:50%;flex-shrink:0" id="healthScoreRing"></div>
+            <div>
+              <div style="font-size:1.6rem;font-weight:900;letter-spacing:-0.02em" id="healthScoreLabel">—</div>
+              <div class="form-hint" id="healthScoreSub">Checking your payroll readiness…</div>
+            </div>
+          </div>
+          <div id="healthScoreIssues"></div>
         </div>
         <div class="card">
           <div class="card-header"><div class="card-title">Payroll Overview</div></div>
@@ -683,6 +696,53 @@
         </div>
       </section>
 
+      <!-- COMPLIANCE CENTRE -->
+      <section class="section" id="section-compliance">
+        <div class="page-header"><h1>Compliance Centre</h1><p>Every recurring statutory obligation in one place — what's overdue, due soon, and done.</p></div>
+        <div class="kpi-grid">
+          <div class="kpi-card"><div class="kpi-label">Overdue</div><div class="kpi-val" id="cc-kpi-overdue" style="color:var(--red)">—</div><div class="kpi-sub">Needs attention now</div></div>
+          <div class="kpi-card"><div class="kpi-label">Due within 30 days</div><div class="kpi-val" id="cc-kpi-soon" style="color:var(--orange)">—</div><div class="kpi-sub">Coming up</div></div>
+          <div class="kpi-card"><div class="kpi-label">Upcoming</div><div class="kpi-val" id="cc-kpi-upcoming">—</div><div class="kpi-sub">No date set / further out</div></div>
+          <div class="kpi-card"><div class="kpi-label">Completed</div><div class="kpi-val" id="cc-kpi-done" style="color:var(--green)">—</div><div class="kpi-sub">Marked done</div></div>
+        </div>
+
+        <div class="card">
+          <div class="card-header"><div class="card-title">PAYE / UIF / SDL / ETI — monthly EMP201</div></div>
+          <p class="form-hint" style="margin-bottom:14px">Generated automatically from your finalized pay runs. EMP201 is due to SARS on or around the 7th of the month following each pay period — confirm the exact date on eFiling, as it shifts around weekends and public holidays.</p>
+          <div id="ccEmp201Wrap"></div>
+        </div>
+
+        <div class="card">
+          <div class="card-header"><div class="card-title">EMP501 reconciliation</div></div>
+          <p class="form-hint" style="margin-bottom:14px">SARS publishes the Interim (Aug–Sep) and Annual (Apr–May) reconciliation windows each year — set the due date yourself once SARS confirms it, and Burse will track and remind you.</p>
+          <div id="ccEmp501Wrap"></div>
+        </div>
+
+        <div class="card">
+          <div class="card-header"><div class="card-title">COID Return of Earnings</div></div>
+          <p class="form-hint" style="margin-bottom:14px">Your annual submission to the Compensation Fund. Set the due date from the Fund's notice — Burse doesn't hard-code it since it can change.</p>
+          <div id="ccCoidWrap"></div>
+        </div>
+
+        <div class="card">
+          <div class="card-header"><div class="card-title">IRP5 / IT3(a) tax certificates</div></div>
+          <p class="form-hint" style="margin-bottom:14px">Issued to employees once your EMP501 annual reconciliation is filed and certificates are generated on SARS e@syFile.</p>
+          <div id="ccIrp5Wrap"></div>
+        </div>
+
+        <div class="card">
+          <div class="card-header"><div class="card-title">POPIA — annual self-review</div></div>
+          <p class="form-hint" style="margin-bottom:14px">Burse is designed to support POPIA compliance — role-based access, row-level data isolation between companies, and an audit trail of who changed what. It doesn't replace your own POPIA obligations as the employer (data subject notices, consent records, your Information Officer registration). Use this as a yearly prompt to review those.</p>
+          <div id="ccPopiaWrap"></div>
+        </div>
+
+        <div class="card">
+          <div class="card-header"><div class="card-title">Payroll record retention — annual self-review</div></div>
+          <p class="form-hint" style="margin-bottom:14px">SA labour and tax law generally requires payroll records to be kept for several years (BCEA and the Tax Administration Act set different minimums) — Burse retains your data indefinitely by default, but it's worth confirming your own retention policy annually.</p>
+          <div id="ccRetentionWrap"></div>
+        </div>
+      </section>
+
       <!-- ANALYTICS -->
       <section class="section" id="section-analytics">
         <div class="page-header"><h1>Analytics</h1><p>Trends across your last 12 pay runs.</p></div>
@@ -747,6 +807,10 @@
         <div class="card">
           <div class="card-header"><div class="card-title">Accountants with access</div></div>
           <div id="accountantsTableWrap"><div class="loading">Loading…</div></div>
+        </div>
+        <div class="card">
+          <div class="card-header"><div class="card-title">Notes from your accountant</div></div>
+          <div id="accountantNotesWrap"><div class="loading">Loading…</div></div>
         </div>
       </section>
 
@@ -1324,7 +1388,7 @@ function showSection(name) {
   document.getElementById('section-' + name).classList.add('active');
   document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
   event?.target?.closest('.nav-item')?.classList.add('active');
-  const titles = { dashboard:'Dashboard', migrate:'Migrate & Import', employees:'Employees', payroll:'Payroll', payslips:'Payslips', leave:'Leave', hr:'HR', announcements:'Announcements', reports:'Reports', analytics:'Analytics', bankfiles:'Bank Payment Files', integrations:'Integrations', accountants:'Accountant Access', settings:'Settings' };
+  const titles = { dashboard:'Dashboard', migrate:'Migrate & Import', employees:'Employees', payroll:'Payroll', payslips:'Payslips', leave:'Leave', hr:'HR', announcements:'Announcements', reports:'Reports', compliance:'Compliance Centre', analytics:'Analytics', bankfiles:'Bank Payment Files', integrations:'Integrations', accountants:'Accountant Access', settings:'Settings' };
   document.getElementById('topbarTitle').textContent = titles[name];
   if (name === 'migrate') loadMigrationJobs();
   if (name === 'employees') loadStaff();
@@ -1334,6 +1398,7 @@ function showSection(name) {
   if (name === 'announcements') loadAnnouncements();
   if (name === 'hr') loadDepartments();
   if (name === 'reports') populateReportRunSelect();
+  if (name === 'compliance') loadComplianceCentre();
   if (name === 'analytics') loadAnalytics();
   if (name === 'bankfiles') loadBankFiles();
   if (name === 'integrations') { loadIntegrationStatus(); loadBankFeedGrid(); }
@@ -1441,6 +1506,8 @@ async function loadCompany() {
 
 function renderCompanySwitcher() {
   const wrap = document.getElementById('companySwitcherRoot');
+  const portalLink = document.getElementById('accountantPortalLink');
+  if (portalLink) portalLink.style.display = allCompanies.some(c => c._role === 'accountant') ? 'flex' : 'none';
   if (!company && allCompanies.length === 0) { wrap.innerHTML = ''; return; }
 
   const roleLabel = r => r === 'owner' ? '' : ' · Accountant view';
@@ -3044,6 +3111,117 @@ async function loadCompliance() {
   `;
 }
 
+// ── Compliance Centre ──
+const CC_LABELS = {
+  emp201: p => `EMP201 — ${p}`,
+  emp501_interim: p => `EMP501 Interim reconciliation — ${p}`,
+  emp501_annual: p => `EMP501 Annual reconciliation — ${p}`,
+  coid_roe: p => `COID Return of Earnings — ${p}`,
+  irp5_issuance: p => `IRP5/IT3(a) issuance — ${p}`,
+  popia_review: p => `POPIA annual review — ${p}`,
+  record_retention_review: p => `Record retention review — ${p}`,
+};
+const CC_REPORT_TAB = { emp201: 'emp201', emp501_interim: 'emp501', emp501_annual: 'emp501', coid_roe: 'coid', irp5_issuance: 'irp5' };
+
+function emp201DueDate(periodEnd) {
+  const d = new Date(periodEnd + 'T00:00:00');
+  return new Date(Date.UTC(d.getUTCFullYear(), d.getUTCMonth() + 1, 7)).toISOString().slice(0, 10);
+}
+
+async function ensureComplianceTasksGenerated() {
+  const rows = [];
+  runsCache.filter(r => r.status !== 'draft').forEach(r => {
+    rows.push({ company_id: company.id, task_type: 'emp201', period_label: `${r.period_start} – ${r.period_end}`, due_date: emp201DueDate(r.period_end) });
+  });
+  const years = [...new Set(runsCache.map(r => r.tax_year).filter(Boolean))];
+  years.forEach(y => {
+    rows.push({ company_id: company.id, task_type: 'emp501_interim', period_label: `Tax year ${y}`, due_date: null });
+    rows.push({ company_id: company.id, task_type: 'emp501_annual', period_label: `Tax year ${y}`, due_date: null });
+    rows.push({ company_id: company.id, task_type: 'irp5_issuance', period_label: `Tax year ${y}`, due_date: null });
+    rows.push({ company_id: company.id, task_type: 'popia_review', period_label: y, due_date: null });
+    rows.push({ company_id: company.id, task_type: 'record_retention_review', period_label: y, due_date: null });
+  });
+  [...new Set(runsCache.map(r => new Date(r.period_end).getFullYear()))].forEach(y => {
+    rows.push({ company_id: company.id, task_type: 'coid_roe', period_label: String(y), due_date: null });
+  });
+  if (rows.length === 0) return;
+  await sb.from('payroll_compliance_tasks').upsert(rows, { onConflict: 'company_id,task_type,period_label', ignoreDuplicates: true });
+}
+
+async function loadComplianceCentre() {
+  if (!company) return;
+  await ensureComplianceTasksGenerated();
+  const { data: tasks } = await sb.from('payroll_compliance_tasks').select('*').eq('company_id', company.id).order('due_date', { ascending: true, nullsFirst: false });
+  const rows = tasks || [];
+
+  const today = new Date(); today.setHours(0,0,0,0);
+  const in30 = new Date(today.getTime() + 30 * 86400000);
+  const status = t => {
+    if (t.status === 'done') return 'done';
+    if (!t.due_date) return 'upcoming';
+    const d = new Date(t.due_date + 'T00:00:00');
+    if (d < today) return 'overdue';
+    if (d <= in30) return 'soon';
+    return 'upcoming';
+  };
+  document.getElementById('cc-kpi-overdue').textContent = rows.filter(t => status(t) === 'overdue').length;
+  document.getElementById('cc-kpi-soon').textContent = rows.filter(t => status(t) === 'soon').length;
+  document.getElementById('cc-kpi-upcoming').textContent = rows.filter(t => status(t) === 'upcoming').length;
+  document.getElementById('cc-kpi-done').textContent = rows.filter(t => status(t) === 'done').length;
+
+  const badge = s => ({ overdue: '<span class="badge badge-red">Overdue</span>', soon: '<span class="badge badge-yellow">Due soon</span>', upcoming: '<span class="badge badge-gray">Upcoming</span>', done: '<span class="badge badge-green">Done</span>' })[s];
+  const renderGroup = (wrapId, taskType) => {
+    const wrap = document.getElementById(wrapId);
+    if (!wrap) return;
+    const group = rows.filter(t => t.task_type === taskType).sort((a,b) => (a.due_date||'9999').localeCompare(b.due_date||'9999'));
+    if (group.length === 0) { wrap.innerHTML = '<div class="empty">Nothing yet — generated once you have pay run or tax-year data.</div>'; return; }
+    wrap.innerHTML = `<table><thead><tr><th>Period</th><th>Due date</th><th>Status</th><th></th></tr></thead><tbody>
+      ${group.map(t => `<tr>
+        <td>${esc(CC_LABELS[t.task_type](t.period_label))}</td>
+        <td><input type="date" value="${t.due_date || ''}" style="border:1px solid var(--border);border-radius:6px;padding:4px 6px;font-size:0.8rem" onchange="setComplianceDueDate('${t.id}', this.value)"></td>
+        <td>${badge(status(t))}</td>
+        <td style="white-space:nowrap">
+          ${CC_REPORT_TAB[t.task_type] ? `<button class="btn-outline btn-sm" onclick="showSection('reports'); setTimeout(()=>switchReportTab('${CC_REPORT_TAB[t.task_type]}'),0)">Open report</button>` : ''}
+          <button class="btn-outline btn-sm" onclick="toggleComplianceDone('${t.id}', ${t.status !== 'done'})">${t.status === 'done' ? 'Reopen' : 'Mark done'}</button>
+        </td>
+      </tr>`).join('')}
+    </tbody></table>`;
+  };
+  renderGroup('ccEmp201Wrap', 'emp201');
+  const emp501Interim = rows.filter(t => t.task_type === 'emp501_interim');
+  const emp501Annual = rows.filter(t => t.task_type === 'emp501_annual');
+  const emp501Wrap = document.getElementById('ccEmp501Wrap');
+  const emp501All = [...emp501Interim, ...emp501Annual].sort((a,b) => (a.due_date||'9999').localeCompare(b.due_date||'9999'));
+  emp501Wrap.innerHTML = emp501All.length === 0 ? '<div class="empty">Nothing yet — generated once you have pay run data.</div>' : `<table><thead><tr><th>Period</th><th>Due date</th><th>Status</th><th></th></tr></thead><tbody>
+    ${emp501All.map(t => `<tr>
+      <td>${esc(CC_LABELS[t.task_type](t.period_label))}</td>
+      <td><input type="date" value="${t.due_date || ''}" style="border:1px solid var(--border);border-radius:6px;padding:4px 6px;font-size:0.8rem" onchange="setComplianceDueDate('${t.id}', this.value)"></td>
+      <td>${badge(status(t))}</td>
+      <td style="white-space:nowrap">
+        <button class="btn-outline btn-sm" onclick="showSection('reports'); setTimeout(()=>switchReportTab('emp501'),0)">Open report</button>
+        <button class="btn-outline btn-sm" onclick="toggleComplianceDone('${t.id}', ${t.status !== 'done'})">${t.status === 'done' ? 'Reopen' : 'Mark done'}</button>
+      </td>
+    </tr>`).join('')}
+  </tbody></table>`;
+  renderGroup('ccCoidWrap', 'coid_roe');
+  renderGroup('ccIrp5Wrap', 'irp5_issuance');
+  renderGroup('ccPopiaWrap', 'popia_review');
+  renderGroup('ccRetentionWrap', 'record_retention_review');
+}
+
+async function setComplianceDueDate(id, value) {
+  await sb.from('payroll_compliance_tasks').update({ due_date: value || null }).eq('id', id);
+  loadComplianceCentre();
+}
+async function toggleComplianceDone(id, makeDone) {
+  await sb.from('payroll_compliance_tasks').update({
+    status: makeDone ? 'done' : 'pending',
+    completed_at: makeDone ? new Date().toISOString() : null,
+    completed_by: makeDone ? session.user.id : null,
+  }).eq('id', id);
+  loadComplianceCentre();
+}
+
 async function loadTemplates() {
   const wrap = document.getElementById('templatesWrap');
   if (!company) { wrap.innerHTML = '<div class="empty">Set up your company first.</div>'; return; }
@@ -3691,6 +3869,15 @@ async function loadAccountants() {
       <td>${a.status !== 'revoked' && isOwner ? `<a class="btn-danger btn-sm" onclick="revokeAccountant('${a.id}')">Revoke</a>` : ''}</td>
     </tr>`).join('')}
   </tbody></table>`;
+  loadAccountantNotes();
+}
+
+async function loadAccountantNotes() {
+  const wrap = document.getElementById('accountantNotesWrap');
+  if (!wrap || !company) return;
+  const { data } = await sb.from('payroll_accountant_comments').select('*').eq('company_id', company.id).order('created_at', { ascending: false }).limit(20);
+  if (!data || data.length === 0) { wrap.innerHTML = '<div class="empty">No notes from your accountant yet.</div>'; return; }
+  wrap.innerHTML = data.map(c => `<div style="padding:10px 0;border-bottom:1px solid var(--border);font-size:0.85rem">${esc(c.body)}<div class="form-hint" style="margin-top:3px">${new Date(c.created_at).toLocaleString('en-ZA')}</div></div>`).join('');
 }
 
 async function inviteAccountant() {
@@ -3778,6 +3965,68 @@ function renderSetupChecklist() {
       ${!i.done ? `<button class="btn-outline btn-sm" onclick="${!company && i.tab === 'settings' ? 'openSetupWizard()' : `showSection('${i.tab}')`}">Go</button>` : ''}
     </div>
   `).join('');
+}
+
+async function renderHealthScore() {
+  const card = document.getElementById('healthScoreCard');
+  if (!isOwner || !company || staffCache.length === 0) { card.style.display = 'none'; return; }
+  card.style.display = 'block';
+
+  const active = staffCache.filter(s => s.active);
+  const missingTax = active.filter(s => !s.tax_number);
+  const missingId = active.filter(s => !s.id_number);
+  const missingBank = active.filter(s => !(s.bank_account_number && s.bank_name));
+  const invalidSalary = active.filter(s => !(Number(s.basic_salary) > 0));
+
+  const eligibleForPayslip = active.filter(s => new Date(s.start_date) <= new Date(Date.now() - 35 * 86400000));
+  const { data: paidStaffRows } = await sb.from('payroll_payslips').select('staff_id').in('staff_id', eligibleForPayslip.map(s => s.id));
+  const paidStaffIds = new Set((paidStaffRows || []).map(p => p.staff_id));
+  const neverPaid = eligibleForPayslip.filter(s => !paidStaffIds.has(s.id));
+
+  const ids = active.map(s => s.id);
+  const [{ count: pendingLeave }, { count: pendingAdvance }, { count: pendingOvertime }] = await Promise.all([
+    sb.from('payroll_leave_requests').select('id', { count: 'exact', head: true }).in('staff_id', ids).eq('status', 'pending'),
+    sb.from('payroll_advance_requests').select('id', { count: 'exact', head: true }).in('staff_id', ids).eq('status', 'pending'),
+    sb.from('payroll_overtime_requests').select('id', { count: 'exact', head: true }).in('staff_id', ids).eq('status', 'pending'),
+  ]);
+  const pendingTotal = (pendingLeave || 0) + (pendingAdvance || 0) + (pendingOvertime || 0);
+
+  const now = new Date();
+  const currentPeriodRun = runsCache.find(r => {
+    const end = new Date(r.period_end);
+    return end.getMonth() === now.getMonth() && end.getFullYear() === now.getFullYear();
+  });
+  const deadlineSoon = now.getDate() >= 25 && !currentPeriodRun;
+
+  const checks = [
+    { label: 'PAYE reference number set', ok: !!company.paye_reference, tab: 'settings' },
+    { label: 'UIF reference number set', ok: !!company.uif_reference, tab: 'settings' },
+    { label: 'SDL reference number set (or marked exempt)', ok: !!company.sdl_reference || !!company.sdl_exempt, tab: 'settings' },
+    { label: 'Company banking details on file', ok: !!(company.bank_name && company.bank_account_number), tab: 'settings' },
+    { label: missingTax.length ? `${missingTax.length} employee(s) missing a tax number` : 'All employees have a tax number', ok: missingTax.length === 0, tab: 'employees' },
+    { label: missingId.length ? `${missingId.length} employee(s) missing an ID number` : 'All employees have an ID number', ok: missingId.length === 0, tab: 'employees' },
+    { label: missingBank.length ? `${missingBank.length} employee(s) missing bank details` : 'All employees have bank details', ok: missingBank.length === 0, tab: 'employees' },
+    { label: invalidSalary.length ? `${invalidSalary.length} employee(s) have no salary set` : 'All employees have a valid salary', ok: invalidSalary.length === 0, tab: 'employees' },
+    { label: neverPaid.length ? `${neverPaid.length} employee(s) have never received a payslip` : 'All eligible employees have a payslip on file', ok: neverPaid.length === 0, tab: 'employees' },
+    { label: pendingTotal > 0 ? `${pendingTotal} pending request(s) awaiting your review` : 'No pending requests', ok: pendingTotal === 0, tab: 'leave' },
+    { label: deadlineSoon ? 'No pay run started yet for this period — payday may be close' : 'No upcoming payroll deadline at risk', ok: !deadlineSoon, tab: 'payroll' },
+  ];
+
+  const passCount = checks.filter(c => c.ok).length;
+  const score = Math.round((passCount / checks.length) * 100);
+  const color = score >= 90 ? '#16a34a' : score >= 70 ? '#b45309' : '#dc2626';
+
+  document.getElementById('healthScoreRing').style.background = `conic-gradient(${color} ${score * 3.6}deg, #f1f5f9 0deg)`;
+  document.getElementById('healthScoreLabel').textContent = `${score}% Payroll Ready`;
+  document.getElementById('healthScoreSub').textContent = score === 100 ? 'Everything looks in order.' : `${checks.length - passCount} item(s) need attention.`;
+
+  const issues = checks.filter(c => !c.ok);
+  document.getElementById('healthScoreIssues').innerHTML = issues.length === 0 ? '' : issues.map(c => `
+    <div class="checklist-row">
+      <div class="checklist-check todo"></div>
+      <div class="checklist-label">${esc(c.label)}</div>
+      <button class="btn-outline btn-sm" onclick="showSection('${c.tab}')">Fix</button>
+    </div>`).join('');
 }
 
 async function renderPayrollOverviewChart() {
@@ -3986,6 +4235,7 @@ async function loadDashPending() {
 function renderDashboard() {
   document.getElementById('kpi-employees').textContent = staffCache.filter(s => s.active).length;
   renderSetupChecklist();
+  renderHealthScore();
   renderPayrollOverviewChart();
   loadDashPending();
 
@@ -4651,12 +4901,14 @@ function mappedVal(row, key) {
 }
 function validateRows() {
   const seenEmpNo = new Map();
+  const seenIdNo = new Map();
   migState.rows.forEach((row, i) => {
     const errors = [], warnings = [];
     const firstName = mappedVal(row, 'first_name');
     const lastName = mappedVal(row, 'last_name');
     const fullName = mappedVal(row, 'full_name') || [firstName, lastName].filter(Boolean).join(' ');
     const empNo = mappedVal(row, 'employee_number');
+    const idNoDupCheck = mappedVal(row, 'id_number');
     const salaryRaw = mappedVal(row, 'basic_salary');
     const salary = parseFloat(String(salaryRaw).replace(/[^0-9.\-]/g, ''));
 
@@ -4668,6 +4920,11 @@ function validateRows() {
       if (seenEmpNo.has(empNo)) errors.push(`Duplicate employee number "${empNo}" (also row ${seenEmpNo.get(empNo) + 1})`);
       else seenEmpNo.set(empNo, i);
     } else warnings.push('No employee number — a new one will need to be assigned manually');
+
+    if (idNoDupCheck) {
+      if (seenIdNo.has(idNoDupCheck)) errors.push(`Duplicate ID number (also row ${seenIdNo.get(idNoDupCheck) + 1})`);
+      else seenIdNo.set(idNoDupCheck, i);
+    }
 
     if (!mappedVal(row, 'tax_number')) warnings.push('Missing tax number');
     if (!mappedVal(row, 'bank_account_number')) warnings.push('Missing bank account details');
@@ -4719,7 +4976,7 @@ function renderWizStep6() {
   const importable = migState.rows.filter(r => r.status !== 'error');
   document.getElementById('wizStepBody').innerHTML = `
     <div class="wiz-h">Preview</div>
-    <div class="wiz-sub">This is exactly how these ${importable.length} employees will appear inside Burse. Existing employees (matched by employee number) will be updated, not duplicated.</div>
+    <div class="wiz-sub">This is exactly how these ${importable.length} employees will appear inside Burse. Existing employees (matched by employee number, or by ID number if there's no employee number) will be updated, not duplicated.</div>
     <div class="map-table-wrap">
       <table><thead><tr><th>Name</th><th>Employee No.</th><th>Job Title</th><th>Start Date</th><th>Basic Salary</th><th>Bank</th></tr></thead><tbody>
         ${importable.slice(0, 100).map(r => `<tr>
@@ -4803,6 +5060,17 @@ async function runImport() {
       let staffId;
       if (payload.employee_number) {
         const { data: existing } = await sb.from('payroll_staff').select('id').eq('company_id', company.id).eq('employee_number', payload.employee_number).maybeSingle();
+        if (existing) {
+          const { data: upd, error } = await sb.from('payroll_staff').update(payload).eq('id', existing.id).select().single();
+          if (error) throw error;
+          staffId = upd.id;
+        }
+      }
+      // No employee number match — some source systems (or exports) don't carry one.
+      // Fall back to matching on SA ID number, a stronger identity key, so re-imports
+      // update the existing employee instead of creating a duplicate record.
+      if (!staffId && payload.id_number) {
+        const { data: existing } = await sb.from('payroll_staff').select('id').eq('company_id', company.id).eq('id_number', payload.id_number).maybeSingle();
         if (existing) {
           const { data: upd, error } = await sb.from('payroll_staff').update(payload).eq('id', existing.id).select().single();
           if (error) throw error;
