@@ -4,6 +4,9 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Payroll — Burse</title>
+  <link rel="manifest" href="/manifest.webmanifest">
+  <meta name="theme-color" content="#0e1c40">
+  <link rel="apple-touch-icon" href="/icons/icon-192.png">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
   <style>
@@ -543,6 +546,7 @@
         <div class="subtabs">
           <div class="subtab active" data-subtab="emp201" onclick="switchReportTab('emp201')">PAYE / UIF / SDL (EMP201)</div>
           <div class="subtab" data-subtab="emp501" onclick="switchReportTab('emp501')">Annual Reconciliation (EMP501)</div>
+          <div class="subtab" data-subtab="coid" onclick="switchReportTab('coid')">COID Return of Earnings</div>
           <div class="subtab" data-subtab="cost" onclick="switchReportTab('cost')">Employee Cost Report</div>
           <div class="subtab" data-subtab="audit" onclick="switchReportTab('audit')">Payroll Audit Trail</div>
           <div class="subtab" data-subtab="irp5" onclick="switchReportTab('irp5')">Tax Certificates (IRP5)</div>
@@ -570,6 +574,18 @@
               <div class="form-group" style="display:flex;align-items:flex-end"><button class="btn-primary" onclick="loadEmp501()">Generate EMP501</button></div>
             </div>
             <div id="emp501Wrap"></div>
+          </div>
+        </div>
+
+        <div class="subtab-panel" id="reportpanel-coid">
+          <div class="card">
+            <div class="card-header"><div class="card-title">COID Return of Earnings</div></div>
+            <p class="form-hint" style="margin-bottom:14px">Annual earnings per employee for your Compensation Fund submission. Set your COID reference and assessment rate in Settings → Payroll to see an estimated assessment — apply the Compensation Fund's current annual earnings ceiling yourself, since it changes each year and Burse doesn't hard-code it.</p>
+            <div class="form-row">
+              <div class="form-group"><label>Tax year</label><select id="coidYearSelect"></select></div>
+              <div class="form-group" style="display:flex;align-items:flex-end"><button class="btn-primary" onclick="loadCoidRoe()">Generate Report</button></div>
+            </div>
+            <div id="coidWrap"></div>
           </div>
         </div>
 
@@ -754,6 +770,18 @@
             </div>
             <div class="checkbox-row"><input type="checkbox" id="c-sdlexempt"><label for="c-sdlexempt" style="margin:0">SDL exempt (annual payroll ≤ R500,000)</label></div>
             <div class="info-box">Tax year and SARS tax tables (PAYE brackets, UIF ceiling, ETI bands) are applied automatically based on the pay date — there's nothing to configure here.</div>
+
+            <h3 style="font-size:0.88rem;font-weight:800;margin:20px 0 4px">COID (Compensation Fund)</h3>
+            <p class="form-hint" style="margin-bottom:12px">Your Compensation for Occupational Injuries and Diseases registration — used on the Return of Earnings report.</p>
+            <div class="form-row">
+              <div class="form-group"><label>COID reference number</label><input id="c-coidref" placeholder="e.g. 1234567/8"></div>
+              <div class="form-group"><label>Assessment rate <span style="font-weight:400;color:var(--soft)">(per R100 of earnings)</span></label><input type="number" id="c-coidrate" step="0.0001" min="0" placeholder="e.g. 1.2500"></div>
+            </div>
+
+            <h3 style="font-size:0.88rem;font-weight:800;margin:20px 0 4px">Automated payroll runs</h3>
+            <p class="form-hint" style="margin-bottom:12px">Once you've run payroll manually at least once, Burse can learn your pay cadence and automatically create and calculate (never approve) each new draft run ahead of time, so it's ready for you to review.</p>
+            <div class="checkbox-row"><input type="checkbox" id="c-autorun"><label for="c-autorun" style="margin:0">Automatically create and calculate the next pay run</label></div>
+            <div class="form-group" style="max-width:260px;margin-bottom:16px"><label>Days before pay date</label><input type="number" id="c-autorundays" min="1" max="14" step="1"></div>
 
             <h3 style="font-size:0.88rem;font-weight:800;margin:20px 0 4px">Leave policy</h3>
             <p class="form-hint" style="margin-bottom:12px">Offer more than the BCEA minimum if you like — Burse will never let you go below it. Leave blank to use the BCEA minimum for your work week.</p>
@@ -1358,6 +1386,10 @@ async function loadCompany() {
     document.getElementById('c-workdays').value = String(company.work_days_per_week || 5);
     document.getElementById('c-address').value = company.address || '';
     document.getElementById('c-sdlexempt').checked = !!company.sdl_exempt;
+    document.getElementById('c-coidref').value = company.coid_reference || '';
+    document.getElementById('c-coidrate').value = company.coid_rate_per_100 ?? '';
+    document.getElementById('c-autorun').checked = !!company.auto_run_payroll;
+    document.getElementById('c-autorundays').value = company.auto_run_days_before ?? 5;
     document.getElementById('c-annualdays').value = company.annual_leave_days_override ?? '';
     document.getElementById('c-sickdays').value = company.sick_leave_days_override ?? '';
     updateLeavePolicyHints();
@@ -1759,6 +1791,10 @@ async function saveCompany() {
     sdl_reference: val('c-sdl') || null,
     work_days_per_week: parseInt(document.getElementById('c-workdays').value),
     address: val('c-address') || null,
+    coid_reference: val('c-coidref') || null,
+    coid_rate_per_100: document.getElementById('c-coidrate').value ? parseFloat(document.getElementById('c-coidrate').value) : null,
+    auto_run_payroll: document.getElementById('c-autorun').checked,
+    auto_run_days_before: Math.min(14, Math.max(1, parseInt(document.getElementById('c-autorundays').value) || 5)),
     sdl_exempt: document.getElementById('c-sdlexempt').checked,
     reconciliation_notes: val('c-notes') || null,
     bank_name: val('c-bankname') || null,
@@ -3037,6 +3073,7 @@ function switchReportTab(name) {
   if (name === 'audit') loadAuditTrail();
   if (name === 'irp5') populateIrp5Selectors();
   if (name === 'emp501') populateEmp501Selector();
+  if (name === 'coid') populateCoidYearSelector();
   if (name === 'builder') rbPopulateColumns();
 }
 
@@ -3075,6 +3112,38 @@ async function loadEmp501() {
       </tbody></table>
       <p class="form-hint" style="margin-top:14px">${r.irp5_certificates_issuable} IRP5/IT3(a) certificates issuable for ${esc(taxYear)}. Reconcile these totals against your submitted EMP201s in SARS e@syFile.</p>
       ${exportButtonsHtml('emp501Wrap', `burse-emp501-${taxYear.replace('/','-')}`, `EMP501 ${taxYear}`)}
+    `;
+  } catch (e) { wrap.innerHTML = `<div class="empty">${esc(e.message)}</div>`; }
+}
+
+function populateCoidYearSelector() {
+  const years = [...new Set(runsCache.filter(r => r.status !== 'draft').map(r => r.tax_year))].sort().reverse();
+  const sel = document.getElementById('coidYearSelect');
+  sel.innerHTML = years.length ? years.map(y => `<option value="${esc(y)}">${esc(y)}</option>`).join('') : '<option value="">No finalized pay runs yet</option>';
+}
+
+async function loadCoidRoe() {
+  const taxYear = document.getElementById('coidYearSelect').value;
+  const wrap = document.getElementById('coidWrap');
+  if (!taxYear) { wrap.innerHTML = '<div class="empty">No tax year available yet.</div>'; return; }
+  wrap.innerHTML = '<div class="loading">Loading…</div>';
+  try {
+    const r = await callEngine('coid_roe', { company_id: company.id, tax_year: taxYear });
+    wrap.innerHTML = `
+      <p style="font-size:0.85rem;color:var(--soft);margin-bottom:12px">COID reference: ${esc(r.coid_reference || '— not set —')}</p>
+      <table><thead><tr><th>Employee</th><th>ID number</th><th>Annual earnings</th></tr></thead><tbody>
+        ${r.employees.map(e => `<tr>
+          <td>${esc(e.name)}</td>
+          <td>${esc(e.id_number || '—')}</td>
+          <td>R ${e.gross.toLocaleString('en-ZA',{minimumFractionDigits:2})}</td>
+        </tr>`).join('')}
+        <tr style="border-top:2px solid var(--border)">
+          <td colspan="2"><strong>Total earnings</strong></td>
+          <td><strong>R ${r.total_earnings.toLocaleString('en-ZA',{minimumFractionDigits:2})}</strong></td>
+        </tr>
+      </tbody></table>
+      ${r.estimated_assessment != null ? `<p class="form-hint" style="margin-top:14px">Estimated assessment at ${r.assessment_rate_per_100}/R100: <strong>R ${r.estimated_assessment.toLocaleString('en-ZA',{minimumFractionDigits:2})}</strong> — remember to apply the Compensation Fund's current annual earnings ceiling per employee before submitting.</p>` : `<p class="form-hint" style="margin-top:14px">Set an assessment rate in Settings → Payroll to see an estimated assessment amount.</p>`}
+      ${exportButtonsHtml('coidWrap', `burse-coid-roe-${taxYear.replace('/','-')}`, `COID ROE ${taxYear}`)}
     `;
   } catch (e) { wrap.innerHTML = `<div class="empty">${esc(e.message)}</div>`; }
 }
@@ -4675,6 +4744,7 @@ function closeModal(id) { document.getElementById(id).hidden = true; }
 function val(id) { return document.getElementById(id).value.trim(); }
 function numOr0(id) { return parseFloat(document.getElementById(id).value) || 0; }
 function esc(str) { return String(str).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+if ('serviceWorker' in navigator) window.addEventListener('load', () => navigator.serviceWorker.register('/sw.js').catch(() => {}));
 </script>
 </body>
 </html>

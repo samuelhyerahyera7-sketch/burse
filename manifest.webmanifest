@@ -1,0 +1,16 @@
+{
+  "name": "Burse Payroll",
+  "short_name": "Burse",
+  "description": "South African payroll, HR and workforce management.",
+  "start_url": "/payroll-admin.html",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#0e1c40",
+  "theme_color": "#0e1c40",
+  "icons": [
+    { "src": "/icons/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "/icons/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "/icons/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "maskable" },
+    { "src": "/icons/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ]
+}

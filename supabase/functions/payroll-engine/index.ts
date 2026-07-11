@@ -20,17 +20,27 @@ Deno.serve(async (req) => {
   if (req.method === 'OPTIONS') return new Response('ok', { headers: corsHeaders });
 
   try {
-    const authHeader = req.headers.get('Authorization');
-    if (!authHeader) return json({ error: 'Unauthorised' }, 401);
+    // Two ways in: a normal user JWT (the app), or our own cron secret (the
+    // auto-schedule-payroll function creating/calculating a due run on a
+    // company's behalf). The cron path skips the owner check since there's
+    // no user — it's only reachable with the secret, never from the browser.
+    const cronSecret = Deno.env.get('CRON_SECRET');
+    const isCronCall = !!cronSecret && req.headers.get('x-cron-secret') === cronSecret;
 
-    const sbUser = createClient(
-      Deno.env.get('SUPABASE_URL')!,
-      Deno.env.get('SUPABASE_ANON_KEY')!,
-      { global: { headers: { Authorization: authHeader } } },
-    );
-    const { data: userData } = await sbUser.auth.getUser();
-    if (!userData?.user) return json({ error: 'Unauthorised' }, 401);
-    const uid = userData.user.id;
+    const authHeader = req.headers.get('Authorization');
+    if (!isCronCall && !authHeader) return json({ error: 'Unauthorised' }, 401);
+
+    let uid: string | null = null;
+    if (!isCronCall) {
+      const sbUser = createClient(
+        Deno.env.get('SUPABASE_URL')!,
+        Deno.env.get('SUPABASE_ANON_KEY')!,
+        { global: { headers: { Authorization: authHeader! } } },
+      );
+      const { data: userData } = await sbUser.auth.getUser();
+      if (!userData?.user) return json({ error: 'Unauthorised' }, 401);
+      uid = userData.user.id;
+    }
 
     const sb = createClient(
       Deno.env.get('SUPABASE_URL')!,
@@ -40,14 +50,13 @@ Deno.serve(async (req) => {
     const body = await req.json();
     const { action } = body;
 
-    // Every action operates on a company the caller must own.
+    // Every action operates on a company the caller must own — except a
+    // cron call, which is already scoped to a specific company_id by the
+    // scheduler and has no user to check ownership against.
     async function requireOwnedCompany(companyId: string) {
-      const { data, error } = await sb
-        .from('payroll_companies')
-        .select('*')
-        .eq('id', companyId)
-        .eq('owner_id', uid)
-        .maybeSingle();
+      let query = sb.from('payroll_companies').select('*').eq('id', companyId);
+      if (!isCronCall) query = query.eq('owner_id', uid);
+      const { data, error } = await query.maybeSingle();
       if (error || !data) throw new HttpError('Company not found or not owned by you', 404);
       return data;
     }
@@ -299,6 +308,46 @@ Deno.serve(async (req) => {
             eti_used: round2(totals.eti),
             total_payable: round2(paye_payable + uif_payable + totals.sdl),
           },
+        });
+      }
+
+      case 'coid_roe': {
+        // COID Return of Earnings: annual earnings per employee for the
+        // Compensation Fund submission. Burse totals actual gross earnings
+        // paid — it deliberately does NOT apply the annual earnings ceiling
+        // published each year by the Compensation Fund, since that figure
+        // changes annually and hard-coding a possibly-stale cap would be
+        // worse than making the employer apply the current one themselves.
+        const { company_id, tax_year } = body;
+        const company = await requireOwnedCompany(company_id);
+        if (!tax_year) return json({ error: 'tax_year is required' }, 400);
+
+        const { data: runs } = await sb.from('payroll_runs').select('id').eq('company_id', company_id).eq('tax_year', tax_year).in('status', ['finalized', 'paid']);
+        const runIds = (runs ?? []).map((r: any) => r.id);
+        const { data: payslips } = runIds.length
+          ? await sb.from('payroll_payslips').select('staff_id, gross_pay, payroll_staff(full_name, id_number)').in('run_id', runIds)
+          : { data: [] as any[] };
+
+        const byStaff = new Map<string, { name: string; id_number: string | null; gross: number }>();
+        (payslips ?? []).forEach((p: any) => {
+          const cur = byStaff.get(p.staff_id) || { name: p.payroll_staff?.full_name || '—', id_number: p.payroll_staff?.id_number || null, gross: 0 };
+          cur.gross += Number(p.gross_pay);
+          byStaff.set(p.staff_id, cur);
+        });
+
+        const employees = Array.from(byStaff.values()).map(e => ({ ...e, gross: round2(e.gross) }));
+        const totalEarnings = round2(employees.reduce((s, e) => s + e.gross, 0));
+        const rate = company.coid_rate_per_100 != null ? Number(company.coid_rate_per_100) : null;
+        const estimatedAssessment = rate != null ? round2(totalEarnings * (rate / 100)) : null;
+
+        return json({
+          company: company.trading_name,
+          coid_reference: company.coid_reference,
+          tax_year,
+          employees,
+          total_earnings: totalEarnings,
+          assessment_rate_per_100: rate,
+          estimated_assessment: estimatedAssessment,
         });
       }
 
