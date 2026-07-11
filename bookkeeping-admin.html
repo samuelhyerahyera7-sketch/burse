@@ -171,6 +171,10 @@
       <a class="nav-item" onclick="showSection('journal')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 17v-6a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v6"/><path d="M9 21h6"/><rect x="3" y="3" width="18" height="18" rx="2"/></svg><span class="nav-label">Journal</span></a>
       <a class="nav-item" onclick="showSection('invoices')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg><span class="nav-label">Invoices</span></a>
       <a class="nav-item" onclick="showSection('expenses')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M16 8h-6a2 2 0 1 0 0 4h4a2 2 0 1 1 0 4H8"/><line x1="12" y1="6" x2="12" y2="18"/></svg><span class="nav-label">Expenses</span></a>
+      <a class="nav-item" onclick="showSection('estimates')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg><span class="nav-label">Estimates</span></a>
+      <a class="nav-item" onclick="showSection('customers')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg><span class="nav-label">Customers</span></a>
+      <a class="nav-item" onclick="showSection('vendors')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="3" width="15" height="13"/><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg><span class="nav-label">Vendors &amp; Bills</span></a>
+      <a class="nav-item" onclick="showSection('stock')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16Z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg><span class="nav-label">Stock</span></a>
       <a class="nav-item" onclick="showSection('reports')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg><span class="nav-label">Reports</span></a>
       <a class="nav-item" onclick="showSection('analytics')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg><span class="nav-label">Analytics</span></a>
       <a class="nav-item" id="payrollNavLink" href="#"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg><span class="nav-label">Payroll</span></a>
@@ -239,6 +243,11 @@
           <div class="card-header"><div class="card-title">All invoices</div><button class="btn-teal btn-sm" onclick="openInvoiceModal()">New Invoice</button></div>
           <div id="invoicesTableWrap"><div class="loading">Loading…</div></div>
         </div>
+        <div class="card">
+          <div class="card-header"><div class="card-title">Recurring invoices</div><button class="btn-outline btn-sm" onclick="openRecurringModal()">New Recurring Invoice</button></div>
+          <p class="form-hint" style="margin-bottom:14px">Automatically issues a new invoice on schedule — a daily job checks these and creates + issues the next one when it's due.</p>
+          <div id="recurringTableWrap"><div class="loading">Loading…</div></div>
+        </div>
       </section>
 
       <!-- EXPENSES -->
@@ -250,13 +259,66 @@
         </div>
       </section>
 
+      <!-- ESTIMATES -->
+      <section class="section" id="section-estimates">
+        <div class="page-header"><h1>Estimates</h1><p>Quote customers before you invoice them.</p></div>
+        <div class="card">
+          <div class="card-header"><div class="card-title">All estimates</div><button class="btn-teal btn-sm" onclick="openEstimateModal()">New Estimate</button></div>
+          <div id="estimatesTableWrap"><div class="loading">Loading…</div></div>
+        </div>
+      </section>
+
+      <!-- CUSTOMERS -->
+      <section class="section" id="section-customers">
+        <div class="page-header"><h1>Customers</h1><p>Every customer you bill, with their balance and history.</p></div>
+        <div class="card">
+          <div class="card-header"><div class="card-title">All customers</div><button class="btn-teal btn-sm" onclick="openCustomerModal()">Add Customer</button></div>
+          <div id="customersTableWrap"><div class="loading">Loading…</div></div>
+        </div>
+      </section>
+
+      <!-- VENDORS & BILLS -->
+      <section class="section" id="section-vendors">
+        <div class="page-header"><h1>Vendors &amp; Bills</h1><p>Who you owe, and what's still outstanding.</p></div>
+        <div class="subtabs">
+          <div class="subtab active" data-subtab="bills" onclick="switchVendorTab('bills')">Bills</div>
+          <div class="subtab" data-subtab="vendors" onclick="switchVendorTab('vendors')">Vendors</div>
+        </div>
+        <div class="subtab-panel active" id="vendorpanel-bills">
+          <div class="card">
+            <div class="card-header"><div class="card-title">All bills</div><button class="btn-teal btn-sm" onclick="openBillModal()">Enter Bill</button></div>
+            <div id="billsTableWrap"><div class="loading">Loading…</div></div>
+          </div>
+        </div>
+        <div class="subtab-panel" id="vendorpanel-vendors">
+          <div class="card">
+            <div class="card-header"><div class="card-title">All vendors</div><button class="btn-teal btn-sm" onclick="openVendorModal()">Add Vendor</button></div>
+            <div id="vendorsTableWrap"><div class="loading">Loading…</div></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- STOCK -->
+      <section class="section" id="section-stock">
+        <div class="page-header"><h1>Stock</h1><p>Items you sell, and how much of each you have on hand.</p></div>
+        <div class="card">
+          <div class="card-header"><div class="card-title">All items</div><button class="btn-teal btn-sm" onclick="openItemModal()">Add Item</button></div>
+          <div id="itemsTableWrap"><div class="loading">Loading…</div></div>
+        </div>
+      </section>
+
       <!-- REPORTS -->
       <section class="section" id="section-reports">
-        <div class="page-header"><h1>Reports</h1><p>Trial balance, income statement and balance sheet.</p></div>
+        <div class="page-header"><h1>Reports</h1><p>Trial balance, income statement, balance sheet, VAT and more.</p></div>
         <div class="subtabs">
           <div class="subtab active" data-subtab="trial" onclick="switchReportTab('trial')">Trial Balance</div>
           <div class="subtab" data-subtab="income" onclick="switchReportTab('income')">Income Statement</div>
           <div class="subtab" data-subtab="balance" onclick="switchReportTab('balance')">Balance Sheet</div>
+          <div class="subtab" data-subtab="vat" onclick="switchReportTab('vat')">VAT201</div>
+          <div class="subtab" data-subtab="araging" onclick="switchReportTab('araging')">AR Aging</div>
+          <div class="subtab" data-subtab="apaging" onclick="switchReportTab('apaging')">AP Aging</div>
+          <div class="subtab" data-subtab="salesbycust" onclick="switchReportTab('salesbycust')">Sales by Customer</div>
+          <div class="subtab" data-subtab="expbyvendor" onclick="switchReportTab('expbyvendor')">Expenses by Vendor</div>
         </div>
         <div class="subtab-panel active" id="reportpanel-trial">
           <div class="card"><div class="card-title" style="margin-bottom:14px">Trial balance (as of today)</div><div id="trialBalanceWrap"><div class="loading">Loading…</div></div></div>
@@ -266,6 +328,29 @@
         </div>
         <div class="subtab-panel" id="reportpanel-balance">
           <div class="card"><div class="card-title" style="margin-bottom:14px">Balance sheet (as of today)</div><div id="balanceSheetWrap"><div class="loading">Loading…</div></div></div>
+        </div>
+        <div class="subtab-panel" id="reportpanel-vat">
+          <div class="card">
+            <div class="card-header"><div class="card-title">VAT201 return</div>
+              <div style="display:flex;gap:8px;align-items:center">
+                <select id="vatPeriodSelect" onchange="loadVat201()" style="padding:7px 10px;border:1.5px solid var(--border);border-radius:8px;font-size:0.82rem;font-family:'Inter',sans-serif"></select>
+              </div>
+            </div>
+            <p class="form-hint" style="margin-bottom:14px">Output VAT (on sales) less input VAT (on expenses &amp; bills) for the selected two-month VAT period. A simplified view based on your VAT Payable control account — always confirm figures with your accountant before filing.</p>
+            <div id="vat201Wrap"><div class="loading">Loading…</div></div>
+          </div>
+        </div>
+        <div class="subtab-panel" id="reportpanel-araging">
+          <div class="card"><div class="card-title" style="margin-bottom:14px">Accounts receivable aging</div><div id="arAgingWrap"><div class="loading">Loading…</div></div></div>
+        </div>
+        <div class="subtab-panel" id="reportpanel-apaging">
+          <div class="card"><div class="card-title" style="margin-bottom:14px">Accounts payable aging</div><div id="apAgingWrap"><div class="loading">Loading…</div></div></div>
+        </div>
+        <div class="subtab-panel" id="reportpanel-salesbycust">
+          <div class="card"><div class="card-title" style="margin-bottom:14px">Sales by customer (all-time)</div><div id="salesByCustWrap"><div class="loading">Loading…</div></div></div>
+        </div>
+        <div class="subtab-panel" id="reportpanel-expbyvendor">
+          <div class="card"><div class="card-title" style="margin-bottom:14px">Expenses by vendor (all-time)</div><div id="expByVendorWrap"><div class="loading">Loading…</div></div></div>
         </div>
       </section>
 
@@ -378,6 +463,207 @@
     <div class="modal-actions">
       <button class="btn-outline" onclick="closeModal('expenseModal')">Cancel</button>
       <button class="btn-primary" onclick="submitExpense()" id="submitExpenseBtn">Record Expense</button>
+    </div>
+  </div>
+</div>
+
+<!-- Customer Modal -->
+<div class="modal-overlay" id="customerModal" hidden>
+  <div class="modal-box" style="max-width:480px">
+    <button class="modal-close" onclick="closeModal('customerModal')">✕</button>
+    <h2 id="customerModalTitle">Add Customer</h2>
+    <div class="error-box" id="customerError"></div>
+    <input type="hidden" id="cust-id">
+    <div class="form-group" style="margin-bottom:14px"><label>Name</label><input id="cust-name"></div>
+    <div class="form-row">
+      <div class="form-group"><label>Email</label><input type="email" id="cust-email"></div>
+      <div class="form-group"><label>Phone</label><input id="cust-phone"></div>
+    </div>
+    <div class="form-row">
+      <div class="form-group"><label>VAT number</label><input id="cust-vat"></div>
+      <div class="form-group"><label>Address</label><input id="cust-address"></div>
+    </div>
+    <div class="modal-actions">
+      <button class="btn-outline" onclick="closeModal('customerModal')">Cancel</button>
+      <button class="btn-primary" onclick="submitCustomer()" id="submitCustomerBtn">Save Customer</button>
+    </div>
+  </div>
+</div>
+
+<!-- Vendor Modal -->
+<div class="modal-overlay" id="vendorModal" hidden>
+  <div class="modal-box" style="max-width:480px">
+    <button class="modal-close" onclick="closeModal('vendorModal')">✕</button>
+    <h2>Add Vendor</h2>
+    <div class="error-box" id="vendorError"></div>
+    <div class="form-group" style="margin-bottom:14px"><label>Name</label><input id="vend-name"></div>
+    <div class="form-row">
+      <div class="form-group"><label>Email</label><input type="email" id="vend-email"></div>
+      <div class="form-group"><label>Phone</label><input id="vend-phone"></div>
+    </div>
+    <div class="form-row">
+      <div class="form-group"><label>VAT number</label><input id="vend-vat"></div>
+      <div class="form-group"><label>Address</label><input id="vend-address"></div>
+    </div>
+    <div class="modal-actions">
+      <button class="btn-outline" onclick="closeModal('vendorModal')">Cancel</button>
+      <button class="btn-primary" onclick="submitVendor()" id="submitVendorBtn">Save Vendor</button>
+    </div>
+  </div>
+</div>
+
+<!-- Bill Modal -->
+<div class="modal-overlay" id="billModal" hidden>
+  <div class="modal-box" style="max-width:520px">
+    <button class="modal-close" onclick="closeModal('billModal')">✕</button>
+    <h2>Enter Bill</h2>
+    <div class="error-box" id="billError"></div>
+    <div class="form-row">
+      <div class="form-group"><label>Vendor</label><select id="bill-vendor"></select></div>
+      <div class="form-group"><label>Bill number (optional)</label><input id="bill-number"></div>
+    </div>
+    <div class="form-row">
+      <div class="form-group"><label>Bill date</label><input type="date" id="bill-date"></div>
+      <div class="form-group"><label>Due date</label><input type="date" id="bill-duedate"></div>
+    </div>
+    <div class="form-group" style="margin-bottom:14px"><label>Expense account</label><select id="bill-account"></select></div>
+    <div class="form-row">
+      <div class="form-group"><label>Amount (excl. VAT)</label><input type="number" id="bill-amount" min="0" step="0.01"></div>
+      <div class="form-group"><label>VAT amount</label><input type="number" id="bill-vat" min="0" step="0.01" value="0"></div>
+    </div>
+    <div class="form-group" style="margin-bottom:14px"><label>Description (optional)</label><input id="bill-description"></div>
+    <div class="modal-actions">
+      <button class="btn-outline" onclick="closeModal('billModal')">Cancel</button>
+      <button class="btn-primary" onclick="submitBill()" id="submitBillBtn">Save Bill</button>
+    </div>
+  </div>
+</div>
+
+<!-- Pay Bill Modal -->
+<div class="modal-overlay" id="payBillModal" hidden>
+  <div class="modal-box" style="max-width:420px">
+    <button class="modal-close" onclick="closeModal('payBillModal')">✕</button>
+    <h2>Pay Bill</h2>
+    <div class="error-box" id="payBillError"></div>
+    <input type="hidden" id="paybill-id">
+    <p class="form-hint" id="paybill-outstanding" style="margin-bottom:14px"></p>
+    <div class="form-row">
+      <div class="form-group"><label>Payment date</label><input type="date" id="paybill-date"></div>
+      <div class="form-group"><label>Amount</label><input type="number" id="paybill-amount" min="0" step="0.01"></div>
+    </div>
+    <div class="modal-actions">
+      <button class="btn-outline" onclick="closeModal('payBillModal')">Cancel</button>
+      <button class="btn-primary" onclick="submitPayBill()" id="submitPayBillBtn">Record Payment</button>
+    </div>
+  </div>
+</div>
+
+<!-- Record Invoice Payment Modal -->
+<div class="modal-overlay" id="invPaymentModal" hidden>
+  <div class="modal-box" style="max-width:420px">
+    <button class="modal-close" onclick="closeModal('invPaymentModal')">✕</button>
+    <h2>Record Payment</h2>
+    <div class="error-box" id="invPaymentError"></div>
+    <input type="hidden" id="invpay-id">
+    <p class="form-hint" id="invpay-outstanding" style="margin-bottom:14px"></p>
+    <div class="form-row">
+      <div class="form-group"><label>Payment date</label><input type="date" id="invpay-date"></div>
+      <div class="form-group"><label>Amount</label><input type="number" id="invpay-amount" min="0" step="0.01"></div>
+    </div>
+    <div class="modal-actions">
+      <button class="btn-outline" onclick="closeModal('invPaymentModal')">Cancel</button>
+      <button class="btn-primary" onclick="submitInvoicePayment()" id="submitInvPaymentBtn">Record Payment</button>
+    </div>
+  </div>
+</div>
+
+<!-- Item Modal -->
+<div class="modal-overlay" id="itemModal" hidden>
+  <div class="modal-box" style="max-width:480px">
+    <button class="modal-close" onclick="closeModal('itemModal')">✕</button>
+    <h2>Add Item</h2>
+    <div class="error-box" id="itemError"></div>
+    <div class="form-row">
+      <div class="form-group"><label>Name</label><input id="item-name"></div>
+      <div class="form-group"><label>SKU (optional)</label><input id="item-sku"></div>
+    </div>
+    <div class="form-row-3">
+      <div class="form-group"><label>Sales price</label><input type="number" id="item-salesprice" min="0" step="0.01" value="0"></div>
+      <div class="form-group"><label>Cost price</label><input type="number" id="item-costprice" min="0" step="0.01" value="0"></div>
+      <div class="form-group"><label>VAT %</label><input type="number" id="item-vatrate" min="0" step="0.01" value="15"></div>
+    </div>
+    <div class="form-row">
+      <div class="form-group"><label>Quantity on hand</label><input type="number" id="item-qty" min="0" step="1" value="0"></div>
+      <div class="form-group"><label>Reorder level</label><input type="number" id="item-reorder" min="0" step="1" value="0"></div>
+    </div>
+    <div class="modal-actions">
+      <button class="btn-outline" onclick="closeModal('itemModal')">Cancel</button>
+      <button class="btn-primary" onclick="submitItem()" id="submitItemBtn">Save Item</button>
+    </div>
+  </div>
+</div>
+
+<!-- Stock Adjustment Modal -->
+<div class="modal-overlay" id="stockAdjModal" hidden>
+  <div class="modal-box" style="max-width:420px">
+    <button class="modal-close" onclick="closeModal('stockAdjModal')">✕</button>
+    <h2>Adjust Stock</h2>
+    <div class="error-box" id="stockAdjError"></div>
+    <input type="hidden" id="stockadj-item-id">
+    <div class="form-group" style="margin-bottom:14px"><label>Quantity change (use a negative number to reduce stock)</label><input type="number" id="stockadj-delta" step="1"></div>
+    <div class="form-group" style="margin-bottom:14px"><label>Reason</label><input id="stockadj-reason" placeholder="e.g. Stocktake correction"></div>
+    <div class="modal-actions">
+      <button class="btn-outline" onclick="closeModal('stockAdjModal')">Cancel</button>
+      <button class="btn-primary" onclick="submitStockAdjustment()" id="submitStockAdjBtn">Save Adjustment</button>
+    </div>
+  </div>
+</div>
+
+<!-- New Recurring Invoice Modal -->
+<div class="modal-overlay" id="recurringModal" hidden>
+  <div class="modal-box" style="max-width:680px">
+    <button class="modal-close" onclick="closeModal('recurringModal')">✕</button>
+    <h2>New Recurring Invoice</h2>
+    <div class="error-box" id="recurringError"></div>
+    <div class="form-row">
+      <div class="form-group"><label>Customer name</label><input id="rec-customer"></div>
+      <div class="form-group"><label>Customer email (optional)</label><input type="email" id="rec-email"></div>
+    </div>
+    <div class="form-row">
+      <div class="form-group"><label>Frequency</label><select id="rec-frequency"><option value="monthly">Monthly</option><option value="weekly">Weekly</option></select></div>
+      <div class="form-group"><label>First run date</label><input type="date" id="rec-nextdate"></div>
+    </div>
+    <div id="recLinesWrap"></div>
+    <button type="button" class="btn-outline btn-sm" onclick="addRecurringLineRow()" style="margin-top:4px">+ Add line</button>
+    <div class="je-totals" id="recTotals" style="color:var(--text)">Subtotal R0.00 · VAT R0.00 · Total R0.00</div>
+    <div class="modal-actions">
+      <button class="btn-outline" onclick="closeModal('recurringModal')">Cancel</button>
+      <button class="btn-primary" onclick="submitRecurring()" id="submitRecurringBtn">Save Template</button>
+    </div>
+  </div>
+</div>
+
+<!-- New Estimate Modal -->
+<div class="modal-overlay" id="estimateModal" hidden>
+  <div class="modal-box" style="max-width:680px">
+    <button class="modal-close" onclick="closeModal('estimateModal')">✕</button>
+    <h2>New Estimate</h2>
+    <div class="error-box" id="estimateError"></div>
+    <div class="form-row-3">
+      <div class="form-group"><label>Estimate number</label><input id="est-number"></div>
+      <div class="form-group"><label>Issue date</label><input type="date" id="est-issuedate"></div>
+      <div class="form-group"><label>Expiry date</label><input type="date" id="est-expirydate"></div>
+    </div>
+    <div class="form-row">
+      <div class="form-group"><label>Customer name</label><input id="est-customer"></div>
+      <div class="form-group"><label>Customer email (optional)</label><input type="email" id="est-email"></div>
+    </div>
+    <div id="estLinesWrap"></div>
+    <button type="button" class="btn-outline btn-sm" onclick="addEstimateLineRow()" style="margin-top:4px">+ Add line</button>
+    <div class="je-totals" id="estTotals" style="color:var(--text)">Subtotal R0.00 · VAT R0.00 · Total R0.00</div>
+    <div class="modal-actions">
+      <button class="btn-outline" onclick="closeModal('estimateModal')">Cancel</button>
+      <button class="btn-primary" onclick="submitEstimate()" id="submitEstimateBtn">Save Estimate</button>
     </div>
   </div>
 </div>
@@ -555,13 +841,17 @@ function showSection(name) {
   document.getElementById('section-' + name).classList.add('active');
   document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
   event?.target?.closest('.nav-item')?.classList.add('active');
-  const titles = { dashboard:'Dashboard', accounts:'Chart of Accounts', journal:'Journal', invoices:'Invoices', expenses:'Expenses', reports:'Reports', analytics:'Analytics' };
+  const titles = { dashboard:'Dashboard', accounts:'Chart of Accounts', journal:'Journal', invoices:'Invoices', expenses:'Expenses', estimates:'Estimates', customers:'Customers', vendors:'Vendors & Bills', stock:'Stock', reports:'Reports', analytics:'Analytics' };
   document.getElementById('topbarTitle').textContent = titles[name];
   if (name === 'accounts') loadAccounts();
   if (name === 'journal') loadJournal();
-  if (name === 'invoices') loadInvoices();
+  if (name === 'invoices') { loadInvoices(); loadRecurring(); }
   if (name === 'expenses') loadExpenses();
-  if (name === 'reports') { loadTrialBalance(); }
+  if (name === 'estimates') loadEstimates();
+  if (name === 'customers') loadCustomers();
+  if (name === 'vendors') { loadBills(); loadVendors(); }
+  if (name === 'stock') loadItems();
+  if (name === 'reports') { loadTrialBalance(); populateVatPeriodSelector(); }
   if (name === 'analytics') { loadAnalytics(); }
   closeSidebar();
 }
@@ -737,14 +1027,15 @@ async function loadInvoices() {
   const { data, error } = await sb.from('bk_invoices').select('*').eq('company_id', company.id).order('issue_date', { ascending: false });
   if (error) { wrap.innerHTML = `<div class="empty">${esc(error.message)}</div>`; return; }
   if (!data || data.length === 0) { wrap.innerHTML = '<div class="empty">No invoices yet.</div>'; return; }
-  const statusBadge = s => ({ draft:'badge-gray', sent:'badge-blue', paid:'badge-green', overdue:'badge-red', void:'badge-gray' }[s] || 'badge-gray');
-  wrap.innerHTML = `<table><thead><tr><th>Number</th><th>Customer</th><th>Issued</th><th class="num">Total</th><th>Status</th><th></th></tr></thead><tbody>
+  const statusBadge = s => ({ draft:'badge-gray', sent:'badge-blue', paid:'badge-green', partial:'badge-yellow', overdue:'badge-red', void:'badge-gray' }[s] || 'badge-gray');
+  wrap.innerHTML = `<table><thead><tr><th>Number</th><th>Customer</th><th>Issued</th><th class="num">Total</th><th class="num">Outstanding</th><th>Status</th><th></th></tr></thead><tbody>
     ${data.map(inv => `<tr>
       <td>${esc(inv.invoice_number)}</td><td>${esc(inv.customer_name)}</td><td>${esc(inv.issue_date)}</td>
-      <td class="num">${money(inv.total)}</td><td><span class="badge ${statusBadge(inv.status)}">${inv.status}</span></td>
+      <td class="num">${money(inv.total)}</td><td class="num">${money(inv.total - (inv.amount_paid || 0))}</td>
+      <td><span class="badge ${statusBadge(inv.status)}">${inv.status}</span></td>
       <td style="white-space:nowrap">
         ${inv.status === 'draft' ? `<button class="btn-outline btn-sm" onclick="issueInvoiceAction('${inv.id}')">Issue</button>` : ''}
-        ${inv.status === 'sent' ? `<button class="btn-outline btn-sm" onclick="markInvoicePaidAction('${inv.id}')">Mark Paid</button>` : ''}
+        ${['sent','overdue','partial'].includes(inv.status) ? `<button class="btn-outline btn-sm" onclick="openInvPaymentModal('${inv.id}', ${inv.total - (inv.amount_paid || 0)})">Record Payment</button>` : ''}
       </td>
     </tr>`).join('')}
   </tbody></table>`;
@@ -827,11 +1118,6 @@ async function issueInvoiceAction(id) {
   if (error) { alert(error.message); return; }
   loadInvoices();
 }
-async function markInvoicePaidAction(id) {
-  const { error } = await sb.rpc('mark_invoice_paid', { p_invoice_id: id, p_paid_date: today() });
-  if (error) { alert(error.message); return; }
-  loadInvoices();
-}
 
 // ── Expenses ──
 async function loadExpenses() {
@@ -885,6 +1171,18 @@ function switchReportTab(name) {
   if (name === 'trial') loadTrialBalance();
   if (name === 'income') loadIncomeStatement();
   if (name === 'balance') loadBalanceSheet();
+  if (name === 'vat') loadVat201();
+  if (name === 'araging') loadArAging();
+  if (name === 'apaging') loadApAging();
+  if (name === 'salesbycust') loadSalesByCustomer();
+  if (name === 'expbyvendor') loadExpensesByVendor();
+}
+
+function switchVendorTab(name) {
+  document.querySelectorAll('#section-vendors .subtab').forEach(t => t.classList.toggle('active', t.dataset.subtab === name));
+  document.querySelectorAll('#section-vendors .subtab-panel').forEach(p => p.classList.toggle('active', p.id === 'vendorpanel-' + name));
+  if (name === 'bills') loadBills();
+  if (name === 'vendors') loadVendors();
 }
 
 async function fetchAllLinesWithAccounts() {
@@ -1136,6 +1434,615 @@ async function renderDashboard() {
     if (l.bk_accounts?.type === 'expense') expense += Number(l.debit || 0) - Number(l.credit || 0);
   });
   document.getElementById('kpi-net').textContent = money(income - expense);
+}
+
+// ── Customers ──
+let customersCache = [];
+async function ensureCustomersLoaded() {
+  if (!company) return [];
+  const { data } = await sb.from('bk_customers').select('*').eq('company_id', company.id).eq('archived', false).order('name');
+  customersCache = data || [];
+  return customersCache;
+}
+async function loadCustomers() {
+  const wrap = document.getElementById('customersTableWrap');
+  if (!requireCompany()) { wrap.innerHTML = '<div class="empty">Set up your company first.</div>'; return; }
+  wrap.innerHTML = '<div class="loading">Loading…</div>';
+  const [customers, { data: invoices }] = await Promise.all([
+    ensureCustomersLoaded(),
+    sb.from('bk_invoices').select('customer_id, total, amount_paid, status').eq('company_id', company.id),
+  ]);
+  if (customers.length === 0) { wrap.innerHTML = '<div class="empty">No customers yet.</div>'; return; }
+  const balanceByCustomer = new Map();
+  (invoices || []).forEach(inv => {
+    if (!inv.customer_id || inv.status === 'draft' || inv.status === 'void') return;
+    const owed = Number(inv.total || 0) - Number(inv.amount_paid || 0);
+    balanceByCustomer.set(inv.customer_id, (balanceByCustomer.get(inv.customer_id) || 0) + owed);
+  });
+  wrap.innerHTML = `<table><thead><tr><th>Name</th><th>Email</th><th>Phone</th><th class="num">Balance owed</th><th></th></tr></thead><tbody>
+    ${customers.map(c => `<tr>
+      <td>${esc(c.name)}</td><td>${esc(c.email || '—')}</td><td>${esc(c.phone || '—')}</td>
+      <td class="num">${money(balanceByCustomer.get(c.id) || 0)}</td>
+      <td style="white-space:nowrap">
+        <button class="btn-outline btn-sm" onclick="openCustomerModal('${c.id}')">Edit</button>
+        <button class="btn-danger" onclick="archiveCustomer('${c.id}')">Archive</button>
+      </td>
+    </tr>`).join('')}
+  </tbody></table>`;
+}
+async function openCustomerModal(id) {
+  if (!requireCompany()) return;
+  document.getElementById('customerError').style.display = 'none';
+  document.getElementById('cust-id').value = id || '';
+  document.getElementById('customerModalTitle').textContent = id ? 'Edit Customer' : 'Add Customer';
+  if (id) {
+    const c = customersCache.find(x => x.id === id) || (await ensureCustomersLoaded()).find(x => x.id === id);
+    document.getElementById('cust-name').value = c?.name || '';
+    document.getElementById('cust-email').value = c?.email || '';
+    document.getElementById('cust-phone').value = c?.phone || '';
+    document.getElementById('cust-vat').value = c?.vat_number || '';
+    document.getElementById('cust-address').value = c?.address || '';
+  } else {
+    ['cust-name','cust-email','cust-phone','cust-vat','cust-address'].forEach(f => document.getElementById(f).value = '');
+  }
+  document.getElementById('customerModal').hidden = false;
+}
+async function submitCustomer() {
+  const errEl = document.getElementById('customerError');
+  errEl.style.display = 'none';
+  const name = val('cust-name');
+  if (!name) { errEl.textContent = 'Name is required.'; errEl.style.display = 'block'; return; }
+  const id = val('cust-id');
+  const payload = { company_id: company.id, name, email: val('cust-email') || null, phone: val('cust-phone') || null, vat_number: val('cust-vat') || null, address: val('cust-address') || null };
+  const btn = document.getElementById('submitCustomerBtn');
+  btn.disabled = true; btn.textContent = 'Saving…';
+  const { error } = id ? await sb.from('bk_customers').update(payload).eq('id', id) : await sb.from('bk_customers').insert(payload);
+  btn.disabled = false; btn.textContent = 'Save Customer';
+  if (error) { errEl.textContent = error.message; errEl.style.display = 'block'; return; }
+  closeModal('customerModal');
+  loadCustomers();
+}
+async function archiveCustomer(id) {
+  if (!confirm('Archive this customer?')) return;
+  await sb.from('bk_customers').update({ archived: true }).eq('id', id);
+  loadCustomers();
+}
+
+// ── Vendors & Bills ──
+let vendorsCache = [];
+async function ensureVendorsLoaded() {
+  if (!company) return [];
+  const { data } = await sb.from('bk_vendors').select('*').eq('company_id', company.id).eq('archived', false).order('name');
+  vendorsCache = data || [];
+  return vendorsCache;
+}
+async function loadVendors() {
+  const wrap = document.getElementById('vendorsTableWrap');
+  if (!requireCompany()) { wrap.innerHTML = '<div class="empty">Set up your company first.</div>'; return; }
+  wrap.innerHTML = '<div class="loading">Loading…</div>';
+  const [vendors, { data: bills }] = await Promise.all([
+    ensureVendorsLoaded(),
+    sb.from('bk_bills').select('vendor_id, total, amount_paid').eq('company_id', company.id),
+  ]);
+  if (vendors.length === 0) { wrap.innerHTML = '<div class="empty">No vendors yet.</div>'; return; }
+  const balanceByVendor = new Map();
+  (bills || []).forEach(b => {
+    if (!b.vendor_id) return;
+    const owed = Number(b.total || 0) - Number(b.amount_paid || 0);
+    balanceByVendor.set(b.vendor_id, (balanceByVendor.get(b.vendor_id) || 0) + owed);
+  });
+  wrap.innerHTML = `<table><thead><tr><th>Name</th><th>Email</th><th>Phone</th><th class="num">Balance owed</th><th></th></tr></thead><tbody>
+    ${vendors.map(v => `<tr>
+      <td>${esc(v.name)}</td><td>${esc(v.email || '—')}</td><td>${esc(v.phone || '—')}</td>
+      <td class="num">${money(balanceByVendor.get(v.id) || 0)}</td>
+      <td><button class="btn-danger" onclick="archiveVendor('${v.id}')">Archive</button></td>
+    </tr>`).join('')}
+  </tbody></table>`;
+}
+function openVendorModal() {
+  if (!requireCompany()) return;
+  document.getElementById('vendorError').style.display = 'none';
+  ['vend-name','vend-email','vend-phone','vend-vat','vend-address'].forEach(f => document.getElementById(f).value = '');
+  document.getElementById('vendorModal').hidden = false;
+}
+async function submitVendor() {
+  const errEl = document.getElementById('vendorError');
+  errEl.style.display = 'none';
+  const name = val('vend-name');
+  if (!name) { errEl.textContent = 'Name is required.'; errEl.style.display = 'block'; return; }
+  const btn = document.getElementById('submitVendorBtn');
+  btn.disabled = true; btn.textContent = 'Saving…';
+  const { error } = await sb.from('bk_vendors').insert({ company_id: company.id, name, email: val('vend-email') || null, phone: val('vend-phone') || null, vat_number: val('vend-vat') || null, address: val('vend-address') || null });
+  btn.disabled = false; btn.textContent = 'Save Vendor';
+  if (error) { errEl.textContent = error.message; errEl.style.display = 'block'; return; }
+  closeModal('vendorModal');
+  loadVendors();
+}
+async function archiveVendor(id) {
+  if (!confirm('Archive this vendor?')) return;
+  await sb.from('bk_vendors').update({ archived: true }).eq('id', id);
+  loadVendors();
+}
+
+async function loadBills() {
+  const wrap = document.getElementById('billsTableWrap');
+  if (!requireCompany()) { wrap.innerHTML = '<div class="empty">Set up your company first.</div>'; return; }
+  wrap.innerHTML = '<div class="loading">Loading…</div>';
+  const { data, error } = await sb.from('bk_bills').select('*').eq('company_id', company.id).order('bill_date', { ascending: false });
+  if (error) { wrap.innerHTML = `<div class="empty">${esc(error.message)}</div>`; return; }
+  if (!data || data.length === 0) { wrap.innerHTML = '<div class="empty">No bills yet.</div>'; return; }
+  const statusBadge = s => ({ open:'badge-blue', partial:'badge-yellow', paid:'badge-green' }[s] || 'badge-gray');
+  wrap.innerHTML = `<table><thead><tr><th>Vendor</th><th>Bill #</th><th>Date</th><th>Due</th><th class="num">Total</th><th class="num">Outstanding</th><th>Status</th><th></th></tr></thead><tbody>
+    ${data.map(b => `<tr>
+      <td>${esc(b.vendor_name)}</td><td>${esc(b.bill_number || '—')}</td><td>${esc(b.bill_date)}</td><td>${esc(b.due_date || '—')}</td>
+      <td class="num">${money(b.total)}</td><td class="num">${money(b.total - b.amount_paid)}</td>
+      <td><span class="badge ${statusBadge(b.status)}">${b.status}</span></td>
+      <td>${b.status !== 'paid' ? `<button class="btn-outline btn-sm" onclick="openPayBillModal('${b.id}', ${b.total - b.amount_paid})">Pay</button>` : ''}</td>
+    </tr>`).join('')}
+  </tbody></table>`;
+}
+async function openBillModal() {
+  if (!requireCompany()) return;
+  document.getElementById('billError').style.display = 'none';
+  document.getElementById('bill-date').value = today();
+  document.getElementById('bill-duedate').value = '';
+  document.getElementById('bill-number').value = '';
+  document.getElementById('bill-amount').value = '';
+  document.getElementById('bill-vat').value = '0';
+  document.getElementById('bill-description').value = '';
+  const vendors = await ensureVendorsLoaded();
+  document.getElementById('bill-vendor').innerHTML = vendors.length
+    ? vendors.map(v => `<option value="${v.id}">${esc(v.name)}</option>`).join('')
+    : '<option value="">— Add a vendor first —</option>';
+  const accounts = (await ensureAccountsLoaded()).filter(a => a.type === 'expense');
+  document.getElementById('bill-account').innerHTML = accounts.map(a => `<option value="${a.id}">${esc(a.code)} — ${esc(a.name)}</option>`).join('');
+  document.getElementById('billModal').hidden = false;
+}
+async function submitBill() {
+  const errEl = document.getElementById('billError');
+  errEl.style.display = 'none';
+  const vendorId = document.getElementById('bill-vendor').value;
+  const amount = parseFloat(val('bill-amount'));
+  if (!vendorId) { errEl.textContent = 'Add a vendor first.'; errEl.style.display = 'block'; return; }
+  if (!amount || amount <= 0) { errEl.textContent = 'Enter an amount greater than zero.'; errEl.style.display = 'block'; return; }
+  const vendor = vendorsCache.find(v => v.id === vendorId);
+  const btn = document.getElementById('submitBillBtn');
+  btn.disabled = true; btn.textContent = 'Saving…';
+  const { error } = await sb.rpc('record_bill', {
+    p_company_id: company.id, p_vendor_id: vendorId, p_vendor_name: vendor?.name || 'Vendor', p_bill_number: val('bill-number') || null,
+    p_bill_date: val('bill-date') || today(), p_due_date: val('bill-duedate') || null,
+    p_account_id: document.getElementById('bill-account').value, p_amount: amount, p_vat_amount: parseFloat(val('bill-vat')) || 0,
+    p_description: val('bill-description') || null,
+  });
+  btn.disabled = false; btn.textContent = 'Save Bill';
+  if (error) { errEl.textContent = error.message; errEl.style.display = 'block'; return; }
+  closeModal('billModal');
+  loadBills();
+}
+function openPayBillModal(id, outstanding) {
+  document.getElementById('payBillError').style.display = 'none';
+  document.getElementById('paybill-id').value = id;
+  document.getElementById('paybill-outstanding').textContent = `Outstanding balance: ${money(outstanding)}`;
+  document.getElementById('paybill-date').value = today();
+  document.getElementById('paybill-amount').value = outstanding.toFixed(2);
+  document.getElementById('payBillModal').hidden = false;
+}
+async function submitPayBill() {
+  const errEl = document.getElementById('payBillError');
+  errEl.style.display = 'none';
+  const amount = parseFloat(val('paybill-amount'));
+  if (!amount || amount <= 0) { errEl.textContent = 'Enter an amount greater than zero.'; errEl.style.display = 'block'; return; }
+  const btn = document.getElementById('submitPayBillBtn');
+  btn.disabled = true; btn.textContent = 'Recording…';
+  const { error } = await sb.rpc('pay_bill', { p_bill_id: val('paybill-id'), p_paid_date: val('paybill-date') || today(), p_amount: amount });
+  btn.disabled = false; btn.textContent = 'Record Payment';
+  if (error) { errEl.textContent = error.message; errEl.style.display = 'block'; return; }
+  closeModal('payBillModal');
+  loadBills();
+}
+
+// ── Invoice payments (partial) ──
+function openInvPaymentModal(id, outstanding) {
+  document.getElementById('invPaymentError').style.display = 'none';
+  document.getElementById('invpay-id').value = id;
+  document.getElementById('invpay-outstanding').textContent = `Outstanding balance: ${money(outstanding)}`;
+  document.getElementById('invpay-date').value = today();
+  document.getElementById('invpay-amount').value = outstanding.toFixed(2);
+  document.getElementById('invPaymentModal').hidden = false;
+}
+async function submitInvoicePayment() {
+  const errEl = document.getElementById('invPaymentError');
+  errEl.style.display = 'none';
+  const amount = parseFloat(val('invpay-amount'));
+  if (!amount || amount <= 0) { errEl.textContent = 'Enter an amount greater than zero.'; errEl.style.display = 'block'; return; }
+  const btn = document.getElementById('submitInvPaymentBtn');
+  btn.disabled = true; btn.textContent = 'Recording…';
+  const { error } = await sb.rpc('record_invoice_payment', { p_invoice_id: val('invpay-id'), p_paid_date: val('invpay-date') || today(), p_amount: amount });
+  btn.disabled = false; btn.textContent = 'Record Payment';
+  if (error) { errEl.textContent = error.message; errEl.style.display = 'block'; return; }
+  closeModal('invPaymentModal');
+  loadInvoices();
+}
+
+// ── Recurring invoices ──
+async function loadRecurring() {
+  const wrap = document.getElementById('recurringTableWrap');
+  if (!requireCompany()) { wrap.innerHTML = '<div class="empty">Set up your company first.</div>'; return; }
+  wrap.innerHTML = '<div class="loading">Loading…</div>';
+  const { data, error } = await sb.from('bk_recurring_invoices').select('*').eq('company_id', company.id).order('next_run_date');
+  if (error) { wrap.innerHTML = `<div class="empty">${esc(error.message)}</div>`; return; }
+  if (!data || data.length === 0) { wrap.innerHTML = '<div class="empty">No recurring invoices set up.</div>'; return; }
+  wrap.innerHTML = `<table><thead><tr><th>Customer</th><th>Frequency</th><th>Next run</th><th>Status</th><th></th></tr></thead><tbody>
+    ${data.map(r => `<tr>
+      <td>${esc(r.customer_name)}</td><td style="text-transform:capitalize">${r.frequency}</td><td>${esc(r.next_run_date)}</td>
+      <td><span class="badge ${r.active ? 'badge-green' : 'badge-gray'}">${r.active ? 'Active' : 'Paused'}</span></td>
+      <td><button class="btn-outline btn-sm" onclick="toggleRecurring('${r.id}', ${!r.active})">${r.active ? 'Pause' : 'Resume'}</button></td>
+    </tr>`).join('')}
+  </tbody></table>`;
+}
+function openRecurringModal() {
+  if (!requireCompany()) return;
+  document.getElementById('recurringError').style.display = 'none';
+  document.getElementById('rec-customer').value = '';
+  document.getElementById('rec-email').value = '';
+  document.getElementById('rec-frequency').value = 'monthly';
+  document.getElementById('rec-nextdate').value = today();
+  document.getElementById('recLinesWrap').innerHTML = '';
+  addRecurringLineRow();
+  updateRecurringTotals();
+  document.getElementById('recurringModal').hidden = false;
+}
+function addRecurringLineRow() {
+  const wrap = document.getElementById('recLinesWrap');
+  const row = document.createElement('div');
+  row.className = 'inv-line-row';
+  row.innerHTML = `
+    <input class="rec-desc" placeholder="Description">
+    <input type="number" class="rec-qty" placeholder="Qty" value="1" min="0" step="1" oninput="updateRecurringTotals()">
+    <input type="number" class="rec-price" placeholder="Unit price" min="0" step="0.01" oninput="updateRecurringTotals()">
+    <input type="number" class="rec-vatrate" placeholder="VAT %" value="15" min="0" step="0.01" oninput="updateRecurringTotals()">
+    <span class="rec-linetotal form-hint" style="text-align:right">R0.00</span>
+    <button type="button" class="je-line-remove" onclick="this.parentElement.remove(); updateRecurringTotals()">✕</button>`;
+  wrap.appendChild(row);
+}
+function updateRecurringTotals() {
+  let subtotal = 0, vat = 0;
+  document.querySelectorAll('#recLinesWrap .inv-line-row').forEach(r => {
+    const qty = parseFloat(r.querySelector('.rec-qty').value) || 0;
+    const price = parseFloat(r.querySelector('.rec-price').value) || 0;
+    const rate = parseFloat(r.querySelector('.rec-vatrate').value) || 0;
+    const lineSub = qty * price;
+    const lineVat = lineSub * (rate / 100);
+    subtotal += lineSub; vat += lineVat;
+    r.querySelector('.rec-linetotal').textContent = money(lineSub + lineVat);
+  });
+  document.getElementById('recTotals').textContent = `Subtotal ${money(subtotal)} · VAT ${money(vat)} · Total ${money(subtotal + vat)}`;
+}
+async function submitRecurring() {
+  const errEl = document.getElementById('recurringError');
+  errEl.style.display = 'none';
+  const customer = val('rec-customer');
+  if (!customer) { errEl.textContent = 'Customer name is required.'; errEl.style.display = 'block'; return; }
+  const rows = [...document.querySelectorAll('#recLinesWrap .inv-line-row')];
+  const lines = rows.map(r => ({
+    description: r.querySelector('.rec-desc').value.trim() || 'Item',
+    quantity: parseFloat(r.querySelector('.rec-qty').value) || 0,
+    unit_price: parseFloat(r.querySelector('.rec-price').value) || 0,
+    vat_rate: parseFloat(r.querySelector('.rec-vatrate').value) || 0,
+  })).filter(l => l.quantity > 0 && l.unit_price >= 0);
+  if (lines.length === 0) { errEl.textContent = 'Add at least one line item.'; errEl.style.display = 'block'; return; }
+  const btn = document.getElementById('submitRecurringBtn');
+  btn.disabled = true; btn.textContent = 'Saving…';
+  const { error } = await sb.from('bk_recurring_invoices').insert({
+    company_id: company.id, customer_name: customer, customer_email: val('rec-email') || null,
+    frequency: document.getElementById('rec-frequency').value, next_run_date: val('rec-nextdate') || today(), lines,
+  });
+  btn.disabled = false; btn.textContent = 'Save Template';
+  if (error) { errEl.textContent = error.message; errEl.style.display = 'block'; return; }
+  closeModal('recurringModal');
+  loadRecurring();
+}
+async function toggleRecurring(id, active) {
+  await sb.from('bk_recurring_invoices').update({ active }).eq('id', id);
+  loadRecurring();
+}
+
+// ── Estimates ──
+async function loadEstimates() {
+  const wrap = document.getElementById('estimatesTableWrap');
+  if (!requireCompany()) { wrap.innerHTML = '<div class="empty">Set up your company first.</div>'; return; }
+  wrap.innerHTML = '<div class="loading">Loading…</div>';
+  const { data, error } = await sb.from('bk_estimates').select('*').eq('company_id', company.id).order('issue_date', { ascending: false });
+  if (error) { wrap.innerHTML = `<div class="empty">${esc(error.message)}</div>`; return; }
+  if (!data || data.length === 0) { wrap.innerHTML = '<div class="empty">No estimates yet.</div>'; return; }
+  const statusBadge = s => ({ draft:'badge-gray', sent:'badge-blue', accepted:'badge-green', declined:'badge-red', converted:'badge-purple' }[s] || 'badge-gray');
+  wrap.innerHTML = `<table><thead><tr><th>Number</th><th>Customer</th><th>Issued</th><th class="num">Total</th><th>Status</th><th></th></tr></thead><tbody>
+    ${data.map(e => `<tr>
+      <td>${esc(e.estimate_number)}</td><td>${esc(e.customer_name)}</td><td>${esc(e.issue_date)}</td>
+      <td class="num">${money(e.total)}</td><td><span class="badge ${statusBadge(e.status)}">${e.status}</span></td>
+      <td style="white-space:nowrap">
+        ${e.status === 'draft' ? `<button class="btn-outline btn-sm" onclick="setEstimateStatus('${e.id}','sent')">Mark Sent</button>` : ''}
+        ${e.status === 'sent' ? `<button class="btn-outline btn-sm" onclick="setEstimateStatus('${e.id}','accepted')">Accept</button> <button class="btn-danger" onclick="setEstimateStatus('${e.id}','declined')">Decline</button>` : ''}
+        ${e.status === 'accepted' ? `<button class="btn-teal btn-sm" onclick="convertEstimate('${e.id}')">Convert to Invoice</button>` : ''}
+      </td>
+    </tr>`).join('')}
+  </tbody></table>`;
+}
+function openEstimateModal() {
+  if (!requireCompany()) return;
+  document.getElementById('estimateError').style.display = 'none';
+  document.getElementById('est-number').value = 'EST-' + Date.now().toString().slice(-6);
+  document.getElementById('est-issuedate').value = today();
+  document.getElementById('est-expirydate').value = '';
+  document.getElementById('est-customer').value = '';
+  document.getElementById('est-email').value = '';
+  document.getElementById('estLinesWrap').innerHTML = '';
+  addEstimateLineRow();
+  updateEstimateTotals();
+  document.getElementById('estimateModal').hidden = false;
+}
+function addEstimateLineRow() {
+  const wrap = document.getElementById('estLinesWrap');
+  const row = document.createElement('div');
+  row.className = 'inv-line-row';
+  row.innerHTML = `
+    <input class="est-desc" placeholder="Description">
+    <input type="number" class="est-qty" placeholder="Qty" value="1" min="0" step="1" oninput="updateEstimateTotals()">
+    <input type="number" class="est-price" placeholder="Unit price" min="0" step="0.01" oninput="updateEstimateTotals()">
+    <input type="number" class="est-vatrate" placeholder="VAT %" value="15" min="0" step="0.01" oninput="updateEstimateTotals()">
+    <span class="est-linetotal form-hint" style="text-align:right">R0.00</span>
+    <button type="button" class="je-line-remove" onclick="this.parentElement.remove(); updateEstimateTotals()">✕</button>`;
+  wrap.appendChild(row);
+}
+function updateEstimateTotals() {
+  let subtotal = 0, vat = 0;
+  document.querySelectorAll('#estLinesWrap .inv-line-row').forEach(r => {
+    const qty = parseFloat(r.querySelector('.est-qty').value) || 0;
+    const price = parseFloat(r.querySelector('.est-price').value) || 0;
+    const rate = parseFloat(r.querySelector('.est-vatrate').value) || 0;
+    const lineSub = qty * price;
+    const lineVat = lineSub * (rate / 100);
+    subtotal += lineSub; vat += lineVat;
+    r.querySelector('.est-linetotal').textContent = money(lineSub + lineVat);
+  });
+  document.getElementById('estTotals').textContent = `Subtotal ${money(subtotal)} · VAT ${money(vat)} · Total ${money(subtotal + vat)}`;
+  return { subtotal, vat, total: subtotal + vat };
+}
+async function submitEstimate() {
+  const errEl = document.getElementById('estimateError');
+  errEl.style.display = 'none';
+  const number = val('est-number'), customer = val('est-customer');
+  if (!number || !customer) { errEl.textContent = 'Estimate number and customer name are required.'; errEl.style.display = 'block'; return; }
+  const rows = [...document.querySelectorAll('#estLinesWrap .inv-line-row')];
+  const lines = rows.map(r => ({
+    description: r.querySelector('.est-desc').value.trim() || 'Item',
+    quantity: parseFloat(r.querySelector('.est-qty').value) || 0,
+    unit_price: parseFloat(r.querySelector('.est-price').value) || 0,
+    vat_rate: parseFloat(r.querySelector('.est-vatrate').value) || 0,
+  })).filter(l => l.quantity > 0 && l.unit_price >= 0);
+  if (lines.length === 0) { errEl.textContent = 'Add at least one line item.'; errEl.style.display = 'block'; return; }
+  const totals = updateEstimateTotals();
+  const btn = document.getElementById('submitEstimateBtn');
+  btn.disabled = true; btn.textContent = 'Saving…';
+  const { data: est, error } = await sb.from('bk_estimates').insert({
+    company_id: company.id, estimate_number: number, customer_name: customer, customer_email: val('est-email') || null,
+    issue_date: val('est-issuedate') || today(), expiry_date: val('est-expirydate') || null,
+    subtotal: totals.subtotal, vat_amount: totals.vat, total: totals.total,
+  }).select().single();
+  if (!error && est) {
+    const lineRows = lines.map(l => ({ estimate_id: est.id, description: l.description, quantity: l.quantity, unit_price: l.unit_price, vat_rate: l.vat_rate, line_total: l.quantity * l.unit_price * (1 + l.vat_rate / 100) }));
+    await sb.from('bk_estimate_lines').insert(lineRows);
+  }
+  btn.disabled = false; btn.textContent = 'Save Estimate';
+  if (error) { errEl.textContent = error.message; errEl.style.display = 'block'; return; }
+  closeModal('estimateModal');
+  loadEstimates();
+}
+async function setEstimateStatus(id, status) {
+  await sb.from('bk_estimates').update({ status }).eq('id', id);
+  loadEstimates();
+}
+async function convertEstimate(id) {
+  const invNumber = prompt('Invoice number for this new invoice:', 'INV-' + Date.now().toString().slice(-6));
+  if (!invNumber) return;
+  const { error } = await sb.rpc('convert_estimate_to_invoice', { p_estimate_id: id, p_invoice_number: invNumber });
+  if (error) { alert(error.message); return; }
+  loadEstimates();
+}
+
+// ── Stock ──
+let itemsCache = [];
+async function ensureItemsLoaded() {
+  if (!company) return [];
+  const { data } = await sb.from('bk_items').select('*').eq('company_id', company.id).eq('archived', false).order('name');
+  itemsCache = data || [];
+  return itemsCache;
+}
+async function loadItems() {
+  const wrap = document.getElementById('itemsTableWrap');
+  if (!requireCompany()) { wrap.innerHTML = '<div class="empty">Set up your company first.</div>'; return; }
+  wrap.innerHTML = '<div class="loading">Loading…</div>';
+  const items = await ensureItemsLoaded();
+  if (items.length === 0) { wrap.innerHTML = '<div class="empty">No items yet.</div>'; return; }
+  wrap.innerHTML = `<table><thead><tr><th>Name</th><th>SKU</th><th class="num">Sales price</th><th class="num">Cost price</th><th class="num">On hand</th><th></th></tr></thead><tbody>
+    ${items.map(i => `<tr>
+      <td>${esc(i.name)}</td><td>${esc(i.sku || '—')}</td><td class="num">${money(i.sales_price)}</td><td class="num">${money(i.cost_price)}</td>
+      <td class="num">${Number(i.quantity_on_hand).toLocaleString('en-ZA')} ${Number(i.quantity_on_hand) <= Number(i.reorder_level) ? '<span class="badge badge-red">Low</span>' : ''}</td>
+      <td><button class="btn-outline btn-sm" onclick="openStockAdjModal('${i.id}')">Adjust</button></td>
+    </tr>`).join('')}
+  </tbody></table>`;
+}
+function openItemModal() {
+  if (!requireCompany()) return;
+  document.getElementById('itemError').style.display = 'none';
+  ['item-name','item-sku'].forEach(f => document.getElementById(f).value = '');
+  document.getElementById('item-salesprice').value = '0';
+  document.getElementById('item-costprice').value = '0';
+  document.getElementById('item-vatrate').value = '15';
+  document.getElementById('item-qty').value = '0';
+  document.getElementById('item-reorder').value = '0';
+  document.getElementById('itemModal').hidden = false;
+}
+async function submitItem() {
+  const errEl = document.getElementById('itemError');
+  errEl.style.display = 'none';
+  const name = val('item-name');
+  if (!name) { errEl.textContent = 'Name is required.'; errEl.style.display = 'block'; return; }
+  const btn = document.getElementById('submitItemBtn');
+  btn.disabled = true; btn.textContent = 'Saving…';
+  const { error } = await sb.from('bk_items').insert({
+    company_id: company.id, name, sku: val('item-sku') || null,
+    sales_price: parseFloat(val('item-salesprice')) || 0, cost_price: parseFloat(val('item-costprice')) || 0,
+    vat_rate: parseFloat(val('item-vatrate')) || 15, quantity_on_hand: parseFloat(val('item-qty')) || 0, reorder_level: parseFloat(val('item-reorder')) || 0,
+  });
+  btn.disabled = false; btn.textContent = 'Save Item';
+  if (error) { errEl.textContent = error.message; errEl.style.display = 'block'; return; }
+  closeModal('itemModal');
+  loadItems();
+}
+function openStockAdjModal(id) {
+  document.getElementById('stockAdjError').style.display = 'none';
+  document.getElementById('stockadj-item-id').value = id;
+  document.getElementById('stockadj-delta').value = '';
+  document.getElementById('stockadj-reason').value = '';
+  document.getElementById('stockAdjModal').hidden = false;
+}
+async function submitStockAdjustment() {
+  const errEl = document.getElementById('stockAdjError');
+  errEl.style.display = 'none';
+  const delta = parseFloat(val('stockadj-delta'));
+  if (!delta) { errEl.textContent = 'Enter a non-zero quantity change.'; errEl.style.display = 'block'; return; }
+  const btn = document.getElementById('submitStockAdjBtn');
+  btn.disabled = true; btn.textContent = 'Saving…';
+  const { error } = await sb.rpc('adjust_stock', { p_item_id: val('stockadj-item-id'), p_quantity_delta: delta, p_reason: val('stockadj-reason') || null });
+  btn.disabled = false; btn.textContent = 'Save Adjustment';
+  if (error) { errEl.textContent = error.message; errEl.style.display = 'block'; return; }
+  closeModal('stockAdjModal');
+  loadItems();
+}
+
+// ── New reports: VAT201, AR/AP aging, sales/expenses by contact ──
+function populateVatPeriodSelector() {
+  const sel = document.getElementById('vatPeriodSelect');
+  if (sel.options.length) { loadVat201(); return; }
+  const now = new Date();
+  const periods = [];
+  // SA standard two-month VAT periods, most recent first
+  for (let i = 0; i < 12; i++) {
+    const d = new Date(now.getFullYear(), now.getMonth() - i * 2, 1);
+    const endMonth = d.getMonth() % 2 === 0 ? d : new Date(d.getFullYear(), d.getMonth() - 1, 1);
+    const start = new Date(endMonth.getFullYear(), endMonth.getMonth() - 1, 1);
+    const end = new Date(endMonth.getFullYear(), endMonth.getMonth() + 1, 0);
+    periods.push({ start: start.toISOString().slice(0, 10), end: end.toISOString().slice(0, 10), label: `${start.toLocaleDateString('en-ZA', { month: 'short' })} – ${end.toLocaleDateString('en-ZA', { month: 'short', year: 'numeric' })}` });
+  }
+  const uniq = [...new Map(periods.map(p => [p.start + p.end, p])).values()];
+  sel.innerHTML = uniq.map(p => `<option value="${p.start}|${p.end}">${p.label}</option>`).join('');
+  loadVat201();
+}
+async function loadVat201() {
+  const wrap = document.getElementById('vat201Wrap');
+  if (!requireCompany()) { wrap.innerHTML = '<div class="empty">Set up your company first.</div>'; return; }
+  wrap.innerHTML = '<div class="loading">Loading…</div>';
+  const [start, end] = (document.getElementById('vatPeriodSelect').value || '').split('|');
+  if (!start) { wrap.innerHTML = '<div class="empty">Select a period.</div>'; return; }
+  const { data } = await sb.from('bk_journal_lines').select('debit, credit, description, bk_journal_entries!inner(company_id, entry_date, source), bk_accounts(code)')
+    .eq('bk_journal_entries.company_id', company.id).eq('bk_accounts.code', '2400')
+    .gte('bk_journal_entries.entry_date', start).lte('bk_journal_entries.entry_date', end);
+  const lines = data || [];
+  const outputVat = lines.filter(l => l.bk_journal_entries.source === 'invoice').reduce((s, l) => s + Number(l.credit || 0), 0);
+  const inputVat = lines.filter(l => l.bk_journal_entries.source === 'expense' || l.bk_journal_entries.source === 'bill').reduce((s, l) => s + Number(l.debit || 0), 0);
+  const net = outputVat - inputVat;
+  wrap.innerHTML = `<table>
+    <tbody>
+      <tr><td>Output VAT (VAT charged on sales)</td><td class="num">${money(outputVat)}</td></tr>
+      <tr><td>Input VAT (VAT paid on expenses &amp; bills)</td><td class="num">${money(inputVat)}</td></tr>
+      <tr class="total-row"><td>${net >= 0 ? 'VAT payable to SARS' : 'VAT refundable from SARS'}</td><td class="num">${money(Math.abs(net))}</td></tr>
+    </tbody>
+  </table>`;
+}
+async function loadArAging() {
+  const wrap = document.getElementById('arAgingWrap');
+  if (!requireCompany()) { wrap.innerHTML = '<div class="empty">Set up your company first.</div>'; return; }
+  wrap.innerHTML = '<div class="loading">Loading…</div>';
+  const { data } = await sb.from('bk_invoices').select('*').eq('company_id', company.id).in('status', ['sent', 'overdue', 'partial']);
+  const rows = (data || []).filter(inv => (inv.total - inv.amount_paid) > 0.01);
+  if (rows.length === 0) { wrap.innerHTML = '<div class="empty">No outstanding receivables.</div>'; return; }
+  const todayD = new Date();
+  const buckets = { current: 0, d30: 0, d60: 0, d90: 0, over90: 0 };
+  const bucketRows = rows.map(inv => {
+    const due = inv.due_date ? new Date(inv.due_date) : new Date(inv.issue_date);
+    const daysOverdue = Math.floor((todayD - due) / 86400000);
+    const owed = inv.total - inv.amount_paid;
+    let bucket = 'current';
+    if (daysOverdue > 90) bucket = 'over90'; else if (daysOverdue > 60) bucket = 'd90'; else if (daysOverdue > 30) bucket = 'd60'; else if (daysOverdue > 0) bucket = 'd30';
+    buckets[bucket] += owed;
+    return { ...inv, daysOverdue, owed };
+  });
+  wrap.innerHTML = `
+    <table style="margin-bottom:16px"><thead><tr><th>Current</th><th>1-30 days</th><th>31-60 days</th><th>61-90 days</th><th>90+ days</th></tr></thead>
+    <tbody><tr><td class="num">${money(buckets.current)}</td><td class="num">${money(buckets.d30)}</td><td class="num">${money(buckets.d60)}</td><td class="num">${money(buckets.d90)}</td><td class="num">${money(buckets.over90)}</td></tr></tbody></table>
+    <table><thead><tr><th>Invoice</th><th>Customer</th><th>Due</th><th class="num">Days overdue</th><th class="num">Owed</th></tr></thead><tbody>
+    ${bucketRows.sort((a,b) => b.daysOverdue - a.daysOverdue).map(r => `<tr><td>${esc(r.invoice_number)}</td><td>${esc(r.customer_name)}</td><td>${esc(r.due_date || r.issue_date)}</td><td class="num">${r.daysOverdue > 0 ? r.daysOverdue : '—'}</td><td class="num">${money(r.owed)}</td></tr>`).join('')}
+    </tbody></table>`;
+}
+async function loadApAging() {
+  const wrap = document.getElementById('apAgingWrap');
+  if (!requireCompany()) { wrap.innerHTML = '<div class="empty">Set up your company first.</div>'; return; }
+  wrap.innerHTML = '<div class="loading">Loading…</div>';
+  const { data } = await sb.from('bk_bills').select('*').eq('company_id', company.id).in('status', ['open', 'partial']);
+  const rows = (data || []).filter(b => (b.total - b.amount_paid) > 0.01);
+  if (rows.length === 0) { wrap.innerHTML = '<div class="empty">No outstanding payables.</div>'; return; }
+  const todayD = new Date();
+  const buckets = { current: 0, d30: 0, d60: 0, d90: 0, over90: 0 };
+  const bucketRows = rows.map(b => {
+    const due = b.due_date ? new Date(b.due_date) : new Date(b.bill_date);
+    const daysOverdue = Math.floor((todayD - due) / 86400000);
+    const owed = b.total - b.amount_paid;
+    let bucket = 'current';
+    if (daysOverdue > 90) bucket = 'over90'; else if (daysOverdue > 60) bucket = 'd90'; else if (daysOverdue > 30) bucket = 'd60'; else if (daysOverdue > 0) bucket = 'd30';
+    buckets[bucket] += owed;
+    return { ...b, daysOverdue, owed };
+  });
+  wrap.innerHTML = `
+    <table style="margin-bottom:16px"><thead><tr><th>Current</th><th>1-30 days</th><th>31-60 days</th><th>61-90 days</th><th>90+ days</th></tr></thead>
+    <tbody><tr><td class="num">${money(buckets.current)}</td><td class="num">${money(buckets.d30)}</td><td class="num">${money(buckets.d60)}</td><td class="num">${money(buckets.d90)}</td><td class="num">${money(buckets.over90)}</td></tr></tbody></table>
+    <table><thead><tr><th>Bill</th><th>Vendor</th><th>Due</th><th class="num">Days overdue</th><th class="num">Owed</th></tr></thead><tbody>
+    ${bucketRows.sort((a,b) => b.daysOverdue - a.daysOverdue).map(r => `<tr><td>${esc(r.bill_number || '—')}</td><td>${esc(r.vendor_name)}</td><td>${esc(r.due_date || r.bill_date)}</td><td class="num">${r.daysOverdue > 0 ? r.daysOverdue : '—'}</td><td class="num">${money(r.owed)}</td></tr>`).join('')}
+    </tbody></table>`;
+}
+async function loadSalesByCustomer() {
+  const wrap = document.getElementById('salesByCustWrap');
+  if (!requireCompany()) { wrap.innerHTML = '<div class="empty">Set up your company first.</div>'; return; }
+  wrap.innerHTML = '<div class="loading">Loading…</div>';
+  const { data } = await sb.from('bk_invoices').select('customer_name, total, status').eq('company_id', company.id).neq('status', 'draft').neq('status', 'void');
+  if (!data || data.length === 0) { wrap.innerHTML = '<div class="empty">No invoices issued yet.</div>'; return; }
+  const byCustomer = new Map();
+  data.forEach(inv => byCustomer.set(inv.customer_name, (byCustomer.get(inv.customer_name) || 0) + Number(inv.total || 0)));
+  const rows = [...byCustomer.entries()].map(([name, total]) => ({ name, total })).sort((a, b) => b.total - a.total);
+  const grand = rows.reduce((s, r) => s + r.total, 0);
+  wrap.innerHTML = `<table><thead><tr><th>Customer</th><th class="num">Total invoiced</th></tr></thead><tbody>
+    ${rows.map(r => `<tr><td>${esc(r.name)}</td><td class="num">${money(r.total)}</td></tr>`).join('')}
+    <tr class="total-row"><td>Total</td><td class="num">${money(grand)}</td></tr>
+  </tbody></table>`;
+}
+async function loadExpensesByVendor() {
+  const wrap = document.getElementById('expByVendorWrap');
+  if (!requireCompany()) { wrap.innerHTML = '<div class="empty">Set up your company first.</div>'; return; }
+  wrap.innerHTML = '<div class="loading">Loading…</div>';
+  const [{ data: expenses }, { data: bills }] = await Promise.all([
+    sb.from('bk_expenses').select('vendor, amount, vat_amount').eq('company_id', company.id),
+    sb.from('bk_bills').select('vendor_name, amount, vat_amount').eq('company_id', company.id),
+  ]);
+  const byVendor = new Map();
+  (expenses || []).forEach(e => byVendor.set(e.vendor, (byVendor.get(e.vendor) || 0) + Number(e.amount || 0) + Number(e.vat_amount || 0)));
+  (bills || []).forEach(b => byVendor.set(b.vendor_name, (byVendor.get(b.vendor_name) || 0) + Number(b.amount || 0) + Number(b.vat_amount || 0)));
+  if (byVendor.size === 0) { wrap.innerHTML = '<div class="empty">No expenses or bills recorded yet.</div>'; return; }
+  const rows = [...byVendor.entries()].map(([name, total]) => ({ name, total })).sort((a, b) => b.total - a.total);
+  const grand = rows.reduce((s, r) => s + r.total, 0);
+  wrap.innerHTML = `<table><thead><tr><th>Vendor</th><th class="num">Total spent</th></tr></thead><tbody>
+    ${rows.map(r => `<tr><td>${esc(r.name)}</td><td class="num">${money(r.total)}</td></tr>`).join('')}
+    <tr class="total-row"><td>Total</td><td class="num">${money(grand)}</td></tr>
+  </tbody></table>`;
 }
 </script>
 </body>
