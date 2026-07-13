@@ -3,113 +3,105 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Thrive — Online Therapy That Fits Your Life</title>
-<meta name="description" content="Connect with a licensed therapist by message, voice, or video — on your schedule, from anywhere. Start therapy in under 48 hours.">
+<title>Thrive — Online Therapy That Works</title>
+<meta name="description" content="Get matched with a licensed therapist in under 48 hours. Therapy by message, video, or phone — on your schedule.">
 <style>
 /* ═══════════════════════════════════════
    TOKENS
 ═══════════════════════════════════════ */
 :root {
-  /* Ground tokens — light mode */
-  --c-bg:        #FAF4F5;
+  --c-bg:        #F6FCF9;
   --c-surface:   #FFFFFF;
-  --c-surface-2: #F2E7EA;
-  --c-text:      #281518;
-  --c-text-2:    #6B4048;
-  --c-text-3:    #A07880;
-  --c-border:    #E0CDD0;
+  --c-surface-2: #EAF5EE;
+  --c-text:      #162620;
+  --c-text-2:    #3D5E52;
+  --c-text-3:    #7FA898;
+  --c-border:    #C6DDD4;
 
-  /* Accent — dusty rose */
-  --c-accent:    #A84E5C;
-  --c-accent-h:  #8A3A48;
-  --c-accent-sub:#F8E8EB;
-  --c-cta:       #C45E70;
-  --c-cta-h:     #A54A5C;
+  --c-accent:    #1F8B66;
+  --c-accent-h:  #156E50;
+  --c-accent-sub:#DDF2EA;
+  --c-cta:       #E88C28;
+  --c-cta-h:     #C87418;
+  --c-cta-sub:   #FDF0DC;
 
-  /* Hero — always deep plum, slight shift per theme */
-  --c-hero:      #3D1E26;
-  --c-hero-2:    #4F2832;
-  --c-hero-text: #F5E8EA;
-  --c-hero-2t:   #C4909A;
-  --c-hero-brd:  rgba(255,255,255,0.12);
+  --c-stats:     #14362A;
+  --c-good:      #1F8B66;
+  --c-good-sub:  #DDF2EA;
 
-  /* Semantic */
-  --c-good:      #2E8B57;
-  --c-good-sub:  #E2F2E9;
+  --s-sm: 0 1px 3px rgba(0,0,0,0.06);
+  --s-md: 0 2px 12px rgba(0,0,0,0.08), 0 0 1px rgba(0,0,0,0.04);
+  --s-lg: 0 8px 32px rgba(0,0,0,0.12), 0 0 1px rgba(0,0,0,0.04);
+  --s-xl: 0 20px 60px rgba(0,0,0,0.14), 0 0 1px rgba(0,0,0,0.04);
 
-  /* Shadows */
-  --s-sm: 0 1px 3px rgba(61,30,38,0.07);
-  --s-md: 0 2px 10px rgba(61,30,38,0.09), 0 0 1px rgba(61,30,38,0.05);
-  --s-lg: 0 10px 30px rgba(61,30,38,0.14), 0 0 1px rgba(61,30,38,0.05);
-
-  --serif: Georgia, 'Times New Roman', serif;
   --sans:  system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-  --r: 12px;
-  --max: 1160px;
+  --serif: Georgia, serif;
+  --r:    12px;
+  --max:  1160px;
   --ease: cubic-bezier(0.25, 0.46, 0.45, 0.94);
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --c-bg:        #1A0E10;
-    --c-surface:   #261418;
-    --c-surface-2: #311820;
-    --c-text:      #F0E0E3;
-    --c-text-2:    #C49098;
-    --c-text-3:    #8A6068;
-    --c-border:    #3D2028;
-    --c-accent:    #D4889A;
-    --c-accent-h:  #E8A0B0;
-    --c-accent-sub:#2A1418;
-    --c-cta:       #C86878;
-    --c-cta-h:     #DA8090;
-    --c-hero:      #120A0C;
-    --c-hero-2:    #1C1012;
-    --c-good-sub:  #162E20;
+    --c-bg:        #0E1C16;
+    --c-surface:   #162820;
+    --c-surface-2: #1C3228;
+    --c-text:      #D8EEE6;
+    --c-text-2:    #7ABEA8;
+    --c-text-3:    #4A7A68;
+    --c-border:    #244034;
+    --c-accent:    #3DBD90;
+    --c-accent-h:  #55D4A8;
+    --c-accent-sub:#12301E;
+    --c-cta:       #E89A38;
+    --c-cta-h:     #F0AE50;
+    --c-cta-sub:   #2E1E08;
+    --c-stats:     #0A1C14;
     --s-sm: 0 1px 3px rgba(0,0,0,0.3);
-    --s-md: 0 2px 10px rgba(0,0,0,0.4), 0 0 1px rgba(0,0,0,0.2);
-    --s-lg: 0 10px 30px rgba(0,0,0,0.5), 0 0 1px rgba(0,0,0,0.2);
+    --s-md: 0 2px 12px rgba(0,0,0,0.4), 0 0 1px rgba(0,0,0,0.2);
+    --s-lg: 0 8px 32px rgba(0,0,0,0.5), 0 0 1px rgba(0,0,0,0.2);
+    --s-xl: 0 20px 60px rgba(0,0,0,0.6), 0 0 1px rgba(0,0,0,0.2);
   }
 }
 :root[data-theme="dark"] {
-  --c-bg:        #1A0E10;
-  --c-surface:   #261418;
-  --c-surface-2: #311820;
-  --c-text:      #F0E0E3;
-  --c-text-2:    #C49098;
-  --c-text-3:    #8A6068;
-  --c-border:    #3D2028;
-  --c-accent:    #D4889A;
-  --c-accent-h:  #E8A0B0;
-  --c-accent-sub:#2A1418;
-  --c-cta:       #C86878;
-  --c-cta-h:     #DA8090;
-  --c-hero:      #120A0C;
-  --c-hero-2:    #1C1012;
-  --c-good-sub:  #162E20;
+  --c-bg:        #0E1C16;
+  --c-surface:   #162820;
+  --c-surface-2: #1C3228;
+  --c-text:      #D8EEE6;
+  --c-text-2:    #7ABEA8;
+  --c-text-3:    #4A7A68;
+  --c-border:    #244034;
+  --c-accent:    #3DBD90;
+  --c-accent-h:  #55D4A8;
+  --c-accent-sub:#12301E;
+  --c-cta:       #E89A38;
+  --c-cta-h:     #F0AE50;
+  --c-cta-sub:   #2E1E08;
+  --c-stats:     #0A1C14;
   --s-sm: 0 1px 3px rgba(0,0,0,0.3);
-  --s-md: 0 2px 10px rgba(0,0,0,0.4), 0 0 1px rgba(0,0,0,0.2);
-  --s-lg: 0 10px 30px rgba(0,0,0,0.5), 0 0 1px rgba(0,0,0,0.2);
+  --s-md: 0 2px 12px rgba(0,0,0,0.4), 0 0 1px rgba(0,0,0,0.2);
+  --s-lg: 0 8px 32px rgba(0,0,0,0.5), 0 0 1px rgba(0,0,0,0.2);
+  --s-xl: 0 20px 60px rgba(0,0,0,0.6), 0 0 1px rgba(0,0,0,0.2);
 }
 :root[data-theme="light"] {
-  --c-bg:        #FAF4F5;
+  --c-bg:        #F6FCF9;
   --c-surface:   #FFFFFF;
-  --c-surface-2: #F2E7EA;
-  --c-text:      #281518;
-  --c-text-2:    #6B4048;
-  --c-text-3:    #A07880;
-  --c-border:    #E0CDD0;
-  --c-accent:    #A84E5C;
-  --c-accent-h:  #8A3A48;
-  --c-accent-sub:#F8E8EB;
-  --c-cta:       #C45E70;
-  --c-cta-h:     #A54A5C;
-  --c-hero:      #3D1E26;
-  --c-hero-2:    #4F2832;
-  --c-good-sub:  #E2F2E9;
-  --s-sm: 0 1px 3px rgba(61,30,38,0.07);
-  --s-md: 0 2px 10px rgba(61,30,38,0.09), 0 0 1px rgba(61,30,38,0.05);
-  --s-lg: 0 10px 30px rgba(61,30,38,0.14), 0 0 1px rgba(61,30,38,0.05);
+  --c-surface-2: #EAF5EE;
+  --c-text:      #162620;
+  --c-text-2:    #3D5E52;
+  --c-text-3:    #7FA898;
+  --c-border:    #C6DDD4;
+  --c-accent:    #1F8B66;
+  --c-accent-h:  #156E50;
+  --c-accent-sub:#DDF2EA;
+  --c-cta:       #E88C28;
+  --c-cta-h:     #C87418;
+  --c-cta-sub:   #FDF0DC;
+  --c-stats:     #14362A;
+  --s-sm: 0 1px 3px rgba(0,0,0,0.06);
+  --s-md: 0 2px 12px rgba(0,0,0,0.08), 0 0 1px rgba(0,0,0,0.04);
+  --s-lg: 0 8px 32px rgba(0,0,0,0.12), 0 0 1px rgba(0,0,0,0.04);
+  --s-xl: 0 20px 60px rgba(0,0,0,0.14), 0 0 1px rgba(0,0,0,0.04);
 }
 
 /* ═══════════════════════════════════════
@@ -137,6 +129,64 @@ ul { list-style: none; }
 }
 
 /* ═══════════════════════════════════════
+   BUTTONS
+═══════════════════════════════════════ */
+.btn-cta {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1.625rem;
+  background: var(--c-cta);
+  color: white;
+  font-size: 1rem;
+  font-weight: 700;
+  border-radius: 50px;
+  border: none;
+  cursor: pointer;
+  transition: background 0.15s, transform 0.15s;
+  white-space: nowrap;
+  letter-spacing: 0.01em;
+}
+.btn-cta:hover { background: var(--c-cta-h); transform: translateY(-1px); }
+.btn-cta:active { transform: translateY(0); }
+.btn-cta:focus-visible { outline: 3px solid var(--c-cta); outline-offset: 2px; }
+.btn-cta--lg { font-size: 1.0625rem; padding: 0.875rem 2rem; }
+.btn-cta--sm { font-size: 0.875rem; padding: 0.5625rem 1.25rem; }
+
+.btn-outline {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.6875rem 1.375rem;
+  background: transparent;
+  color: var(--c-accent);
+  border: 2px solid var(--c-accent);
+  border-radius: 50px;
+  font-size: 0.9375rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s;
+}
+.btn-outline:hover { background: var(--c-accent-sub); }
+
+.btn-ghost {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.375rem;
+  padding: 0.5rem 0.875rem;
+  background: transparent;
+  color: var(--c-text-2);
+  font-size: 0.875rem;
+  font-weight: 600;
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s;
+}
+.btn-ghost:hover { background: var(--c-surface-2); color: var(--c-text); }
+
+/* ═══════════════════════════════════════
    NAV
 ═══════════════════════════════════════ */
 .nav {
@@ -150,56 +200,55 @@ ul { list-style: none; }
 .nav__inner {
   display: flex;
   align-items: center;
-  height: 64px;
+  height: 66px;
   gap: 2rem;
 }
 .nav__logo {
   display: flex;
   align-items: center;
-  gap: 0.5rem;
+  gap: 0.625rem;
   flex-shrink: 0;
   text-decoration: none;
 }
 .nav__logo-icon {
-  width: 32px;
-  height: 32px;
+  width: 34px; height: 34px;
   position: relative;
   flex-shrink: 0;
 }
-.nav__logo-icon::before,
-.nav__logo-icon::after {
+.nav__logo-icon::before {
   content: '';
   position: absolute;
-  border-radius: 50%;
-}
-.nav__logo-icon::before {
-  width: 20px; height: 20px;
+  width: 22px; height: 22px;
   background: var(--c-accent);
+  border-radius: 50% 50% 50% 4px;
   top: 0; left: 0;
 }
 .nav__logo-icon::after {
+  content: '';
+  position: absolute;
   width: 16px; height: 16px;
   background: var(--c-cta);
+  border-radius: 50% 50% 4px 50%;
   bottom: 0; right: 0;
-  opacity: 0.85;
 }
 .nav__logo-name {
-  font-family: var(--serif);
-  font-size: 1.25rem;
-  font-weight: normal;
+  font-size: 1.3125rem;
+  font-weight: 800;
   color: var(--c-text);
-  letter-spacing: -0.01em;
+  letter-spacing: -0.03em;
+  line-height: 1;
 }
 .nav__links {
   display: flex;
   flex: 1;
+  gap: 0;
 }
 .nav__links a {
   padding: 0.5rem 0.875rem;
-  font-size: 0.875rem;
-  font-weight: 500;
+  font-size: 0.9375rem;
+  font-weight: 600;
   color: var(--c-text-2);
-  border-radius: 7px;
+  border-radius: 8px;
   transition: background 0.15s, color 0.15s;
   white-space: nowrap;
 }
@@ -210,39 +259,13 @@ ul { list-style: none; }
   gap: 0.5rem;
   flex-shrink: 0;
 }
-.nav__signin {
-  font-size: 0.875rem;
-  font-weight: 500;
-  color: var(--c-text-2);
-  padding: 0.5rem 0.875rem;
-  border-radius: 7px;
-  transition: color 0.15s, background 0.15s;
-}
-.nav__signin:hover { background: var(--c-surface-2); color: var(--c-text); }
-.btn-primary {
-  padding: 0.5625rem 1.125rem;
-  background: var(--c-cta);
-  color: white;
-  font-size: 0.875rem;
-  font-weight: 700;
-  border-radius: 50px;
-  border: none;
-  cursor: pointer;
-  transition: background 0.15s;
-  white-space: nowrap;
-  letter-spacing: 0.01em;
-}
-.btn-primary:hover { background: var(--c-cta-h); }
-.btn-primary:focus-visible { outline: 2px solid var(--c-cta); outline-offset: 2px; }
 .nav__theme {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 36px;
-  height: 36px;
+  display: flex; align-items: center; justify-content: center;
+  width: 36px; height: 36px;
   background: transparent;
   border-radius: 8px;
   color: var(--c-text-3);
+  border: none; cursor: pointer;
   transition: background 0.15s, color 0.15s;
 }
 .nav__theme:hover { background: var(--c-surface-2); color: var(--c-text); }
@@ -251,542 +274,554 @@ ul { list-style: none; }
    HERO
 ═══════════════════════════════════════ */
 .hero {
-  background: var(--c-hero);
-  padding: 6rem 0 5rem;
-  overflow: hidden;
-  position: relative;
-}
-.hero::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background:
-    radial-gradient(ellipse 60% 50% at 75% 50%, rgba(196,94,112,0.28) 0%, transparent 70%),
-    radial-gradient(ellipse 40% 60% at 20% 80%, rgba(212,136,154,0.15) 0%, transparent 60%);
-  pointer-events: none;
+  background: var(--c-surface);
+  padding: 5rem 0 4rem;
+  border-bottom: 1px solid var(--c-border);
 }
 .hero__inner {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 5rem;
+  gap: 4rem;
   align-items: center;
-  position: relative;
 }
-.hero__badge {
+.hero__label {
   display: inline-flex;
   align-items: center;
   gap: 0.5rem;
-  background: rgba(255,255,255,0.07);
-  border: 1px solid rgba(255,255,255,0.14);
-  border-radius: 50px;
-  padding: 0.35rem 0.875rem;
   font-size: 0.8125rem;
-  font-weight: 600;
-  color: var(--c-hero-2t);
-  margin-bottom: 1.5rem;
-}
-.hero__badge-dot {
-  width: 6px; height: 6px;
-  background: #E8A0B0;
-  border-radius: 50%;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--c-accent);
+  background: var(--c-accent-sub);
+  padding: 0.35rem 0.875rem;
+  border-radius: 50px;
+  margin-bottom: 1.375rem;
 }
 .hero__headline {
-  font-family: var(--serif);
-  font-size: clamp(2.5rem, 4.5vw, 3.75rem);
-  font-weight: normal;
+  font-size: clamp(2.25rem, 4.5vw, 3.5rem);
+  font-weight: 900;
   line-height: 1.1;
-  color: var(--c-hero-text);
-  margin-bottom: 1.375rem;
-  letter-spacing: -0.02em;
+  color: var(--c-text);
+  margin-bottom: 1.25rem;
+  letter-spacing: -0.03em;
   text-wrap: balance;
 }
-.hero__headline em {
-  font-style: italic;
-  color: #F4B0BC;
-}
+.hero__headline span { color: var(--c-accent); }
 .hero__sub {
-  font-size: 1.0625rem;
-  color: var(--c-hero-2t);
-  line-height: 1.7;
+  font-size: 1.125rem;
+  color: var(--c-text-2);
+  line-height: 1.65;
   max-width: 44ch;
   margin-bottom: 2.25rem;
 }
-.hero__cta-row {
+.hero__actions {
   display: flex;
   align-items: center;
   gap: 1rem;
   flex-wrap: wrap;
   margin-bottom: 2.5rem;
 }
-.hero__cta-row .btn-primary {
-  font-size: 1rem;
-  padding: 0.8125rem 1.75rem;
+.hero__note {
+  font-size: 0.875rem;
+  color: var(--c-text-3);
+  display: flex;
+  align-items: center;
+  gap: 1.25rem;
+  flex-wrap: wrap;
 }
-.hero__how-link {
-  font-size: 0.9375rem;
-  font-weight: 600;
-  color: var(--c-hero-2t);
-  display: inline-flex;
+.hero__note-item {
+  display: flex;
   align-items: center;
   gap: 0.375rem;
-  transition: color 0.15s;
 }
-.hero__how-link:hover { color: var(--c-hero-text); }
-.hero__trust {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 1.5rem;
-  padding-top: 2rem;
-  border-top: 1px solid var(--c-hero-brd);
-}
-.hero__trust-item {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  font-size: 0.875rem;
-  color: var(--c-hero-2t);
-}
-.hero__trust-icon { color: #E8A8B4; }
+.hero__note-item svg { color: var(--c-accent); }
 
-/* Hero visual — abstract connection composition */
-.hero__visual {
+/* Hero UI mockup */
+.hero__ui {
   position: relative;
-  height: 440px;
+  height: 480px;
   display: flex;
   align-items: center;
   justify-content: center;
 }
-.conn-ring {
-  position: absolute;
+.ui-phone {
+  width: 240px;
+  background: var(--c-surface);
+  border: 1px solid var(--c-border);
+  border-radius: 28px;
+  box-shadow: var(--s-xl);
+  overflow: hidden;
+  position: relative;
+  z-index: 2;
+}
+.ui-phone__bar {
+  background: var(--c-stats);
+  padding: 0.875rem 1.25rem;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+.ui-phone__avatar {
+  width: 36px; height: 36px;
   border-radius: 50%;
-  border: 1px solid rgba(255,255,255,0.08);
-}
-.conn-ring--1 { width: 340px; height: 340px; }
-.conn-ring--2 { width: 240px; height: 240px; }
-.conn-ring--3 { width: 140px; height: 140px; background: rgba(46,111,163,0.12); }
-.conn-bubble {
-  position: absolute;
-  border-radius: 50%;
-}
-.conn-bubble--a {
-  width: 110px; height: 110px;
-  background: radial-gradient(circle at 35% 35%, #C45E70, #6A2030);
-  top: 15%; left: 10%;
-  box-shadow: 0 0 40px rgba(196,94,112,0.4);
-}
-.conn-bubble--b {
-  width: 80px; height: 80px;
-  background: radial-gradient(circle at 35% 35%, #E0A0B0, #9A4A60);
-  bottom: 20%; right: 12%;
-  box-shadow: 0 0 30px rgba(224,160,176,0.3);
-  opacity: 0.9;
-}
-.conn-bubble--c {
-  width: 56px; height: 56px;
-  background: radial-gradient(circle at 35% 35%, #B87080, #7A3848);
-  top: 55%; left: 18%;
-  opacity: 0.6;
-}
-.conn-bubble--d {
-  width: 44px; height: 44px;
-  background: radial-gradient(circle at 35% 35%, #F0C0CC, #C07888);
-  top: 22%; right: 18%;
-  opacity: 0.55;
-}
-.conn-line {
-  position: absolute;
-  background: rgba(255,255,255,0.08);
-  border-radius: 1px;
-}
-.conn-line--1 {
-  width: 1px; height: 120px;
-  top: 26%; left: calc(10% + 55px);
-  transform: rotate(20deg);
-}
-.conn-line--2 {
-  width: 1px; height: 90px;
-  bottom: 28%; right: calc(12% + 40px);
-  transform: rotate(-15deg);
-}
-
-/* Message preview card */
-.hero__msg-card {
-  position: absolute;
-  bottom: 8%;
-  left: 50%;
-  transform: translateX(-50%);
-  background: rgba(31,54,84,0.8);
-  border: 1px solid rgba(255,255,255,0.13);
-  border-radius: 14px;
-  padding: 1rem 1.125rem;
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  width: 260px;
-}
-.hero__msg-meta {
-  font-size: 0.6875rem;
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.1em;
-  color: var(--c-hero-2t);
-  margin-bottom: 0.5rem;
-}
-.hero__msg-bubble {
-  background: rgba(255,255,255,0.08);
-  border-radius: 10px 10px 10px 3px;
-  padding: 0.625rem 0.875rem;
+  background: linear-gradient(135deg, #3DBD90, #1F6B50);
+  display: flex; align-items: center; justify-content: center;
   font-size: 0.875rem;
-  color: var(--c-hero-text);
-  line-height: 1.45;
-  margin-bottom: 0.5rem;
+  font-weight: 700;
+  color: white;
+  flex-shrink: 0;
 }
-.hero__msg-bubble--reply {
-  border-radius: 10px 10px 3px 10px;
-  background: rgba(168,78,92,0.35);
-  align-self: flex-end;
-  text-align: right;
+.ui-phone__info { flex: 1; min-width: 0; }
+.ui-phone__name {
+  font-size: 0.8125rem;
+  font-weight: 700;
+  color: white;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
-.hero__msg-bubbles {
+.ui-phone__status {
+  font-size: 0.6875rem;
+  color: rgba(255,255,255,0.6);
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+}
+.ui-phone__dot {
+  width: 5px; height: 5px;
+  background: #5CE890;
+  border-radius: 50%;
+}
+.ui-phone__body {
+  padding: 1rem;
   display: flex;
   flex-direction: column;
-  gap: 0.375rem;
+  gap: 0.625rem;
+  min-height: 220px;
+  background: var(--c-bg);
 }
+.ui-msg {
+  max-width: 82%;
+  padding: 0.625rem 0.875rem;
+  border-radius: 14px 14px 14px 4px;
+  font-size: 0.8125rem;
+  line-height: 1.45;
+  background: var(--c-surface);
+  color: var(--c-text);
+  border: 1px solid var(--c-border);
+  box-shadow: var(--s-sm);
+}
+.ui-msg--me {
+  border-radius: 14px 14px 4px 14px;
+  background: var(--c-accent);
+  color: white;
+  border-color: transparent;
+  align-self: flex-end;
+}
+.ui-phone__input {
+  border-top: 1px solid var(--c-border);
+  padding: 0.75rem 1rem;
+  display: flex;
+  align-items: center;
+  gap: 0.625rem;
+  background: var(--c-surface);
+}
+.ui-phone__input-field {
+  flex: 1;
+  font-size: 0.8125rem;
+  color: var(--c-text-3);
+}
+.ui-phone__send {
+  width: 28px; height: 28px;
+  background: var(--c-cta);
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+}
+
+/* Floating cards */
+.ui-float {
+  position: absolute;
+  background: var(--c-surface);
+  border: 1px solid var(--c-border);
+  border-radius: 14px;
+  padding: 0.875rem 1rem;
+  box-shadow: var(--s-lg);
+  z-index: 3;
+}
+.ui-float--match {
+  left: -10%;
+  top: 12%;
+  width: 185px;
+}
+.ui-float--session {
+  right: -8%;
+  bottom: 18%;
+  width: 175px;
+}
+.ui-float__label {
+  font-size: 0.6875rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--c-text-3);
+  margin-bottom: 0.5rem;
+}
+.ui-float__name {
+  font-size: 0.875rem;
+  font-weight: 700;
+  color: var(--c-text);
+  margin-bottom: 0.125rem;
+}
+.ui-float__sub {
+  font-size: 0.75rem;
+  color: var(--c-text-2);
+  margin-bottom: 0.75rem;
+}
+.ui-float__connect {
+  display: block;
+  width: 100%;
+  padding: 0.4375rem;
+  background: var(--c-cta);
+  color: white;
+  font-size: 0.75rem;
+  font-weight: 700;
+  border-radius: 8px;
+  text-align: center;
+  border: none;
+  cursor: pointer;
+}
+.ui-float__session-row {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+.ui-float__session-icon {
+  width: 30px; height: 30px;
+  border-radius: 8px;
+  background: var(--c-accent-sub);
+  color: var(--c-accent);
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+}
+.ui-float__session-text {
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: var(--c-text);
+  line-height: 1.3;
+}
+.ui-float__session-time {
+  font-size: 0.75rem;
+  color: var(--c-text-3);
+}
+
+/* ═══════════════════════════════════════
+   STATS STRIP
+═══════════════════════════════════════ */
+.stats {
+  background: var(--c-stats);
+  padding: 2.5rem 0;
+}
+.stats__grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 0;
+}
+.stat-item {
+  text-align: center;
+  padding: 0.5rem 1rem;
+  border-right: 1px solid rgba(255,255,255,0.1);
+}
+.stat-item:last-child { border-right: none; }
+.stat-item__value {
+  font-size: 2.25rem;
+  font-weight: 900;
+  color: white;
+  letter-spacing: -0.03em;
+  line-height: 1;
+  margin-bottom: 0.375rem;
+  font-variant-numeric: tabular-nums;
+}
+.stat-item__value span { color: var(--c-cta); }
+.stat-item__label {
+  font-size: 0.875rem;
+  color: rgba(255,255,255,0.6);
+  line-height: 1.3;
+}
+
+/* ═══════════════════════════════════════
+   SECTION HEADERS
+═══════════════════════════════════════ */
+.sec-label {
+  font-size: 0.75rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: var(--c-accent);
+  margin-bottom: 0.5rem;
+}
+.sec-title {
+  font-size: clamp(1.625rem, 3vw, 2.25rem);
+  font-weight: 900;
+  color: var(--c-text);
+  letter-spacing: -0.025em;
+  line-height: 1.15;
+  text-wrap: balance;
+}
+.sec-sub {
+  font-size: 1.0625rem;
+  color: var(--c-text-2);
+  line-height: 1.65;
+  margin-top: 0.625rem;
+  max-width: 50ch;
+}
+.sec-hdr { margin-bottom: 2.75rem; }
+.sec-hdr--center { text-align: center; }
+.sec-hdr--center .sec-sub { margin-left: auto; margin-right: auto; }
 
 /* ═══════════════════════════════════════
    HOW IT WORKS
 ═══════════════════════════════════════ */
 .how {
   padding: 5.5rem 0;
+  background: var(--c-surface);
+  border-bottom: 1px solid var(--c-border);
 }
-.sec-eyebrow {
-  font-size: 0.6875rem;
-  font-weight: 700;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
-  color: var(--c-accent);
-  margin-bottom: 0.5rem;
-}
-.sec-title {
-  font-family: var(--serif);
-  font-size: clamp(1.625rem, 3vw, 2.125rem);
-  font-weight: normal;
-  color: var(--c-text);
-  text-wrap: balance;
-  line-height: 1.2;
-}
-.sec-sub {
-  font-size: 1rem;
-  color: var(--c-text-2);
-  line-height: 1.65;
-  margin-top: 0.625rem;
-  max-width: 52ch;
-}
-.sec-header { margin-bottom: 3rem; }
 .how-steps {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: 2rem;
-  position: relative;
-}
-.how-steps::before {
-  content: '';
-  position: absolute;
-  top: 28px;
-  left: calc(33.33% / 2);
-  right: calc(33.33% / 2);
-  height: 1px;
-  background: var(--c-border);
-  z-index: 0;
 }
 .how-step {
   display: flex;
   flex-direction: column;
-  gap: 0.875rem;
-  position: relative;
-  z-index: 1;
+  gap: 1rem;
 }
 .how-step__num {
-  width: 56px;
-  height: 56px;
-  background: var(--c-surface);
-  border: 2px solid var(--c-border);
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-family: var(--serif);
+  width: 52px; height: 52px;
+  background: var(--c-accent);
+  border-radius: 14px;
+  display: flex; align-items: center; justify-content: center;
   font-size: 1.25rem;
-  color: var(--c-accent);
-  margin-bottom: 0.25rem;
+  font-weight: 900;
+  color: white;
+  letter-spacing: -0.02em;
   flex-shrink: 0;
 }
-.how-step--active .how-step__num {
-  background: var(--c-accent);
-  border-color: var(--c-accent);
-  color: white;
-}
 .how-step__title {
-  font-size: 1.0625rem;
-  font-weight: 700;
+  font-size: 1.125rem;
+  font-weight: 800;
   color: var(--c-text);
-  line-height: 1.3;
+  letter-spacing: -0.02em;
+  line-height: 1.25;
 }
 .how-step__desc {
   font-size: 0.9375rem;
   color: var(--c-text-2);
-  line-height: 1.6;
+  line-height: 1.65;
 }
 
 /* ═══════════════════════════════════════
-   THERAPY TYPES
+   WHAT WE TREAT
 ═══════════════════════════════════════ */
-.types {
+.treat {
   padding: 5.5rem 0;
-  background: var(--c-surface-2);
-  border-top: 1px solid var(--c-border);
-  border-bottom: 1px solid var(--c-border);
+  background: var(--c-bg);
 }
-.types-grid {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 1.125rem;
-}
-.type-card {
-  background: var(--c-surface);
-  border: 1px solid var(--c-border);
-  border-radius: var(--r);
-  padding: 1.625rem 1.375rem;
+.treat-tags {
   display: flex;
-  flex-direction: column;
+  flex-wrap: wrap;
   gap: 0.625rem;
-  cursor: pointer;
-  transition: transform 0.2s var(--ease), box-shadow 0.2s var(--ease), border-color 0.2s;
-  text-decoration: none;
-  color: inherit;
+  margin-top: 2rem;
 }
-.type-card:hover {
-  transform: translateY(-3px);
-  box-shadow: var(--s-lg);
-  border-color: var(--c-accent);
-}
-.type-card__icon {
-  width: 44px; height: 44px;
-  border-radius: 10px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin-bottom: 0.25rem;
-  flex-shrink: 0;
-}
-.type-card__icon--blue   { background: var(--c-accent-sub); color: var(--c-accent); }
-.type-card__icon--amber  { background: #FEF3E2; color: #B87220; }
-.type-card__icon--rose   { background: var(--c-accent-sub); color: var(--c-accent); }
-.type-card__icon--sage   { background: var(--c-good-sub); color: var(--c-good); }
-
-[data-theme="dark"] .type-card__icon--amber { background: #2E1E08; color: var(--c-cta); }
-@media (prefers-color-scheme: dark) {
-  .type-card__icon--amber { background: #2E1E08; color: var(--c-cta); }
-}
-
-.type-card__title {
-  font-size: 1rem;
-  font-weight: 700;
-  color: var(--c-text);
-  line-height: 1.25;
-}
-.type-card__desc {
-  font-size: 0.875rem;
-  color: var(--c-text-2);
-  line-height: 1.55;
-  flex: 1;
-}
-.type-card__link {
-  font-size: 0.8125rem;
+.treat-tag {
+  padding: 0.625rem 1.125rem;
+  background: var(--c-surface);
+  border: 1.5px solid var(--c-border);
+  border-radius: 50px;
+  font-size: 0.9375rem;
   font-weight: 600;
-  color: var(--c-accent);
-  display: inline-flex;
-  align-items: center;
-  gap: 0.3rem;
-  margin-top: auto;
-  transition: gap 0.15s;
+  color: var(--c-text-2);
+  cursor: pointer;
+  transition: all 0.15s;
 }
-.type-card:hover .type-card__link { gap: 0.5rem; }
+.treat-tag:hover {
+  border-color: var(--c-accent);
+  color: var(--c-accent);
+  background: var(--c-accent-sub);
+}
+.treat-tag--active {
+  background: var(--c-accent-sub);
+  border-color: var(--c-accent);
+  color: var(--c-accent);
+}
 
 /* ═══════════════════════════════════════
-   THERAPIST CARDS
+   THERAPISTS
 ═══════════════════════════════════════ */
 .therapists {
   padding: 5.5rem 0;
+  background: var(--c-surface);
+  border-top: 1px solid var(--c-border);
+  border-bottom: 1px solid var(--c-border);
 }
-.therapists-header-row {
+.therapists__hdr {
   display: flex;
   align-items: flex-end;
   justify-content: space-between;
   gap: 1rem;
-  margin-bottom: 3rem;
+  margin-bottom: 2.75rem;
 }
 .therapist-grid {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
   gap: 1.125rem;
 }
-.therapist-card {
+.t-card {
   background: var(--c-surface);
-  border: 1px solid var(--c-border);
+  border: 1.5px solid var(--c-border);
   border-radius: var(--r);
   overflow: hidden;
   box-shadow: var(--s-md);
-  transition: transform 0.2s var(--ease), box-shadow 0.2s var(--ease);
+  transition: transform 0.2s var(--ease), box-shadow 0.2s var(--ease), border-color 0.2s;
   display: flex;
   flex-direction: column;
 }
-.therapist-card:hover { transform: translateY(-3px); box-shadow: var(--s-lg); }
-.therapist-card__avatar {
-  width: 100%;
-  aspect-ratio: 1 / 1;
-  position: relative;
-  overflow: hidden;
-  flex-shrink: 0;
+.t-card:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--s-lg);
+  border-color: var(--c-accent);
 }
-/* CSS portrait illustrations */
-.avatar-bg {
-  position: absolute;
-  inset: 0;
+.t-card__top {
+  padding: 1.5rem 1.25rem 1rem;
   display: flex;
-  align-items: center;
-  justify-content: center;
+  align-items: flex-start;
+  gap: 0.875rem;
 }
-.avatar-bg--amara  { background: linear-gradient(145deg, #5A2838 0%, #8A4858 60%, #3A1825 100%); }
-.avatar-bg--james  { background: linear-gradient(145deg, #4A2840 0%, #7A4068 60%, #301830 100%); }
-.avatar-bg--priya  { background: linear-gradient(145deg, #5A2828 0%, #9A4848 60%, #3A1818 100%); }
-.avatar-bg--marcus { background: linear-gradient(145deg, #3A2848 0%, #6A4878 60%, #241832 100%); }
-.avatar-shape {
-  width: 65%;
-  aspect-ratio: 1;
-  border-radius: 50% 50% 48% 52% / 50% 50% 50% 50%;
-  opacity: 0.3;
-}
-.avatar-bg--amara .avatar-shape  { background: #F4B0BC; }
-.avatar-bg--james .avatar-shape  { background: #E8A0C8; }
-.avatar-bg--priya .avatar-shape  { background: #F4C0A0; }
-.avatar-bg--marcus .avatar-shape { background: #C8A0E0; }
-.avatar-initial {
-  position: absolute;
-  font-family: var(--serif);
-  font-size: 2.5rem;
-  color: rgba(255,255,255,0.6);
+.t-card__avi {
+  width: 56px; height: 56px;
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 1.125rem;
+  font-weight: 800;
+  color: white;
+  flex-shrink: 0;
   letter-spacing: -0.02em;
 }
-.therapist-card__badge {
-  position: absolute;
-  bottom: 0.625rem;
-  right: 0.625rem;
-  background: var(--c-good);
-  color: white;
-  font-size: 0.6875rem;
-  font-weight: 700;
-  padding: 0.2rem 0.6rem;
-  border-radius: 50px;
-  letter-spacing: 0.04em;
-}
-.therapist-card__body {
-  padding: 1.25rem;
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
-}
-.therapist-card__name {
+.t-card__avi--a { background: linear-gradient(135deg, #2D9E78, #145A3C); }
+.t-card__avi--b { background: linear-gradient(135deg, #5A7FC4, #2A4588); }
+.t-card__avi--c { background: linear-gradient(135deg, #C47A2D, #7A4010); }
+.t-card__avi--d { background: linear-gradient(135deg, #8A4AC4, #4A1880); }
+.t-card__info { flex: 1; min-width: 0; }
+.t-card__name {
   font-size: 1rem;
-  font-weight: 700;
+  font-weight: 800;
   color: var(--c-text);
+  letter-spacing: -0.02em;
+  line-height: 1.2;
+  margin-bottom: 0.2rem;
 }
-.therapist-card__creds {
+.t-card__creds {
   font-size: 0.8125rem;
   color: var(--c-accent);
-  font-weight: 500;
+  font-weight: 600;
 }
-.therapist-card__tags {
+.t-card__avail {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  font-size: 0.6875rem;
+  font-weight: 700;
+  color: var(--c-good);
+  background: var(--c-good-sub);
+  padding: 0.2rem 0.6rem;
+  border-radius: 50px;
+  margin-top: 0.375rem;
+  align-self: flex-start;
+}
+.t-card__avail::before {
+  content: '';
+  width: 5px; height: 5px;
+  background: var(--c-good);
+  border-radius: 50%;
+}
+.t-card__tags {
+  padding: 0 1.25rem 1rem;
   display: flex;
   flex-wrap: wrap;
   gap: 0.375rem;
-  margin-top: 0.25rem;
 }
-.therapist-card__tag {
+.t-card__tag {
   font-size: 0.6875rem;
-  font-weight: 600;
-  letter-spacing: 0.04em;
-  background: var(--c-accent-sub);
-  color: var(--c-accent);
-  padding: 0.2rem 0.55rem;
+  font-weight: 700;
+  letter-spacing: 0.03em;
+  background: var(--c-surface-2);
+  color: var(--c-text-2);
+  padding: 0.2rem 0.6rem;
   border-radius: 4px;
 }
-.therapist-card__meta {
+.t-card__meta {
+  padding: 0.875rem 1.25rem;
+  border-top: 1px solid var(--c-border);
   font-size: 0.8125rem;
   color: var(--c-text-3);
-  margin-top: auto;
-  padding-top: 0.75rem;
-  border-top: 1px solid var(--c-border);
 }
-.therapist-card__footer {
-  padding: 0 1.25rem 1.25rem;
+.t-card__footer {
+  padding: 0.875rem 1.25rem 1.25rem;
 }
-.btn-outline {
+.t-card__btn {
   display: block;
   width: 100%;
-  padding: 0.5625rem;
-  background: transparent;
-  border: 1.5px solid var(--c-border);
-  border-radius: 8px;
+  padding: 0.625rem;
+  background: var(--c-cta);
+  color: white;
   font-size: 0.875rem;
-  font-weight: 600;
-  color: var(--c-text);
+  font-weight: 700;
+  border-radius: 8px;
   text-align: center;
+  border: none;
   cursor: pointer;
-  transition: border-color 0.15s, color 0.15s, background 0.15s;
+  transition: background 0.15s;
 }
-.btn-outline:hover {
-  border-color: var(--c-accent);
-  color: var(--c-accent);
-  background: var(--c-accent-sub);
-}
+.t-card__btn:hover { background: var(--c-cta-h); }
 
 /* ═══════════════════════════════════════
    PRICING
 ═══════════════════════════════════════ */
 .pricing {
   padding: 5.5rem 0;
-  background: var(--c-surface-2);
-  border-top: 1px solid var(--c-border);
-  border-bottom: 1px solid var(--c-border);
+  background: var(--c-bg);
 }
 .pricing-grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: 1.25rem;
   align-items: start;
+  max-width: 920px;
+  margin: 0 auto;
 }
-.price-card {
+.p-card {
   background: var(--c-surface);
-  border: 1.5px solid var(--c-border);
+  border: 2px solid var(--c-border);
   border-radius: var(--r);
   padding: 2rem;
-  box-shadow: var(--s-md);
   display: flex;
   flex-direction: column;
   gap: 0;
+  transition: border-color 0.2s, box-shadow 0.2s;
 }
-.price-card--featured {
+.p-card:hover { border-color: var(--c-accent); }
+.p-card--featured {
   border-color: var(--c-accent);
   box-shadow: 0 0 0 4px var(--c-accent-sub), var(--s-lg);
-  position: relative;
 }
-.price-card__badge {
+.p-card__pill {
   display: inline-block;
-  background: var(--c-accent);
+  background: var(--c-cta);
   color: white;
   font-size: 0.6875rem;
-  font-weight: 700;
+  font-weight: 800;
   letter-spacing: 0.08em;
   text-transform: uppercase;
   padding: 0.25rem 0.75rem;
@@ -794,104 +829,87 @@ ul { list-style: none; }
   margin-bottom: 1.25rem;
   align-self: flex-start;
 }
-.price-card__tier {
+.p-card__tier {
   font-size: 0.75rem;
-  font-weight: 700;
+  font-weight: 800;
   text-transform: uppercase;
   letter-spacing: 0.12em;
   color: var(--c-text-3);
   margin-bottom: 0.5rem;
 }
-.price-card__amount {
+.p-card__price-row {
   display: flex;
   align-items: baseline;
-  gap: 0.25rem;
-  margin-bottom: 0.375rem;
+  gap: 0.2rem;
+  margin-bottom: 0.25rem;
 }
-.price-card__currency {
-  font-size: 1.25rem;
-  font-weight: 700;
-  color: var(--c-text);
-  align-self: flex-start;
-  margin-top: 0.5rem;
-}
-.price-card__price {
-  font-family: var(--serif);
+.p-card__dollar { font-size: 1.25rem; font-weight: 900; color: var(--c-text); margin-top: 0.375rem; }
+.p-card__amount {
   font-size: 3rem;
-  line-height: 1;
+  font-weight: 900;
   color: var(--c-text);
-  letter-spacing: -0.02em;
+  letter-spacing: -0.04em;
+  line-height: 1;
   font-variant-numeric: tabular-nums;
 }
-.price-card__period {
-  font-size: 0.875rem;
-  color: var(--c-text-3);
-}
-.price-card__billed {
+.p-card__period { font-size: 0.9375rem; color: var(--c-text-3); }
+.p-card__billing {
   font-size: 0.8125rem;
   color: var(--c-text-3);
   margin-bottom: 1.5rem;
 }
-.price-card__features {
+.p-card__divider {
+  height: 1px;
+  background: var(--c-border);
+  margin-bottom: 1.375rem;
+}
+.p-card__features {
   display: flex;
   flex-direction: column;
   gap: 0.625rem;
   margin-bottom: 1.75rem;
-  padding-top: 1.25rem;
-  border-top: 1px solid var(--c-border);
 }
-.price-feature {
+.p-feat {
   display: flex;
   align-items: flex-start;
   gap: 0.625rem;
   font-size: 0.875rem;
   color: var(--c-text-2);
+  line-height: 1.4;
 }
-.price-feature svg { color: var(--c-good); flex-shrink: 0; margin-top: 3px; }
-.price-feature--muted { color: var(--c-text-3); }
-.price-feature--muted svg { color: var(--c-text-3); }
-.price-card .btn-primary {
-  width: 100%;
-  padding: 0.75rem;
-  font-size: 0.9375rem;
-  border-radius: 8px;
-  text-align: center;
-}
-.price-card .btn-outline {
-  border-radius: 8px;
-  padding: 0.75rem;
-}
+.p-feat svg { color: var(--c-good); flex-shrink: 0; margin-top: 2px; }
+.p-feat--no { color: var(--c-text-3); }
+.p-feat--no svg { color: var(--c-border); }
+.p-card .btn-cta, .p-card .btn-outline { width: 100%; }
 
 /* ═══════════════════════════════════════
    TESTIMONIALS
 ═══════════════════════════════════════ */
-.testimonials { padding: 5.5rem 0; }
-.testimonials-grid {
+.testi {
+  padding: 5.5rem 0;
+  background: var(--c-surface);
+  border-top: 1px solid var(--c-border);
+  border-bottom: 1px solid var(--c-border);
+}
+.testi-grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: 1.375rem;
 }
 .testi-card {
-  background: var(--c-surface);
+  background: var(--c-bg);
   border: 1px solid var(--c-border);
   border-radius: var(--r);
   padding: 1.75rem;
-  box-shadow: var(--s-md);
   display: flex;
   flex-direction: column;
   gap: 1rem;
 }
-.testi-stars {
-  display: flex;
-  gap: 0.25rem;
-  color: #C87840;
-}
+.testi-stars { display: flex; gap: 0.25rem; color: var(--c-cta); }
 .testi-quote {
-  font-family: var(--serif);
-  font-size: 1.0625rem;
-  line-height: 1.55;
+  font-size: 1rem;
+  line-height: 1.65;
   color: var(--c-text);
-  font-style: italic;
   flex: 1;
 }
 .testi-person {
@@ -901,21 +919,19 @@ ul { list-style: none; }
   padding-top: 1rem;
   border-top: 1px solid var(--c-border);
 }
-.testi-avatar {
-  width: 38px; height: 38px;
+.testi-avi {
+  width: 40px; height: 40px;
   border-radius: 50%;
-  font-size: 0.9375rem;
-  font-weight: 700;
+  font-size: 1rem;
+  font-weight: 800;
   color: white;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  display: flex; align-items: center; justify-content: center;
   flex-shrink: 0;
 }
-.testi-avatar--j { background: linear-gradient(135deg, #C45E70, #7A2838); }
-.testi-avatar--m { background: linear-gradient(135deg, #9A4878, #5A1848); }
-.testi-avatar--r { background: linear-gradient(135deg, #8A4898, #4A1858); }
-.testi-name { font-size: 0.9375rem; font-weight: 700; color: var(--c-text); }
+.testi-avi--j { background: linear-gradient(135deg, #2D9E78, #145A3C); }
+.testi-avi--m { background: linear-gradient(135deg, #5A7FC4, #2A4588); }
+.testi-avi--r { background: linear-gradient(135deg, #8A4AC4, #4A1880); }
+.testi-name { font-size: 0.9375rem; font-weight: 800; color: var(--c-text); letter-spacing: -0.01em; }
 .testi-meta { font-size: 0.8125rem; color: var(--c-text-3); }
 
 /* ═══════════════════════════════════════
@@ -923,24 +939,23 @@ ul { list-style: none; }
 ═══════════════════════════════════════ */
 .faq {
   padding: 5.5rem 0;
-  background: var(--c-surface-2);
-  border-top: 1px solid var(--c-border);
+  background: var(--c-bg);
 }
 .faq__inner {
   display: grid;
-  grid-template-columns: 1fr 2fr;
+  grid-template-columns: 5fr 7fr;
   gap: 4rem;
   align-items: start;
 }
 .faq__left { position: sticky; top: 5rem; }
 .faq__title {
-  font-family: var(--serif);
   font-size: clamp(1.5rem, 3vw, 2.125rem);
-  font-weight: normal;
+  font-weight: 900;
   color: var(--c-text);
-  margin-bottom: 1rem;
+  letter-spacing: -0.025em;
+  line-height: 1.15;
   text-wrap: balance;
-  line-height: 1.2;
+  margin-bottom: 0.875rem;
 }
 .faq__desc {
   font-size: 0.9375rem;
@@ -948,20 +963,18 @@ ul { list-style: none; }
   line-height: 1.65;
   margin-bottom: 1.5rem;
 }
-.faq__contact {
-  font-size: 0.875rem;
+.faq__cta {
+  font-size: 0.9375rem;
+  font-weight: 700;
   color: var(--c-accent);
-  font-weight: 600;
   display: inline-flex;
   align-items: center;
-  gap: 0.35rem;
+  gap: 0.375rem;
   transition: gap 0.15s;
 }
-.faq__contact:hover { gap: 0.55rem; }
+.faq__cta:hover { gap: 0.6rem; }
 .faq-list { display: flex; flex-direction: column; }
-.faq-item {
-  border-bottom: 1px solid var(--c-border);
-}
+.faq-item { border-bottom: 1px solid var(--c-border); }
 .faq-item:first-child { border-top: 1px solid var(--c-border); }
 .faq-btn {
   width: 100%;
@@ -972,18 +985,16 @@ ul { list-style: none; }
   padding: 1.25rem 0;
   background: transparent;
   font-size: 1rem;
-  font-weight: 600;
+  font-weight: 700;
   color: var(--c-text);
   text-align: left;
   cursor: pointer;
+  border: none;
+  letter-spacing: -0.01em;
   transition: color 0.15s;
 }
 .faq-btn:hover { color: var(--c-accent); }
-.faq-btn svg {
-  flex-shrink: 0;
-  color: var(--c-text-3);
-  transition: transform 0.25s var(--ease), color 0.15s;
-}
+.faq-btn svg { flex-shrink: 0; color: var(--c-text-3); transition: transform 0.25s var(--ease), color 0.15s; }
 .faq-btn[aria-expanded="true"] svg { transform: rotate(45deg); color: var(--c-accent); }
 .faq-answer {
   font-size: 0.9375rem;
@@ -997,57 +1008,51 @@ ul { list-style: none; }
 /* ═══════════════════════════════════════
    CTA BANNER
 ═══════════════════════════════════════ */
-.cta-banner {
-  padding: 5.5rem 0;
-  background: var(--c-hero);
-  position: relative;
-  overflow: hidden;
+.cta-strip {
+  background: var(--c-accent);
+  padding: 4.5rem 0;
 }
-.cta-banner::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background: radial-gradient(ellipse 60% 80% at 60% 50%, rgba(196,94,112,0.32) 0%, transparent 70%);
-  pointer-events: none;
+.cta-strip__inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 2rem;
+  flex-wrap: wrap;
 }
-.cta-banner__inner {
-  text-align: center;
-  position: relative;
-  max-width: 600px;
-  margin: 0 auto;
-}
-.cta-banner__title {
-  font-family: var(--serif);
-  font-size: clamp(2rem, 4vw, 3rem);
-  font-weight: normal;
-  color: var(--c-hero-text);
-  margin-bottom: 1rem;
-  letter-spacing: -0.02em;
-  text-wrap: balance;
+.cta-strip__text {}
+.cta-strip__headline {
+  font-size: clamp(1.5rem, 3vw, 2rem);
+  font-weight: 900;
+  color: white;
+  letter-spacing: -0.025em;
   line-height: 1.15;
+  margin-bottom: 0.5rem;
+  text-wrap: balance;
 }
-.cta-banner__sub {
-  font-size: 1.0625rem;
-  color: var(--c-hero-2t);
-  line-height: 1.65;
-  margin-bottom: 2.25rem;
-}
-.cta-banner .btn-primary {
+.cta-strip__sub {
   font-size: 1rem;
-  padding: 0.875rem 2rem;
+  color: rgba(255,255,255,0.75);
+  line-height: 1.55;
+  max-width: 44ch;
 }
-.cta-banner__note {
-  margin-top: 1.125rem;
-  font-size: 0.875rem;
-  color: var(--c-hero-2t);
+.cta-strip .btn-cta {
+  background: white;
+  color: var(--c-accent);
+  flex-shrink: 0;
+}
+.cta-strip .btn-cta:hover { background: var(--c-cta-sub); color: var(--c-cta); }
+.cta-strip__note {
+  font-size: 0.8125rem;
+  color: rgba(255,255,255,0.6);
+  margin-top: 0.625rem;
+  text-align: right;
 }
 
 /* ═══════════════════════════════════════
    FOOTER
 ═══════════════════════════════════════ */
 .footer {
-  background: var(--c-surface);
-  border-top: 1px solid var(--c-border);
+  background: var(--c-stats);
   padding: 3.5rem 0 2rem;
 }
 .footer__grid {
@@ -1059,20 +1064,19 @@ ul { list-style: none; }
 .footer__brand-logo {
   display: flex;
   align-items: center;
-  gap: 0.5rem;
+  gap: 0.625rem;
   margin-bottom: 0.875rem;
 }
 .footer__logo-icon {
-  width: 28px; height: 28px;
-  position: relative;
-  flex-shrink: 0;
+  width: 30px; height: 30px;
+  position: relative; flex-shrink: 0;
 }
 .footer__logo-icon::before {
   content: '';
   position: absolute;
-  width: 18px; height: 18px;
+  width: 20px; height: 20px;
   background: var(--c-accent);
-  border-radius: 50%;
+  border-radius: 50% 50% 50% 4px;
   top: 0; left: 0;
 }
 .footer__logo-icon::after {
@@ -1080,47 +1084,43 @@ ul { list-style: none; }
   position: absolute;
   width: 14px; height: 14px;
   background: var(--c-cta);
-  border-radius: 50%;
+  border-radius: 50% 50% 4px 50%;
   bottom: 0; right: 0;
-  opacity: 0.85;
 }
 .footer__brand-name {
-  font-family: var(--serif);
-  font-size: 1.125rem;
-  color: var(--c-text);
+  font-size: 1.25rem;
+  font-weight: 900;
+  color: white;
+  letter-spacing: -0.03em;
 }
 .footer__brand p {
   font-size: 0.875rem;
-  color: var(--c-text-2);
+  color: rgba(255,255,255,0.5);
   line-height: 1.65;
   max-width: 30ch;
 }
 .footer__col-title {
   font-size: 0.75rem;
-  font-weight: 700;
+  font-weight: 800;
   text-transform: uppercase;
   letter-spacing: 0.1em;
-  color: var(--c-text-3);
+  color: rgba(255,255,255,0.4);
   margin-bottom: 1rem;
 }
-.footer__links {
-  display: flex;
-  flex-direction: column;
-  gap: 0.5625rem;
-}
+.footer__links { display: flex; flex-direction: column; gap: 0.5625rem; }
 .footer__links a {
   font-size: 0.875rem;
-  color: var(--c-text-2);
+  color: rgba(255,255,255,0.6);
   transition: color 0.15s;
 }
-.footer__links a:hover { color: var(--c-accent); }
+.footer__links a:hover { color: white; }
 .footer__disclaimer {
-  background: var(--c-surface-2);
-  border: 1px solid var(--c-border);
+  background: rgba(0,0,0,0.2);
+  border: 1px solid rgba(255,255,255,0.08);
   border-radius: 8px;
   padding: 1rem 1.25rem;
   font-size: 0.8125rem;
-  color: var(--c-text-3);
+  color: rgba(255,255,255,0.4);
   line-height: 1.6;
   margin-bottom: 1.75rem;
 }
@@ -1130,52 +1130,379 @@ ul { list-style: none; }
   justify-content: space-between;
   gap: 1rem;
   flex-wrap: wrap;
-  border-top: 1px solid var(--c-border);
+  border-top: 1px solid rgba(255,255,255,0.1);
   padding-top: 1.5rem;
   font-size: 0.8125rem;
-  color: var(--c-text-3);
+  color: rgba(255,255,255,0.35);
 }
 .footer__bottom-links { display: flex; gap: 1.25rem; }
-.footer__bottom-links a { color: var(--c-text-3); transition: color 0.15s; }
-.footer__bottom-links a:hover { color: var(--c-accent); }
+.footer__bottom-links a { color: rgba(255,255,255,0.35); transition: color 0.15s; }
+.footer__bottom-links a:hover { color: rgba(255,255,255,0.7); }
 
 /* ═══════════════════════════════════════
    RESPONSIVE
 ═══════════════════════════════════════ */
 @media (max-width: 960px) {
   .hero__inner { grid-template-columns: 1fr; }
-  .hero__visual { display: none; }
+  .hero__ui { display: none; }
   .hero { padding: 4rem 0 3.5rem; }
-  .types-grid { grid-template-columns: repeat(2, 1fr); }
+  .stats__grid { grid-template-columns: repeat(2, 1fr); }
+  .stat-item:nth-child(2) { border-right: none; }
   .therapist-grid { grid-template-columns: repeat(2, 1fr); }
-  .pricing-grid { grid-template-columns: 1fr; max-width: 420px; }
-  .testimonials-grid { grid-template-columns: 1fr 1fr; }
+  .pricing-grid { grid-template-columns: 1fr; }
+  .testi-grid { grid-template-columns: 1fr 1fr; }
   .faq__inner { grid-template-columns: 1fr; gap: 2rem; }
   .faq__left { position: static; }
   .footer__grid { grid-template-columns: 1fr 1fr; }
-  .how-steps::before { display: none; }
+  .how-steps { grid-template-columns: 1fr; gap: 1.75rem; }
+  .cta-strip__inner { flex-direction: column; align-items: flex-start; }
+  .cta-strip__note { text-align: left; }
 }
 
 @media (max-width: 640px) {
   .nav__links { display: none; }
-  .nav__signin { display: none; }
-  .types-grid { grid-template-columns: 1fr 1fr; }
+  .stats__grid { grid-template-columns: repeat(2, 1fr); }
   .therapist-grid { grid-template-columns: 1fr 1fr; }
-  .testimonials-grid { grid-template-columns: 1fr; }
-  .how-steps { grid-template-columns: 1fr; gap: 1.5rem; }
+  .testi-grid { grid-template-columns: 1fr; }
   .footer__grid { grid-template-columns: 1fr; }
   .pricing-grid { max-width: 100%; }
+  .treat-tag { font-size: 0.875rem; }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  *, *::before, *::after {
-    animation-duration: 0.01ms !important;
-    transition-duration: 0.01ms !important;
-  }
+  *, *::before, *::after { transition-duration: 0.01ms !important; animation-duration: 0.01ms !important; }
 }
+
+/* ═══════════════════════════════════════
+   SIGN IN / CREATE ACCOUNT MODAL
+═══════════════════════════════════════ */
+.modal-backdrop {
+  position: fixed; inset: 0; z-index: 1000;
+  background: rgba(10,20,16,0.72);
+  backdrop-filter: blur(4px);
+  display: flex; align-items: center; justify-content: center;
+  padding: 1rem;
+  opacity: 0; pointer-events: none;
+  transition: opacity 0.22s var(--ease);
+}
+.modal-backdrop.open { opacity: 1; pointer-events: all; }
+.modal {
+  background: var(--c-surface);
+  border-radius: 20px;
+  box-shadow: var(--s-xl);
+  width: 100%; max-width: 400px;
+  position: relative;
+  transform: translateY(14px) scale(0.97);
+  transition: transform 0.22s var(--ease);
+}
+.modal-backdrop.open .modal { transform: translateY(0) scale(1); }
+.modal__close {
+  position: absolute; top: 1rem; right: 1rem;
+  width: 30px; height: 30px;
+  background: var(--c-surface-2); border: none; border-radius: 50%;
+  color: var(--c-text-3); font-size: 1.125rem; cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  transition: background 0.15s;
+  line-height: 1;
+}
+.modal__close:hover { background: var(--c-border); color: var(--c-text); }
+.modal__head { padding: 1.75rem 2rem 0; text-align: center; }
+.modal__logo {
+  display: inline-flex; align-items: center; gap: 0.5rem;
+  margin-bottom: 1.375rem;
+}
+.modal__logo-icon {
+  width: 26px; height: 26px; position: relative; flex-shrink: 0;
+}
+.modal__logo-icon::before {
+  content: ''; position: absolute;
+  width: 17px; height: 17px; background: var(--c-accent);
+  border-radius: 50% 50% 50% 3px; top: 0; left: 0;
+}
+.modal__logo-icon::after {
+  content: ''; position: absolute;
+  width: 12px; height: 12px; background: var(--c-cta);
+  border-radius: 50% 50% 3px 50%; bottom: 0; right: 0;
+}
+.modal__logo-name {
+  font-size: 1.125rem; font-weight: 800;
+  color: var(--c-text); letter-spacing: -0.03em;
+}
+.modal__tabs {
+  display: flex; background: var(--c-surface-2);
+  border-radius: 10px; padding: 3px; gap: 2px; margin: 0 2rem;
+}
+.modal__tab {
+  flex: 1; padding: 0.5rem;
+  font-size: 0.875rem; font-weight: 700;
+  background: transparent; border: none; border-radius: 8px;
+  color: var(--c-text-2); cursor: pointer;
+  transition: background 0.15s, color 0.15s;
+}
+.modal__tab.active { background: var(--c-surface); color: var(--c-text); box-shadow: var(--s-sm); }
+.modal__body { padding: 1.375rem 2rem 2rem; }
+.form-group { display: flex; flex-direction: column; gap: 0.3rem; margin-bottom: 1rem; }
+.form-label-row { display: flex; align-items: center; justify-content: space-between; }
+.form-label { font-size: 0.8125rem; font-weight: 700; color: var(--c-text-2); }
+.form-forgot { font-size: 0.8125rem; font-weight: 600; color: var(--c-accent); transition: opacity 0.15s; }
+.form-forgot:hover { opacity: 0.75; }
+.form-input {
+  padding: 0.6875rem 0.875rem;
+  border: 1.5px solid var(--c-border);
+  border-radius: 10px;
+  background: var(--c-bg); color: var(--c-text);
+  font-size: 0.9375rem; font-family: inherit; outline: none;
+  transition: border-color 0.15s, box-shadow 0.15s;
+}
+.form-input:focus { border-color: var(--c-accent); box-shadow: 0 0 0 3px var(--c-accent-sub); }
+.form-input::placeholder { color: var(--c-text-3); }
+.form-check {
+  display: flex; align-items: flex-start; gap: 0.625rem;
+  font-size: 0.8125rem; color: var(--c-text-2);
+  line-height: 1.5; margin-bottom: 1rem; cursor: pointer;
+}
+.form-check input[type="checkbox"] {
+  width: 15px; height: 15px; flex-shrink: 0;
+  margin-top: 2px; accent-color: var(--c-accent);
+}
+.form-check a { color: var(--c-accent); }
+.modal-form-btn {
+  width: 100%; padding: 0.75rem;
+  background: var(--c-cta); color: white;
+  font-size: 1rem; font-weight: 700;
+  border: none; border-radius: 50px; cursor: pointer;
+  transition: background 0.15s, transform 0.15s;
+  margin-bottom: 1.125rem;
+}
+.modal-form-btn:hover { background: var(--c-cta-h); transform: translateY(-1px); }
+.modal-divider {
+  display: flex; align-items: center; gap: 0.75rem;
+  font-size: 0.8125rem; color: var(--c-text-3); margin-bottom: 1.125rem;
+}
+.modal-divider::before, .modal-divider::after { content: ''; flex: 1; height: 1px; background: var(--c-border); }
+.modal-google {
+  width: 100%; padding: 0.6875rem;
+  background: transparent; border: 1.5px solid var(--c-border);
+  border-radius: 50px; font-size: 0.9375rem; font-weight: 600;
+  color: var(--c-text); cursor: pointer;
+  display: flex; align-items: center; justify-content: center; gap: 0.625rem;
+  transition: background 0.15s, border-color 0.15s; font-family: inherit;
+}
+.modal-google:hover { background: var(--c-surface-2); border-color: var(--c-accent); }
+.modal__connect-note {
+  background: var(--c-accent-sub); border: 1px solid var(--c-border);
+  border-radius: 10px; padding: 0.625rem 0.875rem;
+  font-size: 0.8125rem; color: var(--c-text-2);
+  margin-bottom: 1rem; display: flex; align-items: center; gap: 0.5rem;
+}
+.modal__connect-note strong { color: var(--c-accent); }
+
+/* ═══════════════════════════════════════
+   LIVE VIDEO MODAL
+═══════════════════════════════════════ */
+.video-backdrop {
+  position: fixed; inset: 0; z-index: 2000;
+  background: #080F0B;
+  display: flex; flex-direction: column; align-items: stretch;
+  opacity: 0; pointer-events: none;
+  transition: opacity 0.28s var(--ease);
+}
+.video-backdrop.open { opacity: 1; pointer-events: all; }
+.video__header {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 1rem 1.5rem;
+  position: absolute; top: 0; left: 0; right: 0; z-index: 10;
+  background: linear-gradient(180deg, rgba(0,0,0,0.75) 0%, transparent 100%);
+}
+.video__header-left { display: flex; align-items: center; gap: 0.75rem; }
+.video__header-avi {
+  width: 36px; height: 36px; border-radius: 50%;
+  background: linear-gradient(135deg, #3DBD90, #1F6B50);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 0.8125rem; font-weight: 800; color: white;
+}
+.video__header-name { font-size: 0.9375rem; font-weight: 700; color: white; line-height: 1.2; }
+.video__header-timer {
+  font-size: 0.8125rem; color: rgba(255,255,255,0.6);
+  font-variant-numeric: tabular-nums;
+}
+.video__enc-badge {
+  display: flex; align-items: center; gap: 0.375rem;
+  font-size: 0.75rem; font-weight: 600; color: rgba(255,255,255,0.5);
+  background: rgba(255,255,255,0.09); border-radius: 50px;
+  padding: 0.3rem 0.75rem;
+}
+.video__enc-badge::before {
+  content: ''; width: 6px; height: 6px;
+  background: #5CE890; border-radius: 50%; flex-shrink: 0;
+}
+.video__stage {
+  flex: 1; position: relative;
+  display: flex; align-items: center; justify-content: center; overflow: hidden;
+}
+.video__therapist-bg {
+  position: absolute; inset: 0;
+  background: linear-gradient(160deg, #0D2C22 0%, #193D2E 50%, #0A1C14 100%);
+  display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 1rem;
+}
+.video__therapist-avi {
+  width: 110px; height: 110px; border-radius: 50%;
+  background: linear-gradient(135deg, #3DBD90, #145A3C);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 2.25rem; font-weight: 800; color: white; letter-spacing: -0.02em;
+  box-shadow: 0 0 0 8px rgba(61,189,144,0.18), 0 0 0 18px rgba(61,189,144,0.07);
+}
+.video__therapist-name { font-size: 1rem; font-weight: 700; color: rgba(255,255,255,0.85); }
+.video__therapist-sub { font-size: 0.875rem; color: rgba(255,255,255,0.4); }
+.video__self-pip {
+  position: absolute; bottom: 5.75rem; right: 1.25rem;
+  width: 130px; height: 98px;
+  background: linear-gradient(135deg, #1E3A2E, #0E2018);
+  border-radius: 12px; border: 2px solid rgba(255,255,255,0.18);
+  box-shadow: 0 4px 24px rgba(0,0,0,0.5);
+  display: flex; align-items: center; justify-content: center; flex-direction: column; gap: 0.375rem;
+}
+.video__self-pip-label { font-size: 0.6875rem; font-weight: 700; color: rgba(255,255,255,0.45); }
+.video__controls {
+  position: absolute; bottom: 0; left: 0; right: 0;
+  display: flex; align-items: center; justify-content: center;
+  gap: 1.25rem; padding: 1.25rem 1.5rem 1.75rem;
+  background: linear-gradient(0deg, rgba(0,0,0,0.82) 0%, transparent 100%);
+}
+.vid-ctrl { display: flex; flex-direction: column; align-items: center; gap: 0.375rem; }
+.vid-btn {
+  width: 52px; height: 52px; border-radius: 50%; border: none;
+  cursor: pointer; display: flex; align-items: center; justify-content: center;
+  transition: background 0.15s, transform 0.12s; flex-shrink: 0;
+}
+.vid-btn:active { transform: scale(0.9); }
+.vid-btn--ctrl { background: rgba(255,255,255,0.16); color: white; }
+.vid-btn--ctrl:hover { background: rgba(255,255,255,0.26); }
+.vid-btn--ctrl.muted { background: rgba(255,255,255,0.08); color: rgba(255,255,255,0.4); }
+.vid-btn--end { background: #E05252; color: white; width: 60px; height: 60px; }
+.vid-btn--end:hover { background: #C43E3E; }
+.vid-btn__label { font-size: 0.6875rem; font-weight: 600; color: rgba(255,255,255,0.5); }
 </style>
 </head>
 <body>
+
+<!-- ── SIGN IN / CREATE ACCOUNT MODAL ── -->
+<div class="modal-backdrop" id="authModal" role="dialog" aria-modal="true" aria-labelledby="authModalTitle">
+  <div class="modal">
+    <button class="modal__close" id="authClose" aria-label="Close">&#10005;</button>
+    <div class="modal__head">
+      <div class="modal__logo" aria-hidden="true">
+        <div class="modal__logo-icon"></div>
+        <span class="modal__logo-name">Thrive</span>
+      </div>
+    </div>
+    <div class="modal__tabs" role="tablist">
+      <button class="modal__tab active" role="tab" aria-selected="true" data-tab="signin" id="authModalTitle">Sign in</button>
+      <button class="modal__tab" role="tab" aria-selected="false" data-tab="signup">Create account</button>
+    </div>
+    <div class="modal__body">
+
+      <!-- Sign in panel -->
+      <div id="panelSignin">
+        <div class="modal__connect-note" id="connectNote" style="display:none" aria-live="polite">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" aria-hidden="true"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+          Sign in to connect with <strong id="connectName"></strong>
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="siEmail">Email address</label>
+          <input class="form-input" id="siEmail" type="email" placeholder="you@example.com" autocomplete="email">
+        </div>
+        <div class="form-group">
+          <div class="form-label-row">
+            <label class="form-label" for="siPw">Password</label>
+            <a href="#" class="form-forgot" tabindex="0">Forgot password?</a>
+          </div>
+          <input class="form-input" id="siPw" type="password" placeholder="••••••••" autocomplete="current-password">
+        </div>
+        <button class="modal-form-btn">Sign in</button>
+        <div class="modal-divider">or</div>
+        <button class="modal-google" type="button">
+          <svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true"><path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/><path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/><path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z" fill="#FBBC05"/><path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/></svg>
+          Continue with Google
+        </button>
+      </div>
+
+      <!-- Create account panel -->
+      <div id="panelSignup" style="display:none">
+        <div class="form-group">
+          <label class="form-label" for="suEmail">Email address</label>
+          <input class="form-input" id="suEmail" type="email" placeholder="you@example.com" autocomplete="email">
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="suPw">Create password</label>
+          <input class="form-input" id="suPw" type="password" placeholder="At least 8 characters" autocomplete="new-password">
+        </div>
+        <label class="form-check">
+          <input type="checkbox">
+          I agree to Thrive's <a href="#">Terms of Service</a> and <a href="#">Privacy Policy</a>
+        </label>
+        <button class="modal-form-btn">Create account — it's free</button>
+        <div class="modal-divider">or</div>
+        <button class="modal-google" type="button">
+          <svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true"><path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/><path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/><path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z" fill="#FBBC05"/><path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/></svg>
+          Sign up with Google
+        </button>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- ── LIVE VIDEO SESSION MODAL ── -->
+<div class="video-backdrop" id="videoModal" role="dialog" aria-modal="true" aria-label="Live video session with Dr. Amara Osei">
+  <div class="video__header">
+    <div class="video__header-left">
+      <div class="video__header-avi" aria-hidden="true">AO</div>
+      <div>
+        <div class="video__header-name">Dr. Amara Osei</div>
+        <div class="video__header-timer" id="sessionTimer">00:00</div>
+      </div>
+    </div>
+    <div class="video__enc-badge">Session encrypted</div>
+  </div>
+  <div class="video__stage">
+    <div class="video__therapist-bg" aria-hidden="true">
+      <div class="video__therapist-avi">AO</div>
+      <div class="video__therapist-name">Dr. Amara Osei</div>
+      <div class="video__therapist-sub">Ph.D · Clinical Psychologist</div>
+    </div>
+    <div class="video__self-pip" aria-hidden="true">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.3)" stroke-width="1.5" stroke-linecap="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+      <span class="video__self-pip-label">You</span>
+    </div>
+  </div>
+  <div class="video__controls">
+    <div class="vid-ctrl">
+      <button class="vid-btn vid-btn--ctrl" id="btnMic" aria-label="Mute microphone" aria-pressed="false">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></svg>
+      </button>
+      <span class="vid-btn__label" id="micLabel">Mute</span>
+    </div>
+    <div class="vid-ctrl">
+      <button class="vid-btn vid-btn--ctrl" id="btnCam" aria-label="Turn off camera" aria-pressed="false">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2"/></svg>
+      </button>
+      <span class="vid-btn__label" id="camLabel">Camera</span>
+    </div>
+    <div class="vid-ctrl">
+      <button class="vid-btn vid-btn--end" id="btnEndCall" aria-label="End session">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M10.68 13.31a16 16 0 0 0 3.41 2.6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7 2 2 0 0 1 1.72 2v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.42 19.42 0 0 1 4.26 8.89a19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 3.17 0h3a2 2 0 0 1 2 1.72c.13.96.36 1.9.7 2.81a2 2 0 0 1-.45 2.11L7.15 7.91"/><line x1="23" y1="1" x2="1" y2="23"/></svg>
+      </button>
+      <span class="vid-btn__label" style="color:rgba(255,255,255,0.5)">End</span>
+    </div>
+    <div class="vid-ctrl">
+      <button class="vid-btn vid-btn--ctrl" aria-label="Open chat">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+      </button>
+      <span class="vid-btn__label">Chat</span>
+    </div>
+  </div>
+</div>
 
 <!-- ── NAV ── -->
 <nav class="nav">
@@ -1191,8 +1518,8 @@ ul { list-style: none; }
       <li><a href="#faq">FAQ</a></li>
     </ul>
     <div class="nav__right">
-      <a href="#" class="nav__signin">Sign in</a>
-      <button class="btn-primary">Get started</button>
+      <button class="btn-ghost js-open-auth" data-tab="signin">Sign in</button>
+      <button class="btn-cta btn-cta--sm js-open-auth" data-tab="signup">Get started</button>
       <button class="nav__theme" id="themeToggle" aria-label="Toggle dark mode">
         <svg id="iconSun" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M2 12h2M20 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>
         <svg id="iconMoon" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" style="display:none" aria-hidden="true"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
@@ -1205,51 +1532,106 @@ ul { list-style: none; }
 <section class="hero">
   <div class="container hero__inner">
     <div>
-      <div class="hero__badge">
-        <span class="hero__badge-dot" aria-hidden="true"></span>
-        50,000+ licensed therapists available
+      <div class="hero__label">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+        Rated #1 online therapy platform
       </div>
-      <h1 class="hero__headline">Therapy that fits<br><em>around your life</em></h1>
-      <p class="hero__sub">Connect with a licensed therapist by message, voice, or video call — on your schedule, from wherever you are. Start in under 48 hours.</p>
-      <div class="hero__cta-row">
-        <button class="btn-primary">Find my therapist</button>
-        <a href="#how" class="hero__how-link">
-          How it works
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
-        </a>
+      <h1 class="hero__headline">
+        Online therapy<br>that <span>actually works</span>
+      </h1>
+      <p class="hero__sub">
+        Get matched with a licensed therapist and start feeling better — by message, phone, or video, whenever works for you.
+      </p>
+      <div class="hero__actions">
+        <button class="btn-cta btn-cta--lg js-open-auth" data-tab="signup">Get matched now</button>
+        <button class="btn-outline" onclick="document.getElementById('how').scrollIntoView({behavior:'smooth'})">Learn how it works</button>
       </div>
-      <div class="hero__trust">
-        <span class="hero__trust-item">
-          <svg class="hero__trust-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
-          Licensed &amp; accredited
+      <div class="hero__note">
+        <span class="hero__note-item">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
+          Licensed therapists only
         </span>
-        <span class="hero__trust-item">
-          <svg class="hero__trust-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
-          Private &amp; secure
+        <span class="hero__note-item">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
+          Start within 48 hours
         </span>
-        <span class="hero__trust-item">
-          <svg class="hero__trust-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
+        <span class="hero__note-item">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
           Cancel anytime
         </span>
       </div>
     </div>
 
-    <div class="hero__visual" aria-hidden="true">
-      <div class="conn-ring conn-ring--1"></div>
-      <div class="conn-ring conn-ring--2"></div>
-      <div class="conn-ring conn-ring--3"></div>
-      <div class="conn-bubble conn-bubble--a"></div>
-      <div class="conn-bubble conn-bubble--b"></div>
-      <div class="conn-bubble conn-bubble--c"></div>
-      <div class="conn-bubble conn-bubble--d"></div>
-      <div class="conn-line conn-line--1"></div>
-      <div class="conn-line conn-line--2"></div>
-      <div class="hero__msg-card">
-        <div class="hero__msg-meta">Your session — Dr. Osei</div>
-        <div class="hero__msg-bubbles">
-          <div class="hero__msg-bubble">"I've been feeling overwhelmed at work and not sleeping well."</div>
-          <div class="hero__msg-bubble hero__msg-bubble--reply">"That's really common. Let's talk about what's driving that feeling."</div>
+    <div class="hero__ui" aria-hidden="true">
+      <!-- Match float card -->
+      <div class="ui-float ui-float--match">
+        <div class="ui-float__label">Your match</div>
+        <div class="ui-float__name">Dr. Amara Osei</div>
+        <div class="ui-float__sub">Ph.D · Anxiety & Depression</div>
+        <button class="ui-float__connect">Connect</button>
+      </div>
+
+      <!-- Phone mockup -->
+      <div class="ui-phone">
+        <div class="ui-phone__bar">
+          <div class="ui-phone__avatar">AO</div>
+          <div class="ui-phone__info">
+            <div class="ui-phone__name">Dr. Amara Osei</div>
+            <div class="ui-phone__status">
+              <span class="ui-phone__dot"></span>
+              Online now
+            </div>
+          </div>
         </div>
+        <div class="ui-phone__body">
+          <div class="ui-msg">I've been feeling really overwhelmed lately and not sleeping well.</div>
+          <div class="ui-msg ui-msg--me">That's something we can definitely work through together.</div>
+          <div class="ui-msg">What do you think is driving that feeling most right now?</div>
+        </div>
+        <div class="ui-phone__input">
+          <div class="ui-phone__input-field">Type a message…</div>
+          <div class="ui-phone__send">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 2 11 13M22 2 15 22l-4-9-9-4 20-7z"/></svg>
+          </div>
+        </div>
+      </div>
+
+      <!-- Session float card -->
+      <div class="ui-float ui-float--session" id="heroVideoCard" role="button" tabindex="0" aria-label="Join live video session" style="cursor:pointer">
+        <div class="ui-float__label">Upcoming · tap to join</div>
+        <div class="ui-float__session-row">
+          <div class="ui-float__session-icon">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2"/></svg>
+          </div>
+          <div>
+            <div class="ui-float__session-text">Video session</div>
+            <div class="ui-float__session-time">Today at 4:00 pm</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── STATS ── -->
+<section class="stats" aria-label="Key statistics">
+  <div class="container">
+    <div class="stats__grid">
+      <div class="stat-item">
+        <div class="stat-item__value">4.5<span>M+</span></div>
+        <div class="stat-item__label">People helped worldwide</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-item__value">50<span>K+</span></div>
+        <div class="stat-item__label">Licensed therapists</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-item__value">100<span>+</span></div>
+        <div class="stat-item__label">Specialties covered</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-item__value">4.8<span>★</span></div>
+        <div class="stat-item__label">Average member rating</div>
       </div>
     </div>
   </div>
@@ -1258,88 +1640,58 @@ ul { list-style: none; }
 <!-- ── HOW IT WORKS ── -->
 <section class="how" id="how" aria-labelledby="howHeading">
   <div class="container">
-    <div class="sec-header">
-      <p class="sec-eyebrow">Getting started</p>
-      <h2 class="sec-title" id="howHeading">Three steps to your first session</h2>
+    <div class="sec-hdr sec-hdr--center">
+      <p class="sec-label">Getting started</p>
+      <h2 class="sec-title" id="howHeading">Therapy in three simple steps</h2>
       <p class="sec-sub">You can be matched with a therapist and have your first session within 48 hours of signing up.</p>
     </div>
     <div class="how-steps">
       <div class="how-step">
-        <div class="how-step__num how-step__num--active" style="background:var(--c-accent);border-color:var(--c-accent);color:white;">1</div>
-        <div class="how-step__title">Tell us about yourself</div>
-        <div class="how-step__desc">Answer a short questionnaire about your situation, preferences, and goals. It takes about five minutes and is entirely confidential.</div>
+        <div class="how-step__num">1</div>
+        <div class="how-step__title">Answer a few questions</div>
+        <div class="how-step__desc">Tell us about what you're going through, your preferences, and your goals. It takes about five minutes and is completely confidential.</div>
       </div>
       <div class="how-step">
         <div class="how-step__num">2</div>
         <div class="how-step__title">Get matched with a therapist</div>
-        <div class="how-step__desc">Our matching process considers your needs, therapist specialties, availability, and communication preferences. You can switch at any time, for any reason.</div>
+        <div class="how-step__desc">We match you based on your needs and therapist specialties. You're free to switch therapists at any time, for any reason, at no extra cost.</div>
       </div>
       <div class="how-step">
         <div class="how-step__num">3</div>
         <div class="how-step__title">Start therapy your way</div>
-        <div class="how-step__desc">Connect by messaging, voice note, phone call, or live video — whichever fits your comfort and schedule. Therapy should work around you, not the other way around.</div>
+        <div class="how-step__desc">Connect by message, voice note, phone call, or live video — on your schedule. Therapy built around your life, not the other way around.</div>
       </div>
     </div>
   </div>
 </section>
 
-<!-- ── THERAPY TYPES ── -->
-<section class="types" aria-labelledby="typesHeading">
+<!-- ── WHAT WE TREAT ── -->
+<section class="treat" aria-labelledby="treatHeading">
   <div class="container">
-    <div class="sec-header">
-      <p class="sec-eyebrow">What we offer</p>
-      <h2 class="sec-title" id="typesHeading">Therapy for every situation</h2>
+    <div class="sec-hdr">
+      <p class="sec-label">What we can help with</p>
+      <h2 class="sec-title" id="treatHeading">Whatever you're going through</h2>
+      <p class="sec-sub">Our therapists are trained across a wide range of areas. If you don't see yours listed, we can still help.</p>
     </div>
-    <div class="types-grid">
-
-      <a href="#" class="type-card">
-        <div class="type-card__icon type-card__icon--blue">
-          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
-        </div>
-        <div class="type-card__title">Individual Therapy</div>
-        <div class="type-card__desc">One-on-one sessions for anxiety, depression, stress, grief, self-esteem, life transitions, and more.</div>
-        <span class="type-card__link">
-          Learn more
-          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
-        </span>
-      </a>
-
-      <a href="#" class="type-card">
-        <div class="type-card__icon type-card__icon--rose">
-          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
-        </div>
-        <div class="type-card__title">Couples Therapy</div>
-        <div class="type-card__desc">Strengthen your relationship, improve communication, work through conflict, or navigate a major life change together.</div>
-        <span class="type-card__link">
-          Learn more
-          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
-        </span>
-      </a>
-
-      <a href="#" class="type-card">
-        <div class="type-card__icon type-card__icon--amber">
-          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M12 22c5.52 0 10-4.48 10-10S17.52 2 12 2 2 6.48 2 12s4.48 10 10 10z"/><path d="M12 8v4l3 3"/></svg>
-        </div>
-        <div class="type-card__title">Teen Therapy</div>
-        <div class="type-card__desc">Specialised support for ages 13–17 dealing with school pressure, identity, social anxiety, and family stress.</div>
-        <span class="type-card__link">
-          Learn more
-          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
-        </span>
-      </a>
-
-      <a href="#" class="type-card">
-        <div class="type-card__icon type-card__icon--sage">
-          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
-        </div>
-        <div class="type-card__title">Psychiatry &amp; Medication</div>
-        <div class="type-card__desc">Consult with a psychiatrist for medication evaluation and management, alongside or independent of talk therapy.</div>
-        <span class="type-card__link">
-          Learn more
-          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
-        </span>
-      </a>
-
+    <div class="treat-tags" role="list">
+      <span class="treat-tag treat-tag--active" role="listitem">Anxiety</span>
+      <span class="treat-tag" role="listitem">Depression</span>
+      <span class="treat-tag" role="listitem">Stress</span>
+      <span class="treat-tag" role="listitem">Relationship issues</span>
+      <span class="treat-tag" role="listitem">Grief &amp; loss</span>
+      <span class="treat-tag" role="listitem">Trauma &amp; PTSD</span>
+      <span class="treat-tag" role="listitem">OCD</span>
+      <span class="treat-tag" role="listitem">Self-esteem</span>
+      <span class="treat-tag" role="listitem">Life transitions</span>
+      <span class="treat-tag" role="listitem">Sleep issues</span>
+      <span class="treat-tag" role="listitem">Anger management</span>
+      <span class="treat-tag" role="listitem">LGBTQ+ issues</span>
+      <span class="treat-tag" role="listitem">Eating concerns</span>
+      <span class="treat-tag" role="listitem">Parenting</span>
+      <span class="treat-tag" role="listitem">Addiction</span>
+      <span class="treat-tag" role="listitem">Chronic illness</span>
+      <span class="treat-tag" role="listitem">Work &amp; burnout</span>
+      <span class="treat-tag" role="listitem">Family conflict</span>
     </div>
   </div>
 </section>
@@ -1347,111 +1699,95 @@ ul { list-style: none; }
 <!-- ── THERAPISTS ── -->
 <section class="therapists" id="therapists" aria-labelledby="therapistsHeading">
   <div class="container">
-    <div class="therapists-header-row">
+    <div class="therapists__hdr">
       <div>
-        <p class="sec-eyebrow">Our therapists</p>
-        <h2 class="sec-title" id="therapistsHeading">People behind your care</h2>
+        <p class="sec-label">Our therapists</p>
+        <h2 class="sec-title" id="therapistsHeading">Meet some of our team</h2>
       </div>
-      <a href="#" class="type-card__link" style="font-size:0.875rem">
+      <a href="#" class="faq__cta">
         Browse all therapists
-        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
       </a>
     </div>
     <div class="therapist-grid">
 
-      <!-- Therapist 1 -->
-      <div class="therapist-card">
-        <div class="therapist-card__avatar">
-          <div class="avatar-bg avatar-bg--amara">
-            <div class="avatar-shape"></div>
-            <span class="avatar-initial">AO</span>
+      <div class="t-card">
+        <div class="t-card__top">
+          <div class="t-card__avi t-card__avi--a">AO</div>
+          <div class="t-card__info">
+            <div class="t-card__name">Dr. Amara Osei</div>
+            <div class="t-card__creds">Ph.D · Clinical Psychologist</div>
+            <div class="t-card__avail">Available today</div>
           </div>
-          <span class="therapist-card__badge">Available</span>
         </div>
-        <div class="therapist-card__body">
-          <div class="therapist-card__name">Dr. Amara Osei</div>
-          <div class="therapist-card__creds">Ph.D · Clinical Psychologist</div>
-          <div class="therapist-card__tags">
-            <span class="therapist-card__tag">Anxiety</span>
-            <span class="therapist-card__tag">Depression</span>
-            <span class="therapist-card__tag">Trauma</span>
-          </div>
-          <div class="therapist-card__meta">12 years experience · CBT &amp; ACT</div>
+        <div class="t-card__tags">
+          <span class="t-card__tag">Anxiety</span>
+          <span class="t-card__tag">Depression</span>
+          <span class="t-card__tag">Trauma</span>
         </div>
-        <div class="therapist-card__footer">
-          <button class="btn-outline">View profile</button>
+        <div class="t-card__meta">12 years experience · CBT &amp; ACT</div>
+        <div class="t-card__footer">
+          <button class="t-card__btn js-open-auth" data-tab="signup">View &amp; connect</button>
         </div>
       </div>
 
-      <!-- Therapist 2 -->
-      <div class="therapist-card">
-        <div class="therapist-card__avatar">
-          <div class="avatar-bg avatar-bg--james">
-            <div class="avatar-shape"></div>
-            <span class="avatar-initial">JW</span>
+      <div class="t-card">
+        <div class="t-card__top">
+          <div class="t-card__avi t-card__avi--b">JW</div>
+          <div class="t-card__info">
+            <div class="t-card__name">James Whitfield</div>
+            <div class="t-card__creds">LMFT · Licensed Therapist</div>
+            <div class="t-card__avail">Available today</div>
           </div>
-          <span class="therapist-card__badge">Available</span>
         </div>
-        <div class="therapist-card__body">
-          <div class="therapist-card__name">James Whitfield</div>
-          <div class="therapist-card__creds">LMFT · Licensed Marriage &amp; Family</div>
-          <div class="therapist-card__tags">
-            <span class="therapist-card__tag">Relationships</span>
-            <span class="therapist-card__tag">Couples</span>
-            <span class="therapist-card__tag">Grief</span>
-          </div>
-          <div class="therapist-card__meta">9 years experience · EFT</div>
+        <div class="t-card__tags">
+          <span class="t-card__tag">Relationships</span>
+          <span class="t-card__tag">Couples</span>
+          <span class="t-card__tag">Grief</span>
         </div>
-        <div class="therapist-card__footer">
-          <button class="btn-outline">View profile</button>
+        <div class="t-card__meta">9 years experience · EFT</div>
+        <div class="t-card__footer">
+          <button class="t-card__btn js-open-auth" data-tab="signup">View &amp; connect</button>
         </div>
       </div>
 
-      <!-- Therapist 3 -->
-      <div class="therapist-card">
-        <div class="therapist-card__avatar">
-          <div class="avatar-bg avatar-bg--priya">
-            <div class="avatar-shape"></div>
-            <span class="avatar-initial">PS</span>
+      <div class="t-card">
+        <div class="t-card__top">
+          <div class="t-card__avi t-card__avi--c">PS</div>
+          <div class="t-card__info">
+            <div class="t-card__name">Dr. Priya Sharma</div>
+            <div class="t-card__creds">Psy.D · Licensed Psychologist</div>
+            <div class="t-card__avail">Available today</div>
           </div>
-          <span class="therapist-card__badge">Available</span>
         </div>
-        <div class="therapist-card__body">
-          <div class="therapist-card__name">Dr. Priya Sharma</div>
-          <div class="therapist-card__creds">Psy.D · Licensed Psychologist</div>
-          <div class="therapist-card__tags">
-            <span class="therapist-card__tag">OCD</span>
-            <span class="therapist-card__tag">Phobias</span>
-            <span class="therapist-card__tag">Life transitions</span>
-          </div>
-          <div class="therapist-card__meta">7 years experience · CBT &amp; ERP</div>
+        <div class="t-card__tags">
+          <span class="t-card__tag">OCD</span>
+          <span class="t-card__tag">Phobias</span>
+          <span class="t-card__tag">Life transitions</span>
         </div>
-        <div class="therapist-card__footer">
-          <button class="btn-outline">View profile</button>
+        <div class="t-card__meta">7 years experience · CBT &amp; ERP</div>
+        <div class="t-card__footer">
+          <button class="t-card__btn js-open-auth" data-tab="signup">View &amp; connect</button>
         </div>
       </div>
 
-      <!-- Therapist 4 -->
-      <div class="therapist-card">
-        <div class="therapist-card__avatar">
-          <div class="avatar-bg avatar-bg--marcus">
-            <div class="avatar-shape"></div>
-            <span class="avatar-initial">MC</span>
+      <div class="t-card">
+        <div class="t-card__top">
+          <div class="t-card__avi t-card__avi--d">MC</div>
+          <div class="t-card__info">
+            <div class="t-card__name">Marcus Chen</div>
+            <div class="t-card__creds">LCSW · Clinical Social Worker</div>
+            <div class="t-card__avail">Available today</div>
           </div>
-          <span class="therapist-card__badge">Available</span>
         </div>
-        <div class="therapist-card__body">
-          <div class="therapist-card__name">Marcus Chen</div>
-          <div class="therapist-card__creds">LCSW · Licensed Clinical Social Worker</div>
-          <div class="therapist-card__tags">
-            <span class="therapist-card__tag">Identity</span>
-            <span class="therapist-card__tag">LGBTQ+</span>
-            <span class="therapist-card__tag">Self-esteem</span>
-          </div>
-          <div class="therapist-card__meta">11 years experience · Person-centred</div>
+        <div class="t-card__tags">
+          <span class="t-card__tag">Identity</span>
+          <span class="t-card__tag">LGBTQ+</span>
+          <span class="t-card__tag">Self-esteem</span>
         </div>
-        <div class="therapist-card__footer">
-          <button class="btn-outline">View profile</button>
+        <div class="t-card__meta">11 years experience · Person-centred</div>
+        <div class="t-card__footer">
+          <button class="t-card__btn js-open-auth" data-tab="signup">View &amp; connect</button>
         </div>
       </div>
 
@@ -1462,99 +1798,102 @@ ul { list-style: none; }
 <!-- ── PRICING ── -->
 <section class="pricing" id="pricing" aria-labelledby="pricingHeading">
   <div class="container">
-    <div class="sec-header" style="text-align:center;max-width:500px;margin-left:auto;margin-right:auto;margin-bottom:3rem">
-      <p class="sec-eyebrow">Plans &amp; pricing</p>
+    <div class="sec-hdr sec-hdr--center">
+      <p class="sec-label">Plans &amp; pricing</p>
       <h2 class="sec-title" id="pricingHeading">Simple, transparent pricing</h2>
-      <p class="sec-sub" style="margin:0.625rem auto 0">Financial aid is available for those who qualify. All plans include unlimited messaging with your therapist.</p>
+      <p class="sec-sub">Financial aid available for those who qualify. All plans include unlimited messaging with your therapist.</p>
     </div>
-    <div class="pricing-grid" style="max-width:900px;margin:0 auto">
+    <div class="pricing-grid">
 
-      <div class="price-card">
-        <div class="price-card__tier">Basic</div>
-        <div class="price-card__amount">
-          <span class="price-card__currency">$</span>
-          <span class="price-card__price">60</span>
-          <span class="price-card__period">/ week</span>
+      <div class="p-card">
+        <div class="p-card__tier">Basic</div>
+        <div class="p-card__price-row">
+          <span class="p-card__dollar">$</span>
+          <span class="p-card__amount">60</span>
+          <span class="p-card__period">/wk</span>
         </div>
-        <div class="price-card__billed">Billed monthly · cancel anytime</div>
-        <ul class="price-card__features">
-          <li class="price-feature">
+        <div class="p-card__billing">Billed monthly · cancel anytime</div>
+        <div class="p-card__divider"></div>
+        <ul class="p-card__features">
+          <li class="p-feat">
             <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
-            Unlimited messaging therapy
+            Unlimited messaging
           </li>
-          <li class="price-feature">
+          <li class="p-feat">
             <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
-            Licensed therapist matching
+            Therapist matching
           </li>
-          <li class="price-feature price-feature--muted">
+          <li class="p-feat p-feat--no">
             <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
             Live video sessions
           </li>
-          <li class="price-feature price-feature--muted">
+          <li class="p-feat p-feat--no">
             <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
-            Phone &amp; voice sessions
+            Group workshops
           </li>
         </ul>
-        <button class="btn-outline">Get started</button>
+        <button class="btn-outline js-open-auth" data-tab="signup" style="width:100%">Get started</button>
       </div>
 
-      <div class="price-card price-card--featured">
-        <span class="price-card__badge">Most popular</span>
-        <div class="price-card__tier">Standard</div>
-        <div class="price-card__amount">
-          <span class="price-card__currency">$</span>
-          <span class="price-card__price">80</span>
-          <span class="price-card__period">/ week</span>
+      <div class="p-card p-card--featured">
+        <span class="p-card__pill">Most popular</span>
+        <div class="p-card__tier">Standard</div>
+        <div class="p-card__price-row">
+          <span class="p-card__dollar">$</span>
+          <span class="p-card__amount">80</span>
+          <span class="p-card__period">/wk</span>
         </div>
-        <div class="price-card__billed">Billed monthly · cancel anytime</div>
-        <ul class="price-card__features">
-          <li class="price-feature">
+        <div class="p-card__billing">Billed monthly · cancel anytime</div>
+        <div class="p-card__divider"></div>
+        <ul class="p-card__features">
+          <li class="p-feat">
             <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
-            Unlimited messaging therapy
+            Unlimited messaging
           </li>
-          <li class="price-feature">
+          <li class="p-feat">
             <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
-            Licensed therapist matching
+            Therapist matching
           </li>
-          <li class="price-feature">
+          <li class="p-feat">
             <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
-            4 live video sessions / month
+            4 live video sessions/month
           </li>
-          <li class="price-feature">
-            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
-            Phone &amp; voice sessions
+          <li class="p-feat p-feat--no">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+            Group workshops
           </li>
         </ul>
-        <button class="btn-primary">Get started</button>
+        <button class="btn-cta js-open-auth" data-tab="signup" style="width:100%">Get started</button>
       </div>
 
-      <div class="price-card">
-        <div class="price-card__tier">Premium</div>
-        <div class="price-card__amount">
-          <span class="price-card__currency">$</span>
-          <span class="price-card__price">100</span>
-          <span class="price-card__period">/ week</span>
+      <div class="p-card">
+        <div class="p-card__tier">Premium</div>
+        <div class="p-card__price-row">
+          <span class="p-card__dollar">$</span>
+          <span class="p-card__amount">100</span>
+          <span class="p-card__period">/wk</span>
         </div>
-        <div class="price-card__billed">Billed monthly · cancel anytime</div>
-        <ul class="price-card__features">
-          <li class="price-feature">
+        <div class="p-card__billing">Billed monthly · cancel anytime</div>
+        <div class="p-card__divider"></div>
+        <ul class="p-card__features">
+          <li class="p-feat">
             <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
-            Unlimited messaging therapy
+            Unlimited messaging
           </li>
-          <li class="price-feature">
+          <li class="p-feat">
             <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
-            Priority therapist matching
+            Priority matching
           </li>
-          <li class="price-feature">
+          <li class="p-feat">
             <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
             Unlimited live video sessions
           </li>
-          <li class="price-feature">
+          <li class="p-feat">
             <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
-            Workshops &amp; group sessions
+            Group workshops included
           </li>
         </ul>
-        <button class="btn-outline">Get started</button>
+        <button class="btn-outline js-open-auth" data-tab="signup" style="width:100%">Get started</button>
       </div>
 
     </div>
@@ -1562,43 +1901,43 @@ ul { list-style: none; }
 </section>
 
 <!-- ── TESTIMONIALS ── -->
-<section class="testimonials" aria-labelledby="testiHeading">
+<section class="testi" aria-labelledby="testiHeading">
   <div class="container">
-    <div class="sec-header">
-      <p class="sec-eyebrow">Real stories</p>
-      <h2 class="sec-title" id="testiHeading">What members say</h2>
+    <div class="sec-hdr">
+      <p class="sec-label">What members say</p>
+      <h2 class="sec-title" id="testiHeading">Real people, real progress</h2>
     </div>
-    <div class="testimonials-grid">
+    <div class="testi-grid">
 
       <div class="testi-card">
-        <div class="testi-stars" aria-label="5 stars">
+        <div class="testi-stars" aria-label="5 out of 5 stars">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
           <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
           <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
           <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
           <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
         </div>
-        <p class="testi-quote">"I put off therapy for years because I couldn't commit to a fixed time every week. Being able to message my therapist on my own schedule changed everything. Three months in, I genuinely feel different."</p>
+        <p class="testi-quote">"I put off therapy for years because I couldn't commit to a fixed schedule. Being able to message my therapist whenever I needed to changed everything. Three months in and I feel genuinely different."</p>
         <div class="testi-person">
-          <div class="testi-avatar testi-avatar--j" aria-hidden="true">J</div>
+          <div class="testi-avi testi-avi--j" aria-hidden="true">J</div>
           <div>
             <div class="testi-name">Jordan, 31</div>
-            <div class="testi-meta">Anxiety · 3 months on Standard plan</div>
+            <div class="testi-meta">Anxiety · 3 months on Standard</div>
           </div>
         </div>
       </div>
 
       <div class="testi-card">
-        <div class="testi-stars" aria-label="5 stars">
+        <div class="testi-stars" aria-label="5 out of 5 stars">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
           <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
           <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
           <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
           <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
         </div>
-        <p class="testi-quote">"My partner and I tried couples therapy twice before and both times the waiting list was months long. We matched with James within a day and had our first session that week. It's been seven months now."</p>
+        <p class="testi-quote">"My partner and I tried to get couples therapy locally twice — the waitlist was four months both times. We matched with James within 24 hours and had our first session that same week. It's been seven months now."</p>
         <div class="testi-person">
-          <div class="testi-avatar testi-avatar--m" aria-hidden="true">M</div>
+          <div class="testi-avi testi-avi--m" aria-hidden="true">M</div>
           <div>
             <div class="testi-name">Maya &amp; Dan, 34 &amp; 37</div>
             <div class="testi-meta">Couples therapy · 7 months on Premium</div>
@@ -1607,16 +1946,16 @@ ul { list-style: none; }
       </div>
 
       <div class="testi-card">
-        <div class="testi-stars" aria-label="5 stars">
+        <div class="testi-stars" aria-label="5 out of 5 stars">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
           <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
           <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
           <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
           <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
         </div>
-        <p class="testi-quote">"I live in a rural area where there are no therapists within an hour's drive. Thrive gave me access to a specialist in OCD — something I never could have found locally. I can't overstate how much this matters."</p>
+        <p class="testi-quote">"I live rurally with no therapists for an hour's drive. Thrive gave me access to a specialist in OCD I never could have found locally. I can't overstate how much access like this matters."</p>
         <div class="testi-person">
-          <div class="testi-avatar testi-avatar--r" aria-hidden="true">R</div>
+          <div class="testi-avi testi-avi--r" aria-hidden="true">R</div>
           <div>
             <div class="testi-name">Riley, 26</div>
             <div class="testi-meta">OCD &amp; anxiety · 5 months on Standard</div>
@@ -1632,88 +1971,71 @@ ul { list-style: none; }
 <section class="faq" id="faq" aria-labelledby="faqHeading">
   <div class="container faq__inner">
     <div class="faq__left">
-      <p class="sec-eyebrow">Questions</p>
-      <h2 class="faq__title" id="faqHeading">Everything you need to know</h2>
-      <p class="faq__desc">Still have questions? Our team is available seven days a week.</p>
-      <a href="#" class="faq__contact">
+      <p class="sec-label">FAQ</p>
+      <h2 class="faq__title" id="faqHeading">Questions we get asked a lot</h2>
+      <p class="faq__desc">Can't find what you're looking for? Our support team is available seven days a week.</p>
+      <a href="#" class="faq__cta">
         Contact support
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
       </a>
     </div>
-    <div class="faq-list" role="list">
-
-      <div class="faq-item" role="listitem">
+    <div class="faq-list">
+      <div class="faq-item">
         <button class="faq-btn" aria-expanded="false" aria-controls="faq1">
           Are Thrive therapists licensed?
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
         </button>
-        <div class="faq-answer" id="faq1" role="region">
-          Yes — every therapist on the platform holds an active licence from their state or national regulatory body. All are Masters- or Doctorate-level clinicians with at least three years of post-qualification experience. We verify credentials before any therapist can see clients.
-        </div>
+        <div class="faq-answer" id="faq1">Yes — every therapist holds an active licence from their state or national regulatory body. All are Masters- or Doctorate-level clinicians with at least three years of post-qualification experience. We verify credentials before anyone can see clients.</div>
       </div>
-
-      <div class="faq-item" role="listitem">
+      <div class="faq-item">
         <button class="faq-btn" aria-expanded="false" aria-controls="faq2">
           Is my therapy private and secure?
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
         </button>
-        <div class="faq-answer" id="faq2" role="region">
-          All sessions — whether text, voice, or video — are end-to-end encrypted. We are HIPAA-compliant and will never sell your data. Your therapist cannot share anything you discuss without your explicit consent, except in the narrow circumstances required by law (such as imminent risk of harm).
-        </div>
+        <div class="faq-answer" id="faq2">All sessions — text, voice, or video — are end-to-end encrypted. We are HIPAA-compliant and will never sell your data. Your therapist cannot share anything without your explicit consent, except where required by law.</div>
       </div>
-
-      <div class="faq-item" role="listitem">
+      <div class="faq-item">
         <button class="faq-btn" aria-expanded="false" aria-controls="faq3">
           How quickly will I be matched?
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
         </button>
-        <div class="faq-answer" id="faq3" role="region">
-          Most members are matched with a therapist within 24 hours of completing the questionnaire. You can have your first session — whether a message exchange or a live call — within 48 hours of signing up.
-        </div>
+        <div class="faq-answer" id="faq3">Most members are matched within 24 hours of completing the questionnaire, and can have their first session within 48 hours of signing up.</div>
       </div>
-
-      <div class="faq-item" role="listitem">
+      <div class="faq-item">
         <button class="faq-btn" aria-expanded="false" aria-controls="faq4">
           Can I switch therapists?
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
         </button>
-        <div class="faq-answer" id="faq4" role="region">
-          Yes — at any time, for any reason, at no extra cost. A good therapeutic relationship matters, and we want you to find the right fit. You can request a new match directly from your account and will typically be rematched within 24 hours.
-        </div>
+        <div class="faq-answer" id="faq4">Yes — at any time, for any reason, at no extra cost. Request a new match from your account and you'll typically be rematched within 24 hours.</div>
       </div>
-
-      <div class="faq-item" role="listitem">
+      <div class="faq-item">
         <button class="faq-btn" aria-expanded="false" aria-controls="faq5">
           Is financial aid available?
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
         </button>
-        <div class="faq-answer" id="faq5" role="region">
-          We offer reduced rates for people who can't afford full-price therapy. When signing up, you'll be asked about your financial situation — if you qualify, you'll be offered a discounted rate automatically. We believe cost should never be the reason someone doesn't get support.
-        </div>
+        <div class="faq-answer" id="faq5">Yes. When signing up you'll be asked about your financial situation — if you qualify, you'll automatically be offered a discounted rate. Cost should never be the reason someone doesn't get support.</div>
       </div>
-
-      <div class="faq-item" role="listitem">
+      <div class="faq-item">
         <button class="faq-btn" aria-expanded="false" aria-controls="faq6">
           What if I'm in crisis right now?
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
         </button>
-        <div class="faq-answer" id="faq6" role="region">
-          Thrive is not a crisis service. If you are in immediate danger, please call 000 (emergency), Lifeline on 13 11 14, or go to your nearest emergency department. If you are an existing member, your therapist can help connect you with local crisis resources.
-        </div>
+        <div class="faq-answer" id="faq6">Thrive is not a crisis service. If you are in immediate danger, call 000 or go to your nearest emergency department. For mental health crisis support call Lifeline on 13 11 14 (24/7, free).</div>
       </div>
-
     </div>
   </div>
 </section>
 
-<!-- ── CTA BANNER ── -->
-<section class="cta-banner" aria-labelledby="ctaHeading">
-  <div class="container">
-    <div class="cta-banner__inner">
-      <h2 class="cta-banner__title" id="ctaHeading">You don't have to figure this out alone</h2>
-      <p class="cta-banner__sub">Taking the first step is the hardest part. Your matched therapist will be with you from there.</p>
-      <button class="btn-primary">Get matched — it's free to start</button>
-      <p class="cta-banner__note">No commitment. No waitlist. Cancel anytime.</p>
+<!-- ── CTA STRIP ── -->
+<section class="cta-strip" aria-labelledby="ctaHeading">
+  <div class="container cta-strip__inner">
+    <div class="cta-strip__text">
+      <h2 class="cta-strip__headline" id="ctaHeading">You don't have to figure this out alone</h2>
+      <p class="cta-strip__sub">Taking the first step is the hardest part. Your matched therapist will meet you right where you are.</p>
+    </div>
+    <div>
+      <button class="btn-cta btn-cta--lg js-open-auth" data-tab="signup">Get matched — free to start</button>
+      <p class="cta-strip__note">No waitlist. No commitment. Cancel anytime.</p>
     </div>
   </div>
 </section>
@@ -1761,7 +2083,7 @@ ul { list-style: none; }
       </div>
     </div>
     <div class="footer__disclaimer" role="note">
-      <strong>Not a crisis service.</strong> Thrive is not suitable for emergencies. If you are in immediate danger, call 000 or your local emergency number. For mental health crisis support, call Lifeline on 13 11 14. Thrive therapy is provided by licensed clinicians but does not constitute a clinical care relationship under all regulatory definitions. Please consult your GP for medical advice.
+      <strong>Not a crisis service.</strong> Thrive is not suitable for emergencies. If you are in immediate danger, call 000. For mental health crisis support, call Lifeline on 13 11 14. Therapy provided on this platform does not constitute a clinical care relationship under all regulatory definitions. Consult your GP for medical advice.
     </div>
     <div class="footer__bottom">
       <span>&copy; 2026 Thrive Health Pty Ltd. All rights reserved.</span>
@@ -1782,17 +2104,13 @@ ul { list-style: none; }
   const btn  = document.getElementById('themeToggle');
   const sun  = document.getElementById('iconSun');
   const moon = document.getElementById('iconMoon');
-
   function apply(t) {
     root.setAttribute('data-theme', t);
     sun.style.display  = t === 'dark' ? 'none' : '';
     moon.style.display = t === 'dark' ? '' : 'none';
   }
-
   const saved = localStorage.getItem('thrive-theme');
-  const sys   = window.matchMedia('(prefers-color-scheme: dark)').matches;
-  apply(saved || (sys ? 'dark' : 'light'));
-
+  apply(saved || (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'));
   btn.addEventListener('click', () => {
     const next = root.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
     apply(next);
@@ -1800,28 +2118,195 @@ ul { list-style: none; }
   });
 })();
 
-/* ── FAQ ACCORDION ── */
+/* ── FAQ ── */
 document.querySelectorAll('.faq-btn').forEach(btn => {
   btn.addEventListener('click', function () {
-    const expanded = this.getAttribute('aria-expanded') === 'true';
-    const answerId = this.getAttribute('aria-controls');
-    const answer   = document.getElementById(answerId);
-
-    // Close all
-    document.querySelectorAll('.faq-btn').forEach(b => {
-      b.setAttribute('aria-expanded', 'false');
-    });
-    document.querySelectorAll('.faq-answer').forEach(a => {
-      a.classList.remove('open');
-    });
-
-    // Toggle clicked
-    if (!expanded) {
+    const open = this.getAttribute('aria-expanded') === 'true';
+    document.querySelectorAll('.faq-btn').forEach(b => b.setAttribute('aria-expanded', 'false'));
+    document.querySelectorAll('.faq-answer').forEach(a => a.classList.remove('open'));
+    if (!open) {
       this.setAttribute('aria-expanded', 'true');
-      answer.classList.add('open');
+      document.getElementById(this.getAttribute('aria-controls')).classList.add('open');
     }
   });
 });
+
+/* ── TREAT TAGS ── */
+document.querySelectorAll('.treat-tag').forEach(tag => {
+  tag.addEventListener('click', function () {
+    document.querySelectorAll('.treat-tag').forEach(t => t.classList.remove('treat-tag--active'));
+    this.classList.add('treat-tag--active');
+  });
+});
+
+/* ── AUTH MODAL ── */
+(function () {
+  const backdrop  = document.getElementById('authModal');
+  const closeBtn  = document.getElementById('authClose');
+  const tabs      = backdrop.querySelectorAll('.modal__tab');
+  const panelSI   = document.getElementById('panelSignin');
+  const panelSU   = document.getElementById('panelSignup');
+  const connectNote = document.getElementById('connectNote');
+  const connectName = document.getElementById('connectName');
+
+  function openAuth(tab, therapistName) {
+    switchTab(tab || 'signup');
+    if (therapistName) {
+      connectNote.style.display = 'flex';
+      connectName.textContent = therapistName;
+    } else {
+      connectNote.style.display = 'none';
+    }
+    backdrop.classList.add('open');
+    document.body.style.overflow = 'hidden';
+    setTimeout(() => {
+      const first = backdrop.querySelector('.form-input');
+      if (first) first.focus();
+    }, 240);
+  }
+
+  function closeAuth() {
+    backdrop.classList.remove('open');
+    document.body.style.overflow = '';
+  }
+
+  function switchTab(name) {
+    tabs.forEach(t => {
+      const active = t.dataset.tab === name;
+      t.classList.toggle('active', active);
+      t.setAttribute('aria-selected', active);
+    });
+    panelSI.style.display = name === 'signin' ? '' : 'none';
+    panelSU.style.display = name === 'signup' ? '' : 'none';
+  }
+
+  tabs.forEach(t => t.addEventListener('click', () => switchTab(t.dataset.tab)));
+  closeBtn.addEventListener('click', closeAuth);
+  backdrop.addEventListener('click', e => { if (e.target === backdrop) closeAuth(); });
+  document.addEventListener('keydown', e => { if (e.key === 'Escape' && backdrop.classList.contains('open')) closeAuth(); });
+
+  document.querySelectorAll('.js-open-auth').forEach(btn => {
+    btn.addEventListener('click', function () {
+      const tab = this.dataset.tab || 'signup';
+      const tName = this.dataset.therapist || null;
+      openAuth(tab, tName);
+    });
+  });
+
+  /* Give each therapist connect button its name context */
+  const therapistNames = ['Dr. Amara Osei', 'James Whitfield', 'Dr. Priya Sharma', 'Marcus Chen'];
+  document.querySelectorAll('.t-card__btn').forEach((btn, i) => {
+    btn.dataset.therapist = therapistNames[i] || null;
+  });
+
+  /* Demo: form submit shows a toast instead of navigating */
+  backdrop.querySelectorAll('.modal-form-btn, .modal-google').forEach(btn => {
+    btn.addEventListener('click', function (e) {
+      e.preventDefault();
+      closeAuth();
+      showToast('Welcome to Thrive! Your account is being set up.');
+    });
+  });
+})();
+
+/* ── VIDEO MODAL ── */
+(function () {
+  const vBackdrop = document.getElementById('videoModal');
+  const btnEnd    = document.getElementById('btnEndCall');
+  const btnMic    = document.getElementById('btnMic');
+  const btnCam    = document.getElementById('btnCam');
+  const timerEl   = document.getElementById('sessionTimer');
+  const micLabel  = document.getElementById('micLabel');
+  const camLabel  = document.getElementById('camLabel');
+  let timerInterval = null;
+  let seconds = 0;
+
+  function startTimer() {
+    seconds = 0;
+    clearInterval(timerInterval);
+    timerInterval = setInterval(() => {
+      seconds++;
+      const m = String(Math.floor(seconds / 60)).padStart(2, '0');
+      const s = String(seconds % 60).padStart(2, '0');
+      timerEl.textContent = m + ':' + s;
+    }, 1000);
+  }
+
+  function openVideo() {
+    vBackdrop.classList.add('open');
+    document.body.style.overflow = 'hidden';
+    startTimer();
+    btnEnd.focus();
+  }
+
+  function closeVideo() {
+    vBackdrop.classList.remove('open');
+    document.body.style.overflow = '';
+    clearInterval(timerInterval);
+    timerEl.textContent = '00:00';
+    btnMic.classList.remove('muted');
+    btnCam.classList.remove('muted');
+    micLabel.textContent = 'Mute';
+    camLabel.textContent = 'Camera';
+  }
+
+  btnEnd.addEventListener('click', () => {
+    closeVideo();
+    showToast('Session ended. A summary has been sent to your email.');
+  });
+
+  btnMic.addEventListener('click', function () {
+    this.classList.toggle('muted');
+    const muted = this.classList.contains('muted');
+    this.setAttribute('aria-pressed', muted);
+    this.setAttribute('aria-label', muted ? 'Unmute microphone' : 'Mute microphone');
+    micLabel.textContent = muted ? 'Unmute' : 'Mute';
+  });
+
+  btnCam.addEventListener('click', function () {
+    this.classList.toggle('muted');
+    const off = this.classList.contains('muted');
+    this.setAttribute('aria-pressed', off);
+    this.setAttribute('aria-label', off ? 'Turn on camera' : 'Turn off camera');
+    camLabel.textContent = off ? 'Cam off' : 'Camera';
+  });
+
+  document.addEventListener('keydown', e => { if (e.key === 'Escape' && vBackdrop.classList.contains('open')) closeVideo(); });
+
+  /* Video card in hero */
+  const heroCard = document.getElementById('heroVideoCard');
+  if (heroCard) {
+    heroCard.addEventListener('click', openVideo);
+    heroCard.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); openVideo(); } });
+  }
+})();
+
+/* ── TOAST ── */
+function showToast(msg) {
+  const t = document.createElement('div');
+  t.textContent = msg;
+  Object.assign(t.style, {
+    position: 'fixed', bottom: '1.5rem', left: '50%',
+    transform: 'translateX(-50%) translateY(8px)',
+    background: 'var(--c-stats)', color: 'white',
+    padding: '0.75rem 1.5rem', borderRadius: '50px',
+    fontSize: '0.9375rem', fontWeight: '600',
+    boxShadow: '0 4px 24px rgba(0,0,0,0.3)',
+    zIndex: '9999', opacity: '0',
+    transition: 'opacity 0.2s, transform 0.2s',
+    whiteSpace: 'nowrap', maxWidth: '90vw',
+  });
+  document.body.appendChild(t);
+  requestAnimationFrame(() => {
+    t.style.opacity = '1';
+    t.style.transform = 'translateX(-50%) translateY(0)';
+  });
+  setTimeout(() => {
+    t.style.opacity = '0';
+    t.style.transform = 'translateX(-50%) translateY(8px)';
+    setTimeout(() => t.remove(), 250);
+  }, 3500);
+}
 </script>
 </body>
 </html>
