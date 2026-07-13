@@ -3,131 +3,131 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Thrive Health — Your Guide to Living Well</title>
-<meta name="description" content="Evidence-based health information for everyone. Find answers on conditions, symptoms, nutrition, mental health, and more.">
+<title>Thrive — Online Therapy That Fits Your Life</title>
+<meta name="description" content="Connect with a licensed therapist by message, voice, or video — on your schedule, from anywhere. Start therapy in under 48 hours.">
 <style>
 /* ═══════════════════════════════════════
    TOKENS
 ═══════════════════════════════════════ */
 :root {
-  /* Ground tokens (light mode default) */
-  --c-bg:           #F2F7F4;
-  --c-surface:      #FFFFFF;
-  --c-surface-2:    #E8F0EB;
-  --c-text:         #192D23;
-  --c-text-2:       #4B6959;
-  --c-text-3:       #7D9E8C;
-  --c-border:       #C8D9D0;
+  /* Ground tokens — light mode */
+  --c-bg:        #F5F2EE;
+  --c-surface:   #FFFFFF;
+  --c-surface-2: #EDE9E4;
+  --c-text:      #1C1612;
+  --c-text-2:    #5A4E44;
+  --c-text-3:    #9C9087;
+  --c-border:    #DDD7CF;
 
-  /* Accent tokens (light) */
-  --c-accent:       #2E7D52;
-  --c-accent-h:     #225E3D;
-  --c-accent-sub:   #E2F0E9;
-  --c-cta:          #C07E0A;
-  --c-cta-h:        #9D6608;
+  /* Accent */
+  --c-accent:    #2E6FA3;
+  --c-accent-h:  #1F5280;
+  --c-accent-sub:#E3EEF7;
+  --c-cta:       #D68B35;
+  --c-cta-h:     #B8721E;
 
-  /* Hero — always dark, slight shift per theme */
-  --c-hero:         #0E2B1D;
-  --c-hero-blob:    #163D28;
-  --c-hero-text:    #E6F1EC;
-  --c-hero-text-2:  #87B09A;
-  --c-hero-border:  rgba(255,255,255,0.13);
+  /* Hero — always deep navy, slight shift per theme */
+  --c-hero:      #172840;
+  --c-hero-2:    #1F3654;
+  --c-hero-text: #EFF4F8;
+  --c-hero-2t:   #8AAAC2;
+  --c-hero-brd:  rgba(255,255,255,0.12);
+
+  /* Semantic */
+  --c-good:      #2E8B57;
+  --c-good-sub:  #E2F2E9;
 
   /* Shadows */
-  --s-sm: 0 1px 2px rgba(0,0,0,0.05);
-  --s-md: 0 2px 8px rgba(0,0,0,0.07), 0 0 1px rgba(0,0,0,0.04);
-  --s-lg: 0 8px 24px rgba(0,0,0,0.10), 0 0 1px rgba(0,0,0,0.04);
+  --s-sm: 0 1px 3px rgba(0,0,0,0.06);
+  --s-md: 0 2px 10px rgba(0,0,0,0.08), 0 0 1px rgba(0,0,0,0.04);
+  --s-lg: 0 10px 30px rgba(0,0,0,0.12), 0 0 1px rgba(0,0,0,0.04);
 
-  /* Type */
   --serif: Georgia, 'Times New Roman', serif;
   --sans:  system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-
-  /* Misc */
-  --r:    10px;
-  --max:  1200px;
+  --r: 12px;
+  --max: 1160px;
   --ease: cubic-bezier(0.25, 0.46, 0.45, 0.94);
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --c-bg:        #0C1A12;
-    --c-surface:   #132019;
-    --c-surface-2: #1A2E22;
-    --c-text:      #D4E8DC;
-    --c-text-2:    #7BA490;
-    --c-text-3:    #4D6E5E;
-    --c-border:    #263D2F;
-    --c-accent:    #48A872;
-    --c-accent-h:  #60C48A;
-    --c-accent-sub:#162E20;
-    --c-cta:       #D9961E;
-    --c-cta-h:     #EAA930;
-    --c-hero:      #07160D;
-    --c-hero-blob: #0E2219;
-    --s-sm: 0 1px 2px rgba(0,0,0,0.3);
-    --s-md: 0 2px 8px rgba(0,0,0,0.35), 0 0 1px rgba(0,0,0,0.2);
-    --s-lg: 0 8px 24px rgba(0,0,0,0.45), 0 0 1px rgba(0,0,0,0.2);
+    --c-bg:        #111820;
+    --c-surface:   #18232F;
+    --c-surface-2: #1F2E3D;
+    --c-text:      #E8EFF5;
+    --c-text-2:    #8AAAC2;
+    --c-text-3:    #5A7A94;
+    --c-border:    #253547;
+    --c-accent:    #4A90C4;
+    --c-accent-h:  #62A8DC;
+    --c-accent-sub:#182638;
+    --c-cta:       #E09A45;
+    --c-cta-h:     #F0B060;
+    --c-hero:      #0C1620;
+    --c-hero-2:    #12202E;
+    --c-good-sub:  #162E20;
+    --s-sm: 0 1px 3px rgba(0,0,0,0.3);
+    --s-md: 0 2px 10px rgba(0,0,0,0.4), 0 0 1px rgba(0,0,0,0.2);
+    --s-lg: 0 10px 30px rgba(0,0,0,0.5), 0 0 1px rgba(0,0,0,0.2);
   }
 }
-
 :root[data-theme="dark"] {
-  --c-bg:        #0C1A12;
-  --c-surface:   #132019;
-  --c-surface-2: #1A2E22;
-  --c-text:      #D4E8DC;
-  --c-text-2:    #7BA490;
-  --c-text-3:    #4D6E5E;
-  --c-border:    #263D2F;
-  --c-accent:    #48A872;
-  --c-accent-h:  #60C48A;
-  --c-accent-sub:#162E20;
-  --c-cta:       #D9961E;
-  --c-cta-h:     #EAA930;
-  --c-hero:      #07160D;
-  --c-hero-blob: #0E2219;
-  --s-sm: 0 1px 2px rgba(0,0,0,0.3);
-  --s-md: 0 2px 8px rgba(0,0,0,0.35), 0 0 1px rgba(0,0,0,0.2);
-  --s-lg: 0 8px 24px rgba(0,0,0,0.45), 0 0 1px rgba(0,0,0,0.2);
+  --c-bg:        #111820;
+  --c-surface:   #18232F;
+  --c-surface-2: #1F2E3D;
+  --c-text:      #E8EFF5;
+  --c-text-2:    #8AAAC2;
+  --c-text-3:    #5A7A94;
+  --c-border:    #253547;
+  --c-accent:    #4A90C4;
+  --c-accent-h:  #62A8DC;
+  --c-accent-sub:#182638;
+  --c-cta:       #E09A45;
+  --c-cta-h:     #F0B060;
+  --c-hero:      #0C1620;
+  --c-hero-2:    #12202E;
+  --c-good-sub:  #162E20;
+  --s-sm: 0 1px 3px rgba(0,0,0,0.3);
+  --s-md: 0 2px 10px rgba(0,0,0,0.4), 0 0 1px rgba(0,0,0,0.2);
+  --s-lg: 0 10px 30px rgba(0,0,0,0.5), 0 0 1px rgba(0,0,0,0.2);
 }
-
 :root[data-theme="light"] {
-  --c-bg:        #F2F7F4;
+  --c-bg:        #F5F2EE;
   --c-surface:   #FFFFFF;
-  --c-surface-2: #E8F0EB;
-  --c-text:      #192D23;
-  --c-text-2:    #4B6959;
-  --c-text-3:    #7D9E8C;
-  --c-border:    #C8D9D0;
-  --c-accent:    #2E7D52;
-  --c-accent-h:  #225E3D;
-  --c-accent-sub:#E2F0E9;
-  --c-cta:       #C07E0A;
-  --c-cta-h:     #9D6608;
-  --c-hero:      #0E2B1D;
-  --c-hero-blob: #163D28;
-  --s-sm: 0 1px 2px rgba(0,0,0,0.05);
-  --s-md: 0 2px 8px rgba(0,0,0,0.07), 0 0 1px rgba(0,0,0,0.04);
-  --s-lg: 0 8px 24px rgba(0,0,0,0.10), 0 0 1px rgba(0,0,0,0.04);
+  --c-surface-2: #EDE9E4;
+  --c-text:      #1C1612;
+  --c-text-2:    #5A4E44;
+  --c-text-3:    #9C9087;
+  --c-border:    #DDD7CF;
+  --c-accent:    #2E6FA3;
+  --c-accent-h:  #1F5280;
+  --c-accent-sub:#E3EEF7;
+  --c-cta:       #D68B35;
+  --c-cta-h:     #B8721E;
+  --c-hero:      #172840;
+  --c-hero-2:    #1F3654;
+  --c-good-sub:  #E2F2E9;
+  --s-sm: 0 1px 3px rgba(0,0,0,0.06);
+  --s-md: 0 2px 10px rgba(0,0,0,0.08), 0 0 1px rgba(0,0,0,0.04);
+  --s-lg: 0 10px 30px rgba(0,0,0,0.12), 0 0 1px rgba(0,0,0,0.04);
 }
 
 /* ═══════════════════════════════════════
-   RESET & BASE
+   RESET
 ═══════════════════════════════════════ */
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-html { scroll-behavior: smooth; font-size: 16px; }
+html { scroll-behavior: smooth; }
 body {
   font-family: var(--sans);
   font-size: 1rem;
   line-height: 1.6;
   color: var(--c-text);
   background: var(--c-bg);
-  transition: background 0.2s, color 0.2s;
+  transition: background 0.25s, color 0.25s;
 }
 a { color: inherit; text-decoration: none; }
 button { cursor: pointer; font-family: inherit; border: none; }
 ul { list-style: none; }
-img { max-width: 100%; display: block; }
-input { font-family: inherit; }
 
 .container {
   width: 100%;
@@ -137,28 +137,22 @@ input { font-family: inherit; }
 }
 
 /* ═══════════════════════════════════════
-   NAVIGATION
+   NAV
 ═══════════════════════════════════════ */
 .nav {
   position: sticky;
   top: 0;
   z-index: 200;
-  background: rgba(var(--nav-bg-rgb, 255,255,255), 0.92);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
+  background: var(--c-surface);
   border-bottom: 1px solid var(--c-border);
-  transition: border-color 0.2s;
+  transition: background 0.25s, border-color 0.25s;
 }
-[data-theme="dark"] .nav,
-@media (prefers-color-scheme: dark) { .nav { --nav-bg-rgb: 19,32,25; } }
-
 .nav__inner {
   display: flex;
   align-items: center;
-  height: 62px;
-  gap: 1.5rem;
+  height: 64px;
+  gap: 2rem;
 }
-
 .nav__logo {
   display: flex;
   align-items: center;
@@ -166,99 +160,109 @@ input { font-family: inherit; }
   flex-shrink: 0;
   text-decoration: none;
 }
-.nav__logo-mark {
-  width: 30px;
-  height: 30px;
-  background: var(--c-accent);
-  border-radius: 50% 50% 50% 12%;
-  transform: rotate(-45deg);
+.nav__logo-icon {
+  width: 32px;
+  height: 32px;
   position: relative;
   flex-shrink: 0;
-  transition: background 0.2s;
 }
-.nav__logo-mark::after {
+.nav__logo-icon::before,
+.nav__logo-icon::after {
   content: '';
   position: absolute;
-  inset: 8px;
-  background: white;
   border-radius: 50%;
-  transform: rotate(45deg);
+}
+.nav__logo-icon::before {
+  width: 20px; height: 20px;
+  background: var(--c-accent);
+  top: 0; left: 0;
+}
+.nav__logo-icon::after {
+  width: 16px; height: 16px;
+  background: var(--c-cta);
+  bottom: 0; right: 0;
+  opacity: 0.85;
 }
 .nav__logo-name {
   font-family: var(--serif);
   font-size: 1.25rem;
   font-weight: normal;
-  letter-spacing: -0.01em;
   color: var(--c-text);
-  transition: color 0.2s;
+  letter-spacing: -0.01em;
 }
-.nav__logo-tag {
-  font-size: 0.6875rem;
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.09em;
-  color: var(--c-accent);
-  margin-left: 0.25rem;
-  align-self: flex-end;
-  margin-bottom: 3px;
-}
-
 .nav__links {
   display: flex;
   flex: 1;
-  gap: 0;
 }
 .nav__links a {
-  display: block;
   padding: 0.5rem 0.875rem;
   font-size: 0.875rem;
   font-weight: 500;
   color: var(--c-text-2);
   border-radius: 7px;
-  transition: color 0.15s, background 0.15s;
+  transition: background 0.15s, color 0.15s;
   white-space: nowrap;
 }
-.nav__links a:hover {
-  color: var(--c-accent);
-  background: var(--c-accent-sub);
-}
-
-.nav__actions {
+.nav__links a:hover { background: var(--c-surface-2); color: var(--c-text); }
+.nav__right {
   display: flex;
   align-items: center;
-  gap: 0.375rem;
+  gap: 0.5rem;
   flex-shrink: 0;
 }
-.nav__icon-btn {
+.nav__signin {
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--c-text-2);
+  padding: 0.5rem 0.875rem;
+  border-radius: 7px;
+  transition: color 0.15s, background 0.15s;
+}
+.nav__signin:hover { background: var(--c-surface-2); color: var(--c-text); }
+.btn-primary {
+  padding: 0.5625rem 1.125rem;
+  background: var(--c-cta);
+  color: white;
+  font-size: 0.875rem;
+  font-weight: 700;
+  border-radius: 50px;
+  border: none;
+  cursor: pointer;
+  transition: background 0.15s;
+  white-space: nowrap;
+  letter-spacing: 0.01em;
+}
+.btn-primary:hover { background: var(--c-cta-h); }
+.btn-primary:focus-visible { outline: 2px solid var(--c-cta); outline-offset: 2px; }
+.nav__theme {
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 38px;
-  height: 38px;
+  width: 36px;
+  height: 36px;
   background: transparent;
   border-radius: 8px;
-  color: var(--c-text-2);
+  color: var(--c-text-3);
   transition: background 0.15s, color 0.15s;
 }
-.nav__icon-btn:hover { background: var(--c-surface-2); color: var(--c-text); }
-.nav__icon-btn:focus-visible { outline: 2px solid var(--c-accent); outline-offset: 2px; }
+.nav__theme:hover { background: var(--c-surface-2); color: var(--c-text); }
 
 /* ═══════════════════════════════════════
    HERO
 ═══════════════════════════════════════ */
 .hero {
   background: var(--c-hero);
-  padding: 5.5rem 0;
+  padding: 6rem 0 5rem;
   overflow: hidden;
   position: relative;
 }
-/* Subtle dot grid texture */
 .hero::before {
   content: '';
   position: absolute;
   inset: 0;
-  background-image: radial-gradient(circle, rgba(255,255,255,0.06) 1px, transparent 1px);
-  background-size: 28px 28px;
+  background:
+    radial-gradient(ellipse 60% 50% at 75% 50%, rgba(46,111,163,0.25) 0%, transparent 70%),
+    radial-gradient(ellipse 40% 60% at 20% 80%, rgba(214,139,53,0.12) 0%, transparent 60%);
   pointer-events: none;
 }
 .hero__inner {
@@ -268,635 +272,776 @@ input { font-family: inherit; }
   align-items: center;
   position: relative;
 }
-.hero__eyebrow {
-  font-size: 0.6875rem;
-  font-weight: 700;
-  letter-spacing: 0.15em;
-  text-transform: uppercase;
-  color: var(--c-hero-text-2);
-  margin-bottom: 1.25rem;
+.hero__badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: rgba(255,255,255,0.07);
+  border: 1px solid rgba(255,255,255,0.14);
+  border-radius: 50px;
+  padding: 0.35rem 0.875rem;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: var(--c-hero-2t);
+  margin-bottom: 1.5rem;
+}
+.hero__badge-dot {
+  width: 6px; height: 6px;
+  background: #6DCA90;
+  border-radius: 50%;
 }
 .hero__headline {
   font-family: var(--serif);
-  font-size: clamp(2.4rem, 4.5vw, 4rem);
+  font-size: clamp(2.5rem, 4.5vw, 3.75rem);
   font-weight: normal;
   line-height: 1.1;
   color: var(--c-hero-text);
   margin-bottom: 1.375rem;
-  text-wrap: balance;
   letter-spacing: -0.02em;
+  text-wrap: balance;
 }
 .hero__headline em {
   font-style: italic;
-  color: #8ECBA5;
+  color: #7DC4E8;
 }
-.hero__lede {
+.hero__sub {
   font-size: 1.0625rem;
-  color: var(--c-hero-text-2);
+  color: var(--c-hero-2t);
   line-height: 1.7;
-  max-width: 46ch;
+  max-width: 44ch;
   margin-bottom: 2.25rem;
 }
-.hero__search-wrap {
-  display: flex;
-  background: rgba(255,255,255,0.08);
-  border: 1px solid rgba(255,255,255,0.18);
-  border-radius: 50px;
-  overflow: hidden;
-  transition: border-color 0.2s, background 0.2s;
-  margin-bottom: 1.25rem;
-}
-.hero__search-wrap:focus-within {
-  border-color: rgba(255,255,255,0.42);
-  background: rgba(255,255,255,0.11);
-}
-.hero__search-input {
-  flex: 1;
-  background: transparent;
-  border: none;
-  padding: 0.9375rem 1.375rem;
-  font-size: 0.9375rem;
-  color: var(--c-hero-text);
-  outline: none;
-  min-width: 0;
-}
-.hero__search-input::placeholder { color: var(--c-hero-text-2); }
-.hero__search-btn {
+.hero__cta-row {
   display: flex;
   align-items: center;
-  gap: 0.5rem;
-  background: var(--c-cta);
-  border: none;
-  padding: 0 1.375rem;
-  color: white;
-  font-size: 0.875rem;
-  font-weight: 700;
-  letter-spacing: 0.02em;
-  border-radius: 0 50px 50px 0;
-  transition: background 0.15s;
-  flex-shrink: 0;
+  gap: 1rem;
+  flex-wrap: wrap;
+  margin-bottom: 2.5rem;
 }
-.hero__search-btn:hover { background: var(--c-cta-h); }
-.hero__trust-row {
+.hero__cta-row .btn-primary {
+  font-size: 1rem;
+  padding: 0.8125rem 1.75rem;
+}
+.hero__how-link {
+  font-size: 0.9375rem;
+  font-weight: 600;
+  color: var(--c-hero-2t);
+  display: inline-flex;
+  align-items: center;
+  gap: 0.375rem;
+  transition: color 0.15s;
+}
+.hero__how-link:hover { color: var(--c-hero-text); }
+.hero__trust {
   display: flex;
   flex-wrap: wrap;
-  gap: 1.25rem;
+  gap: 1.5rem;
+  padding-top: 2rem;
+  border-top: 1px solid var(--c-hero-brd);
 }
 .hero__trust-item {
   display: flex;
   align-items: center;
-  gap: 0.4rem;
-  font-size: 0.8125rem;
-  color: var(--c-hero-text-2);
+  gap: 0.5rem;
+  font-size: 0.875rem;
+  color: var(--c-hero-2t);
 }
-.hero__trust-dot {
-  width: 5px;
-  height: 5px;
-  background: var(--c-accent);
-  border-radius: 50%;
-  flex-shrink: 0;
-}
+.hero__trust-icon { color: #6DCA90; }
 
-/* Hero visual */
+/* Hero visual — abstract connection composition */
 .hero__visual {
   position: relative;
-  height: 420px;
-}
-.hero__blob {
-  position: absolute;
-  width: 88%;
-  height: 88%;
-  top: 6%;
-  left: 6%;
-  background: var(--c-hero-blob);
-  border-radius: 60% 40% 55% 45% / 50% 55% 45% 50%;
-}
-@media (prefers-reduced-motion: no-preference) {
-  .hero__blob {
-    animation: blob-morph 12s ease-in-out infinite;
-  }
-}
-@keyframes blob-morph {
-  0%, 100% { border-radius: 60% 40% 55% 45% / 50% 55% 45% 50%; }
-  33%       { border-radius: 50% 50% 45% 55% / 55% 45% 55% 45%; }
-  66%       { border-radius: 45% 55% 60% 40% / 45% 60% 40% 55%; }
-}
-.hero__stat {
-  position: absolute;
-  background: rgba(14, 43, 29, 0.72);
-  border: 1px solid rgba(255,255,255,0.14);
-  border-radius: 14px;
-  padding: 1rem 1.125rem;
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
-}
-.hero__stat--a { top: 10%; left: 4%;  }
-.hero__stat--b { bottom: 22%; left: 0; }
-.hero__stat--c { top: 16%; right: 4%; }
-.hero__stat-label {
-  font-size: 0.6875rem;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.1em;
-  color: var(--c-hero-text-2);
-  margin-bottom: 0.25rem;
-}
-.hero__stat-value {
-  font-family: var(--serif);
-  font-size: 1.625rem;
-  line-height: 1;
-  color: var(--c-hero-text);
-  margin-bottom: 0.2rem;
-  font-variant-numeric: tabular-nums;
-}
-.hero__stat-sub {
-  font-size: 0.8rem;
-  color: var(--c-hero-text-2);
-  line-height: 1.3;
-}
-
-/* ═══════════════════════════════════════
-   CATEGORY PILLS
-═══════════════════════════════════════ */
-.cats {
-  padding: 1.625rem 0;
-  border-bottom: 1px solid var(--c-border);
-  background: var(--c-surface);
-}
-.cats__track {
-  display: flex;
-  gap: 0.625rem;
-  overflow-x: auto;
-  scrollbar-width: none;
-  -ms-overflow-style: none;
-  padding-bottom: 2px;
-}
-.cats__track::-webkit-scrollbar { display: none; }
-.cat-pill {
+  height: 440px;
   display: flex;
   align-items: center;
-  gap: 0.5rem;
-  padding: 0.5625rem 1rem;
-  background: transparent;
-  border: 1px solid var(--c-border);
-  border-radius: 50px;
+  justify-content: center;
+}
+.conn-ring {
+  position: absolute;
+  border-radius: 50%;
+  border: 1px solid rgba(255,255,255,0.08);
+}
+.conn-ring--1 { width: 340px; height: 340px; }
+.conn-ring--2 { width: 240px; height: 240px; }
+.conn-ring--3 { width: 140px; height: 140px; background: rgba(46,111,163,0.12); }
+.conn-bubble {
+  position: absolute;
+  border-radius: 50%;
+}
+.conn-bubble--a {
+  width: 110px; height: 110px;
+  background: radial-gradient(circle at 35% 35%, #3474A3, #1F3654);
+  top: 15%; left: 10%;
+  box-shadow: 0 0 40px rgba(52,116,163,0.35);
+}
+.conn-bubble--b {
+  width: 80px; height: 80px;
+  background: radial-gradient(circle at 35% 35%, #D68B35, #8B4E12);
+  bottom: 20%; right: 12%;
+  box-shadow: 0 0 30px rgba(214,139,53,0.3);
+  opacity: 0.9;
+}
+.conn-bubble--c {
+  width: 56px; height: 56px;
+  background: radial-gradient(circle at 35% 35%, #4A90C4, #2A5580);
+  top: 55%; left: 18%;
+  opacity: 0.6;
+}
+.conn-bubble--d {
+  width: 44px; height: 44px;
+  background: radial-gradient(circle at 35% 35%, #7DC4E8, #3A7A9E);
+  top: 22%; right: 18%;
+  opacity: 0.55;
+}
+.conn-line {
+  position: absolute;
+  background: rgba(255,255,255,0.08);
+  border-radius: 1px;
+}
+.conn-line--1 {
+  width: 1px; height: 120px;
+  top: 26%; left: calc(10% + 55px);
+  transform: rotate(20deg);
+}
+.conn-line--2 {
+  width: 1px; height: 90px;
+  bottom: 28%; right: calc(12% + 40px);
+  transform: rotate(-15deg);
+}
+
+/* Message preview card */
+.hero__msg-card {
+  position: absolute;
+  bottom: 8%;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(31,54,84,0.8);
+  border: 1px solid rgba(255,255,255,0.13);
+  border-radius: 14px;
+  padding: 1rem 1.125rem;
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  width: 260px;
+}
+.hero__msg-meta {
+  font-size: 0.6875rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--c-hero-2t);
+  margin-bottom: 0.5rem;
+}
+.hero__msg-bubble {
+  background: rgba(255,255,255,0.08);
+  border-radius: 10px 10px 10px 3px;
+  padding: 0.625rem 0.875rem;
   font-size: 0.875rem;
-  font-weight: 500;
-  color: var(--c-text-2);
-  white-space: nowrap;
-  cursor: pointer;
-  transition: background 0.15s, border-color 0.15s, color 0.15s;
-  flex-shrink: 0;
+  color: var(--c-hero-text);
+  line-height: 1.45;
+  margin-bottom: 0.5rem;
 }
-.cat-pill:hover {
-  background: var(--c-accent-sub);
-  border-color: var(--c-accent);
-  color: var(--c-accent);
+.hero__msg-bubble--reply {
+  border-radius: 10px 10px 3px 10px;
+  background: rgba(46,111,163,0.35);
+  align-self: flex-end;
+  text-align: right;
 }
-.cat-pill svg { color: var(--c-accent); flex-shrink: 0; }
+.hero__msg-bubbles {
+  display: flex;
+  flex-direction: column;
+  gap: 0.375rem;
+}
 
 /* ═══════════════════════════════════════
-   SECTION HEADERS
+   HOW IT WORKS
 ═══════════════════════════════════════ */
-.sec-header { margin-bottom: 2rem; }
+.how {
+  padding: 5.5rem 0;
+}
 .sec-eyebrow {
   font-size: 0.6875rem;
   font-weight: 700;
-  letter-spacing: 0.12em;
+  letter-spacing: 0.14em;
   text-transform: uppercase;
   color: var(--c-accent);
   margin-bottom: 0.5rem;
 }
 .sec-title {
   font-family: var(--serif);
-  font-size: clamp(1.5rem, 3vw, 2rem);
+  font-size: clamp(1.625rem, 3vw, 2.125rem);
   font-weight: normal;
-  line-height: 1.2;
   color: var(--c-text);
   text-wrap: balance;
+  line-height: 1.2;
 }
-.sec-link {
-  font-size: 0.875rem;
-  font-weight: 600;
-  color: var(--c-accent);
-  display: inline-flex;
-  align-items: center;
-  gap: 0.35rem;
-  transition: gap 0.15s;
-  text-decoration: none;
+.sec-sub {
+  font-size: 1rem;
+  color: var(--c-text-2);
+  line-height: 1.65;
+  margin-top: 0.625rem;
+  max-width: 52ch;
 }
-.sec-link:hover { gap: 0.55rem; }
-.sec-header-row {
-  display: flex;
-  align-items: flex-end;
-  justify-content: space-between;
-  gap: 1rem;
-}
-
-/* ═══════════════════════════════════════
-   FEATURED ARTICLES
-═══════════════════════════════════════ */
-.featured { padding: 4.5rem 0; }
-.featured-grid {
+.sec-header { margin-bottom: 3rem; }
+.how-steps {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  grid-template-rows: auto auto;
-  gap: 1.375rem;
+  gap: 2rem;
+  position: relative;
 }
-.a-card {
-  background: var(--c-surface);
-  border: 1px solid var(--c-border);
-  border-radius: var(--r);
-  overflow: hidden;
+.how-steps::before {
+  content: '';
+  position: absolute;
+  top: 28px;
+  left: calc(33.33% / 2);
+  right: calc(33.33% / 2);
+  height: 1px;
+  background: var(--c-border);
+  z-index: 0;
+}
+.how-step {
   display: flex;
   flex-direction: column;
-  box-shadow: var(--s-md);
-  transition: transform 0.2s var(--ease), box-shadow 0.2s var(--ease);
-  text-decoration: none;
-  color: inherit;
+  gap: 0.875rem;
+  position: relative;
+  z-index: 1;
 }
-.a-card:hover {
-  transform: translateY(-3px);
-  box-shadow: var(--s-lg);
-}
-.a-card--primary { grid-row: 1 / 3; }
-.a-card__thumb {
-  width: 100%;
-  aspect-ratio: 16/9;
+.how-step__num {
+  width: 56px;
+  height: 56px;
+  background: var(--c-surface);
+  border: 2px solid var(--c-border);
+  border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
+  font-family: var(--serif);
+  font-size: 1.25rem;
+  color: var(--c-accent);
+  margin-bottom: 0.25rem;
   flex-shrink: 0;
 }
-.a-card--primary .a-card__thumb {
-  aspect-ratio: auto;
-  flex: 1;
-  min-height: 240px;
+.how-step--active .how-step__num {
+  background: var(--c-accent);
+  border-color: var(--c-accent);
+  color: white;
 }
-/* Illustrated placeholders using CSS gradients */
-.a-card__thumb--heart {
-  background: linear-gradient(145deg, #1A4A35 0%, #0D2B1E 50%, #123825 100%);
-  position: relative;
-  overflow: hidden;
+.how-step__title {
+  font-size: 1.0625rem;
+  font-weight: 700;
+  color: var(--c-text);
+  line-height: 1.3;
 }
-.a-card__thumb--heart::after {
-  content: '';
-  position: absolute;
-  width: 90px;
-  height: 80px;
-  background: rgba(255,255,255,0.06);
-  border-radius: 50% 50% 50% 50% / 40% 40% 60% 60%;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -60%) rotate(-45deg);
-  box-shadow: 18px 0 0 0 rgba(255,255,255,0.06);
+.how-step__desc {
+  font-size: 0.9375rem;
+  color: var(--c-text-2);
+  line-height: 1.6;
 }
-.a-card__thumb--gut {
-  background: linear-gradient(145deg, #1A3A50 0%, #0D2535 100%);
+
+/* ═══════════════════════════════════════
+   THERAPY TYPES
+═══════════════════════════════════════ */
+.types {
+  padding: 5.5rem 0;
+  background: var(--c-surface-2);
+  border-top: 1px solid var(--c-border);
+  border-bottom: 1px solid var(--c-border);
 }
-.a-card__thumb--sleep {
-  background: linear-gradient(145deg, #1E1A40 0%, #120D30 100%);
+.types-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1.125rem;
 }
-.a-card__thumb-icon {
-  color: rgba(255,255,255,0.15);
-}
-.a-card__body {
-  padding: 1.25rem 1.375rem;
+.type-card {
+  background: var(--c-surface);
+  border: 1px solid var(--c-border);
+  border-radius: var(--r);
+  padding: 1.625rem 1.375rem;
   display: flex;
   flex-direction: column;
-  gap: 0.5rem;
-  flex: 1;
+  gap: 0.625rem;
+  cursor: pointer;
+  transition: transform 0.2s var(--ease), box-shadow 0.2s var(--ease), border-color 0.2s;
+  text-decoration: none;
+  color: inherit;
 }
-.a-card--primary .a-card__body { padding: 1.625rem; }
-.a-card__tag {
-  display: inline-block;
-  font-size: 0.6875rem;
-  font-weight: 700;
-  letter-spacing: 0.09em;
-  text-transform: uppercase;
-  color: var(--c-accent);
-  background: var(--c-accent-sub);
-  padding: 0.225rem 0.6rem;
-  border-radius: 4px;
-  align-self: flex-start;
+.type-card:hover {
+  transform: translateY(-3px);
+  box-shadow: var(--s-lg);
+  border-color: var(--c-accent);
 }
-.a-card__title {
-  font-family: var(--serif);
-  font-size: 1.125rem;
-  font-weight: normal;
-  line-height: 1.35;
-  color: var(--c-text);
-  text-wrap: balance;
-}
-.a-card--primary .a-card__title { font-size: 1.5rem; }
-.a-card__excerpt {
-  font-size: 0.875rem;
-  color: var(--c-text-2);
-  line-height: 1.65;
-  display: -webkit-box;
-  -webkit-line-clamp: 3;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
-}
-.a-card__footer {
+.type-card__icon {
+  width: 44px; height: 44px;
+  border-radius: 10px;
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  margin-top: auto;
-  padding-top: 0.875rem;
-  border-top: 1px solid var(--c-border);
+  justify-content: center;
+  margin-bottom: 0.25rem;
+  flex-shrink: 0;
 }
-.a-card__meta { font-size: 0.8rem; color: var(--c-text-3); }
-.a-card__read {
+.type-card__icon--blue   { background: var(--c-accent-sub); color: var(--c-accent); }
+.type-card__icon--amber  { background: #FEF3E2; color: #B87220; }
+.type-card__icon--rose   { background: #FDEEF0; color: #B83250; }
+.type-card__icon--sage   { background: var(--c-good-sub); color: var(--c-good); }
+
+[data-theme="dark"] .type-card__icon--amber { background: #2E1E08; color: var(--c-cta); }
+[data-theme="dark"] .type-card__icon--rose  { background: #2E0E16; color: #E06080; }
+@media (prefers-color-scheme: dark) {
+  .type-card__icon--amber { background: #2E1E08; color: var(--c-cta); }
+  .type-card__icon--rose  { background: #2E0E16; color: #E06080; }
+}
+
+.type-card__title {
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--c-text);
+  line-height: 1.25;
+}
+.type-card__desc {
+  font-size: 0.875rem;
+  color: var(--c-text-2);
+  line-height: 1.55;
+  flex: 1;
+}
+.type-card__link {
   font-size: 0.8125rem;
   font-weight: 600;
   color: var(--c-accent);
   display: inline-flex;
   align-items: center;
   gap: 0.3rem;
+  margin-top: auto;
   transition: gap 0.15s;
 }
-.a-card:hover .a-card__read { gap: 0.5rem; }
+.type-card:hover .type-card__link { gap: 0.5rem; }
 
 /* ═══════════════════════════════════════
-   HEALTH TOOLS
+   THERAPIST CARDS
 ═══════════════════════════════════════ */
-.tools {
-  padding: 4.5rem 0;
+.therapists {
+  padding: 5.5rem 0;
+}
+.therapists-header-row {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 3rem;
+}
+.therapist-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1.125rem;
+}
+.therapist-card {
+  background: var(--c-surface);
+  border: 1px solid var(--c-border);
+  border-radius: var(--r);
+  overflow: hidden;
+  box-shadow: var(--s-md);
+  transition: transform 0.2s var(--ease), box-shadow 0.2s var(--ease);
+  display: flex;
+  flex-direction: column;
+}
+.therapist-card:hover { transform: translateY(-3px); box-shadow: var(--s-lg); }
+.therapist-card__avatar {
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  position: relative;
+  overflow: hidden;
+  flex-shrink: 0;
+}
+/* CSS portrait illustrations */
+.avatar-bg {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.avatar-bg--amara  { background: linear-gradient(145deg, #2A4B6E 0%, #3D7A8A 60%, #1E3A52 100%); }
+.avatar-bg--james  { background: linear-gradient(145deg, #3A2E52 0%, #5A4A7A 60%, #2A1E40 100%); }
+.avatar-bg--priya  { background: linear-gradient(145deg, #4A3020 0%, #7A5535 60%, #3A2015 100%); }
+.avatar-bg--marcus { background: linear-gradient(145deg, #1A3A2A 0%, #2E6A4A 60%, #112A1C 100%); }
+.avatar-shape {
+  width: 65%;
+  aspect-ratio: 1;
+  border-radius: 50% 50% 48% 52% / 50% 50% 50% 50%;
+  opacity: 0.3;
+}
+.avatar-bg--amara .avatar-shape  { background: #7DC4E8; }
+.avatar-bg--james .avatar-shape  { background: #C4A0E8; }
+.avatar-bg--priya .avatar-shape  { background: #E8C07D; }
+.avatar-bg--marcus .avatar-shape { background: #7DE8A8; }
+.avatar-initial {
+  position: absolute;
+  font-family: var(--serif);
+  font-size: 2.5rem;
+  color: rgba(255,255,255,0.6);
+  letter-spacing: -0.02em;
+}
+.therapist-card__badge {
+  position: absolute;
+  bottom: 0.625rem;
+  right: 0.625rem;
+  background: var(--c-good);
+  color: white;
+  font-size: 0.6875rem;
+  font-weight: 700;
+  padding: 0.2rem 0.6rem;
+  border-radius: 50px;
+  letter-spacing: 0.04em;
+}
+.therapist-card__body {
+  padding: 1.25rem;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+.therapist-card__name {
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--c-text);
+}
+.therapist-card__creds {
+  font-size: 0.8125rem;
+  color: var(--c-accent);
+  font-weight: 500;
+}
+.therapist-card__tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.375rem;
+  margin-top: 0.25rem;
+}
+.therapist-card__tag {
+  font-size: 0.6875rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  background: var(--c-accent-sub);
+  color: var(--c-accent);
+  padding: 0.2rem 0.55rem;
+  border-radius: 4px;
+}
+.therapist-card__meta {
+  font-size: 0.8125rem;
+  color: var(--c-text-3);
+  margin-top: auto;
+  padding-top: 0.75rem;
+  border-top: 1px solid var(--c-border);
+}
+.therapist-card__footer {
+  padding: 0 1.25rem 1.25rem;
+}
+.btn-outline {
+  display: block;
+  width: 100%;
+  padding: 0.5625rem;
+  background: transparent;
+  border: 1.5px solid var(--c-border);
+  border-radius: 8px;
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--c-text);
+  text-align: center;
+  cursor: pointer;
+  transition: border-color 0.15s, color 0.15s, background 0.15s;
+}
+.btn-outline:hover {
+  border-color: var(--c-accent);
+  color: var(--c-accent);
+  background: var(--c-accent-sub);
+}
+
+/* ═══════════════════════════════════════
+   PRICING
+═══════════════════════════════════════ */
+.pricing {
+  padding: 5.5rem 0;
   background: var(--c-surface-2);
   border-top: 1px solid var(--c-border);
   border-bottom: 1px solid var(--c-border);
 }
-.tools-grid {
+.pricing-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1.25rem;
+  align-items: start;
+}
+.price-card {
+  background: var(--c-surface);
+  border: 1.5px solid var(--c-border);
+  border-radius: var(--r);
+  padding: 2rem;
+  box-shadow: var(--s-md);
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+.price-card--featured {
+  border-color: var(--c-accent);
+  box-shadow: 0 0 0 4px var(--c-accent-sub), var(--s-lg);
+  position: relative;
+}
+.price-card__badge {
+  display: inline-block;
+  background: var(--c-accent);
+  color: white;
+  font-size: 0.6875rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  padding: 0.25rem 0.75rem;
+  border-radius: 50px;
+  margin-bottom: 1.25rem;
+  align-self: flex-start;
+}
+.price-card__tier {
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: var(--c-text-3);
+  margin-bottom: 0.5rem;
+}
+.price-card__amount {
+  display: flex;
+  align-items: baseline;
+  gap: 0.25rem;
+  margin-bottom: 0.375rem;
+}
+.price-card__currency {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--c-text);
+  align-self: flex-start;
+  margin-top: 0.5rem;
+}
+.price-card__price {
+  font-family: var(--serif);
+  font-size: 3rem;
+  line-height: 1;
+  color: var(--c-text);
+  letter-spacing: -0.02em;
+  font-variant-numeric: tabular-nums;
+}
+.price-card__period {
+  font-size: 0.875rem;
+  color: var(--c-text-3);
+}
+.price-card__billed {
+  font-size: 0.8125rem;
+  color: var(--c-text-3);
+  margin-bottom: 1.5rem;
+}
+.price-card__features {
+  display: flex;
+  flex-direction: column;
+  gap: 0.625rem;
+  margin-bottom: 1.75rem;
+  padding-top: 1.25rem;
+  border-top: 1px solid var(--c-border);
+}
+.price-feature {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.625rem;
+  font-size: 0.875rem;
+  color: var(--c-text-2);
+}
+.price-feature svg { color: var(--c-good); flex-shrink: 0; margin-top: 3px; }
+.price-feature--muted { color: var(--c-text-3); }
+.price-feature--muted svg { color: var(--c-text-3); }
+.price-card .btn-primary {
+  width: 100%;
+  padding: 0.75rem;
+  font-size: 0.9375rem;
+  border-radius: 8px;
+  text-align: center;
+}
+.price-card .btn-outline {
+  border-radius: 8px;
+  padding: 0.75rem;
+}
+
+/* ═══════════════════════════════════════
+   TESTIMONIALS
+═══════════════════════════════════════ */
+.testimonials { padding: 5.5rem 0; }
+.testimonials-grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: 1.375rem;
 }
-.tool-card {
+.testi-card {
   background: var(--c-surface);
   border: 1px solid var(--c-border);
   border-radius: var(--r);
   padding: 1.75rem;
   box-shadow: var(--s-md);
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
 }
-.tool-card__icon {
-  width: 46px;
-  height: 46px;
-  background: var(--c-accent-sub);
-  color: var(--c-accent);
-  border-radius: 11px;
+.testi-stars {
+  display: flex;
+  gap: 0.25rem;
+  color: #D68B35;
+}
+.testi-quote {
+  font-family: var(--serif);
+  font-size: 1.0625rem;
+  line-height: 1.55;
+  color: var(--c-text);
+  font-style: italic;
+  flex: 1;
+}
+.testi-person {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--c-border);
+}
+.testi-avatar {
+  width: 38px; height: 38px;
+  border-radius: 50%;
+  font-size: 0.9375rem;
+  font-weight: 700;
+  color: white;
   display: flex;
   align-items: center;
   justify-content: center;
-  margin-bottom: 1.125rem;
   flex-shrink: 0;
 }
-.tool-card__title {
-  font-family: var(--serif);
-  font-size: 1.1875rem;
-  font-weight: normal;
-  color: var(--c-text);
-  margin-bottom: 0.375rem;
-  line-height: 1.25;
-}
-.tool-card__desc {
-  font-size: 0.875rem;
-  color: var(--c-text-2);
-  line-height: 1.55;
-  margin-bottom: 1.375rem;
-}
-.tool-form { display: flex; flex-direction: column; gap: 0.75rem; }
-.tool-field { display: flex; flex-direction: column; gap: 0.3rem; }
-.tool-field label {
-  font-size: 0.8125rem;
-  font-weight: 600;
-  color: var(--c-text-2);
-}
-.tool-field input {
-  padding: 0.5625rem 0.875rem;
-  border: 1px solid var(--c-border);
-  border-radius: 8px;
-  background: var(--c-bg);
-  color: var(--c-text);
-  font-size: 0.9375rem;
-  outline: none;
-  transition: border-color 0.15s;
-  width: 100%;
-}
-.tool-field input:focus { border-color: var(--c-accent); }
-.tool-row {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 0.625rem;
-}
-.tool-btn {
-  width: 100%;
-  padding: 0.625rem 1rem;
-  background: var(--c-accent);
-  color: white;
-  border: none;
-  border-radius: 8px;
-  font-size: 0.875rem;
-  font-weight: 700;
-  letter-spacing: 0.01em;
-  cursor: pointer;
-  transition: background 0.15s;
-  margin-top: 0.25rem;
-}
-.tool-btn:hover { background: var(--c-accent-h); }
-.tool-result {
-  display: none;
-  margin-top: 1rem;
-  padding: 1rem;
-  background: var(--c-accent-sub);
-  border-radius: 8px;
-}
-.tool-result.show { display: block; }
-.tool-result__value {
-  font-family: var(--serif);
-  font-size: 1.75rem;
-  font-weight: normal;
-  color: var(--c-accent);
-  line-height: 1;
-  margin-bottom: 0.3rem;
-  font-variant-numeric: tabular-nums;
-}
-.tool-result__label {
-  font-size: 0.8125rem;
-  color: var(--c-text-2);
-  line-height: 1.45;
-}
+.testi-avatar--j { background: linear-gradient(135deg, #3474A3, #1E4D7A); }
+.testi-avatar--m { background: linear-gradient(135deg, #7A4AA0, #4A2870); }
+.testi-avatar--r { background: linear-gradient(135deg, #3A7A52, #1E4A30); }
+.testi-name { font-size: 0.9375rem; font-weight: 700; color: var(--c-text); }
+.testi-meta { font-size: 0.8125rem; color: var(--c-text-3); }
 
 /* ═══════════════════════════════════════
-   TOPIC TILES
+   FAQ
 ═══════════════════════════════════════ */
-.topics { padding: 4.5rem 0; }
-.topics-grid {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 1rem;
+.faq {
+  padding: 5.5rem 0;
+  background: var(--c-surface-2);
+  border-top: 1px solid var(--c-border);
 }
-.topic-tile {
-  background: var(--c-surface);
-  border: 1px solid var(--c-border);
-  border-radius: var(--r);
-  padding: 1.5rem 1.25rem;
-  cursor: pointer;
-  transition: transform 0.2s var(--ease), box-shadow 0.2s var(--ease), border-color 0.2s;
+.faq__inner {
+  display: grid;
+  grid-template-columns: 1fr 2fr;
+  gap: 4rem;
+  align-items: start;
+}
+.faq__left { position: sticky; top: 5rem; }
+.faq__title {
+  font-family: var(--serif);
+  font-size: clamp(1.5rem, 3vw, 2.125rem);
+  font-weight: normal;
+  color: var(--c-text);
+  margin-bottom: 1rem;
+  text-wrap: balance;
+  line-height: 1.2;
+}
+.faq__desc {
+  font-size: 0.9375rem;
+  color: var(--c-text-2);
+  line-height: 1.65;
+  margin-bottom: 1.5rem;
+}
+.faq__contact {
+  font-size: 0.875rem;
+  color: var(--c-accent);
+  font-weight: 600;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  transition: gap 0.15s;
+}
+.faq__contact:hover { gap: 0.55rem; }
+.faq-list { display: flex; flex-direction: column; }
+.faq-item {
+  border-bottom: 1px solid var(--c-border);
+}
+.faq-item:first-child { border-top: 1px solid var(--c-border); }
+.faq-btn {
+  width: 100%;
   display: flex;
-  flex-direction: column;
-  gap: 0.625rem;
-  text-decoration: none;
-  color: inherit;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 1.25rem 0;
+  background: transparent;
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--c-text);
+  text-align: left;
+  cursor: pointer;
+  transition: color 0.15s;
+}
+.faq-btn:hover { color: var(--c-accent); }
+.faq-btn svg {
+  flex-shrink: 0;
+  color: var(--c-text-3);
+  transition: transform 0.25s var(--ease), color 0.15s;
+}
+.faq-btn[aria-expanded="true"] svg { transform: rotate(45deg); color: var(--c-accent); }
+.faq-answer {
+  font-size: 0.9375rem;
+  color: var(--c-text-2);
+  line-height: 1.7;
+  padding-bottom: 1.25rem;
+  display: none;
+}
+.faq-answer.open { display: block; }
+
+/* ═══════════════════════════════════════
+   CTA BANNER
+═══════════════════════════════════════ */
+.cta-banner {
+  padding: 5.5rem 0;
+  background: var(--c-hero);
   position: relative;
   overflow: hidden;
 }
-.topic-tile::after {
-  content: '';
-  position: absolute;
-  bottom: 0; left: 0; right: 0;
-  height: 3px;
-  background: var(--c-accent);
-  transform: scaleX(0);
-  transform-origin: left;
-  transition: transform 0.25s var(--ease);
-}
-.topic-tile:hover { transform: translateY(-3px); box-shadow: var(--s-lg); border-color: var(--c-accent); }
-.topic-tile:hover::after { transform: scaleX(1); }
-.topic-tile__icon {
-  width: 42px;
-  height: 42px;
-  color: var(--c-accent);
-}
-.topic-tile__name {
-  font-size: 0.9375rem;
-  font-weight: 600;
-  color: var(--c-text);
-  line-height: 1.25;
-}
-.topic-tile__count {
-  font-size: 0.8125rem;
-  color: var(--c-text-3);
-  margin-top: auto;
-}
-.topic-tile__arrow {
-  color: var(--c-text-3);
-  transition: color 0.15s, transform 0.15s;
-  align-self: flex-end;
-}
-.topic-tile:hover .topic-tile__arrow { color: var(--c-accent); transform: translateX(4px); }
-
-/* ═══════════════════════════════════════
-   A–Z INDEX
-═══════════════════════════════════════ */
-.az {
-  padding: 3.5rem 0;
-  background: var(--c-surface-2);
-  border-top: 1px solid var(--c-border);
-  border-bottom: 1px solid var(--c-border);
-}
-.az-letters {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.5rem;
-  margin-top: 1.75rem;
-}
-.az-letter {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 46px;
-  height: 46px;
-  background: var(--c-surface);
-  border: 1px solid var(--c-border);
-  border-radius: 8px;
-  font-size: 0.9375rem;
-  font-weight: 600;
-  color: var(--c-text-2);
-  cursor: pointer;
-  transition: all 0.15s;
-  text-decoration: none;
-}
-.az-letter:hover {
-  background: var(--c-accent);
-  border-color: var(--c-accent);
-  color: white;
-}
-
-/* ═══════════════════════════════════════
-   HELPLINES
-═══════════════════════════════════════ */
-.helplines {
-  background: var(--c-hero);
-  padding: 4rem 0;
-  position: relative;
-}
-.helplines::before {
+.cta-banner::before {
   content: '';
   position: absolute;
   inset: 0;
-  background-image: radial-gradient(circle, rgba(255,255,255,0.04) 1px, transparent 1px);
-  background-size: 28px 28px;
+  background: radial-gradient(ellipse 60% 80% at 60% 50%, rgba(46,111,163,0.3) 0%, transparent 70%);
   pointer-events: none;
 }
-.helplines__inner {
-  display: grid;
-  grid-template-columns: 1fr 2fr;
-  gap: 3.5rem;
-  align-items: start;
+.cta-banner__inner {
+  text-align: center;
   position: relative;
+  max-width: 600px;
+  margin: 0 auto;
 }
-.helplines__left {}
-.helplines__heading {
+.cta-banner__title {
   font-family: var(--serif);
-  font-size: clamp(1.5rem, 3vw, 2rem);
+  font-size: clamp(2rem, 4vw, 3rem);
   font-weight: normal;
   color: var(--c-hero-text);
-  line-height: 1.2;
-  margin-bottom: 0.75rem;
+  margin-bottom: 1rem;
+  letter-spacing: -0.02em;
   text-wrap: balance;
+  line-height: 1.15;
 }
-.helplines__sub {
-  font-size: 0.9375rem;
-  color: var(--c-hero-text-2);
+.cta-banner__sub {
+  font-size: 1.0625rem;
+  color: var(--c-hero-2t);
   line-height: 1.65;
+  margin-bottom: 2.25rem;
 }
-.helplines-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 0.875rem;
+.cta-banner .btn-primary {
+  font-size: 1rem;
+  padding: 0.875rem 2rem;
 }
-.hl-card {
-  background: rgba(255,255,255,0.06);
-  border: 1px solid rgba(255,255,255,0.1);
-  border-radius: var(--r);
-  padding: 1.125rem 1.25rem;
-  display: flex;
-  flex-direction: column;
-  gap: 0.25rem;
-}
-.hl-card--emergency {
-  border-color: rgba(255, 100, 80, 0.35);
-  background: rgba(255, 70, 50, 0.07);
-}
-.hl-card__service {
-  font-size: 0.6875rem;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.1em;
-  color: var(--c-hero-text-2);
-}
-.hl-card__number {
-  font-family: var(--serif);
-  font-size: 1.625rem;
-  color: var(--c-hero-text);
-  font-variant-numeric: tabular-nums;
-  line-height: 1.1;
-}
-.hl-card--emergency .hl-card__number { color: #FF9080; }
-.hl-card__hours {
-  font-size: 0.8125rem;
-  color: var(--c-hero-text-2);
+.cta-banner__note {
+  margin-top: 1.125rem;
+  font-size: 0.875rem;
+  color: var(--c-hero-2t);
 }
 
 /* ═══════════════════════════════════════
@@ -913,29 +1058,33 @@ input { font-family: inherit; }
   gap: 2.5rem;
   margin-bottom: 2.5rem;
 }
-.footer__brand {}
 .footer__brand-logo {
   display: flex;
   align-items: center;
   gap: 0.5rem;
   margin-bottom: 0.875rem;
 }
-.footer__brand-mark {
-  width: 26px;
-  height: 26px;
-  background: var(--c-accent);
-  border-radius: 50% 50% 50% 12%;
-  transform: rotate(-45deg);
+.footer__logo-icon {
+  width: 28px; height: 28px;
   position: relative;
   flex-shrink: 0;
 }
-.footer__brand-mark::after {
+.footer__logo-icon::before {
   content: '';
   position: absolute;
-  inset: 7px;
-  background: white;
+  width: 18px; height: 18px;
+  background: var(--c-accent);
   border-radius: 50%;
-  transform: rotate(45deg);
+  top: 0; left: 0;
+}
+.footer__logo-icon::after {
+  content: '';
+  position: absolute;
+  width: 14px; height: 14px;
+  background: var(--c-cta);
+  border-radius: 50%;
+  bottom: 0; right: 0;
+  opacity: 0.85;
 }
 .footer__brand-name {
   font-family: var(--serif);
@@ -988,459 +1137,585 @@ input { font-family: inherit; }
   font-size: 0.8125rem;
   color: var(--c-text-3);
 }
-.footer__bottom-links {
-  display: flex;
-  gap: 1.25rem;
-}
-.footer__bottom-links a {
-  color: var(--c-text-3);
-  transition: color 0.15s;
-}
+.footer__bottom-links { display: flex; gap: 1.25rem; }
+.footer__bottom-links a { color: var(--c-text-3); transition: color 0.15s; }
 .footer__bottom-links a:hover { color: var(--c-accent); }
 
 /* ═══════════════════════════════════════
    RESPONSIVE
 ═══════════════════════════════════════ */
-@media (max-width: 1024px) {
-  .topics-grid { grid-template-columns: repeat(4, 1fr); }
-}
-
-@media (max-width: 900px) {
+@media (max-width: 960px) {
   .hero__inner { grid-template-columns: 1fr; }
   .hero__visual { display: none; }
-  .hero { padding: 4rem 0; }
-  .featured-grid { grid-template-columns: 1fr 1fr; }
-  .a-card--primary { grid-column: 1 / -1; grid-row: auto; }
-  .a-card--primary .a-card__thumb { min-height: 200px; }
-  .tools-grid { grid-template-columns: 1fr; max-width: 520px; }
-  .topics-grid { grid-template-columns: repeat(2, 1fr); }
-  .helplines__inner { grid-template-columns: 1fr; gap: 1.75rem; }
+  .hero { padding: 4rem 0 3.5rem; }
+  .types-grid { grid-template-columns: repeat(2, 1fr); }
+  .therapist-grid { grid-template-columns: repeat(2, 1fr); }
+  .pricing-grid { grid-template-columns: 1fr; max-width: 420px; }
+  .testimonials-grid { grid-template-columns: 1fr 1fr; }
+  .faq__inner { grid-template-columns: 1fr; gap: 2rem; }
+  .faq__left { position: static; }
   .footer__grid { grid-template-columns: 1fr 1fr; }
+  .how-steps::before { display: none; }
 }
 
 @media (max-width: 640px) {
   .nav__links { display: none; }
-  .featured-grid { grid-template-columns: 1fr; }
-  .a-card--primary { grid-column: auto; }
-  .helplines-grid { grid-template-columns: 1fr; }
+  .nav__signin { display: none; }
+  .types-grid { grid-template-columns: 1fr 1fr; }
+  .therapist-grid { grid-template-columns: 1fr 1fr; }
+  .testimonials-grid { grid-template-columns: 1fr; }
+  .how-steps { grid-template-columns: 1fr; gap: 1.5rem; }
   .footer__grid { grid-template-columns: 1fr; }
-  .az-letter { width: 38px; height: 38px; font-size: 0.875rem; }
-  .hero__search-wrap { flex-direction: column; border-radius: var(--r); }
-  .hero__search-btn { border-radius: 0 0 var(--r) var(--r); padding: 0.75rem; }
+  .pricing-grid { max-width: 100%; }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
 }
 </style>
 </head>
 <body>
 
-<!-- ── NAVIGATION ── -->
-<nav class="nav" role="navigation" aria-label="Main">
+<!-- ── NAV ── -->
+<nav class="nav">
   <div class="container nav__inner">
-    <a href="#" class="nav__logo" aria-label="Thrive Health home">
-      <div class="nav__logo-mark" aria-hidden="true"></div>
+    <a href="#" class="nav__logo" aria-label="Thrive home">
+      <div class="nav__logo-icon" aria-hidden="true"></div>
       <span class="nav__logo-name">Thrive</span>
-      <span class="nav__logo-tag">Health</span>
     </a>
     <ul class="nav__links" role="list">
-      <li><a href="#">Conditions A–Z</a></li>
-      <li><a href="#">Healthy Living</a></li>
-      <li><a href="#">Mental Health</a></li>
-      <li><a href="#">Nutrition</a></li>
-      <li><a href="#">Tools</a></li>
+      <li><a href="#how">How it works</a></li>
+      <li><a href="#therapists">Our therapists</a></li>
+      <li><a href="#pricing">Pricing</a></li>
+      <li><a href="#faq">FAQ</a></li>
     </ul>
-    <div class="nav__actions">
-      <button class="nav__icon-btn" aria-label="Search">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
-      </button>
-      <button class="nav__icon-btn" id="themeToggle" aria-label="Toggle dark mode">
-        <svg id="iconSun" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M2 12h2M20 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>
-        <svg id="iconMoon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" style="display:none" aria-hidden="true"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+    <div class="nav__right">
+      <a href="#" class="nav__signin">Sign in</a>
+      <button class="btn-primary">Get started</button>
+      <button class="nav__theme" id="themeToggle" aria-label="Toggle dark mode">
+        <svg id="iconSun" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M2 12h2M20 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>
+        <svg id="iconMoon" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" style="display:none" aria-hidden="true"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
       </button>
     </div>
   </div>
 </nav>
 
 <!-- ── HERO ── -->
-<section class="hero" aria-labelledby="heroHeading">
+<section class="hero">
   <div class="container hero__inner">
-    <div class="hero__content">
-      <p class="hero__eyebrow">Evidence-based health information</p>
-      <h1 class="hero__headline" id="heroHeading">
-        Your guide to<br><em>living well</em>
-      </h1>
-      <p class="hero__lede">
-        Plain-language answers on conditions, symptoms, treatments, and healthy habits — reviewed by medical professionals, written for everyone.
-      </p>
-      <div class="hero__search-wrap" role="search">
-        <input class="hero__search-input" type="search" placeholder="Search conditions, symptoms, treatments…" aria-label="Search health topics">
-        <button class="hero__search-btn" type="submit" aria-label="Submit search">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
-          Search
-        </button>
+    <div>
+      <div class="hero__badge">
+        <span class="hero__badge-dot" aria-hidden="true"></span>
+        50,000+ licensed therapists available
       </div>
-      <div class="hero__trust-row" aria-label="Site statistics">
-        <span class="hero__trust-item"><span class="hero__trust-dot" aria-hidden="true"></span>2,400+ health topics</span>
-        <span class="hero__trust-item"><span class="hero__trust-dot" aria-hidden="true"></span>Reviewed by clinicians</span>
-        <span class="hero__trust-item"><span class="hero__trust-dot" aria-hidden="true"></span>Updated weekly</span>
+      <h1 class="hero__headline">Therapy that fits<br><em>around your life</em></h1>
+      <p class="hero__sub">Connect with a licensed therapist by message, voice, or video call — on your schedule, from wherever you are. Start in under 48 hours.</p>
+      <div class="hero__cta-row">
+        <button class="btn-primary">Find my therapist</button>
+        <a href="#how" class="hero__how-link">
+          How it works
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+        </a>
+      </div>
+      <div class="hero__trust">
+        <span class="hero__trust-item">
+          <svg class="hero__trust-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
+          Licensed &amp; accredited
+        </span>
+        <span class="hero__trust-item">
+          <svg class="hero__trust-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
+          Private &amp; secure
+        </span>
+        <span class="hero__trust-item">
+          <svg class="hero__trust-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
+          Cancel anytime
+        </span>
       </div>
     </div>
 
     <div class="hero__visual" aria-hidden="true">
-      <div class="hero__blob"></div>
-      <div class="hero__stat hero__stat--a">
-        <div class="hero__stat-label">Daily steps</div>
-        <div class="hero__stat-value">10,000</div>
-        <div class="hero__stat-sub">recommended target for adults</div>
-      </div>
-      <div class="hero__stat hero__stat--b">
-        <div class="hero__stat-label">Sleep</div>
-        <div class="hero__stat-value">7–9 hrs</div>
-        <div class="hero__stat-sub">optimal for most adults</div>
-      </div>
-      <div class="hero__stat hero__stat--c">
-        <div class="hero__stat-label">Activity / week</div>
-        <div class="hero__stat-value">150 min</div>
-        <div class="hero__stat-sub">moderate aerobic exercise</div>
+      <div class="conn-ring conn-ring--1"></div>
+      <div class="conn-ring conn-ring--2"></div>
+      <div class="conn-ring conn-ring--3"></div>
+      <div class="conn-bubble conn-bubble--a"></div>
+      <div class="conn-bubble conn-bubble--b"></div>
+      <div class="conn-bubble conn-bubble--c"></div>
+      <div class="conn-bubble conn-bubble--d"></div>
+      <div class="conn-line conn-line--1"></div>
+      <div class="conn-line conn-line--2"></div>
+      <div class="hero__msg-card">
+        <div class="hero__msg-meta">Your session — Dr. Osei</div>
+        <div class="hero__msg-bubbles">
+          <div class="hero__msg-bubble">"I've been feeling overwhelmed at work and not sleeping well."</div>
+          <div class="hero__msg-bubble hero__msg-bubble--reply">"That's really common. Let's talk about what's driving that feeling."</div>
+        </div>
       </div>
     </div>
   </div>
 </section>
 
-<!-- ── CATEGORY PILLS ── -->
-<section class="cats" aria-label="Browse by category">
-  <div class="container">
-    <div class="cats__track" role="list">
-      <button class="cat-pill" role="listitem">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
-        Heart Health
-      </button>
-      <button class="cat-pill" role="listitem">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><ellipse cx="12" cy="5" rx="8" ry="3"/><path d="M4 5c0 1.66 3.58 3 8 3s8-1.34 8-3"/><path d="M4 5v14c0 1.66 3.58 3 8 3s8-1.34 8-3V5"/></svg>
-        Mental Wellbeing
-      </button>
-      <button class="cat-pill" role="listitem">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M12 2a10 10 0 1 0 10 10"/><path d="M12 6v6l4 2"/></svg>
-        Symptoms Checker
-      </button>
-      <button class="cat-pill" role="listitem">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><rect x="3" y="3" width="7" height="9" rx="1"/><rect x="14" y="3" width="7" height="5" rx="1"/><rect x="14" y="12" width="7" height="9" rx="1"/><rect x="3" y="16" width="7" height="5" rx="1"/></svg>
-        Medications
-      </button>
-      <button class="cat-pill" role="listitem">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="5" r="3"/><path d="M6.5 8a5.5 5.5 0 0 0 11 0"/><path d="M10 21v-6l-3-3"/><path d="M14 21v-6l3-3"/></svg>
-        Children's Health
-      </button>
-      <button class="cat-pill" role="listitem">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M18 8h1a4 4 0 0 1 0 8h-1"/><path d="M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8z"/><line x1="6" y1="1" x2="6" y2="4"/><line x1="10" y1="1" x2="10" y2="4"/><line x1="14" y1="1" x2="14" y2="4"/></svg>
-        Nutrition
-      </button>
-    </div>
-  </div>
-</section>
-
-<!-- ── FEATURED ARTICLES ── -->
-<section class="featured" aria-labelledby="featuredHeading">
-  <div class="container">
-    <div class="sec-header sec-header-row">
-      <div>
-        <p class="sec-eyebrow">In focus</p>
-        <h2 class="sec-title" id="featuredHeading">Essential reading</h2>
-      </div>
-      <a href="#" class="sec-link">
-        All articles
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
-      </a>
-    </div>
-
-    <div class="featured-grid">
-      <!-- Primary article -->
-      <a href="#" class="a-card a-card--primary" aria-label="Read: Understanding your heart health">
-        <div class="a-card__thumb a-card__thumb--heart">
-          <svg class="a-card__thumb-icon" width="80" height="80" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round" aria-hidden="true"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
-        </div>
-        <div class="a-card__body">
-          <span class="a-card__tag">Cardiology</span>
-          <h3 class="a-card__title">Understanding your heart health: a complete guide to prevention</h3>
-          <p class="a-card__excerpt">Cardiovascular disease remains the leading cause of death worldwide, yet up to 80% of cases are preventable. Here's what the science says about protecting your heart — from blood pressure and cholesterol to diet and exercise.</p>
-          <div class="a-card__footer">
-            <span class="a-card__meta">Dr. Sarah Okafor · 12 min read</span>
-            <span class="a-card__read">
-              Read
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
-            </span>
-          </div>
-        </div>
-      </a>
-
-      <!-- Article 2 -->
-      <a href="#" class="a-card" aria-label="Read: The gut-brain connection">
-        <div class="a-card__thumb a-card__thumb--gut">
-          <svg class="a-card__thumb-icon" width="60" height="60" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="0.8" stroke-linecap="round" aria-hidden="true"><ellipse cx="12" cy="12" rx="10" ry="6"/><path d="M12 2c0 0 4 4 4 10s-4 10-4 10"/><path d="M2 12h20"/></svg>
-        </div>
-        <div class="a-card__body">
-          <span class="a-card__tag">Gut Health</span>
-          <h3 class="a-card__title">The gut-brain connection: what the science now tells us</h3>
-          <p class="a-card__excerpt">Your gut contains 100 million nerve cells and produces 95% of the body's serotonin. Researchers are uncovering just how deeply gut health shapes mental health, immunity, and chronic disease risk.</p>
-          <div class="a-card__footer">
-            <span class="a-card__meta">Tom Reid · 8 min read</span>
-            <span class="a-card__read">
-              Read
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
-            </span>
-          </div>
-        </div>
-      </a>
-
-      <!-- Article 3 -->
-      <a href="#" class="a-card" aria-label="Read: Sleep and your immune system">
-        <div class="a-card__thumb a-card__thumb--sleep">
-          <svg class="a-card__thumb-icon" width="60" height="60" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="0.8" stroke-linecap="round" aria-hidden="true"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/><path d="M14 14l4 4M10 14l-4 4"/></svg>
-        </div>
-        <div class="a-card__body">
-          <span class="a-card__tag">Sleep</span>
-          <h3 class="a-card__title">Why sleep is your most powerful immune tool</h3>
-          <p class="a-card__excerpt">During deep sleep, your immune system releases cytokines — proteins that fight infection and inflammation. Chronic short sleep is now linked to higher rates of diabetes, cardiovascular disease, and even some cancers.</p>
-          <div class="a-card__footer">
-            <span class="a-card__meta">Dr. Kim Larsson · 7 min read</span>
-            <span class="a-card__read">
-              Read
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
-            </span>
-          </div>
-        </div>
-      </a>
-    </div>
-  </div>
-</section>
-
-<!-- ── HEALTH TOOLS ── -->
-<section class="tools" id="tools" aria-labelledby="toolsHeading">
+<!-- ── HOW IT WORKS ── -->
+<section class="how" id="how" aria-labelledby="howHeading">
   <div class="container">
     <div class="sec-header">
-      <p class="sec-eyebrow">Interactive tools</p>
-      <h2 class="sec-title" id="toolsHeading">Check your numbers</h2>
+      <p class="sec-eyebrow">Getting started</p>
+      <h2 class="sec-title" id="howHeading">Three steps to your first session</h2>
+      <p class="sec-sub">You can be matched with a therapist and have your first session within 48 hours of signing up.</p>
     </div>
-
-    <div class="tools-grid">
-      <!-- BMI Calculator -->
-      <div class="tool-card">
-        <div class="tool-card__icon" aria-hidden="true">
-          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 6h18M3 12h18M3 18h18"/><rect x="9" y="3" width="6" height="18" rx="1"/></svg>
-        </div>
-        <h3 class="tool-card__title">BMI Calculator</h3>
-        <p class="tool-card__desc">Body Mass Index is a screening measure for weight relative to height. Use this alongside other health indicators.</p>
-        <div class="tool-form" id="bmiForm">
-          <div class="tool-row">
-            <div class="tool-field">
-              <label for="bmiHeight">Height (cm)</label>
-              <input type="number" id="bmiHeight" placeholder="175" min="100" max="250">
-            </div>
-            <div class="tool-field">
-              <label for="bmiWeight">Weight (kg)</label>
-              <input type="number" id="bmiWeight" placeholder="70" min="20" max="300">
-            </div>
-          </div>
-          <button class="tool-btn" onclick="calcBMI()">Calculate BMI</button>
-          <div class="tool-result" id="bmiResult">
-            <div class="tool-result__value" id="bmiValue"></div>
-            <div class="tool-result__label" id="bmiLabel"></div>
-          </div>
-        </div>
+    <div class="how-steps">
+      <div class="how-step">
+        <div class="how-step__num how-step__num--active" style="background:var(--c-accent);border-color:var(--c-accent);color:white;">1</div>
+        <div class="how-step__title">Tell us about yourself</div>
+        <div class="how-step__desc">Answer a short questionnaire about your situation, preferences, and goals. It takes about five minutes and is entirely confidential.</div>
       </div>
-
-      <!-- Water Intake -->
-      <div class="tool-card">
-        <div class="tool-card__icon" aria-hidden="true">
-          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z"/></svg>
-        </div>
-        <h3 class="tool-card__title">Daily Water Intake</h3>
-        <p class="tool-card__desc">Staying hydrated supports kidney function, cognition, and energy levels. Your ideal intake varies by weight and activity.</p>
-        <div class="tool-form">
-          <div class="tool-field">
-            <label for="waterWeight">Body weight (kg)</label>
-            <input type="number" id="waterWeight" placeholder="70" min="30" max="250">
-          </div>
-          <div class="tool-field">
-            <label for="waterActivity">Activity level</label>
-            <input type="text" id="waterActivity" placeholder="sedentary / moderate / active" aria-label="Type sedentary, moderate, or active">
-          </div>
-          <button class="tool-btn" onclick="calcWater()">Calculate intake</button>
-          <div class="tool-result" id="waterResult">
-            <div class="tool-result__value" id="waterValue"></div>
-            <div class="tool-result__label" id="waterLabel"></div>
-          </div>
-        </div>
+      <div class="how-step">
+        <div class="how-step__num">2</div>
+        <div class="how-step__title">Get matched with a therapist</div>
+        <div class="how-step__desc">Our matching process considers your needs, therapist specialties, availability, and communication preferences. You can switch at any time, for any reason.</div>
       </div>
-
-      <!-- Sleep Bedtime -->
-      <div class="tool-card">
-        <div class="tool-card__icon" aria-hidden="true">
-          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
-        </div>
-        <h3 class="tool-card__title">Ideal Bedtime</h3>
-        <p class="tool-card__desc">Sleep happens in 90-minute cycles. Waking between cycles leaves you feeling rested. Enter your wake time to find ideal bedtimes.</p>
-        <div class="tool-form">
-          <div class="tool-field">
-            <label for="wakeTime">Wake-up time</label>
-            <input type="time" id="wakeTime" value="07:00">
-          </div>
-          <button class="tool-btn" onclick="calcSleep()">Find bedtimes</button>
-          <div class="tool-result" id="sleepResult">
-            <div class="tool-result__value" id="sleepValue"></div>
-            <div class="tool-result__label" id="sleepLabel"></div>
-          </div>
-        </div>
+      <div class="how-step">
+        <div class="how-step__num">3</div>
+        <div class="how-step__title">Start therapy your way</div>
+        <div class="how-step__desc">Connect by messaging, voice note, phone call, or live video — whichever fits your comfort and schedule. Therapy should work around you, not the other way around.</div>
       </div>
     </div>
   </div>
 </section>
 
-<!-- ── TOPIC TILES ── -->
-<section class="topics" aria-labelledby="topicsHeading">
+<!-- ── THERAPY TYPES ── -->
+<section class="types" aria-labelledby="typesHeading">
   <div class="container">
-    <div class="sec-header sec-header-row">
-      <div>
-        <p class="sec-eyebrow">Browse by topic</p>
-        <h2 class="sec-title" id="topicsHeading">Find your area</h2>
-      </div>
-      <a href="#" class="sec-link">
-        All topics
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
-      </a>
+    <div class="sec-header">
+      <p class="sec-eyebrow">What we offer</p>
+      <h2 class="sec-title" id="typesHeading">Therapy for every situation</h2>
     </div>
-    <div class="topics-grid">
+    <div class="types-grid">
 
-      <a href="#" class="topic-tile">
-        <svg class="topic-tile__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" aria-hidden="true"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
-        <div class="topic-tile__name">Heart &amp; Blood Vessels</div>
-        <div class="topic-tile__count">312 articles</div>
-        <svg class="topic-tile__arrow" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+      <a href="#" class="type-card">
+        <div class="type-card__icon type-card__icon--blue">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+        </div>
+        <div class="type-card__title">Individual Therapy</div>
+        <div class="type-card__desc">One-on-one sessions for anxiety, depression, stress, grief, self-esteem, life transitions, and more.</div>
+        <span class="type-card__link">
+          Learn more
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+        </span>
       </a>
 
-      <a href="#" class="topic-tile">
-        <svg class="topic-tile__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" aria-hidden="true"><path d="M9 3H5a2 2 0 0 0-2 2v4m6-6h10a2 2 0 0 1 2 2v4M9 3v18m0 0h10a2 2 0 0 0 2-2v-4M9 21H5a2 2 0 0 1-2-2v-4m0 0h18"/></svg>
-        <div class="topic-tile__name">Brain &amp; Mental Health</div>
-        <div class="topic-tile__count">284 articles</div>
-        <svg class="topic-tile__arrow" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+      <a href="#" class="type-card">
+        <div class="type-card__icon type-card__icon--rose">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+        </div>
+        <div class="type-card__title">Couples Therapy</div>
+        <div class="type-card__desc">Strengthen your relationship, improve communication, work through conflict, or navigate a major life change together.</div>
+        <span class="type-card__link">
+          Learn more
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+        </span>
       </a>
 
-      <a href="#" class="topic-tile">
-        <svg class="topic-tile__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" aria-hidden="true"><path d="M18 8h1a4 4 0 0 1 0 8h-1"/><path d="M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8z"/><line x1="6" y1="1" x2="6" y2="4"/><line x1="10" y1="1" x2="10" y2="4"/><line x1="14" y1="1" x2="14" y2="4"/></svg>
-        <div class="topic-tile__name">Nutrition &amp; Diet</div>
-        <div class="topic-tile__count">196 articles</div>
-        <svg class="topic-tile__arrow" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+      <a href="#" class="type-card">
+        <div class="type-card__icon type-card__icon--amber">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M12 22c5.52 0 10-4.48 10-10S17.52 2 12 2 2 6.48 2 12s4.48 10 10 10z"/><path d="M12 8v4l3 3"/></svg>
+        </div>
+        <div class="type-card__title">Teen Therapy</div>
+        <div class="type-card__desc">Specialised support for ages 13–17 dealing with school pressure, identity, social anxiety, and family stress.</div>
+        <span class="type-card__link">
+          Learn more
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+        </span>
       </a>
 
-      <a href="#" class="topic-tile">
-        <svg class="topic-tile__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="5" r="3"/><path d="M6.5 8a5.5 5.5 0 0 0 4.5 5.46V21"/><path d="M17.5 8a5.5 5.5 0 0 1-4.5 5.46V21"/></svg>
-        <div class="topic-tile__name">Exercise &amp; Movement</div>
-        <div class="topic-tile__count">158 articles</div>
-        <svg class="topic-tile__arrow" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
-      </a>
-
-      <a href="#" class="topic-tile">
-        <svg class="topic-tile__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="8" r="3"/><path d="M12 11v10"/><path d="M9 18c0-1.66 1.34-3 3-3s3 1.34 3 3"/><path d="M8 21h8"/></svg>
-        <div class="topic-tile__name">Women's Health</div>
-        <div class="topic-tile__count">241 articles</div>
-        <svg class="topic-tile__arrow" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
-      </a>
-
-      <a href="#" class="topic-tile">
-        <svg class="topic-tile__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="7" r="4"/><path d="M6 21v-2a6 6 0 0 1 12 0v2"/></svg>
-        <div class="topic-tile__name">Men's Health</div>
-        <div class="topic-tile__count">187 articles</div>
-        <svg class="topic-tile__arrow" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
-      </a>
-
-      <a href="#" class="topic-tile">
-        <svg class="topic-tile__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="6" r="3"/><path d="M5 20v-1a7 7 0 0 1 14 0v1"/><path d="M12 9v5"/></svg>
-        <div class="topic-tile__name">Children &amp; Teens</div>
-        <div class="topic-tile__count">223 articles</div>
-        <svg class="topic-tile__arrow" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
-      </a>
-
-      <a href="#" class="topic-tile">
-        <svg class="topic-tile__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="5" r="3"/><path d="M7 10a5 5 0 0 0 10 0"/><path d="M10 21V15l-2-2"/><path d="M14 21V15l2-2"/><path d="M12 15v-5"/></svg>
-        <div class="topic-tile__name">Healthy Ageing</div>
-        <div class="topic-tile__count">174 articles</div>
-        <svg class="topic-tile__arrow" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+      <a href="#" class="type-card">
+        <div class="type-card__icon type-card__icon--sage">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+        </div>
+        <div class="type-card__title">Psychiatry &amp; Medication</div>
+        <div class="type-card__desc">Consult with a psychiatrist for medication evaluation and management, alongside or independent of talk therapy.</div>
+        <span class="type-card__link">
+          Learn more
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+        </span>
       </a>
 
     </div>
   </div>
 </section>
 
-<!-- ── A–Z CONDITIONS ── -->
-<section class="az" aria-labelledby="azHeading">
+<!-- ── THERAPISTS ── -->
+<section class="therapists" id="therapists" aria-labelledby="therapistsHeading">
   <div class="container">
-    <div class="sec-header-row">
+    <div class="therapists-header-row">
       <div>
-        <p class="sec-eyebrow">Directory</p>
-        <h2 class="sec-title" id="azHeading">Conditions A–Z</h2>
+        <p class="sec-eyebrow">Our therapists</p>
+        <h2 class="sec-title" id="therapistsHeading">People behind your care</h2>
       </div>
+      <a href="#" class="type-card__link" style="font-size:0.875rem">
+        Browse all therapists
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+      </a>
     </div>
-    <nav class="az-letters" aria-label="Browse conditions alphabetically">
-      <a href="#" class="az-letter">A</a>
-      <a href="#" class="az-letter">B</a>
-      <a href="#" class="az-letter">C</a>
-      <a href="#" class="az-letter">D</a>
-      <a href="#" class="az-letter">E</a>
-      <a href="#" class="az-letter">F</a>
-      <a href="#" class="az-letter">G</a>
-      <a href="#" class="az-letter">H</a>
-      <a href="#" class="az-letter">I</a>
-      <a href="#" class="az-letter">J</a>
-      <a href="#" class="az-letter">K</a>
-      <a href="#" class="az-letter">L</a>
-      <a href="#" class="az-letter">M</a>
-      <a href="#" class="az-letter">N</a>
-      <a href="#" class="az-letter">O</a>
-      <a href="#" class="az-letter">P</a>
-      <a href="#" class="az-letter">Q</a>
-      <a href="#" class="az-letter">R</a>
-      <a href="#" class="az-letter">S</a>
-      <a href="#" class="az-letter">T</a>
-      <a href="#" class="az-letter">U</a>
-      <a href="#" class="az-letter">V</a>
-      <a href="#" class="az-letter">W</a>
-      <a href="#" class="az-letter">X</a>
-      <a href="#" class="az-letter">Y</a>
-      <a href="#" class="az-letter">Z</a>
-    </nav>
+    <div class="therapist-grid">
+
+      <!-- Therapist 1 -->
+      <div class="therapist-card">
+        <div class="therapist-card__avatar">
+          <div class="avatar-bg avatar-bg--amara">
+            <div class="avatar-shape"></div>
+            <span class="avatar-initial">AO</span>
+          </div>
+          <span class="therapist-card__badge">Available</span>
+        </div>
+        <div class="therapist-card__body">
+          <div class="therapist-card__name">Dr. Amara Osei</div>
+          <div class="therapist-card__creds">Ph.D · Clinical Psychologist</div>
+          <div class="therapist-card__tags">
+            <span class="therapist-card__tag">Anxiety</span>
+            <span class="therapist-card__tag">Depression</span>
+            <span class="therapist-card__tag">Trauma</span>
+          </div>
+          <div class="therapist-card__meta">12 years experience · CBT &amp; ACT</div>
+        </div>
+        <div class="therapist-card__footer">
+          <button class="btn-outline">View profile</button>
+        </div>
+      </div>
+
+      <!-- Therapist 2 -->
+      <div class="therapist-card">
+        <div class="therapist-card__avatar">
+          <div class="avatar-bg avatar-bg--james">
+            <div class="avatar-shape"></div>
+            <span class="avatar-initial">JW</span>
+          </div>
+          <span class="therapist-card__badge">Available</span>
+        </div>
+        <div class="therapist-card__body">
+          <div class="therapist-card__name">James Whitfield</div>
+          <div class="therapist-card__creds">LMFT · Licensed Marriage &amp; Family</div>
+          <div class="therapist-card__tags">
+            <span class="therapist-card__tag">Relationships</span>
+            <span class="therapist-card__tag">Couples</span>
+            <span class="therapist-card__tag">Grief</span>
+          </div>
+          <div class="therapist-card__meta">9 years experience · EFT</div>
+        </div>
+        <div class="therapist-card__footer">
+          <button class="btn-outline">View profile</button>
+        </div>
+      </div>
+
+      <!-- Therapist 3 -->
+      <div class="therapist-card">
+        <div class="therapist-card__avatar">
+          <div class="avatar-bg avatar-bg--priya">
+            <div class="avatar-shape"></div>
+            <span class="avatar-initial">PS</span>
+          </div>
+          <span class="therapist-card__badge">Available</span>
+        </div>
+        <div class="therapist-card__body">
+          <div class="therapist-card__name">Dr. Priya Sharma</div>
+          <div class="therapist-card__creds">Psy.D · Licensed Psychologist</div>
+          <div class="therapist-card__tags">
+            <span class="therapist-card__tag">OCD</span>
+            <span class="therapist-card__tag">Phobias</span>
+            <span class="therapist-card__tag">Life transitions</span>
+          </div>
+          <div class="therapist-card__meta">7 years experience · CBT &amp; ERP</div>
+        </div>
+        <div class="therapist-card__footer">
+          <button class="btn-outline">View profile</button>
+        </div>
+      </div>
+
+      <!-- Therapist 4 -->
+      <div class="therapist-card">
+        <div class="therapist-card__avatar">
+          <div class="avatar-bg avatar-bg--marcus">
+            <div class="avatar-shape"></div>
+            <span class="avatar-initial">MC</span>
+          </div>
+          <span class="therapist-card__badge">Available</span>
+        </div>
+        <div class="therapist-card__body">
+          <div class="therapist-card__name">Marcus Chen</div>
+          <div class="therapist-card__creds">LCSW · Licensed Clinical Social Worker</div>
+          <div class="therapist-card__tags">
+            <span class="therapist-card__tag">Identity</span>
+            <span class="therapist-card__tag">LGBTQ+</span>
+            <span class="therapist-card__tag">Self-esteem</span>
+          </div>
+          <div class="therapist-card__meta">11 years experience · Person-centred</div>
+        </div>
+        <div class="therapist-card__footer">
+          <button class="btn-outline">View profile</button>
+        </div>
+      </div>
+
+    </div>
   </div>
 </section>
 
-<!-- ── HELPLINES ── -->
-<section class="helplines" aria-labelledby="helplinesHeading">
-  <div class="container helplines__inner">
-    <div class="helplines__left">
-      <h2 class="helplines__heading" id="helplinesHeading">Need to talk to someone right now?</h2>
-      <p class="helplines__sub">Free, confidential support is available around the clock. You don't need to be in crisis — reaching out early helps.</p>
+<!-- ── PRICING ── -->
+<section class="pricing" id="pricing" aria-labelledby="pricingHeading">
+  <div class="container">
+    <div class="sec-header" style="text-align:center;max-width:500px;margin-left:auto;margin-right:auto;margin-bottom:3rem">
+      <p class="sec-eyebrow">Plans &amp; pricing</p>
+      <h2 class="sec-title" id="pricingHeading">Simple, transparent pricing</h2>
+      <p class="sec-sub" style="margin:0.625rem auto 0">Financial aid is available for those who qualify. All plans include unlimited messaging with your therapist.</p>
     </div>
-    <div class="helplines-grid">
-      <div class="hl-card hl-card--emergency">
-        <div class="hl-card__service">Emergency</div>
-        <div class="hl-card__number">000</div>
-        <div class="hl-card__hours">Police · Fire · Ambulance · 24/7</div>
+    <div class="pricing-grid" style="max-width:900px;margin:0 auto">
+
+      <div class="price-card">
+        <div class="price-card__tier">Basic</div>
+        <div class="price-card__amount">
+          <span class="price-card__currency">$</span>
+          <span class="price-card__price">60</span>
+          <span class="price-card__period">/ week</span>
+        </div>
+        <div class="price-card__billed">Billed monthly · cancel anytime</div>
+        <ul class="price-card__features">
+          <li class="price-feature">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
+            Unlimited messaging therapy
+          </li>
+          <li class="price-feature">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
+            Licensed therapist matching
+          </li>
+          <li class="price-feature price-feature--muted">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+            Live video sessions
+          </li>
+          <li class="price-feature price-feature--muted">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+            Phone &amp; voice sessions
+          </li>
+        </ul>
+        <button class="btn-outline">Get started</button>
       </div>
-      <div class="hl-card">
-        <div class="hl-card__service">Lifeline — Crisis Support</div>
-        <div class="hl-card__number">13 11 14</div>
-        <div class="hl-card__hours">24 hours · 7 days a week</div>
+
+      <div class="price-card price-card--featured">
+        <span class="price-card__badge">Most popular</span>
+        <div class="price-card__tier">Standard</div>
+        <div class="price-card__amount">
+          <span class="price-card__currency">$</span>
+          <span class="price-card__price">80</span>
+          <span class="price-card__period">/ week</span>
+        </div>
+        <div class="price-card__billed">Billed monthly · cancel anytime</div>
+        <ul class="price-card__features">
+          <li class="price-feature">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
+            Unlimited messaging therapy
+          </li>
+          <li class="price-feature">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
+            Licensed therapist matching
+          </li>
+          <li class="price-feature">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
+            4 live video sessions / month
+          </li>
+          <li class="price-feature">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
+            Phone &amp; voice sessions
+          </li>
+        </ul>
+        <button class="btn-primary">Get started</button>
       </div>
-      <div class="hl-card">
-        <div class="hl-card__service">Beyond Blue</div>
-        <div class="hl-card__number">1300 22 4636</div>
-        <div class="hl-card__hours">Mental health · 24/7</div>
+
+      <div class="price-card">
+        <div class="price-card__tier">Premium</div>
+        <div class="price-card__amount">
+          <span class="price-card__currency">$</span>
+          <span class="price-card__price">100</span>
+          <span class="price-card__period">/ week</span>
+        </div>
+        <div class="price-card__billed">Billed monthly · cancel anytime</div>
+        <ul class="price-card__features">
+          <li class="price-feature">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
+            Unlimited messaging therapy
+          </li>
+          <li class="price-feature">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
+            Priority therapist matching
+          </li>
+          <li class="price-feature">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
+            Unlimited live video sessions
+          </li>
+          <li class="price-feature">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
+            Workshops &amp; group sessions
+          </li>
+        </ul>
+        <button class="btn-outline">Get started</button>
       </div>
-      <div class="hl-card">
-        <div class="hl-card__service">Kids Helpline</div>
-        <div class="hl-card__number">1800 55 1800</div>
-        <div class="hl-card__hours">Ages 5–25 · 24 hours a day</div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ── TESTIMONIALS ── -->
+<section class="testimonials" aria-labelledby="testiHeading">
+  <div class="container">
+    <div class="sec-header">
+      <p class="sec-eyebrow">Real stories</p>
+      <h2 class="sec-title" id="testiHeading">What members say</h2>
+    </div>
+    <div class="testimonials-grid">
+
+      <div class="testi-card">
+        <div class="testi-stars" aria-label="5 stars">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+        </div>
+        <p class="testi-quote">"I put off therapy for years because I couldn't commit to a fixed time every week. Being able to message my therapist on my own schedule changed everything. Three months in, I genuinely feel different."</p>
+        <div class="testi-person">
+          <div class="testi-avatar testi-avatar--j" aria-hidden="true">J</div>
+          <div>
+            <div class="testi-name">Jordan, 31</div>
+            <div class="testi-meta">Anxiety · 3 months on Standard plan</div>
+          </div>
+        </div>
       </div>
+
+      <div class="testi-card">
+        <div class="testi-stars" aria-label="5 stars">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+        </div>
+        <p class="testi-quote">"My partner and I tried couples therapy twice before and both times the waiting list was months long. We matched with James within a day and had our first session that week. It's been seven months now."</p>
+        <div class="testi-person">
+          <div class="testi-avatar testi-avatar--m" aria-hidden="true">M</div>
+          <div>
+            <div class="testi-name">Maya &amp; Dan, 34 &amp; 37</div>
+            <div class="testi-meta">Couples therapy · 7 months on Premium</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="testi-card">
+        <div class="testi-stars" aria-label="5 stars">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+        </div>
+        <p class="testi-quote">"I live in a rural area where there are no therapists within an hour's drive. Thrive gave me access to a specialist in OCD — something I never could have found locally. I can't overstate how much this matters."</p>
+        <div class="testi-person">
+          <div class="testi-avatar testi-avatar--r" aria-hidden="true">R</div>
+          <div>
+            <div class="testi-name">Riley, 26</div>
+            <div class="testi-meta">OCD &amp; anxiety · 5 months on Standard</div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ── FAQ ── -->
+<section class="faq" id="faq" aria-labelledby="faqHeading">
+  <div class="container faq__inner">
+    <div class="faq__left">
+      <p class="sec-eyebrow">Questions</p>
+      <h2 class="faq__title" id="faqHeading">Everything you need to know</h2>
+      <p class="faq__desc">Still have questions? Our team is available seven days a week.</p>
+      <a href="#" class="faq__contact">
+        Contact support
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+      </a>
+    </div>
+    <div class="faq-list" role="list">
+
+      <div class="faq-item" role="listitem">
+        <button class="faq-btn" aria-expanded="false" aria-controls="faq1">
+          Are Thrive therapists licensed?
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+        </button>
+        <div class="faq-answer" id="faq1" role="region">
+          Yes — every therapist on the platform holds an active licence from their state or national regulatory body. All are Masters- or Doctorate-level clinicians with at least three years of post-qualification experience. We verify credentials before any therapist can see clients.
+        </div>
+      </div>
+
+      <div class="faq-item" role="listitem">
+        <button class="faq-btn" aria-expanded="false" aria-controls="faq2">
+          Is my therapy private and secure?
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+        </button>
+        <div class="faq-answer" id="faq2" role="region">
+          All sessions — whether text, voice, or video — are end-to-end encrypted. We are HIPAA-compliant and will never sell your data. Your therapist cannot share anything you discuss without your explicit consent, except in the narrow circumstances required by law (such as imminent risk of harm).
+        </div>
+      </div>
+
+      <div class="faq-item" role="listitem">
+        <button class="faq-btn" aria-expanded="false" aria-controls="faq3">
+          How quickly will I be matched?
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+        </button>
+        <div class="faq-answer" id="faq3" role="region">
+          Most members are matched with a therapist within 24 hours of completing the questionnaire. You can have your first session — whether a message exchange or a live call — within 48 hours of signing up.
+        </div>
+      </div>
+
+      <div class="faq-item" role="listitem">
+        <button class="faq-btn" aria-expanded="false" aria-controls="faq4">
+          Can I switch therapists?
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+        </button>
+        <div class="faq-answer" id="faq4" role="region">
+          Yes — at any time, for any reason, at no extra cost. A good therapeutic relationship matters, and we want you to find the right fit. You can request a new match directly from your account and will typically be rematched within 24 hours.
+        </div>
+      </div>
+
+      <div class="faq-item" role="listitem">
+        <button class="faq-btn" aria-expanded="false" aria-controls="faq5">
+          Is financial aid available?
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+        </button>
+        <div class="faq-answer" id="faq5" role="region">
+          We offer reduced rates for people who can't afford full-price therapy. When signing up, you'll be asked about your financial situation — if you qualify, you'll be offered a discounted rate automatically. We believe cost should never be the reason someone doesn't get support.
+        </div>
+      </div>
+
+      <div class="faq-item" role="listitem">
+        <button class="faq-btn" aria-expanded="false" aria-controls="faq6">
+          What if I'm in crisis right now?
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+        </button>
+        <div class="faq-answer" id="faq6" role="region">
+          Thrive is not a crisis service. If you are in immediate danger, please call 000 (emergency), Lifeline on 13 11 14, or go to your nearest emergency department. If you are an existing member, your therapist can help connect you with local crisis resources.
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ── CTA BANNER ── -->
+<section class="cta-banner" aria-labelledby="ctaHeading">
+  <div class="container">
+    <div class="cta-banner__inner">
+      <h2 class="cta-banner__title" id="ctaHeading">You don't have to figure this out alone</h2>
+      <p class="cta-banner__sub">Taking the first step is the hardest part. Your matched therapist will be with you from there.</p>
+      <button class="btn-primary">Get matched — it's free to start</button>
+      <p class="cta-banner__note">No commitment. No waitlist. Cancel anytime.</p>
     </div>
   </div>
 </section>
@@ -1449,55 +1724,53 @@ input { font-family: inherit; }
 <footer class="footer">
   <div class="container">
     <div class="footer__grid">
-      <div class="footer__brand">
+      <div>
         <div class="footer__brand-logo">
-          <div class="footer__brand-mark" aria-hidden="true"></div>
-          <span class="footer__brand-name">Thrive Health</span>
+          <div class="footer__logo-icon" aria-hidden="true"></div>
+          <span class="footer__brand-name">Thrive</span>
         </div>
-        <p>Evidence-based health information for the whole community — reviewed by clinicians, written in plain language.</p>
+        <p>Online therapy from licensed clinicians — accessible, private, and built around your life.</p>
       </div>
       <div>
-        <p class="footer__col-title">Health Topics</p>
+        <p class="footer__col-title">Therapy</p>
         <ul class="footer__links">
-          <li><a href="#">Conditions A–Z</a></li>
-          <li><a href="#">Symptoms</a></li>
-          <li><a href="#">Medications</a></li>
-          <li><a href="#">Tests &amp; procedures</a></li>
-          <li><a href="#">Healthy Living</a></li>
+          <li><a href="#">Individual therapy</a></li>
+          <li><a href="#">Couples therapy</a></li>
+          <li><a href="#">Teen therapy</a></li>
+          <li><a href="#">Psychiatry</a></li>
+          <li><a href="#">Group sessions</a></li>
+        </ul>
+      </div>
+      <div>
+        <p class="footer__col-title">Company</p>
+        <ul class="footer__links">
+          <li><a href="#">About us</a></li>
+          <li><a href="#">For therapists</a></li>
+          <li><a href="#">Our therapists</a></li>
+          <li><a href="#">Careers</a></li>
+          <li><a href="#">Press</a></li>
         </ul>
       </div>
       <div>
         <p class="footer__col-title">Support</p>
         <ul class="footer__links">
-          <li><a href="#">Mental health</a></li>
-          <li><a href="#">Family &amp; carers</a></li>
-          <li><a href="#">Disability</a></li>
-          <li><a href="#">Emergency contacts</a></li>
-          <li><a href="#">Find a GP</a></li>
-        </ul>
-      </div>
-      <div>
-        <p class="footer__col-title">About</p>
-        <ul class="footer__links">
-          <li><a href="#">About Thrive Health</a></li>
-          <li><a href="#">Medical review board</a></li>
-          <li><a href="#">Editorial policy</a></li>
-          <li><a href="#">Contact us</a></li>
+          <li><a href="#">Help centre</a></li>
+          <li><a href="#">Crisis resources</a></li>
           <li><a href="#">Privacy policy</a></li>
+          <li><a href="#">Terms of service</a></li>
+          <li><a href="#">Accessibility</a></li>
         </ul>
       </div>
     </div>
-
     <div class="footer__disclaimer" role="note">
-      <strong>Medical disclaimer:</strong> The content on this website is provided for general information purposes only. It is not a substitute for professional medical advice, diagnosis, or treatment. Always seek the advice of your doctor or another qualified health provider with any questions about a medical condition. Never disregard professional medical advice or delay seeking it because of something you have read on this site.
+      <strong>Not a crisis service.</strong> Thrive is not suitable for emergencies. If you are in immediate danger, call 000 or your local emergency number. For mental health crisis support, call Lifeline on 13 11 14. Thrive therapy is provided by licensed clinicians but does not constitute a clinical care relationship under all regulatory definitions. Please consult your GP for medical advice.
     </div>
-
     <div class="footer__bottom">
-      <span>&copy; 2026 Thrive Health. All rights reserved.</span>
+      <span>&copy; 2026 Thrive Health Pty Ltd. All rights reserved.</span>
       <div class="footer__bottom-links">
         <a href="#">Privacy</a>
-        <a href="#">Terms of use</a>
-        <a href="#">Accessibility</a>
+        <a href="#">Terms</a>
+        <a href="#">Cookies</a>
         <a href="#">Sitemap</a>
       </div>
     </div>
@@ -1505,136 +1778,52 @@ input { font-family: inherit; }
 </footer>
 
 <script>
-/* ── THEME TOGGLE ── */
+/* ── THEME ── */
 (function () {
   const root = document.documentElement;
-  const btn = document.getElementById('themeToggle');
-  const sun = document.getElementById('iconSun');
+  const btn  = document.getElementById('themeToggle');
+  const sun  = document.getElementById('iconSun');
   const moon = document.getElementById('iconMoon');
 
-  function applyTheme(theme) {
-    root.setAttribute('data-theme', theme);
-    if (theme === 'dark') {
-      sun.style.display = 'none';
-      moon.style.display = '';
-    } else {
-      sun.style.display = '';
-      moon.style.display = 'none';
-    }
+  function apply(t) {
+    root.setAttribute('data-theme', t);
+    sun.style.display  = t === 'dark' ? 'none' : '';
+    moon.style.display = t === 'dark' ? '' : 'none';
   }
 
   const saved = localStorage.getItem('thrive-theme');
-  const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-  applyTheme(saved || (prefersDark ? 'dark' : 'light'));
+  const sys   = window.matchMedia('(prefers-color-scheme: dark)').matches;
+  apply(saved || (sys ? 'dark' : 'light'));
 
-  btn.addEventListener('click', function () {
+  btn.addEventListener('click', () => {
     const next = root.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
-    applyTheme(next);
+    apply(next);
     localStorage.setItem('thrive-theme', next);
   });
 })();
 
-/* ── BMI CALCULATOR ── */
-function calcBMI() {
-  const h = parseFloat(document.getElementById('bmiHeight').value);
-  const w = parseFloat(document.getElementById('bmiWeight').value);
-  const res = document.getElementById('bmiResult');
-  const val = document.getElementById('bmiValue');
-  const lbl = document.getElementById('bmiLabel');
+/* ── FAQ ACCORDION ── */
+document.querySelectorAll('.faq-btn').forEach(btn => {
+  btn.addEventListener('click', function () {
+    const expanded = this.getAttribute('aria-expanded') === 'true';
+    const answerId = this.getAttribute('aria-controls');
+    const answer   = document.getElementById(answerId);
 
-  if (!h || !w || h < 100 || h > 250 || w < 20 || w > 300) {
-    res.className = 'tool-result show';
-    val.textContent = '—';
-    lbl.textContent = 'Please enter a valid height (100–250 cm) and weight (20–300 kg).';
-    return;
-  }
+    // Close all
+    document.querySelectorAll('.faq-btn').forEach(b => {
+      b.setAttribute('aria-expanded', 'false');
+    });
+    document.querySelectorAll('.faq-answer').forEach(a => {
+      a.classList.remove('open');
+    });
 
-  const bmi = w / Math.pow(h / 100, 2);
-  let category, note;
-  if (bmi < 18.5) {
-    category = 'Underweight';
-    note = 'Consider speaking with a GP or dietitian about reaching a healthy weight.';
-  } else if (bmi < 25) {
-    category = 'Healthy weight';
-    note = 'Your weight is within the healthy range. Maintain it with balanced eating and regular activity.';
-  } else if (bmi < 30) {
-    category = 'Overweight';
-    note = 'A modest reduction in weight may improve health outcomes. A GP can advise on next steps.';
-  } else {
-    category = 'Obese';
-    note = 'Speak with a GP to discuss a safe, personalised plan for reaching a healthier weight.';
-  }
-
-  res.className = 'tool-result show';
-  val.textContent = bmi.toFixed(1) + ' — ' + category;
-  lbl.textContent = note;
-}
-
-/* ── WATER CALCULATOR ── */
-function calcWater() {
-  const w = parseFloat(document.getElementById('waterWeight').value);
-  const act = (document.getElementById('waterActivity').value || '').toLowerCase().trim();
-  const res = document.getElementById('waterResult');
-  const val = document.getElementById('waterValue');
-  const lbl = document.getElementById('waterLabel');
-
-  if (!w || w < 30 || w > 250) {
-    res.className = 'tool-result show';
-    val.textContent = '—';
-    lbl.textContent = 'Please enter a valid weight between 30 and 250 kg.';
-    return;
-  }
-
-  let base = w * 0.033;
-  let actLabel = 'sedentary';
-  if (act.includes('active') || act.includes('high')) {
-    base += 0.75;
-    actLabel = 'active';
-  } else if (act.includes('mod')) {
-    base += 0.35;
-    actLabel = 'moderately active';
-  }
-
-  res.className = 'tool-result show';
-  val.textContent = base.toFixed(1) + ' L per day';
-  lbl.textContent = 'Estimated for a ' + actLabel + ' adult at ' + w + ' kg. Increase this on hot days or when you exercise heavily.';
-}
-
-/* ── SLEEP CALCULATOR ── */
-function calcSleep() {
-  const input = document.getElementById('wakeTime').value;
-  const res = document.getElementById('sleepResult');
-  const val = document.getElementById('sleepValue');
-  const lbl = document.getElementById('sleepLabel');
-
-  if (!input) {
-    res.className = 'tool-result show';
-    val.textContent = '—';
-    lbl.textContent = 'Please enter a wake-up time.';
-    return;
-  }
-
-  const [hStr, mStr] = input.split(':');
-  let wakeMin = parseInt(hStr) * 60 + parseInt(mStr);
-
-  const cycles = [6, 5, 4];
-  const cycleMins = 90;
-  const fallAsleepMins = 14;
-
-  const times = cycles.map(c => {
-    let bed = wakeMin - c * cycleMins - fallAsleepMins;
-    if (bed < 0) bed += 24 * 60;
-    const h = Math.floor(bed / 60) % 24;
-    const m = bed % 60;
-    const ampm = h >= 12 ? 'pm' : 'am';
-    const h12 = h % 12 || 12;
-    return h12 + ':' + String(m).padStart(2, '0') + ' ' + ampm + ' (' + c * 1.5 + ' hrs)';
+    // Toggle clicked
+    if (!expanded) {
+      this.setAttribute('aria-expanded', 'true');
+      answer.classList.add('open');
+    }
   });
-
-  res.className = 'tool-result show';
-  val.textContent = times.join('  ·  ');
-  lbl.textContent = 'Go to sleep at one of these times to wake feeling refreshed at ' + input + '. Times include ~14 minutes to fall asleep.';
-}
+});
 </script>
 </body>
 </html>
