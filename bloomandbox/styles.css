@@ -34,21 +34,15 @@ a{text-decoration:none;color:inherit}
 ul{list-style:none}
 .container{max-width:1240px;margin:0 auto;padding:0 40px}
 
-/* ANNOUNCE */
-.announce{background:var(--rose);color:#fff;text-align:center;padding:9px 20px;font-size:.78rem;letter-spacing:.03em;font-weight:500}
-.announce a{color:#fff;text-decoration:underline;text-underline-offset:2px}
-
 /* ── HEADER ── */
 .hdr{background:var(--white);border-bottom:1px solid var(--border);position:sticky;top:0;z-index:200;transition:box-shadow var(--ease)}
 .hdr.raised{box-shadow:0 2px 20px rgba(0,0,0,.08)}
 .hdr-inner{display:flex;align-items:center;justify-content:space-between;padding:0 40px;height:76px;gap:24px}
 
 /* LOGO */
-.logo{display:flex;align-items:center;gap:10px;flex-shrink:0}
-.logo-text{display:flex;flex-direction:column;line-height:1}
-.logo-name{font-family:var(--serif);font-size:1.55rem;font-weight:700;letter-spacing:-.02em;color:var(--ink)}
+.logo{display:flex;align-items:center;flex-shrink:0;text-decoration:none}
+.logo-name{font-family:var(--serif);font-size:1.5rem;font-weight:700;letter-spacing:-.02em;color:var(--ink)}
 .logo-name span{color:var(--rose)}
-.logo-tag{font-size:.62rem;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-top:1px}
 
 /* SEARCH BAR */
 .hdr-search{flex:1;max-width:420px;position:relative}
@@ -69,8 +63,12 @@ ul{list-style:none}
 .icon-btn svg{width:19px;height:19px;stroke:var(--ink2);fill:none;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
 .icon-btn-label{font-size:.6rem;font-weight:600;color:var(--muted);letter-spacing:.02em}
 .cart-dot{position:absolute;top:5px;right:5px;width:16px;height:16px;background:var(--rose);border-radius:50%;border:2px solid var(--white);display:flex;align-items:center;justify-content:center;font-size:.6rem;font-weight:700;color:#fff}
-.mob-menu{display:none;flex-direction:column;gap:5px;background:none;border:none;cursor:pointer;padding:4px}
-.mob-menu span{width:22px;height:1.5px;background:var(--ink);display:block;border-radius:2px}
+.mob-menu{display:none;width:40px;height:40px;align-items:center;justify-content:center;background:none;border:1.5px solid var(--border);border-radius:6px;cursor:pointer;flex-direction:column;gap:5px;padding:0;transition:border-color var(--ease)}
+.mob-menu:hover{border-color:var(--rose)}
+.mob-menu span{display:block;height:1.5px;background:var(--ink);border-radius:2px;transition:all .2s ease}
+.mob-menu span:first-child{width:20px}
+.mob-menu span:nth-child(2){width:16px}
+.mob-menu span:last-child{width:12px}
 
 /* BUTTONS */
 .btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:12px 26px;font-size:.86rem;font-weight:600;border-radius:3px;border:none;cursor:pointer;transition:all var(--ease);letter-spacing:.03em;line-height:1;white-space:nowrap;font-family:var(--sans)}
@@ -106,24 +104,20 @@ ul{list-style:none}
 .hero-cell-price{background:var(--rose);color:#fff;padding:3px 10px;font-size:.68rem;font-weight:700;border-radius:20px}
 
 /* ── DELIVERY FINDER ── */
-.delivery-finder{background:var(--white);border-bottom:2px solid var(--rose-lt);padding:0}
-.df-inner{display:flex;align-items:center;gap:0;padding:0 40px}
-.df-label{font-size:.78rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--ink2);white-space:nowrap;padding:16px 24px 16px 0;border-right:1px solid var(--border)}
-.df-fields{display:flex;align-items:center;flex:1;gap:0}
-.df-field{display:flex;align-items:center;gap:8px;padding:12px 20px;border-right:1px solid var(--border);flex:1}
-.df-field svg{width:15px;height:15px;stroke:var(--rose);fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;flex-shrink:0}
-.df-field select,.df-field input{border:none;background:transparent;font-size:.84rem;color:var(--ink);font-family:var(--sans);outline:none;width:100%;cursor:pointer}
-.df-field input::placeholder{color:var(--muted)}
-.df-go{padding:0 24px;background:var(--rose);color:#fff;border:none;font-size:.84rem;font-weight:700;cursor:pointer;height:100%;transition:background var(--ease);letter-spacing:.04em;font-family:var(--sans);min-height:52px;white-space:nowrap}
+.delivery-finder{background:var(--white);border-bottom:1px solid var(--border)}
+.df-inner{display:flex;align-items:stretch;padding:0 40px}
+.df-label{font-size:.78rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--ink2);white-space:nowrap;padding:0 24px 0 0;border-right:1px solid var(--border);display:flex;align-items:center}
+.df-fields{display:flex;align-items:stretch;flex:1}
+.df-field{display:flex;align-items:center;gap:10px;padding:0 20px;border-right:1px solid var(--border);flex:1;min-height:56px}
+.df-field svg{width:15px;height:15px;stroke:var(--muted);fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;flex-shrink:0}
+.df-field select,.df-field input{border:none;background:transparent;font-size:.9rem;font-weight:500;color:var(--ink);font-family:var(--sans);outline:none;width:100%;cursor:pointer;-webkit-appearance:none;appearance:none;letter-spacing:-.01em}
+.df-field input::placeholder{color:var(--muted);font-weight:400}
+.df-select-wrap{position:relative;flex:1;display:flex;align-items:center}
+.df-select-wrap select{padding-right:20px}
+.df-chevron{position:absolute;right:0;pointer-events:none;width:12px;height:12px;stroke:var(--muted);fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.df-go{padding:0 28px;background:var(--rose);color:#fff;border:none;font-size:.86rem;font-weight:600;cursor:pointer;transition:background var(--ease);letter-spacing:.02em;font-family:var(--sans);white-space:nowrap}
 .df-go:hover{background:var(--rose-dk)}
 
-/* ── PROMO BANNER ── */
-.promo-banner{background:linear-gradient(135deg,var(--rose-dk) 0%,var(--rose) 50%,#c8708a 100%);padding:20px 0;overflow:hidden}
-.promo-inner{display:flex;align-items:center;gap:32px}
-.promo-text{color:#fff;font-size:.88rem;font-weight:600;white-space:nowrap}
-.promo-text strong{font-size:1.1rem}
-.promo-code{background:rgba(255,255,255,.2);border:1.5px dashed rgba(255,255,255,.7);border-radius:3px;padding:6px 16px;color:#fff;font-size:.82rem;font-weight:700;letter-spacing:.1em;white-space:nowrap}
-.promo-btn{padding:9px 20px;background:#fff;color:var(--rose);border:none;border-radius:3px;font-size:.8rem;font-weight:700;cursor:pointer;white-space:nowrap;font-family:var(--sans);flex-shrink:0}
 
 /* ── TRUST ── */
 .trust{border-bottom:1px solid var(--border);background:var(--white)}
