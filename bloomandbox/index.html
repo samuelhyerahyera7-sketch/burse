@@ -1,591 +1,580 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Bloom & Box – Curated Subscription Boxes</title>
-  <meta name="description" content="Bloom & Box delivers thoughtfully curated subscription boxes filled with beautiful, handpicked treasures every month." />
-  <link rel="stylesheet" href="styles.css" />
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet" />
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Bloom &amp; Box – Flowers &amp; Gifts Delivered</title>
+<meta name="description" content="Fresh flowers, curated gift hampers, chocolates and plants delivered across South Africa. Same-day delivery available.">
+<link rel="stylesheet" href="styles.css">
 </head>
 <body>
 
-  <!-- ── NAVIGATION ── -->
-  <header class="site-header" id="site-header">
-    <nav class="nav container">
-      <a href="#" class="logo">
-        <span class="logo-bloom">Bloom</span><span class="logo-amp">&</span><span class="logo-box">Box</span>
-      </a>
-      <ul class="nav-links" id="nav-links">
-        <li><a href="#boxes">Our Boxes</a></li>
-        <li><a href="#how-it-works">How It Works</a></li>
-        <li><a href="#reviews">Reviews</a></li>
-        <li><a href="#pricing">Pricing</a></li>
-        <li><a href="#gift">Gift a Box</a></li>
-      </ul>
-      <div class="nav-actions">
-        <a href="#" class="btn-ghost">Log In</a>
-        <a href="#pricing" class="btn-primary">Subscribe Now</a>
-      </div>
-      <button class="hamburger" id="hamburger" aria-label="Toggle menu">
-        <span></span><span></span><span></span>
-      </button>
+<!-- ANNOUNCEMENT -->
+<div class="announce"><strong>Same-day delivery</strong> available on orders placed before 1pm &nbsp;·&nbsp; Free delivery on orders over R500</div>
+
+<!-- HEADER -->
+<header class="hdr" id="hdr">
+  <div class="hdr-top">
+    <a href="#" class="logo">Bloom <span>&</span> Box</a>
+    <nav class="hdr-nav">
+      <a href="#shop">Flowers</a>
+      <a href="#gifts">Gifts</a>
+      <a href="#occasions">Occasions</a>
+      <a href="#contact">Contact</a>
     </nav>
-  </header>
-
-  <!-- ── HERO ── -->
-  <section class="hero">
-    <div class="hero-bg"></div>
-    <div class="container hero-content">
-      <div class="hero-badge">New box ships every month</div>
-      <h1 class="hero-title">Joy, Curated &<br /><em>Delivered to You</em></h1>
-      <p class="hero-subtitle">
-        Every Bloom &amp; Box is filled with handpicked botanical skincare, home fragrance,
-        artisan goods &amp; seasonal surprises — all chosen with love and intention.
-      </p>
-      <div class="hero-cta">
-        <a href="#pricing" class="btn-primary btn-large">Start Your Subscription</a>
-        <a href="#boxes" class="btn-outline btn-large">See What's Inside</a>
+    <div class="hdr-actions">
+      <button class="icon-btn" aria-label="Search">
+        <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+      </button>
+      <button class="icon-btn" aria-label="Wishlist">
+        <svg viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+      </button>
+      <div style="position:relative;display:flex">
+        <button class="icon-btn" aria-label="Cart">
+          <svg viewBox="0 0 24 24"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
+        </button>
+        <span class="cart-dot"></span>
       </div>
-      <div class="hero-stats">
-        <div class="stat"><span class="stat-num">48k+</span><span class="stat-label">Happy Subscribers</span></div>
-        <div class="stat-divider"></div>
-        <div class="stat"><span class="stat-num">4.9★</span><span class="stat-label">Average Rating</span></div>
-        <div class="stat-divider"></div>
-        <div class="stat"><span class="stat-num">$120+</span><span class="stat-label">Value Per Box</span></div>
-      </div>
-    </div>
-    <div class="hero-float hero-float-1">🌸</div>
-    <div class="hero-float hero-float-2">🌿</div>
-    <div class="hero-float hero-float-3">✨</div>
-  </section>
-
-  <!-- ── TRUST BAR ── -->
-  <div class="trust-bar">
-    <div class="container trust-inner">
-      <div class="trust-item">🚚 Free shipping on all boxes</div>
-      <div class="trust-item">🎁 Skip or cancel anytime</div>
-      <div class="trust-item">🌱 Eco-friendly packaging</div>
-      <div class="trust-item">💌 Exclusive members-only perks</div>
+      <button class="mob-menu" id="mob" aria-label="Menu"><span></span><span></span><span></span></button>
     </div>
   </div>
+</header>
 
-  <!-- ── OUR BOXES ── -->
-  <section class="section" id="boxes">
-    <div class="container">
-      <div class="section-header">
-        <span class="section-tag">Our Collections</span>
-        <h2 class="section-title">Find Your Perfect Box</h2>
-        <p class="section-subtitle">Three beautifully curated boxes to match your lifestyle, mood, and budget.</p>
-      </div>
+<!-- CATEGORY NAV -->
+<nav class="cat-nav">
+  <div class="cat-nav-inner">
+    <a href="#" class="active">All</a>
+    <a href="#">Flowers &amp; Roses</a>
+    <a href="#">Plants</a>
+    <a href="#">Chocolates</a>
+    <a href="#">Gift Hampers</a>
+    <a href="#">Alcohol &amp; Wine</a>
+    <a href="#">Gourmet &amp; Snacks</a>
+    <a href="#">Birthday</a>
+    <a href="#">Anniversary</a>
+    <a href="#">Same-Day Delivery</a>
+  </div>
+</nav>
 
-      <div class="boxes-grid">
-
-        <div class="box-card featured">
-          <div class="box-card-badge">Most Popular</div>
-          <div class="box-card-image box-image-bloom">
-            <div class="box-visual">
-              <div class="box-items">
-                <div class="box-item item-1">🌸</div>
-                <div class="box-item item-2">🕯️</div>
-                <div class="box-item item-3">🧴</div>
-                <div class="box-item item-4">🌿</div>
-                <div class="box-item item-5">💐</div>
-              </div>
-              <div class="box-3d"></div>
-            </div>
-          </div>
-          <div class="box-card-body">
-            <h3 class="box-name">The Bloom Box</h3>
-            <p class="box-desc">Our signature box — 5–7 full-size botanical skincare products, home scents, and lifestyle extras. A guaranteed treat every month.</p>
-            <ul class="box-includes">
-              <li>✓ 2 botanical skincare items</li>
-              <li>✓ 1 home fragrance product</li>
-              <li>✓ 2–3 lifestyle surprises</li>
-              <li>✓ Members-only discount card</li>
-            </ul>
-            <div class="box-footer">
-              <div class="box-price">From <strong>$39.99</strong><span>/mo</span></div>
-              <a href="#pricing" class="btn-primary">Subscribe</a>
-            </div>
-          </div>
-        </div>
-
-        <div class="box-card">
-          <div class="box-card-image box-image-petal">
-            <div class="box-visual">
-              <div class="box-items">
-                <div class="box-item item-1">🌼</div>
-                <div class="box-item item-3">✨</div>
-                <div class="box-item item-5">🫧</div>
-              </div>
-              <div class="box-3d"></div>
-            </div>
-          </div>
-          <div class="box-card-body">
-            <h3 class="box-name">The Petal Box</h3>
-            <p class="box-desc">A petite but perfectly formed box with 3–4 curated essentials — ideal for gifting or as your self-care starter.</p>
-            <ul class="box-includes">
-              <li>✓ 1 skincare essential</li>
-              <li>✓ 1 mini home scent</li>
-              <li>✓ 1–2 lifestyle surprises</li>
-            </ul>
-            <div class="box-footer">
-              <div class="box-price">From <strong>$22.99</strong><span>/mo</span></div>
-              <a href="#pricing" class="btn-primary">Subscribe</a>
-            </div>
-          </div>
-        </div>
-
-        <div class="box-card">
-          <div class="box-card-image box-image-luxe">
-            <div class="box-visual">
-              <div class="box-items">
-                <div class="box-item item-1">💎</div>
-                <div class="box-item item-2">🌹</div>
-                <div class="box-item item-3">🧖</div>
-                <div class="box-item item-4">🥂</div>
-                <div class="box-item item-5">🪷</div>
-              </div>
-              <div class="box-3d"></div>
-            </div>
-          </div>
-          <div class="box-card-body">
-            <h3 class="box-name">The Luxe Box</h3>
-            <p class="box-desc">Premium. Indulgent. Unforgettable. 8–10 luxury items including full-size, limited-edition and brand-exclusive products.</p>
-            <ul class="box-includes">
-              <li>✓ 3–4 luxury skincare items</li>
-              <li>✓ 2 premium home scents</li>
-              <li>✓ 2–4 exclusive extras</li>
-              <li>✓ Early access to new products</li>
-            </ul>
-            <div class="box-footer">
-              <div class="box-price">From <strong>$69.99</strong><span>/mo</span></div>
-              <a href="#pricing" class="btn-primary">Subscribe</a>
-            </div>
-          </div>
-        </div>
-
-      </div>
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-left">
+    <span class="hero-eyebrow">Flowers &amp; Gifts, Delivered</span>
+    <h1 class="hero-title">Say It With <em>Flowers</em><br>and Something More</h1>
+    <p class="hero-desc">Fresh bouquets, curated gift hampers, premium chocolates, and beautiful plants — delivered same-day to your door across South Africa.</p>
+    <div class="hero-btns">
+      <a href="#shop" class="btn btn-primary btn-lg">Shop Flowers</a>
+      <a href="#gifts" class="btn btn-outline btn-lg">Explore Gifts</a>
     </div>
-  </section>
-
-  <!-- ── HOW IT WORKS ── -->
-  <section class="section section-alt" id="how-it-works">
-    <div class="container">
-      <div class="section-header">
-        <span class="section-tag">Simple as that</span>
-        <h2 class="section-title">How Bloom &amp; Box Works</h2>
-        <p class="section-subtitle">From your first click to your doorstep — effortless joy in four steps.</p>
-      </div>
-
-      <div class="steps-grid">
-        <div class="step">
-          <div class="step-icon">🌸</div>
-          <div class="step-num">01</div>
-          <h3 class="step-title">Choose Your Box</h3>
-          <p class="step-desc">Pick the subscription that fits your vibe — Petal, Bloom, or Luxe. Monthly, quarterly, or a one-time gift.</p>
-        </div>
-        <div class="step-arrow">→</div>
-        <div class="step">
-          <div class="step-icon">🎨</div>
-          <div class="step-num">02</div>
-          <h3 class="step-title">We Curate With Care</h3>
-          <p class="step-desc">Our team hand-selects each product — discovering indie brands, botanical makers, and seasonal treasures just for you.</p>
-        </div>
-        <div class="step-arrow">→</div>
-        <div class="step">
-          <div class="step-icon">📦</div>
-          <div class="step-num">03</div>
-          <h3 class="step-title">We Pack &amp; Ship</h3>
-          <p class="step-desc">Your box is lovingly wrapped in eco-friendly packaging and ships free right to your door, every month.</p>
-        </div>
-        <div class="step-arrow">→</div>
-        <div class="step">
-          <div class="step-icon">✨</div>
-          <div class="step-num">04</div>
-          <h3 class="step-title">Unbox the Joy</h3>
-          <p class="step-desc">Experience the thrill of discovering something beautiful. Share your unboxing with #BloomAndBox and inspire the community.</p>
-        </div>
-      </div>
-
-      <div class="hiw-banner">
-        <div class="hiw-banner-text">
-          <h3>Flexible, always.</h3>
-          <p>Skip a month, pause your subscription, or cancel anytime — no fees, no fuss, no questions asked.</p>
-        </div>
-        <a href="#pricing" class="btn-primary btn-large">Get Started Today</a>
-      </div>
-    </div>
-  </section>
-
-  <!-- ── FEATURED PRODUCTS ── -->
-  <section class="section" id="products">
-    <div class="container">
-      <div class="section-header">
-        <span class="section-tag">Past Box Highlights</span>
-        <h2 class="section-title">What's Been Inside</h2>
-        <p class="section-subtitle">A peek at some of the incredible products our subscribers have loved.</p>
-      </div>
-      <div class="products-grid">
-        <div class="product-card">
-          <div class="product-img" style="background: linear-gradient(135deg, #f9dde0, #e8b4c0);">🌸</div>
-          <div class="product-info">
-            <span class="product-brand">Botanic Lab</span>
-            <h4 class="product-name">Rose & Hyaluronic Serum</h4>
-            <div class="product-value">Retail value: $48</div>
-          </div>
-        </div>
-        <div class="product-card">
-          <div class="product-img" style="background: linear-gradient(135deg, #d4edda, #a8d5b5);">🕯️</div>
-          <div class="product-info">
-            <span class="product-brand">Sage House</span>
-            <h4 class="product-name">Eucalyptus & Cedar Candle</h4>
-            <div class="product-value">Retail value: $36</div>
-          </div>
-        </div>
-        <div class="product-card">
-          <div class="product-img" style="background: linear-gradient(135deg, #fef3cd, #f4d87a);">🧴</div>
-          <div class="product-info">
-            <span class="product-brand">Nourish Collective</span>
-            <h4 class="product-name">Calendula Body Butter</h4>
-            <div class="product-value">Retail value: $32</div>
-          </div>
-        </div>
-        <div class="product-card">
-          <div class="product-img" style="background: linear-gradient(135deg, #e8d5f5, #c9a0dc);">🪷</div>
-          <div class="product-info">
-            <span class="product-brand">Lavande</span>
-            <h4 class="product-name">Lavender Sleep Mist</h4>
-            <div class="product-value">Retail value: $29</div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- ── REVIEWS ── -->
-  <section class="section section-alt" id="reviews">
-    <div class="container">
-      <div class="section-header">
-        <span class="section-tag">Real Subscribers</span>
-        <h2 class="section-title">People Are Talking</h2>
-        <div class="reviews-rating-bar">
-          <span class="rating-stars">★★★★★</span>
-          <span class="rating-text">4.9 out of 5 from 12,400+ reviews</span>
-        </div>
-      </div>
-
-      <div class="reviews-grid">
-        <div class="review-card">
-          <div class="review-stars">★★★★★</div>
-          <p class="review-text">"I've tried so many subscription boxes and none compare. Every single item in the Bloom Box felt like it was chosen just for me. The rose serum alone was worth the subscription price!"</p>
-          <div class="review-author">
-            <div class="review-avatar" style="background: #f9dde0;">S</div>
-            <div>
-              <div class="review-name">Sarah M.</div>
-              <div class="review-sub">Bloom Box subscriber, 14 months</div>
-            </div>
-          </div>
-        </div>
-        <div class="review-card">
-          <div class="review-stars">★★★★★</div>
-          <p class="review-text">"The Luxe Box is a genuine luxury experience. I've discovered brands I never would have found otherwise. My bathroom shelf has never looked — or smelled — so good."</p>
-          <div class="review-author">
-            <div class="review-avatar" style="background: #d4edda;">J</div>
-            <div>
-              <div class="review-name">Jade K.</div>
-              <div class="review-sub">Luxe Box subscriber, 8 months</div>
-            </div>
-          </div>
-        </div>
-        <div class="review-card">
-          <div class="review-stars">★★★★★</div>
-          <p class="review-text">"I gifted the Petal Box to my mum and she called me crying happy tears. The packaging alone is so gorgeous. Already thinking about gifting it to everyone I love."</p>
-          <div class="review-author">
-            <div class="review-avatar" style="background: #e8d5f5;">A</div>
-            <div>
-              <div class="review-name">Amara T.</div>
-              <div class="review-sub">Petal Box — gift subscriber</div>
-            </div>
-          </div>
-        </div>
-        <div class="review-card">
-          <div class="review-stars">★★★★★</div>
-          <p class="review-text">"What I love most is the curation — you can tell someone who actually cares about these things is making every decision. Nothing filler, nothing boring. Pure joy every month."</p>
-          <div class="review-author">
-            <div class="review-avatar" style="background: #fef3cd;">R</div>
-            <div>
-              <div class="review-name">Rachel O.</div>
-              <div class="review-sub">Bloom Box subscriber, 22 months</div>
-            </div>
-          </div>
-        </div>
-        <div class="review-card">
-          <div class="review-stars">★★★★★</div>
-          <p class="review-text">"Cancelled my other subscriptions the moment I tried Bloom & Box. The eco-friendly packaging made me feel great too — beautiful inside and out."</p>
-          <div class="review-author">
-            <div class="review-avatar" style="background: #d4edda;">L</div>
-            <div>
-              <div class="review-name">Lydia F.</div>
-              <div class="review-sub">Bloom Box subscriber, 11 months</div>
-            </div>
-          </div>
-        </div>
-        <div class="review-card">
-          <div class="review-stars">★★★★★</div>
-          <p class="review-text">"Best self-care decision I've made. It's the one delivery I actually get excited about each month. Delivery day has become my favourite day!"</p>
-          <div class="review-author">
-            <div class="review-avatar" style="background: #f9dde0;">M</div>
-            <div>
-              <div class="review-name">Maya P.</div>
-              <div class="review-sub">Luxe Box subscriber, 6 months</div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- ── PRICING ── -->
-  <section class="section" id="pricing">
-    <div class="container">
-      <div class="section-header">
-        <span class="section-tag">Flexible Plans</span>
-        <h2 class="section-title">Choose How You Bloom</h2>
-        <p class="section-subtitle">Subscribe monthly, save with quarterly, or gift a box to someone special.</p>
-      </div>
-
-      <div class="pricing-toggle">
-        <button class="pricing-btn active" data-period="monthly">Monthly</button>
-        <button class="pricing-btn" data-period="quarterly">Quarterly <span class="save-badge">Save 15%</span></button>
-        <button class="pricing-btn" data-period="annual">Annual <span class="save-badge">Save 25%</span></button>
-      </div>
-
-      <div class="pricing-grid">
-
-        <div class="pricing-card">
-          <div class="pricing-name">Petal Box</div>
-          <div class="pricing-tagline">Petite &amp; Perfect</div>
-          <div class="pricing-price">
-            <span class="price-currency">$</span>
-            <span class="price-amount" data-monthly="22.99" data-quarterly="19.54" data-annual="17.24">22.99</span>
-            <span class="price-period">/month</span>
-          </div>
-          <div class="pricing-value">$60+ value per box</div>
-          <ul class="pricing-features">
-            <li>✓ 3–4 curated products</li>
-            <li>✓ 1 botanical skincare item</li>
-            <li>✓ 1 home fragrance</li>
-            <li>✓ Free shipping</li>
-            <li>✓ Cancel anytime</li>
-            <li class="unavailable">✗ Exclusive brand extras</li>
-            <li class="unavailable">✗ Early access products</li>
-          </ul>
-          <a href="#" class="btn-outline btn-full">Get the Petal Box</a>
-        </div>
-
-        <div class="pricing-card featured">
-          <div class="pricing-popular-tag">Most Popular</div>
-          <div class="pricing-name">Bloom Box</div>
-          <div class="pricing-tagline">Our Signature Experience</div>
-          <div class="pricing-price">
-            <span class="price-currency">$</span>
-            <span class="price-amount" data-monthly="39.99" data-quarterly="33.99" data-annual="29.99">39.99</span>
-            <span class="price-period">/month</span>
-          </div>
-          <div class="pricing-value">$120+ value per box</div>
-          <ul class="pricing-features">
-            <li>✓ 5–7 curated products</li>
-            <li>✓ 2 botanical skincare items</li>
-            <li>✓ 1 home fragrance product</li>
-            <li>✓ 2–3 lifestyle surprises</li>
-            <li>✓ Free shipping</li>
-            <li>✓ Members discount card</li>
-            <li class="unavailable">✗ Early access products</li>
-          </ul>
-          <a href="#" class="btn-primary btn-full">Get the Bloom Box</a>
-        </div>
-
-        <div class="pricing-card">
-          <div class="pricing-name">Luxe Box</div>
-          <div class="pricing-tagline">Premium Indulgence</div>
-          <div class="pricing-price">
-            <span class="price-currency">$</span>
-            <span class="price-amount" data-monthly="69.99" data-quarterly="59.49" data-annual="52.49">69.99</span>
-            <span class="price-period">/month</span>
-          </div>
-          <div class="pricing-value">$200+ value per box</div>
-          <ul class="pricing-features">
-            <li>✓ 8–10 curated products</li>
-            <li>✓ 3–4 luxury skincare items</li>
-            <li>✓ 2 premium home scents</li>
-            <li>✓ 2–4 exclusive extras</li>
-            <li>✓ Free priority shipping</li>
-            <li>✓ VIP members perks</li>
-            <li>✓ Early access to new products</li>
-          </ul>
-          <a href="#" class="btn-outline btn-full">Get the Luxe Box</a>
-        </div>
-
-      </div>
-
-      <div class="pricing-note">
-        All plans include free shipping · Cancel or pause any time · Eco-friendly packaging
-      </div>
-    </div>
-  </section>
-
-  <!-- ── GIFT SECTION ── -->
-  <section class="section section-gift" id="gift">
-    <div class="container">
-      <div class="gift-inner">
-        <div class="gift-text">
-          <span class="section-tag">Give the Gift of Bloom</span>
-          <h2 class="section-title">The Box That<br />Keeps on Giving</h2>
-          <p class="section-subtitle">Send a 1, 3, or 6-month gift subscription to someone you love. Arrives with a beautifully designed digital gift card they can redeem whenever they're ready.</p>
-          <div class="gift-cta">
-            <a href="#" class="btn-primary btn-large">Shop Gift Boxes</a>
-            <a href="#" class="btn-ghost">Learn more →</a>
-          </div>
-        </div>
-        <div class="gift-visual">
-          <div class="gift-box-wrap">
-            <div class="gift-emoji">🎁</div>
-            <div class="gift-ribbon">
-              <div class="gift-tag">
-                <div class="gift-tag-title">For Someone Special</div>
-                <div class="gift-tag-text">With love, from Bloom &amp; Box</div>
-              </div>
-            </div>
-            <div class="gift-float-1">🌸</div>
-            <div class="gift-float-2">✨</div>
-            <div class="gift-float-3">🌿</div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- ── INSTAGRAM GRID ── -->
-  <section class="section section-alt" id="community">
-    <div class="container">
-      <div class="section-header">
-        <span class="section-tag">@bloomandbox</span>
-        <h2 class="section-title">The Bloom &amp; Box Community</h2>
-        <p class="section-subtitle">Share your unboxing with <strong>#BloomAndBox</strong> and join 48,000+ happy subscribers.</p>
-      </div>
-      <div class="insta-grid">
-        <div class="insta-item" style="background: linear-gradient(135deg, #f9dde0 60%, #fce4ec);">
-          <div class="insta-emoji">🌸</div>
-          <div class="insta-overlay"><span>❤️ 2.4k</span></div>
-        </div>
-        <div class="insta-item" style="background: linear-gradient(135deg, #d4edda, #a8d5b5);">
-          <div class="insta-emoji">🕯️</div>
-          <div class="insta-overlay"><span>❤️ 1.8k</span></div>
-        </div>
-        <div class="insta-item" style="background: linear-gradient(135deg, #e8d5f5, #c9a0dc);">
-          <div class="insta-emoji">💜</div>
-          <div class="insta-overlay"><span>❤️ 3.1k</span></div>
-        </div>
-        <div class="insta-item" style="background: linear-gradient(135deg, #fef3cd, #f4d87a);">
-          <div class="insta-emoji">✨</div>
-          <div class="insta-overlay"><span>❤️ 2.9k</span></div>
-        </div>
-        <div class="insta-item" style="background: linear-gradient(135deg, #fce4ec, #f48fb1);">
-          <div class="insta-emoji">🌹</div>
-          <div class="insta-overlay"><span>❤️ 4.2k</span></div>
-        </div>
-        <div class="insta-item" style="background: linear-gradient(135deg, #e0f2f1, #80cbc4);">
-          <div class="insta-emoji">🌿</div>
-          <div class="insta-overlay"><span>❤️ 1.6k</span></div>
-        </div>
-      </div>
-      <div class="insta-cta">
-        <a href="#" class="btn-outline">Follow Us on Instagram</a>
-      </div>
-    </div>
-  </section>
-
-  <!-- ── FOOTER ── -->
-  <footer class="footer">
-    <div class="container">
-      <div class="footer-top">
-        <div class="footer-brand">
-          <a href="#" class="logo logo-light">
-            <span class="logo-bloom">Bloom</span><span class="logo-amp">&</span><span class="logo-box">Box</span>
-          </a>
-          <p class="footer-tagline">Thoughtfully curated. Lovingly delivered.</p>
-          <div class="footer-social">
-            <a href="#" aria-label="Instagram" class="social-link">📸</a>
-            <a href="#" aria-label="TikTok" class="social-link">🎵</a>
-            <a href="#" aria-label="Pinterest" class="social-link">📌</a>
-            <a href="#" aria-label="Facebook" class="social-link">💬</a>
-          </div>
-        </div>
-        <div class="footer-links-group">
-          <h4>Boxes</h4>
-          <ul>
-            <li><a href="#">The Petal Box</a></li>
-            <li><a href="#">The Bloom Box</a></li>
-            <li><a href="#">The Luxe Box</a></li>
-            <li><a href="#">Gift Subscriptions</a></li>
-            <li><a href="#">Corporate Gifting</a></li>
-          </ul>
-        </div>
-        <div class="footer-links-group">
-          <h4>Company</h4>
-          <ul>
-            <li><a href="#">Our Story</a></li>
-            <li><a href="#">Meet the Team</a></li>
-            <li><a href="#">Sustainability</a></li>
-            <li><a href="#">Brand Partners</a></li>
-            <li><a href="#">Press &amp; Media</a></li>
-          </ul>
-        </div>
-        <div class="footer-links-group">
-          <h4>Help</h4>
-          <ul>
-            <li><a href="#">FAQ</a></li>
-            <li><a href="#">Shipping Info</a></li>
-            <li><a href="#">Manage Subscription</a></li>
-            <li><a href="#">Returns &amp; Refunds</a></li>
-            <li><a href="#">Contact Us</a></li>
-          </ul>
-        </div>
-      </div>
-
-      <div class="footer-newsletter">
-        <div class="newsletter-text">
-          <h4>Join the Bloom Community</h4>
-          <p>Early access, exclusive offers, and a little botanical inspiration in your inbox.</p>
-        </div>
-        <form class="newsletter-form" onsubmit="handleNewsletter(event)">
-          <input type="email" placeholder="Enter your email address" required />
-          <button type="submit" class="btn-primary">Subscribe</button>
-        </form>
-      </div>
-
-      <div class="footer-bottom">
-        <p class="footer-legal">© 2026 Bloom &amp; Box. All rights reserved.</p>
-        <div class="footer-legal-links">
-          <a href="#">Privacy Policy</a>
-          <a href="#">Terms of Service</a>
-          <a href="#">Cookie Settings</a>
-        </div>
-      </div>
-    </div>
-  </footer>
-
-  <!-- ── STICKY CTA ── -->
-  <div class="sticky-cta" id="sticky-cta">
-    <div class="sticky-cta-inner">
-      <span>🌸 Start your Bloom &amp; Box subscription today</span>
-      <a href="#pricing" class="btn-primary">Subscribe Now</a>
+    <div class="hero-tags">
+      <span class="htag">Same-day delivery</span>
+      <span class="htag">4.4 stars from 50,000+ reviews</span>
+      <span class="htag">Nationwide coverage</span>
     </div>
   </div>
+  <div class="hero-right">
+    <div class="hero-cell">
+      <div class="hero-cell-icon">&#128144;</div>
+      <span class="hero-cell-label">Red Roses</span>
+      <span class="hero-cell-price">From R249</span>
+    </div>
+    <div class="hero-cell">
+      <div class="hero-cell-icon">&#127873;</div>
+      <span class="hero-cell-label">Gift Hampers</span>
+      <span class="hero-cell-price">From R399</span>
+    </div>
+    <div class="hero-cell">
+      <div class="hero-cell-icon">&#127881;</div>
+      <span class="hero-cell-label">Birthday Gifts</span>
+      <span class="hero-cell-price">From R299</span>
+    </div>
+    <div class="hero-cell">
+      <div class="hero-cell-icon">&#127807;</div>
+      <span class="hero-cell-label">Plants</span>
+      <span class="hero-cell-price">From R199</span>
+    </div>
+  </div>
+</section>
 
-  <script src="app.js"></script>
+<!-- TRUST BAR -->
+<div class="trust">
+  <div class="trust-inner">
+    <div class="trust-item"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>Same-day delivery available</div>
+    <div class="trust-item"><svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>Freshness guaranteed</div>
+    <div class="trust-item"><svg viewBox="0 0 24 24"><rect x="1" y="3" width="15" height="13"/><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg>Free delivery over R500</div>
+    <div class="trust-item"><svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>50,000+ happy customers</div>
+  </div>
+</div>
+
+<!-- SHOP BY OCCASION -->
+<section class="sec" id="occasions">
+  <div class="container">
+    <div class="sh center">
+      <span class="eyebrow">Shop by Occasion</span>
+      <h2 class="h2">Find the Perfect Gift</h2>
+      <p class="sub">Whatever the celebration, we have something beautiful for every moment.</p>
+    </div>
+    <div class="ogrid">
+      <a href="#" class="ocard"><div class="ocard-img oc1">&#127881;</div><div class="ocard-name">Birthday</div></a>
+      <a href="#" class="ocard"><div class="ocard-img oc2">&#128149;</div><div class="ocard-name">Anniversary</div></a>
+      <a href="#" class="ocard"><div class="ocard-img oc3">&#127808;</div><div class="ocard-name">Get Well Soon</div></a>
+      <a href="#" class="ocard"><div class="ocard-img oc4">&#127801;</div><div class="ocard-name">Thank You</div></a>
+      <a href="#" class="ocard"><div class="ocard-img oc5">&#127880;</div><div class="ocard-name">Congratulations</div></a>
+      <a href="#" class="ocard"><div class="ocard-img oc6">&#128145;</div><div class="ocard-name">Just Because</div></a>
+      <a href="#" class="ocard"><div class="ocard-img oc7">&#127891;</div><div class="ocard-name">Graduation</div></a>
+      <a href="#" class="ocard"><div class="ocard-img oc8">&#129406;</div><div class="ocard-name">Sympathy</div></a>
+    </div>
+  </div>
+</section>
+
+<!-- BROWSE CATEGORIES -->
+<section class="sec sec-alt" id="shop">
+  <div class="container">
+    <div class="sh">
+      <span class="eyebrow">Browse by Category</span>
+      <h2 class="h2">Shop the Full Range</h2>
+      <p class="sub">From fresh roses to indulgent hampers — something beautiful for every budget.</p>
+    </div>
+    <div class="cgrid">
+      <a href="#" class="ccard">
+        <div class="ccard-bg c1">&#127801;</div>
+        <div class="ccard-body"><span class="ccard-name">Flowers &amp; Roses</span><span class="ccard-count">120+ arrangements</span></div>
+        <div class="ccard-arrow"><svg viewBox="0 0 24 24"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></div>
+      </a>
+      <a href="#" class="ccard">
+        <div class="ccard-bg c2">&#127807;</div>
+        <div class="ccard-body"><span class="ccard-name">Plants &amp; Succulents</span><span class="ccard-count">60+ varieties</span></div>
+        <div class="ccard-arrow"><svg viewBox="0 0 24 24"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></div>
+      </a>
+      <a href="#" class="ccard">
+        <div class="ccard-bg c3">&#127874;</div>
+        <div class="ccard-body"><span class="ccard-name">Chocolates &amp; Sweets</span><span class="ccard-count">80+ products</span></div>
+        <div class="ccard-arrow"><svg viewBox="0 0 24 24"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></div>
+      </a>
+      <a href="#" class="ccard">
+        <div class="ccard-bg c4">&#127873;</div>
+        <div class="ccard-body"><span class="ccard-name">Gift Hampers</span><span class="ccard-count">45+ hampers</span></div>
+        <div class="ccard-arrow"><svg viewBox="0 0 24 24"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></div>
+      </a>
+      <a href="#" class="ccard">
+        <div class="ccard-bg c5">&#127863;</div>
+        <div class="ccard-body"><span class="ccard-name">Alcohol &amp; Wine</span><span class="ccard-count">50+ selections</span></div>
+        <div class="ccard-arrow"><svg viewBox="0 0 24 24"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></div>
+      </a>
+      <a href="#" class="ccard">
+        <div class="ccard-bg c6">&#129371;</div>
+        <div class="ccard-body"><span class="ccard-name">Personalised Gifts</span><span class="ccard-count">30+ custom items</span></div>
+        <div class="ccard-arrow"><svg viewBox="0 0 24 24"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></div>
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- FEATURED PRODUCTS -->
+<section class="sec" id="gifts">
+  <div class="container">
+    <div class="sh">
+      <span class="eyebrow">Featured Products</span>
+      <h2 class="h2">Most Loved Gifts</h2>
+    </div>
+    <div class="pf-control">
+      <div class="pf-btns">
+        <button class="pf-btn act">All</button>
+        <button class="pf-btn">Flowers</button>
+        <button class="pf-btn">Chocolates</button>
+        <button class="pf-btn">Hampers</button>
+        <button class="pf-btn">Plants</button>
+        <button class="pf-btn">On Sale</button>
+      </div>
+      <div class="pf-sort"><span>Sort by</span>
+        <select>
+          <option>Featured</option>
+          <option>Price: Low to High</option>
+          <option>Price: High to Low</option>
+          <option>Most Popular</option>
+          <option>Newest</option>
+        </select>
+      </div>
+    </div>
+    <div class="pgrid">
+
+      <div class="pcard">
+        <div class="pcard-img pi1">
+          <div class="pcard-img-inner">&#128144;</div>
+          <span class="pcard-badge b-hot">Best Seller</span>
+          <div class="pcard-actions">
+            <button class="pac" title="Wishlist"><svg viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg></button>
+            <button class="pac" title="Quick View"><svg viewBox="0 0 24 24"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></button>
+          </div>
+        </div>
+        <div class="pcard-info">
+          <div class="pcard-cat">Flowers &amp; Roses</div>
+          <div class="pcard-name">Classic Red Rose Bouquet</div>
+          <div class="pcard-rating"><span class="pcard-stars">&#9733;&#9733;&#9733;&#9733;&#9733;</span><span class="pcard-rcount">(2,841)</span></div>
+          <div class="pcard-price-row"><span class="pcard-price">R249.00</span><button class="pcard-atc">Add to Cart</button></div>
+        </div>
+      </div>
+
+      <div class="pcard">
+        <div class="pcard-img pi2">
+          <div class="pcard-img-inner">&#127873;</div>
+          <span class="pcard-badge b-hot">Best Seller</span>
+          <div class="pcard-actions">
+            <button class="pac" title="Wishlist"><svg viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg></button>
+            <button class="pac" title="Quick View"><svg viewBox="0 0 24 24"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></button>
+          </div>
+        </div>
+        <div class="pcard-info">
+          <div class="pcard-cat">Gift Hampers</div>
+          <div class="pcard-name">Luxury Birthday Gift Hamper</div>
+          <div class="pcard-rating"><span class="pcard-stars">&#9733;&#9733;&#9733;&#9733;&#9733;</span><span class="pcard-rcount">(1,204)</span></div>
+          <div class="pcard-price-row"><span class="pcard-price">R649.00</span><button class="pcard-atc">Add to Cart</button></div>
+        </div>
+      </div>
+
+      <div class="pcard">
+        <div class="pcard-img pi3">
+          <div class="pcard-img-inner">&#127874;</div>
+          <span class="pcard-badge b-sale">Sale</span>
+          <div class="pcard-actions">
+            <button class="pac" title="Wishlist"><svg viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg></button>
+            <button class="pac" title="Quick View"><svg viewBox="0 0 24 24"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></button>
+          </div>
+        </div>
+        <div class="pcard-info">
+          <div class="pcard-cat">Chocolates</div>
+          <div class="pcard-name">Lindt Chocolate Luxury Box</div>
+          <div class="pcard-rating"><span class="pcard-stars">&#9733;&#9733;&#9733;&#9733;&#9733;</span><span class="pcard-rcount">(987)</span></div>
+          <div class="pcard-price-row"><span class="pcard-price">R299.00</span><span class="pcard-price-orig">R349.00</span><button class="pcard-atc">Add</button></div>
+        </div>
+      </div>
+
+      <div class="pcard">
+        <div class="pcard-img pi4">
+          <div class="pcard-img-inner">&#127807;</div>
+          <span class="pcard-badge b-new">New</span>
+          <div class="pcard-actions">
+            <button class="pac" title="Wishlist"><svg viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg></button>
+            <button class="pac" title="Quick View"><svg viewBox="0 0 24 24"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></button>
+          </div>
+        </div>
+        <div class="pcard-info">
+          <div class="pcard-cat">Plants</div>
+          <div class="pcard-name">Orchid Plant in Ceramic Pot</div>
+          <div class="pcard-rating"><span class="pcard-stars">&#9733;&#9733;&#9733;&#9733;&#9733;</span><span class="pcard-rcount">(763)</span></div>
+          <div class="pcard-price-row"><span class="pcard-price">R399.00</span><button class="pcard-atc">Add to Cart</button></div>
+        </div>
+      </div>
+
+      <div class="pcard">
+        <div class="pcard-img pi5">
+          <div class="pcard-img-inner">&#127801;</div>
+          <span class="pcard-badge b-hot">Best Seller</span>
+          <div class="pcard-actions">
+            <button class="pac" title="Wishlist"><svg viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg></button>
+            <button class="pac" title="Quick View"><svg viewBox="0 0 24 24"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></button>
+          </div>
+        </div>
+        <div class="pcard-info">
+          <div class="pcard-cat">Flowers &amp; Roses</div>
+          <div class="pcard-name">Mixed Seasonal Bouquet</div>
+          <div class="pcard-rating"><span class="pcard-stars">&#9733;&#9733;&#9733;&#9733;&#9733;</span><span class="pcard-rcount">(1,556)</span></div>
+          <div class="pcard-price-row"><span class="pcard-price">R349.00</span><button class="pcard-atc">Add to Cart</button></div>
+        </div>
+      </div>
+
+      <div class="pcard">
+        <div class="pcard-img pi6">
+          <div class="pcard-img-inner">&#129371;</div>
+          <div class="pcard-actions">
+            <button class="pac" title="Wishlist"><svg viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg></button>
+            <button class="pac" title="Quick View"><svg viewBox="0 0 24 24"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></button>
+          </div>
+        </div>
+        <div class="pcard-info">
+          <div class="pcard-cat">Personalised Gifts</div>
+          <div class="pcard-name">Custom Photo Gift Frame</div>
+          <div class="pcard-rating"><span class="pcard-stars">&#9733;&#9733;&#9733;&#9733;&#9734;</span><span class="pcard-rcount">(432)</span></div>
+          <div class="pcard-price-row"><span class="pcard-price">R259.00</span><button class="pcard-atc">Add to Cart</button></div>
+        </div>
+      </div>
+
+      <div class="pcard">
+        <div class="pcard-img pi7">
+          <div class="pcard-img-inner">&#127863;</div>
+          <span class="pcard-badge b-new">New</span>
+          <div class="pcard-actions">
+            <button class="pac" title="Wishlist"><svg viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg></button>
+            <button class="pac" title="Quick View"><svg viewBox="0 0 24 24"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></button>
+          </div>
+        </div>
+        <div class="pcard-info">
+          <div class="pcard-cat">Alcohol &amp; Wine</div>
+          <div class="pcard-name">Premium Red Wine &amp; Roses Set</div>
+          <div class="pcard-rating"><span class="pcard-stars">&#9733;&#9733;&#9733;&#9733;&#9733;</span><span class="pcard-rcount">(318)</span></div>
+          <div class="pcard-price-row"><span class="pcard-price">R799.00</span><button class="pcard-atc">Add to Cart</button></div>
+        </div>
+      </div>
+
+      <div class="pcard">
+        <div class="pcard-img pi8">
+          <div class="pcard-img-inner">&#127808;</div>
+          <span class="pcard-badge b-sale">Sale</span>
+          <div class="pcard-actions">
+            <button class="pac" title="Wishlist"><svg viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg></button>
+            <button class="pac" title="Quick View"><svg viewBox="0 0 24 24"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></button>
+          </div>
+        </div>
+        <div class="pcard-info">
+          <div class="pcard-cat">Flowers &amp; Roses</div>
+          <div class="pcard-name">Sunflower &amp; Pink Rose Bouquet</div>
+          <div class="pcard-rating"><span class="pcard-stars">&#9733;&#9733;&#9733;&#9733;&#9733;</span><span class="pcard-rcount">(891)</span></div>
+          <div class="pcard-price-row"><span class="pcard-price">R279.00</span><span class="pcard-price-orig">R329.00</span><button class="pcard-atc">Add</button></div>
+        </div>
+      </div>
+
+      <div class="pcard">
+        <div class="pcard-img pi9">
+          <div class="pcard-img-inner">&#127820;</div>
+          <span class="pcard-badge b-hot">Best Seller</span>
+          <div class="pcard-actions">
+            <button class="pac" title="Wishlist"><svg viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg></button>
+            <button class="pac" title="Quick View"><svg viewBox="0 0 24 24"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></button>
+          </div>
+        </div>
+        <div class="pcard-info">
+          <div class="pcard-cat">Gourmet &amp; Snacks</div>
+          <div class="pcard-name">SA Biltong &amp; Snack Crate</div>
+          <div class="pcard-rating"><span class="pcard-stars">&#9733;&#9733;&#9733;&#9733;&#9733;</span><span class="pcard-rcount">(2,103)</span></div>
+          <div class="pcard-price-row"><span class="pcard-price">R449.00</span><button class="pcard-atc">Add to Cart</button></div>
+        </div>
+      </div>
+
+      <div class="pcard">
+        <div class="pcard-img pi10">
+          <div class="pcard-img-inner">&#127801;</div>
+          <span class="pcard-badge b-new">New</span>
+          <div class="pcard-actions">
+            <button class="pac" title="Wishlist"><svg viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg></button>
+            <button class="pac" title="Quick View"><svg viewBox="0 0 24 24"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></button>
+          </div>
+        </div>
+        <div class="pcard-info">
+          <div class="pcard-cat">Flowers &amp; Roses</div>
+          <div class="pcard-name">Pink Protea &amp; Fynbos Arrangement</div>
+          <div class="pcard-rating"><span class="pcard-stars">&#9733;&#9733;&#9733;&#9733;&#9733;</span><span class="pcard-rcount">(547)</span></div>
+          <div class="pcard-price-row"><span class="pcard-price">R499.00</span><button class="pcard-atc">Add to Cart</button></div>
+        </div>
+      </div>
+
+      <div class="pcard">
+        <div class="pcard-img pi11">
+          <div class="pcard-img-inner">&#127866;</div>
+          <div class="pcard-actions">
+            <button class="pac" title="Wishlist"><svg viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg></button>
+            <button class="pac" title="Quick View"><svg viewBox="0 0 24 24"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></button>
+          </div>
+        </div>
+        <div class="pcard-info">
+          <div class="pcard-cat">Gourmet &amp; Snacks</div>
+          <div class="pcard-name">Craft Beer &amp; Snacks Gift Set</div>
+          <div class="pcard-rating"><span class="pcard-stars">&#9733;&#9733;&#9733;&#9733;&#9734;</span><span class="pcard-rcount">(394)</span></div>
+          <div class="pcard-price-row"><span class="pcard-price">R549.00</span><button class="pcard-atc">Add to Cart</button></div>
+        </div>
+      </div>
+
+      <div class="pcard">
+        <div class="pcard-img pi12">
+          <div class="pcard-img-inner">&#127874;</div>
+          <span class="pcard-badge b-sale">Sale</span>
+          <div class="pcard-actions">
+            <button class="pac" title="Wishlist"><svg viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg></button>
+            <button class="pac" title="Quick View"><svg viewBox="0 0 24 24"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></button>
+          </div>
+        </div>
+        <div class="pcard-info">
+          <div class="pcard-cat">Chocolates</div>
+          <div class="pcard-name">Ferrero Rocher Tower Gift Box</div>
+          <div class="pcard-rating"><span class="pcard-stars">&#9733;&#9733;&#9733;&#9733;&#9733;</span><span class="pcard-rcount">(1,872)</span></div>
+          <div class="pcard-price-row"><span class="pcard-price">R379.00</span><span class="pcard-price-orig">R429.00</span><button class="pcard-atc">Add</button></div>
+        </div>
+      </div>
+
+    </div>
+    <div style="text-align:center;margin-top:44px"><a href="#" class="btn btn-outline btn-lg">View All Products</a></div>
+  </div>
+</section>
+
+<!-- SAME DAY DELIVERY BANNER -->
+<section class="sec sec-alt">
+  <div class="container">
+    <div class="sameday">
+      <div class="sd-icon">&#9889;</div>
+      <div>
+        <h2 class="sd-h">Same-Day Delivery Available</h2>
+        <p class="sd-p">Order before 1pm Monday to Friday or before 11am on Saturday and we'll deliver today. Available across all major SA cities including Johannesburg, Cape Town, Durban, Pretoria, and Port Elizabeth.</p>
+      </div>
+      <a href="#shop" class="btn btn-primary btn-lg">Order Now</a>
+    </div>
+  </div>
+</section>
+
+<!-- FEATURES -->
+<section class="sec sec-linen">
+  <div class="container">
+    <div class="features">
+      <div class="feat">
+        <div class="feat-icon"><svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></div>
+        <h3>Freshness Guaranteed</h3>
+        <p>Every bouquet is hand-arranged with the freshest seasonal flowers from trusted growers.</p>
+      </div>
+      <div class="feat">
+        <div class="feat-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></div>
+        <h3>Same-Day Delivery</h3>
+        <p>Order by 1pm for same-day delivery to all major cities across South Africa.</p>
+      </div>
+      <div class="feat">
+        <div class="feat-icon"><svg viewBox="0 0 24 24"><rect x="1" y="3" width="15" height="13"/><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg></div>
+        <h3>Nationwide Delivery</h3>
+        <p>We deliver to homes, offices, and hospitals across all 9 provinces of South Africa.</p>
+      </div>
+      <div class="feat">
+        <div class="feat-icon"><svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg></div>
+        <h3>Personal Message Card</h3>
+        <p>Add a heartfelt message to every order at no extra cost — we hand-write your card.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- REVIEWS -->
+<section class="sec">
+  <div class="container">
+    <div class="sh center">
+      <span class="eyebrow">Customer Reviews</span>
+      <h2 class="h2">What Our Customers Say</h2>
+      <div class="trating-bar"><span class="stars">&#9733;&#9733;&#9733;&#9733;&#9733;</span><span>4.4 out of 5 — over 50,000 reviews</span></div>
+    </div>
+    <div class="tgrid">
+      <div class="tcard">
+        <div class="tstars">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
+        <p class="tq">The roses arrived beautifully packaged and completely fresh. My mom was so happy she called me in tears. Will definitely order from Bloom &amp; Box again.</p>
+        <div class="tauth"><div class="tav" style="background:#f5e6ea">S</div><div><div class="tname">Siphiwe Nkosi</div><div class="tsub">Johannesburg, Gauteng</div></div></div>
+      </div>
+      <div class="tcard">
+        <div class="tstars">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
+        <p class="tq">Ordered the luxury hamper for my wife's birthday — it arrived on time and she loved every single item. The chocolate selection was incredible. Thank you!</p>
+        <div class="tauth"><div class="tav" style="background:#daeee3">R</div><div><div class="tname">Ruan Botha</div><div class="tsub">Cape Town, Western Cape</div></div></div>
+      </div>
+      <div class="tcard">
+        <div class="tstars">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
+        <p class="tq">I've used Bloom &amp; Box three times now and they never disappoint. Same-day delivery is a lifesaver. The flowers always look exactly like the pictures.</p>
+        <div class="tauth"><div class="tav" style="background:#e6d5f2">A</div><div><div class="tname">Ayanda Dube</div><div class="tsub">Durban, KwaZulu-Natal</div></div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CONTACT -->
+<section class="sec sec-alt" id="contact">
+  <div class="container">
+    <div class="sh center">
+      <span class="eyebrow">Get in Touch</span>
+      <h2 class="h2">We're Here to Help</h2>
+      <p class="sub" style="margin:10px auto 0">Questions about your order, delivery status, or a custom arrangement? Reach out any time.</p>
+    </div>
+    <div class="contact-grid">
+      <div class="contact-card">
+        <div class="cc-icon"><svg viewBox="0 0 24 24"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12 19.79 19.79 0 0 1 1.61 3.4 2 2 0 0 1 3.58 1.18h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 8.72a16 16 0 0 0 6.29 6.29l.82-.82a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg></div>
+        <h3 class="cc-title">Call Us</h3>
+        <p class="cc-text">Mon–Fri, 7am–6pm<br>Sat–Sun, 8am–3pm</p>
+        <a href="tel:+27000000000" class="cc-link">+27 (0)00 000 0000</a>
+      </div>
+      <div class="contact-card">
+        <div class="cc-icon"><svg viewBox="0 0 24 24"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg></div>
+        <h3 class="cc-title">Email Us</h3>
+        <p class="cc-text">We respond within<br>2 business hours</p>
+        <a href="mailto:hello@bloomandbox.co.za" class="cc-link">hello@bloomandbox.co.za</a>
+      </div>
+      <div class="contact-card">
+        <div class="cc-icon"><svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg></div>
+        <h3 class="cc-title">Live Chat</h3>
+        <p class="cc-text">Chat with us in real time<br>Mon–Sat, 8am–5pm</p>
+        <a href="#" class="cc-link">Start a chat</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- NEWSLETTER -->
+<div class="nl">
+  <div class="container">
+    <div class="nl-inner">
+      <div>
+        <h2 class="nl-h">New arrivals &amp; exclusive deals</h2>
+        <p class="nl-p">Be first to hear about seasonal specials, new gift ranges, and subscriber-only discounts.</p>
+      </div>
+      <form class="nl-form" onsubmit="nlSub(event)">
+        <input class="nl-input" type="email" placeholder="Your email address" required>
+        <button type="submit" class="nl-btn">Subscribe</button>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- FOOTER -->
+<footer class="footer">
+  <div class="container">
+    <div class="footer-grid">
+      <div>
+        <a href="#" class="footer-logo">Bloom <span>&</span> Box</a>
+        <p class="footer-desc">South Africa's favourite online florist and gift delivery service. Delivering joy since 2018.</p>
+        <div class="footer-contact">
+          <span><svg viewBox="0 0 24 24"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12 19.79 19.79 0 0 1 1.61 3.4 2 2 0 0 1 3.58 1.18h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 8.72a16 16 0 0 0 6.29 6.29l.82-.82a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>+27 (0)00 000 0000</span>
+          <span><svg viewBox="0 0 24 24"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>hello@bloomandbox.co.za</span>
+        </div>
+      </div>
+      <div class="footer-col">
+        <h4>Shop</h4>
+        <ul>
+          <li><a href="#">Flowers &amp; Roses</a></li>
+          <li><a href="#">Plants</a></li>
+          <li><a href="#">Chocolates</a></li>
+          <li><a href="#">Gift Hampers</a></li>
+          <li><a href="#">Alcohol &amp; Wine</a></li>
+          <li><a href="#">Gourmet Gifts</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Occasions</h4>
+        <ul>
+          <li><a href="#">Birthday</a></li>
+          <li><a href="#">Anniversary</a></li>
+          <li><a href="#">Get Well Soon</a></li>
+          <li><a href="#">Thank You</a></li>
+          <li><a href="#">Sympathy</a></li>
+          <li><a href="#">Corporate Gifts</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Info</h4>
+        <ul>
+          <li><a href="#">About Us</a></li>
+          <li><a href="#">Delivery Info</a></li>
+          <li><a href="#">Returns Policy</a></li>
+          <li><a href="#">FAQ</a></li>
+          <li><a href="#">Track Your Order</a></li>
+          <li><a href="#">Contact</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span class="footer-legal">&copy; 2026 Bloom &amp; Box. All rights reserved.</span>
+      <div class="footer-leg-links"><a href="#">Privacy Policy</a><a href="#">Terms &amp; Conditions</a><a href="#">Refund Policy</a></div>
+    </div>
+  </div>
+</footer>
+
+<script src="app.js"></script>
 </body>
 </html>

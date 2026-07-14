@@ -1,95 +1,52 @@
 /* Bloom & Box – App JS */
 
-// ── SCROLL: header shadow + sticky CTA
-const header    = document.getElementById('site-header');
-const stickyCta = document.getElementById('sticky-cta');
-let lastScroll  = 0;
+const hdr = document.getElementById('hdr');
+window.addEventListener('scroll', () => hdr.classList.toggle('raised', window.scrollY > 10), { passive: true });
 
-window.addEventListener('scroll', () => {
-  const y = window.scrollY;
-  header.classList.toggle('scrolled', y > 20);
+// Filter buttons
+document.querySelectorAll('.pf-btn').forEach(b => b.addEventListener('click', () => {
+  document.querySelectorAll('.pf-btn').forEach(x => x.classList.remove('act'));
+  b.classList.add('act');
+}));
 
-  // show sticky CTA after scrolling past hero (600px)
-  stickyCta.classList.toggle('visible', y > 600);
-  lastScroll = y;
-}, { passive: true });
-
-// ── MOBILE NAV TOGGLE
-const hamburger = document.getElementById('hamburger');
-const navLinks  = document.getElementById('nav-links');
-
-hamburger.addEventListener('click', () => {
-  navLinks.classList.toggle('open');
-});
-
-// close nav on link click
-navLinks.querySelectorAll('a').forEach(link => {
-  link.addEventListener('click', () => navLinks.classList.remove('open'));
-});
-
-// ── PRICING TOGGLE
-const pricingBtns   = document.querySelectorAll('.pricing-btn');
-const priceAmounts  = document.querySelectorAll('.price-amount');
-
-pricingBtns.forEach(btn => {
-  btn.addEventListener('click', () => {
-    pricingBtns.forEach(b => b.classList.remove('active'));
-    btn.classList.add('active');
-    const period = btn.dataset.period;
-    priceAmounts.forEach(el => {
-      const val = parseFloat(el.dataset[period]);
-      el.textContent = val.toFixed(2);
-    });
-  });
-});
-
-// ── NEWSLETTER FORM
-function handleNewsletter(e) {
+// Newsletter
+function nlSub(e) {
   e.preventDefault();
-  const form  = e.target;
-  const input = form.querySelector('input');
-  const btn   = form.querySelector('button');
-  btn.textContent  = '✓ You\'re in!';
-  btn.style.background = '#6b9e7d';
-  input.value = '';
-  input.placeholder = 'Thanks for joining 🌸';
+  const btn = e.target.querySelector('button');
+  const inp = e.target.querySelector('input');
+  btn.textContent = 'Subscribed!';
+  btn.style.background = '#5e8c72';
+  inp.value = '';
+  inp.placeholder = 'Thanks — you\'re on the list!';
   setTimeout(() => {
     btn.textContent = 'Subscribe';
     btn.style.background = '';
-    input.placeholder = 'Enter your email address';
+    inp.placeholder = 'Your email address';
   }, 4000);
 }
 
-// ── SCROLL REVEAL ANIMATION
-const revealEls = document.querySelectorAll(
-  '.box-card, .step, .product-card, .review-card, .pricing-card, .insta-item'
-);
+// Smooth scroll with header offset
+document.querySelectorAll('a[href^="#"]').forEach(a => a.addEventListener('click', e => {
+  const t = document.querySelector(a.getAttribute('href'));
+  if (!t) return;
+  e.preventDefault();
+  window.scrollTo({ top: t.offsetTop - hdr.offsetHeight - 8, behavior: 'smooth' });
+}));
 
-const observer = new IntersectionObserver((entries) => {
-  entries.forEach(entry => {
-    if (entry.isIntersecting) {
-      entry.target.style.opacity = '1';
-      entry.target.style.transform = entry.target.style.transform
-        .replace('translateY(32px)', 'translateY(0)') || '';
-      observer.unobserve(entry.target);
+// Scroll reveal
+const obs = new IntersectionObserver(entries => {
+  entries.forEach(e => {
+    if (e.isIntersecting) {
+      e.target.style.opacity = '1';
+      e.target.style.transform = 'translateY(0)';
+      obs.unobserve(e.target);
     }
   });
-}, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
+}, { threshold: 0.06, rootMargin: '0px 0px -28px 0px' });
 
-revealEls.forEach((el, i) => {
+document.querySelectorAll('.pcard,.ccard,.tcard,.contact-card,.feat,.ocard').forEach((el, i) => {
   el.style.opacity = '0';
-  el.style.transform += ' translateY(32px)';
-  el.style.transition = `opacity .5s ease ${i * 0.05}s, transform .5s ease ${i * 0.05}s, box-shadow .25s ease, border-color .25s ease`;
-  observer.observe(el);
-});
-
-// ── SMOOTH ANCHOR SCROLL (offset for fixed header)
-document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-  anchor.addEventListener('click', e => {
-    const target = document.querySelector(anchor.getAttribute('href'));
-    if (!target) return;
-    e.preventDefault();
-    const offset = header.offsetHeight + 16;
-    window.scrollTo({ top: target.offsetTop - offset, behavior: 'smooth' });
-  });
+  el.style.transform = 'translateY(20px)';
+  el.style.transition = `opacity .4s ease ${i * .04}s, transform .4s ease ${i * .04}s, box-shadow .22s ease`;
+  obs.observe(el);
 });
