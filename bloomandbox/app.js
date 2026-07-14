@@ -3,6 +3,18 @@
 const hdr = document.getElementById('hdr');
 window.addEventListener('scroll', () => hdr.classList.toggle('raised', window.scrollY > 10), { passive: true });
 
+// Burger menu toggle
+const mob = document.getElementById('mob');
+const moboverlay = document.getElementById('moboverlay');
+function closeMobNav() { document.body.classList.remove('nav-open'); }
+if (mob) {
+  mob.addEventListener('click', () => document.body.classList.toggle('nav-open'));
+}
+if (moboverlay) {
+  moboverlay.addEventListener('click', closeMobNav);
+}
+document.querySelectorAll('.mob-nav a').forEach(a => a.addEventListener('click', closeMobNav));
+
 // Filter buttons
 document.querySelectorAll('.pf-btn').forEach(b => b.addEventListener('click', () => {
   document.querySelectorAll('.pf-btn').forEach(x => x.classList.remove('act'));
