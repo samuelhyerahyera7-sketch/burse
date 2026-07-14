@@ -9,6 +9,12 @@ document.querySelectorAll('.pf-btn').forEach(b => b.addEventListener('click', ()
   b.classList.add('act');
 }));
 
+// Shop-for tabs
+document.querySelectorAll('.sf-btn').forEach(b => b.addEventListener('click', () => {
+  document.querySelectorAll('.sf-btn').forEach(x => x.classList.remove('act'));
+  b.classList.add('act');
+}));
+
 // Newsletter
 function nlSub(e) {
   e.preventDefault();
