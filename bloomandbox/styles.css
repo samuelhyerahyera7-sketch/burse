@@ -40,10 +40,10 @@ ul{list-style:none}
 .hdr-inner{display:flex;align-items:center;justify-content:space-between;padding:0 40px;height:76px;gap:24px}
 
 /* LOGO */
-.logo{display:flex;flex-direction:column;align-items:flex-start;flex-shrink:0;text-decoration:none;gap:1px}
-.logo-name{font-family:var(--serif);font-size:1.7rem;font-weight:700;letter-spacing:-.03em;color:var(--ink);line-height:1}
-.logo-name .amp{color:var(--rose)}
-.logo-tag{font-size:.55rem;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:var(--muted)}
+.logo{display:flex;flex-direction:column;align-items:flex-start;flex-shrink:0;text-decoration:none;gap:2px}
+.logo-name{font-family:var(--serif);font-size:1.55rem;font-weight:700;letter-spacing:-.02em;color:var(--ink);line-height:1;display:flex;align-items:center;gap:2px}
+.logo-name .amp{color:var(--rose);font-size:2.5rem;font-style:italic;font-weight:400;line-height:.9;display:inline-block}
+.logo-tag{font-size:.52rem;font-weight:600;letter-spacing:.16em;text-transform:uppercase;color:var(--muted)}
 
 /* SEARCH BAR */
 .hdr-search{flex:1;max-width:420px;position:relative}
@@ -188,7 +188,7 @@ body.nav-open .mob-overlay{display:block}
 .pcard:hover{box-shadow:0 10px 36px rgba(0,0,0,.1);transform:translateY(-4px)}
 .pcard-img{aspect-ratio:1;position:relative;overflow:hidden;display:flex;align-items:center;justify-content:center}
 .pcard-img-inner{width:100%;height:100%;transition:transform .45s ease;display:flex;align-items:center;justify-content:center}
-.pcard-icon{width:56px;height:56px;stroke:var(--rose);fill:none;stroke-width:1.4;stroke-linecap:round;stroke-linejoin:round;opacity:.65}
+.pcard-icon{width:60px;height:60px;stroke:var(--rose);fill:none;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round;opacity:.85}
 .pcard:hover .pcard-img-inner{transform:scale(1.06)}
 .pi1{background:linear-gradient(145deg,#fce8ec,#f4c0d0)}
 .pi2{background:linear-gradient(145deg,#e8f4e8,#c0e4c8)}
@@ -230,7 +230,10 @@ body.nav-open .mob-overlay{display:block}
 .pf-btn{padding:7px 16px;border:1.5px solid var(--border);background:transparent;border-radius:24px;font-size:.77rem;font-weight:600;color:var(--muted);cursor:pointer;transition:all var(--ease);letter-spacing:.03em;font-family:var(--sans)}
 .pf-btn.act,.pf-btn:hover{border-color:var(--rose);color:#fff;background:var(--rose)}
 .pf-sort{display:flex;align-items:center;gap:8px;font-size:.8rem;color:var(--muted)}
-.pf-sort select{border:1.5px solid var(--border);border-radius:3px;padding:6px 10px;font-size:.8rem;color:var(--ink);background:var(--white);font-family:var(--sans);cursor:pointer}
+.pf-sort{position:relative}
+.pf-sort select{border:1.5px solid var(--border);border-radius:3px;padding:6px 28px 6px 10px;font-size:.8rem;color:var(--ink);background:var(--white);font-family:var(--sans);cursor:pointer;-webkit-appearance:none;appearance:none;outline:none}
+.pf-sort::after{content:"";position:absolute;right:10px;top:50%;transform:translateY(-50%);width:0;height:0;border-left:4px solid transparent;border-right:4px solid transparent;border-top:5px solid var(--muted);pointer-events:none}
+select:focus{outline:none;box-shadow:none}
 
 /* ── ADD-ONS ── */
 .addon-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:14px;margin-top:12px}
