@@ -43,13 +43,11 @@
         <svg viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
         <span class="icon-btn-label">Saved</span>
       </button>
-      <div style="position:relative;display:flex;flex-direction:column;align-items:center;gap:3px">
-        <button class="icon-btn" aria-label="Cart" style="flex-direction:column;gap:3px">
-          <svg viewBox="0 0 24 24"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
-          <span class="icon-btn-label">Cart</span>
-        </button>
+      <button class="icon-btn" aria-label="Cart" style="flex-direction:column;gap:3px;position:relative">
+        <svg viewBox="0 0 24 24"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
         <span class="cart-dot">2</span>
-      </div>
+        <span class="icon-btn-label">Cart</span>
+      </button>
       <button class="mob-menu" id="mob" aria-label="Menu">
         <span></span><span></span><span></span>
       </button>
@@ -85,7 +83,23 @@
       </div>
       <div class="df-field">
         <svg viewBox="0 0 24 24"><path d="M21 10c0 7-9 13-9 13S3 17 3 10a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
-        <input type="text" placeholder="Enter suburb or city">
+        <input type="text" placeholder="Enter Gauteng suburb or city" list="gauteng-suburbs" autocomplete="off">
+        <datalist id="gauteng-suburbs">
+          <option value="Sandton"><option value="Rosebank"><option value="Randburg">
+          <option value="Fourways"><option value="Midrand"><option value="Centurion">
+          <option value="Pretoria Central"><option value="Menlo Park"><option value="Brooklyn">
+          <option value="Hatfield"><option value="Lynnwood"><option value="Waterkloof">
+          <option value="Johannesburg CBD"><option value="Parktown"><option value="Northcliff">
+          <option value="Roodepoort"><option value="Krugersdorp"><option value="Soweto">
+          <option value="Alberton"><option value="Germiston"><option value="Boksburg">
+          <option value="Benoni"><option value="Kempton Park"><option value="Edenvale">
+          <option value="Bedfordview"><option value="Brakpan"><option value="Springs">
+          <option value="Tembisa"><option value="Alexandra"><option value="Diepsloot">
+          <option value="Kyalami"><option value="Rivonia"><option value="Bryanston">
+          <option value="Randpark Ridge"><option value="Sunninghill"><option value="Woodmead">
+          <option value="Vereeniging"><option value="Vanderbijlpark"><option value="Meyerton">
+          <option value="Atteridgeville"><option value="Mamelodi"><option value="Soshanguve">
+        </datalist>
       </div>
       <div class="df-field" style="flex:0.65">
         <svg viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
@@ -108,16 +122,16 @@
 <!-- HERO -->
 <section class="hero">
   <div class="hero-left">
-    <span class="hero-eyebrow">South Africa's Favourite Flower &amp; Gift Delivery</span>
-    <h1 class="hero-title">Send <em>Love</em><br>Anywhere in SA</h1>
-    <p class="hero-desc">Fresh bouquets, luxury hampers, premium chocolates and beautiful plants, hand-delivered to your door. Next-day delivery available nationwide.</p>
+    <span class="hero-eyebrow">Gauteng's Favourite Flower &amp; Gift Delivery</span>
+    <h1 class="hero-title">Send <em>Love</em><br>Across Gauteng</h1>
+    <p class="hero-desc">Fresh bouquets, luxury hampers, premium chocolates and beautiful plants, hand-delivered across Johannesburg, Pretoria and surrounding areas.</p>
     <div class="hero-btns">
       <a href="#shop" class="btn btn-primary btn-lg">Shop Flowers</a>
       <a href="#gifts" class="btn btn-outline btn-lg">Explore Gifts</a>
     </div>
     <div class="hero-tags">
       <span class="htag"><svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>Freshness guaranteed</span>
-      <span class="htag"><svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>Nationwide delivery</span>
+      <span class="htag"><svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>Gauteng delivery</span>
       <span class="htag"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>Easy returns</span>
     </div>
   </div>
@@ -145,7 +159,7 @@
 <div class="trust">
   <div class="trust-inner">
     <div class="trust-item"><svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>100% freshness guarantee</div>
-    <div class="trust-item"><svg viewBox="0 0 24 24"><rect x="1" y="3" width="15" height="13"/><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg>Next-day nationwide delivery</div>
+    <div class="trust-item"><svg viewBox="0 0 24 24"><rect x="1" y="3" width="15" height="13"/><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg>Next-day Gauteng delivery</div>
     <div class="trust-item"><svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>Free handwritten message card</div>
     <div class="trust-item"><svg viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>Secure online payment</div>
   </div>
@@ -522,16 +536,16 @@
   <div class="container">
     <div class="sameday">
       <div>
-        <h2 class="sd-h">Nationwide Delivery</h2>
-        <p class="sd-p">We deliver to all major cities and surrounding suburbs across South Africa. Order by 2pm for next-day delivery.</p>
+        <h2 class="sd-h">Gauteng Delivery</h2>
+        <p class="sd-p">We deliver to all major suburbs across Gauteng. Order by 2pm for next-day delivery across Joburg, Pretoria and surrounding areas.</p>
         <div class="sd-cities">
           <span class="sd-city">Johannesburg</span>
-          <span class="sd-city">Cape Town</span>
-          <span class="sd-city">Durban</span>
           <span class="sd-city">Pretoria</span>
-          <span class="sd-city">Port Elizabeth</span>
-          <span class="sd-city">Bloemfontein</span>
-          <span class="sd-city">East London</span>
+          <span class="sd-city">Sandton</span>
+          <span class="sd-city">Midrand</span>
+          <span class="sd-city">Centurion</span>
+          <span class="sd-city">Randburg</span>
+          <span class="sd-city">Soweto</span>
         </div>
       </div>
       <a href="#shop" class="btn btn-primary btn-lg">Order Now</a>
@@ -625,9 +639,9 @@
     <div class="footer-grid">
       <div>
         <div class="footer-logo-wrap">
-          <span class="footer-logo-name">Bloom <span>&amp;</span> Box</span>
+          <span class="footer-logo-name">Bloom <span class="amp">&amp;</span> Box</span>
         </div>
-        <p class="footer-desc">South Africa's favourite online florist and gift delivery service. Delivering joy since 2018.</p>
+        <p class="footer-desc">Gauteng's favourite online florist and gift delivery service. Delivering joy across Joburg and Pretoria.</p>
         <div class="footer-contact">
           <span><svg viewBox="0 0 24 24"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12 19.79 19.79 0 0 1 1.61 3.4 2 2 0 0 1 3.58 1.18h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 8.72a16 16 0 0 0 6.29 6.29l.82-.82a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>+27 (0)00 000 0000</span>
           <span><svg viewBox="0 0 24 24"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>hello@bloomandbox.co.za</span>
