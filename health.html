@@ -6,57 +6,43 @@
 <title>Thrive — Online Therapy That Works</title>
 <meta name="description" content="Get matched with a licensed therapist in under 48 hours. Therapy by message, video, or phone — on your schedule.">
 <style>
-/* ═══════════════════════════════════════
-   TOKENS
-═══════════════════════════════════════ */
+/* ── TOKENS ── */
 :root {
-  --c-bg:        #F6FCF9;
+  --c-bg:        #FAF8F6;
   --c-surface:   #FFFFFF;
-  --c-surface-2: #EAF5EE;
-  --c-text:      #162620;
-  --c-text-2:    #3D5E52;
-  --c-text-3:    #7FA898;
-  --c-border:    #C6DDD4;
-
-  --c-accent:    #1F8B66;
-  --c-accent-h:  #156E50;
-  --c-accent-sub:#DDF2EA;
-  --c-cta:       #E88C28;
-  --c-cta-h:     #C87418;
-  --c-cta-sub:   #FDF0DC;
-
-  --c-stats:     #14362A;
-  --c-good:      #1F8B66;
+  --c-surface-2: #F5F0EC;
+  --c-text:      #2B2445;
+  --c-text-2:    #7B6E8E;
+  --c-text-3:    #AFA4BC;
+  --c-border:    #EBE4E0;
+  --c-coral:     #E8665A;
+  --c-coral-h:   #D45448;
+  --c-coral-sub: #FCE9E6;
+  --c-how-bg:    #FDE8E4;
+  --c-good:      #3DBD90;
   --c-good-sub:  #DDF2EA;
-
-  --s-sm: 0 1px 3px rgba(0,0,0,0.06);
-  --s-md: 0 2px 12px rgba(0,0,0,0.08), 0 0 1px rgba(0,0,0,0.04);
-  --s-lg: 0 8px 32px rgba(0,0,0,0.12), 0 0 1px rgba(0,0,0,0.04);
-  --s-xl: 0 20px 60px rgba(0,0,0,0.14), 0 0 1px rgba(0,0,0,0.04);
-
-  --sans:  system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-  --serif: Georgia, serif;
-  --r:    12px;
-  --max:  1160px;
+  --s-sm: 0 1px 3px rgba(43,36,69,0.06);
+  --s-md: 0 2px 12px rgba(43,36,69,0.08), 0 0 1px rgba(43,36,69,0.04);
+  --s-lg: 0 8px 32px rgba(43,36,69,0.12), 0 0 1px rgba(43,36,69,0.04);
+  --s-xl: 0 20px 60px rgba(43,36,69,0.14), 0 0 1px rgba(43,36,69,0.04);
+  --sans: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --r: 16px;
+  --max: 1160px;
   --ease: cubic-bezier(0.25, 0.46, 0.45, 0.94);
 }
-
 @media (prefers-color-scheme: dark) {
   :root {
-    --c-bg:        #0E1C16;
-    --c-surface:   #162820;
-    --c-surface-2: #1C3228;
-    --c-text:      #D8EEE6;
-    --c-text-2:    #7ABEA8;
-    --c-text-3:    #4A7A68;
-    --c-border:    #244034;
-    --c-accent:    #3DBD90;
-    --c-accent-h:  #55D4A8;
-    --c-accent-sub:#12301E;
-    --c-cta:       #E89A38;
-    --c-cta-h:     #F0AE50;
-    --c-cta-sub:   #2E1E08;
-    --c-stats:     #0A1C14;
+    --c-bg:        #1A1425;
+    --c-surface:   #241C35;
+    --c-surface-2: #2E2440;
+    --c-text:      #F0EBF8;
+    --c-text-2:    #A89AB8;
+    --c-text-3:    #6A5E7A;
+    --c-border:    #3A2E4C;
+    --c-coral:     #EF7B6F;
+    --c-coral-h:   #F59088;
+    --c-coral-sub: #3A1C1C;
+    --c-how-bg:    #2A1C28;
     --s-sm: 0 1px 3px rgba(0,0,0,0.3);
     --s-md: 0 2px 12px rgba(0,0,0,0.4), 0 0 1px rgba(0,0,0,0.2);
     --s-lg: 0 8px 32px rgba(0,0,0,0.5), 0 0 1px rgba(0,0,0,0.2);
@@ -64,1317 +50,368 @@
   }
 }
 :root[data-theme="dark"] {
-  --c-bg:        #0E1C16;
-  --c-surface:   #162820;
-  --c-surface-2: #1C3228;
-  --c-text:      #D8EEE6;
-  --c-text-2:    #7ABEA8;
-  --c-text-3:    #4A7A68;
-  --c-border:    #244034;
-  --c-accent:    #3DBD90;
-  --c-accent-h:  #55D4A8;
-  --c-accent-sub:#12301E;
-  --c-cta:       #E89A38;
-  --c-cta-h:     #F0AE50;
-  --c-cta-sub:   #2E1E08;
-  --c-stats:     #0A1C14;
+  --c-bg:        #1A1425;
+  --c-surface:   #241C35;
+  --c-surface-2: #2E2440;
+  --c-text:      #F0EBF8;
+  --c-text-2:    #A89AB8;
+  --c-text-3:    #6A5E7A;
+  --c-border:    #3A2E4C;
+  --c-coral:     #EF7B6F;
+  --c-coral-h:   #F59088;
+  --c-coral-sub: #3A1C1C;
+  --c-how-bg:    #2A1C28;
   --s-sm: 0 1px 3px rgba(0,0,0,0.3);
   --s-md: 0 2px 12px rgba(0,0,0,0.4), 0 0 1px rgba(0,0,0,0.2);
   --s-lg: 0 8px 32px rgba(0,0,0,0.5), 0 0 1px rgba(0,0,0,0.2);
   --s-xl: 0 20px 60px rgba(0,0,0,0.6), 0 0 1px rgba(0,0,0,0.2);
 }
 :root[data-theme="light"] {
-  --c-bg:        #F6FCF9;
+  --c-bg:        #FAF8F6;
   --c-surface:   #FFFFFF;
-  --c-surface-2: #EAF5EE;
-  --c-text:      #162620;
-  --c-text-2:    #3D5E52;
-  --c-text-3:    #7FA898;
-  --c-border:    #C6DDD4;
-  --c-accent:    #1F8B66;
-  --c-accent-h:  #156E50;
-  --c-accent-sub:#DDF2EA;
-  --c-cta:       #E88C28;
-  --c-cta-h:     #C87418;
-  --c-cta-sub:   #FDF0DC;
-  --c-stats:     #14362A;
-  --s-sm: 0 1px 3px rgba(0,0,0,0.06);
-  --s-md: 0 2px 12px rgba(0,0,0,0.08), 0 0 1px rgba(0,0,0,0.04);
-  --s-lg: 0 8px 32px rgba(0,0,0,0.12), 0 0 1px rgba(0,0,0,0.04);
-  --s-xl: 0 20px 60px rgba(0,0,0,0.14), 0 0 1px rgba(0,0,0,0.04);
+  --c-surface-2: #F5F0EC;
+  --c-text:      #2B2445;
+  --c-text-2:    #7B6E8E;
+  --c-text-3:    #AFA4BC;
+  --c-border:    #EBE4E0;
+  --c-coral:     #E8665A;
+  --c-coral-h:   #D45448;
+  --c-coral-sub: #FCE9E6;
+  --c-how-bg:    #FDE8E4;
+  --s-sm: 0 1px 3px rgba(43,36,69,0.06);
+  --s-md: 0 2px 12px rgba(43,36,69,0.08), 0 0 1px rgba(43,36,69,0.04);
+  --s-lg: 0 8px 32px rgba(43,36,69,0.12), 0 0 1px rgba(43,36,69,0.04);
+  --s-xl: 0 20px 60px rgba(43,36,69,0.14), 0 0 1px rgba(43,36,69,0.04);
 }
 
-/* ═══════════════════════════════════════
-   RESET
-═══════════════════════════════════════ */
+/* ── RESET ── */
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 html { scroll-behavior: smooth; }
-body {
-  font-family: var(--sans);
-  font-size: 1rem;
-  line-height: 1.6;
-  color: var(--c-text);
-  background: var(--c-bg);
-  transition: background 0.25s, color 0.25s;
-}
+body { font-family: var(--sans); font-size: 1rem; line-height: 1.6; color: var(--c-text); background: var(--c-bg); transition: background 0.25s, color 0.25s; }
 a { color: inherit; text-decoration: none; }
 button { cursor: pointer; font-family: inherit; border: none; }
 ul { list-style: none; }
+.container { width: 100%; max-width: var(--max); margin: 0 auto; padding: 0 1.5rem; }
 
-.container {
-  width: 100%;
-  max-width: var(--max);
-  margin: 0 auto;
-  padding: 0 1.5rem;
+/* ── LOGO ── */
+.logo-circle {
+  width: 38px; height: 38px; border-radius: 50%; flex-shrink: 0;
+  background: radial-gradient(circle at 35% 30%, #F9C4BE, #E8665A 55%, #C84848);
 }
+.logo-circle--sm { width: 30px; height: 30px; }
+.logo-name { font-size: 1.3rem; font-weight: 800; color: var(--c-text); letter-spacing: -0.03em; line-height: 1; }
 
-/* ═══════════════════════════════════════
-   BUTTONS
-═══════════════════════════════════════ */
-.btn-cta {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 0.5rem;
-  padding: 0.75rem 1.625rem;
-  background: var(--c-cta);
-  color: white;
-  font-size: 1rem;
-  font-weight: 700;
-  border-radius: 50px;
-  border: none;
-  cursor: pointer;
-  transition: background 0.15s, transform 0.15s;
-  white-space: nowrap;
-  letter-spacing: 0.01em;
+/* ── BUTTONS ── */
+.btn-coral {
+  display: inline-flex; align-items: center; justify-content: center; gap: 0.5rem;
+  padding: 0.8125rem 1.75rem; background: var(--c-coral); color: white;
+  font-size: 1rem; font-weight: 700; border-radius: 50px; border: none; cursor: pointer;
+  transition: background 0.15s, transform 0.15s; white-space: nowrap; letter-spacing: 0.01em;
 }
-.btn-cta:hover { background: var(--c-cta-h); transform: translateY(-1px); }
-.btn-cta:active { transform: translateY(0); }
-.btn-cta:focus-visible { outline: 3px solid var(--c-cta); outline-offset: 2px; }
-.btn-cta--lg { font-size: 1.0625rem; padding: 0.875rem 2rem; }
-.btn-cta--sm { font-size: 0.875rem; padding: 0.5625rem 1.25rem; }
-
+.btn-coral:hover { background: var(--c-coral-h); transform: translateY(-1px); }
+.btn-coral:active { transform: translateY(0); }
+.btn-coral:focus-visible { outline: 3px solid var(--c-coral); outline-offset: 2px; }
+.btn-coral--lg { font-size: 1.0625rem; padding: 0.9375rem 2rem; }
+.btn-coral--full { width: 100%; }
 .btn-outline {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  padding: 0.6875rem 1.375rem;
-  background: transparent;
-  color: var(--c-accent);
-  border: 2px solid var(--c-accent);
-  border-radius: 50px;
-  font-size: 0.9375rem;
-  font-weight: 700;
-  cursor: pointer;
-  transition: background 0.15s, color 0.15s;
+  display: inline-flex; align-items: center; justify-content: center;
+  padding: 0.75rem 1.75rem; background: transparent; color: var(--c-text);
+  border: 1.5px solid var(--c-border); border-radius: 50px;
+  font-size: 1rem; font-weight: 600; cursor: pointer;
+  transition: background 0.15s, border-color 0.15s;
 }
-.btn-outline:hover { background: var(--c-accent-sub); }
-
+.btn-outline:hover { background: var(--c-surface-2); border-color: var(--c-text-3); }
 .btn-ghost {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.375rem;
-  padding: 0.5rem 0.875rem;
-  background: transparent;
-  color: var(--c-text-2);
-  font-size: 0.875rem;
-  font-weight: 600;
-  border-radius: 8px;
-  border: none;
-  cursor: pointer;
+  display: inline-flex; align-items: center; gap: 0.375rem;
+  padding: 0.5rem 0.875rem; background: transparent;
+  color: var(--c-text-2); font-size: 0.875rem; font-weight: 600;
+  border-radius: 8px; border: none; cursor: pointer;
   transition: background 0.15s, color 0.15s;
 }
 .btn-ghost:hover { background: var(--c-surface-2); color: var(--c-text); }
 
-/* ═══════════════════════════════════════
-   NAV
-═══════════════════════════════════════ */
+/* ── NAV ── */
 .nav {
-  position: sticky;
-  top: 0;
-  z-index: 200;
-  background: var(--c-surface);
-  border-bottom: 1px solid var(--c-border);
+  position: sticky; top: 0; z-index: 200;
+  background: var(--c-surface); border-bottom: 1px solid var(--c-border);
   transition: background 0.25s, border-color 0.25s;
 }
-.nav__inner {
-  display: flex;
-  align-items: center;
-  height: 66px;
-  gap: 2rem;
-}
-.nav__logo {
-  display: flex;
-  align-items: center;
-  gap: 0.625rem;
-  flex-shrink: 0;
-  text-decoration: none;
-}
-.nav__logo-icon {
-  width: 34px; height: 34px;
-  position: relative;
-  flex-shrink: 0;
-}
-.nav__logo-icon::before {
-  content: '';
-  position: absolute;
-  width: 22px; height: 22px;
-  background: var(--c-accent);
-  border-radius: 50% 50% 50% 4px;
-  top: 0; left: 0;
-}
-.nav__logo-icon::after {
-  content: '';
-  position: absolute;
-  width: 16px; height: 16px;
-  background: var(--c-cta);
-  border-radius: 50% 50% 4px 50%;
-  bottom: 0; right: 0;
-}
-.nav__logo-name {
-  font-size: 1.3125rem;
-  font-weight: 800;
-  color: var(--c-text);
-  letter-spacing: -0.03em;
-  line-height: 1;
-}
-.nav__links {
-  display: flex;
-  flex: 1;
-  gap: 0;
-}
+.nav__inner { display: flex; align-items: center; justify-content: space-between; height: 68px; gap: 1rem; }
+.nav__logo { display: flex; align-items: center; gap: 0.625rem; text-decoration: none; flex-shrink: 0; }
+.nav__links { display: flex; flex: 1; gap: 0; }
 .nav__links a {
-  padding: 0.5rem 0.875rem;
-  font-size: 0.9375rem;
-  font-weight: 600;
-  color: var(--c-text-2);
-  border-radius: 8px;
-  transition: background 0.15s, color 0.15s;
-  white-space: nowrap;
+  padding: 0.5rem 0.875rem; font-size: 0.9375rem; font-weight: 500;
+  color: var(--c-text-2); border-radius: 8px;
+  transition: background 0.15s, color 0.15s; white-space: nowrap;
 }
 .nav__links a:hover { background: var(--c-surface-2); color: var(--c-text); }
-.nav__right {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  flex-shrink: 0;
-}
+.nav__right { display: flex; align-items: center; gap: 0.625rem; flex-shrink: 0; }
 .nav__theme {
   display: flex; align-items: center; justify-content: center;
-  width: 36px; height: 36px;
-  background: transparent;
-  border-radius: 8px;
-  color: var(--c-text-3);
-  border: none; cursor: pointer;
+  width: 36px; height: 36px; background: transparent; border-radius: 8px;
+  color: var(--c-text-3); border: none; cursor: pointer;
   transition: background 0.15s, color 0.15s;
 }
 .nav__theme:hover { background: var(--c-surface-2); color: var(--c-text); }
+.nav__hamburger {
+  display: none; align-items: center; justify-content: center;
+  width: 40px; height: 40px; border-radius: 50%; border: 1.5px solid var(--c-border);
+  background: transparent; color: var(--c-text); cursor: pointer;
+  transition: background 0.15s;
+}
+.nav__hamburger:hover { background: var(--c-surface-2); }
 
-/* ═══════════════════════════════════════
-   HERO
-═══════════════════════════════════════ */
-.hero {
-  background: var(--c-surface);
-  padding: 5rem 0 4rem;
-  border-bottom: 1px solid var(--c-border);
+/* ── MOBILE DRAWER ── */
+.drawer-backdrop {
+  position: fixed; inset: 0; z-index: 300;
+  background: rgba(43,36,69,0.5); backdrop-filter: blur(4px);
+  opacity: 0; pointer-events: none; transition: opacity 0.22s var(--ease);
 }
-.hero__inner {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 4rem;
-  align-items: center;
+.drawer-backdrop.open { opacity: 1; pointer-events: all; }
+.drawer {
+  position: absolute; top: 0; left: 0; right: 0;
+  background: var(--c-surface); border-bottom: 1px solid var(--c-border);
+  padding: 0 1.5rem 2rem;
+  transform: translateY(-8px); opacity: 0;
+  transition: transform 0.22s var(--ease), opacity 0.22s var(--ease);
 }
-.hero__label {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.5rem;
-  font-size: 0.8125rem;
-  font-weight: 700;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  color: var(--c-accent);
-  background: var(--c-accent-sub);
-  padding: 0.35rem 0.875rem;
-  border-radius: 50px;
-  margin-bottom: 1.375rem;
+.drawer-backdrop.open .drawer { transform: translateY(0); opacity: 1; }
+.drawer__head { display: flex; align-items: center; justify-content: space-between; height: 68px; }
+.drawer__logo { display: flex; align-items: center; gap: 0.625rem; }
+.drawer__close {
+  display: flex; align-items: center; justify-content: center;
+  width: 40px; height: 40px; border-radius: 50%; border: 1.5px solid var(--c-border);
+  background: transparent; color: var(--c-text); cursor: pointer; font-size: 1.125rem;
+  transition: background 0.15s;
 }
+.drawer__close:hover { background: var(--c-surface-2); }
+.drawer__links { display: flex; flex-direction: column; margin-bottom: 0.5rem; }
+.drawer__links a {
+  display: block; padding: 0.875rem 0; font-size: 1.125rem; font-weight: 500;
+  color: var(--c-text); border-bottom: 1px solid var(--c-border); transition: color 0.15s;
+}
+.drawer__links a:hover { color: var(--c-coral); }
+.drawer__actions { display: flex; gap: 0.75rem; margin-top: 1.5rem; }
+.drawer__actions > * { flex: 1; }
+
+/* ── HERO ── */
+.hero { background: var(--c-surface); padding: 5rem 0 4.5rem; }
+.hero__inner { max-width: 600px; margin: 0 auto; text-align: center; }
 .hero__headline {
-  font-size: clamp(2.25rem, 4.5vw, 3.5rem);
-  font-weight: 900;
-  line-height: 1.1;
-  color: var(--c-text);
-  margin-bottom: 1.25rem;
-  letter-spacing: -0.03em;
-  text-wrap: balance;
+  font-size: clamp(2.375rem, 6vw, 3.75rem); font-weight: 900;
+  line-height: 1.08; color: var(--c-text); margin-bottom: 1.25rem;
+  letter-spacing: -0.035em; text-wrap: balance;
 }
-.hero__headline span { color: var(--c-accent); }
+.hero__headline em { color: var(--c-coral); font-style: normal; }
 .hero__sub {
-  font-size: 1.125rem;
-  color: var(--c-text-2);
-  line-height: 1.65;
-  max-width: 44ch;
-  margin-bottom: 2.25rem;
+  font-size: 1.125rem; color: var(--c-text-2); line-height: 1.65;
+  margin-bottom: 2.5rem; max-width: 42ch; margin-left: auto; margin-right: auto;
 }
-.hero__actions {
-  display: flex;
-  align-items: center;
-  gap: 1rem;
-  flex-wrap: wrap;
-  margin-bottom: 2.5rem;
+.hero__form { display: flex; flex-direction: column; gap: 0.75rem; margin-bottom: 1.5rem; }
+.hero__email {
+  padding: 0.9375rem 1.375rem; border: 1.5px solid var(--c-border);
+  border-radius: 50px; background: var(--c-bg); color: var(--c-text);
+  font-size: 1rem; font-family: inherit; outline: none; width: 100%;
+  transition: border-color 0.15s, box-shadow 0.15s;
 }
-.hero__note {
-  font-size: 0.875rem;
-  color: var(--c-text-3);
-  display: flex;
-  align-items: center;
-  gap: 1.25rem;
-  flex-wrap: wrap;
-}
-.hero__note-item {
-  display: flex;
-  align-items: center;
-  gap: 0.375rem;
-}
-.hero__note-item svg { color: var(--c-accent); }
+.hero__email:focus { border-color: var(--c-coral); box-shadow: 0 0 0 3px var(--c-coral-sub); }
+.hero__email::placeholder { color: var(--c-text-3); }
+.hero__badges { display: flex; align-items: center; justify-content: center; gap: 1.5rem; flex-wrap: wrap; }
+.hero__badge { display: flex; align-items: center; gap: 0.375rem; font-size: 0.875rem; color: var(--c-text-2); }
+.hero__badge svg { color: var(--c-coral); flex-shrink: 0; }
 
-/* Hero UI mockup */
-.hero__ui {
-  position: relative;
-  height: 480px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-.ui-phone {
-  width: 240px;
-  background: var(--c-surface);
-  border: 1px solid var(--c-border);
-  border-radius: 28px;
-  box-shadow: var(--s-xl);
-  overflow: hidden;
-  position: relative;
-  z-index: 2;
-}
-.ui-phone__bar {
-  background: var(--c-stats);
-  padding: 0.875rem 1.25rem;
-  display: flex;
-  align-items: center;
-  gap: 0.75rem;
-}
-.ui-phone__avatar {
-  width: 36px; height: 36px;
-  border-radius: 50%;
-  background: linear-gradient(135deg, #3DBD90, #1F6B50);
-  display: flex; align-items: center; justify-content: center;
-  font-size: 0.875rem;
-  font-weight: 700;
-  color: white;
-  flex-shrink: 0;
-}
-.ui-phone__info { flex: 1; min-width: 0; }
-.ui-phone__name {
-  font-size: 0.8125rem;
-  font-weight: 700;
-  color: white;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-.ui-phone__status {
-  font-size: 0.6875rem;
-  color: rgba(255,255,255,0.6);
-  display: flex;
-  align-items: center;
-  gap: 0.3rem;
-}
-.ui-phone__dot {
-  width: 5px; height: 5px;
-  background: #5CE890;
-  border-radius: 50%;
-}
-.ui-phone__body {
-  padding: 1rem;
-  display: flex;
-  flex-direction: column;
-  gap: 0.625rem;
-  min-height: 220px;
-  background: var(--c-bg);
-}
-.ui-msg {
-  max-width: 82%;
-  padding: 0.625rem 0.875rem;
-  border-radius: 14px 14px 14px 4px;
-  font-size: 0.8125rem;
-  line-height: 1.45;
-  background: var(--c-surface);
-  color: var(--c-text);
-  border: 1px solid var(--c-border);
-  box-shadow: var(--s-sm);
-}
-.ui-msg--me {
-  border-radius: 14px 14px 4px 14px;
-  background: var(--c-accent);
-  color: white;
-  border-color: transparent;
-  align-self: flex-end;
-}
-.ui-phone__input {
-  border-top: 1px solid var(--c-border);
-  padding: 0.75rem 1rem;
-  display: flex;
-  align-items: center;
-  gap: 0.625rem;
-  background: var(--c-surface);
-}
-.ui-phone__input-field {
-  flex: 1;
-  font-size: 0.8125rem;
-  color: var(--c-text-3);
-}
-.ui-phone__send {
-  width: 28px; height: 28px;
-  background: var(--c-cta);
-  border-radius: 50%;
-  display: flex; align-items: center; justify-content: center;
-  flex-shrink: 0;
-}
+/* ── STATS ── */
+.stats { background: var(--c-bg); padding: 3.5rem 0; border-top: 1px solid var(--c-border); border-bottom: 1px solid var(--c-border); }
+.stats__grid { display: grid; grid-template-columns: 1fr 1fr; max-width: 480px; margin: 0 auto; }
+.stat-item { text-align: center; padding: 0.5rem 2rem; }
+.stat-item:first-child { border-right: 1px solid var(--c-border); }
+.stat-item__value { font-size: 3rem; font-weight: 900; color: var(--c-coral); letter-spacing: -0.04em; line-height: 1; margin-bottom: 0.4rem; font-variant-numeric: tabular-nums; }
+.stat-item__label { font-size: 0.75rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; color: var(--c-text-3); }
 
-/* Floating cards */
-.ui-float {
-  position: absolute;
-  background: var(--c-surface);
-  border: 1px solid var(--c-border);
-  border-radius: 14px;
-  padding: 0.875rem 1rem;
-  box-shadow: var(--s-lg);
-  z-index: 3;
-}
-.ui-float--match {
-  left: -10%;
-  top: 12%;
-  width: 185px;
-}
-.ui-float--session {
-  right: -8%;
-  bottom: 18%;
-  width: 175px;
-}
-.ui-float__label {
-  font-size: 0.6875rem;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
-  color: var(--c-text-3);
-  margin-bottom: 0.5rem;
-}
-.ui-float__name {
-  font-size: 0.875rem;
-  font-weight: 700;
-  color: var(--c-text);
-  margin-bottom: 0.125rem;
-}
-.ui-float__sub {
-  font-size: 0.75rem;
-  color: var(--c-text-2);
-  margin-bottom: 0.75rem;
-}
-.ui-float__connect {
-  display: block;
-  width: 100%;
-  padding: 0.4375rem;
-  background: var(--c-cta);
-  color: white;
-  font-size: 0.75rem;
-  font-weight: 700;
-  border-radius: 8px;
-  text-align: center;
-  border: none;
-  cursor: pointer;
-}
-.ui-float__session-row {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-}
-.ui-float__session-icon {
-  width: 30px; height: 30px;
-  border-radius: 8px;
-  background: var(--c-accent-sub);
-  color: var(--c-accent);
-  display: flex; align-items: center; justify-content: center;
-  flex-shrink: 0;
-}
-.ui-float__session-text {
-  font-size: 0.8125rem;
-  font-weight: 600;
-  color: var(--c-text);
-  line-height: 1.3;
-}
-.ui-float__session-time {
-  font-size: 0.75rem;
-  color: var(--c-text-3);
-}
-
-/* ═══════════════════════════════════════
-   STATS STRIP
-═══════════════════════════════════════ */
-.stats {
-  background: var(--c-stats);
-  padding: 2.5rem 0;
-}
-.stats__grid {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 0;
-}
-.stat-item {
-  text-align: center;
-  padding: 0.5rem 1rem;
-  border-right: 1px solid rgba(255,255,255,0.1);
-}
-.stat-item:last-child { border-right: none; }
-.stat-item__value {
-  font-size: 2.25rem;
-  font-weight: 900;
-  color: white;
-  letter-spacing: -0.03em;
-  line-height: 1;
-  margin-bottom: 0.375rem;
-  font-variant-numeric: tabular-nums;
-}
-.stat-item__value span { color: var(--c-cta); }
-.stat-item__label {
-  font-size: 0.875rem;
-  color: rgba(255,255,255,0.6);
-  line-height: 1.3;
-}
-
-/* ═══════════════════════════════════════
-   SECTION HEADERS
-═══════════════════════════════════════ */
-.sec-label {
-  font-size: 0.75rem;
-  font-weight: 800;
-  text-transform: uppercase;
-  letter-spacing: 0.12em;
-  color: var(--c-accent);
-  margin-bottom: 0.5rem;
-}
-.sec-title {
-  font-size: clamp(1.625rem, 3vw, 2.25rem);
-  font-weight: 900;
-  color: var(--c-text);
-  letter-spacing: -0.025em;
-  line-height: 1.15;
-  text-wrap: balance;
-}
-.sec-sub {
-  font-size: 1.0625rem;
-  color: var(--c-text-2);
-  line-height: 1.65;
-  margin-top: 0.625rem;
-  max-width: 50ch;
-}
+/* ── SECTION LABELS ── */
+.sec-label { font-size: 0.75rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.12em; color: var(--c-coral); margin-bottom: 0.625rem; display: block; }
+.sec-title { font-size: clamp(1.75rem, 3.5vw, 2.5rem); font-weight: 900; color: var(--c-text); letter-spacing: -0.03em; line-height: 1.12; text-wrap: balance; }
+.sec-sub { font-size: 1.0625rem; color: var(--c-text-2); line-height: 1.65; margin-top: 0.75rem; max-width: 50ch; }
 .sec-hdr { margin-bottom: 2.75rem; }
 .sec-hdr--center { text-align: center; }
 .sec-hdr--center .sec-sub { margin-left: auto; margin-right: auto; }
+.arrow-link { display: inline-flex; align-items: center; gap: 0.375rem; font-size: 0.9375rem; font-weight: 700; color: var(--c-coral); transition: gap 0.15s; white-space: nowrap; }
+.arrow-link:hover { gap: 0.625rem; }
 
-/* ═══════════════════════════════════════
-   HOW IT WORKS
-═══════════════════════════════════════ */
-.how {
-  padding: 5.5rem 0;
-  background: var(--c-surface);
-  border-bottom: 1px solid var(--c-border);
-}
-.how-steps {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 2rem;
-}
-.how-step {
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
-}
-.how-step__num {
-  width: 52px; height: 52px;
-  background: var(--c-accent);
-  border-radius: 14px;
-  display: flex; align-items: center; justify-content: center;
-  font-size: 1.25rem;
-  font-weight: 900;
-  color: white;
-  letter-spacing: -0.02em;
-  flex-shrink: 0;
-}
-.how-step__title {
-  font-size: 1.125rem;
-  font-weight: 800;
-  color: var(--c-text);
-  letter-spacing: -0.02em;
-  line-height: 1.25;
-}
-.how-step__desc {
-  font-size: 0.9375rem;
-  color: var(--c-text-2);
-  line-height: 1.65;
-}
+/* ── HOW IT WORKS ── */
+.how { background: var(--c-how-bg); padding: 5.5rem 0; }
+.how-steps { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem; padding-top: 1.25rem; }
+.how-step { position: relative; background: var(--c-surface); border-radius: 20px; padding: 2rem 1.75rem 1.75rem; margin-top: 20px; box-shadow: var(--s-md); }
+.how-step__badge { position: absolute; top: -16px; left: 1.5rem; width: 32px; height: 32px; border-radius: 50%; background: var(--c-coral); color: white; font-size: 0.875rem; font-weight: 900; display: flex; align-items: center; justify-content: center; }
+.how-step__icon { width: 52px; height: 52px; border-radius: 50%; background: var(--c-coral-sub); color: var(--c-coral); display: flex; align-items: center; justify-content: center; margin-bottom: 1.125rem; }
+.how-step__title { font-size: 1.0625rem; font-weight: 800; color: var(--c-text); letter-spacing: -0.02em; line-height: 1.25; margin-bottom: 0.625rem; }
+.how-step__desc { font-size: 0.9375rem; color: var(--c-text-2); line-height: 1.65; }
+.how__cta { text-align: center; margin-top: 2.75rem; }
 
-/* ═══════════════════════════════════════
-   WHAT WE TREAT
-═══════════════════════════════════════ */
-.treat {
-  padding: 5.5rem 0;
-  background: var(--c-bg);
-}
-.treat-tags {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.625rem;
-  margin-top: 2rem;
-}
-.treat-tag {
-  padding: 0.625rem 1.125rem;
-  background: var(--c-surface);
-  border: 1.5px solid var(--c-border);
-  border-radius: 50px;
-  font-size: 0.9375rem;
-  font-weight: 600;
-  color: var(--c-text-2);
-  cursor: pointer;
-  transition: all 0.15s;
-}
-.treat-tag:hover {
-  border-color: var(--c-accent);
-  color: var(--c-accent);
-  background: var(--c-accent-sub);
-}
-.treat-tag--active {
-  background: var(--c-accent-sub);
-  border-color: var(--c-accent);
-  color: var(--c-accent);
-}
+/* ── WHAT WE TREAT ── */
+.treat { padding: 5.5rem 0; background: var(--c-bg); }
+.treat__hdr { display: flex; align-items: flex-end; justify-content: space-between; gap: 1rem; margin-bottom: 1.75rem; }
+.treat-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0.625rem; }
+.treat-card { padding: 0.875rem 1.25rem; background: var(--c-surface); border: 1.5px solid var(--c-border); border-radius: 14px; font-size: 0.9375rem; font-weight: 600; color: var(--c-text-2); cursor: pointer; transition: all 0.15s; text-align: left; }
+.treat-card:hover { border-color: var(--c-coral); color: var(--c-coral); background: var(--c-coral-sub); }
+.treat-card--active { background: var(--c-coral-sub); border-color: var(--c-coral); color: var(--c-coral); }
 
-/* ═══════════════════════════════════════
-   THERAPISTS
-═══════════════════════════════════════ */
-.therapists {
-  padding: 5.5rem 0;
-  background: var(--c-surface);
-  border-top: 1px solid var(--c-border);
-  border-bottom: 1px solid var(--c-border);
-}
-.therapists__hdr {
-  display: flex;
-  align-items: flex-end;
-  justify-content: space-between;
-  gap: 1rem;
-  margin-bottom: 2.75rem;
-}
-.therapist-grid {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 1.125rem;
-}
-.t-card {
-  background: var(--c-surface);
-  border: 1.5px solid var(--c-border);
-  border-radius: var(--r);
-  overflow: hidden;
-  box-shadow: var(--s-md);
-  transition: transform 0.2s var(--ease), box-shadow 0.2s var(--ease), border-color 0.2s;
-  display: flex;
-  flex-direction: column;
-}
-.t-card:hover {
-  transform: translateY(-4px);
-  box-shadow: var(--s-lg);
-  border-color: var(--c-accent);
-}
-.t-card__top {
-  padding: 1.5rem 1.25rem 1rem;
-  display: flex;
-  align-items: flex-start;
-  gap: 0.875rem;
-}
-.t-card__avi {
-  width: 56px; height: 56px;
-  border-radius: 50%;
-  display: flex; align-items: center; justify-content: center;
-  font-size: 1.125rem;
-  font-weight: 800;
-  color: white;
-  flex-shrink: 0;
-  letter-spacing: -0.02em;
-}
-.t-card__avi--a { background: linear-gradient(135deg, #2D9E78, #145A3C); }
-.t-card__avi--b { background: linear-gradient(135deg, #5A7FC4, #2A4588); }
-.t-card__avi--c { background: linear-gradient(135deg, #C47A2D, #7A4010); }
-.t-card__avi--d { background: linear-gradient(135deg, #8A4AC4, #4A1880); }
+/* ── THERAPISTS ── */
+.therapists { padding: 5.5rem 0; background: var(--c-surface); border-top: 1px solid var(--c-border); }
+.therapists__hdr { display: flex; align-items: flex-end; justify-content: space-between; gap: 1rem; margin-bottom: 2.5rem; }
+.therapist-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1.125rem; }
+.t-card { background: var(--c-surface); border: 1.5px solid var(--c-border); border-radius: 20px; overflow: hidden; box-shadow: var(--s-md); transition: transform 0.2s var(--ease), box-shadow 0.2s var(--ease), border-color 0.2s; display: flex; flex-direction: column; }
+.t-card:hover { transform: translateY(-4px); box-shadow: var(--s-lg); border-color: var(--c-coral); }
+.t-card__top { padding: 1.5rem 1.25rem 1rem; display: flex; align-items: flex-start; gap: 0.875rem; }
+.t-card__avi { width: 52px; height: 52px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1rem; font-weight: 800; color: white; flex-shrink: 0; }
+.t-card__avi--a { background: linear-gradient(135deg, #E8A090, #C85048); }
+.t-card__avi--b { background: linear-gradient(135deg, #9090D8, #4848A8); }
+.t-card__avi--c { background: linear-gradient(135deg, #D8A060, #A06020); }
+.t-card__avi--d { background: linear-gradient(135deg, #A080C8, #604888); }
 .t-card__info { flex: 1; min-width: 0; }
-.t-card__name {
-  font-size: 1rem;
-  font-weight: 800;
-  color: var(--c-text);
-  letter-spacing: -0.02em;
-  line-height: 1.2;
-  margin-bottom: 0.2rem;
-}
-.t-card__creds {
-  font-size: 0.8125rem;
-  color: var(--c-accent);
-  font-weight: 600;
-}
-.t-card__avail {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.3rem;
-  font-size: 0.6875rem;
-  font-weight: 700;
-  color: var(--c-good);
-  background: var(--c-good-sub);
-  padding: 0.2rem 0.6rem;
-  border-radius: 50px;
-  margin-top: 0.375rem;
-  align-self: flex-start;
-}
-.t-card__avail::before {
-  content: '';
-  width: 5px; height: 5px;
-  background: var(--c-good);
-  border-radius: 50%;
-}
-.t-card__tags {
-  padding: 0 1.25rem 1rem;
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.375rem;
-}
-.t-card__tag {
-  font-size: 0.6875rem;
-  font-weight: 700;
-  letter-spacing: 0.03em;
-  background: var(--c-surface-2);
-  color: var(--c-text-2);
-  padding: 0.2rem 0.6rem;
-  border-radius: 4px;
-}
-.t-card__meta {
-  padding: 0.875rem 1.25rem;
-  border-top: 1px solid var(--c-border);
-  font-size: 0.8125rem;
-  color: var(--c-text-3);
-}
-.t-card__footer {
-  padding: 0.875rem 1.25rem 1.25rem;
-}
-.t-card__btn {
-  display: block;
-  width: 100%;
-  padding: 0.625rem;
-  background: var(--c-cta);
-  color: white;
-  font-size: 0.875rem;
-  font-weight: 700;
-  border-radius: 8px;
-  text-align: center;
-  border: none;
-  cursor: pointer;
-  transition: background 0.15s;
-}
-.t-card__btn:hover { background: var(--c-cta-h); }
+.t-card__name { font-size: 1rem; font-weight: 800; color: var(--c-text); letter-spacing: -0.02em; line-height: 1.2; margin-bottom: 0.2rem; }
+.t-card__creds { font-size: 0.8125rem; color: var(--c-coral); font-weight: 600; }
+.t-card__avail { display: inline-flex; align-items: center; gap: 0.3rem; font-size: 0.6875rem; font-weight: 700; color: var(--c-good); background: var(--c-good-sub); padding: 0.2rem 0.6rem; border-radius: 50px; margin-top: 0.375rem; }
+.t-card__avail::before { content: ''; width: 5px; height: 5px; background: var(--c-good); border-radius: 50%; }
+.t-card__tags { padding: 0 1.25rem 1rem; display: flex; flex-wrap: wrap; gap: 0.375rem; }
+.t-card__tag { font-size: 0.6875rem; font-weight: 700; letter-spacing: 0.03em; background: var(--c-surface-2); color: var(--c-text-2); padding: 0.2rem 0.6rem; border-radius: 6px; }
+.t-card__meta { padding: 0.875rem 1.25rem; border-top: 1px solid var(--c-border); font-size: 0.8125rem; color: var(--c-text-3); }
+.t-card__footer { padding: 0.875rem 1.25rem 1.25rem; }
+.t-card__btn { display: block; width: 100%; padding: 0.625rem; background: var(--c-coral); color: white; font-size: 0.875rem; font-weight: 700; border-radius: 50px; text-align: center; border: none; cursor: pointer; transition: background 0.15s; }
+.t-card__btn:hover { background: var(--c-coral-h); }
 
-/* ═══════════════════════════════════════
-   PRICING
-═══════════════════════════════════════ */
-.pricing {
-  padding: 5.5rem 0;
-  background: var(--c-bg);
-}
-.pricing-grid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 1.25rem;
-  align-items: start;
-  max-width: 920px;
-  margin: 0 auto;
-}
-.p-card {
-  background: var(--c-surface);
-  border: 2px solid var(--c-border);
-  border-radius: var(--r);
-  padding: 2rem;
-  display: flex;
-  flex-direction: column;
-  gap: 0;
-  transition: border-color 0.2s, box-shadow 0.2s;
-}
-.p-card:hover { border-color: var(--c-accent); }
-.p-card--featured {
-  border-color: var(--c-accent);
-  box-shadow: 0 0 0 4px var(--c-accent-sub), var(--s-lg);
-}
-.p-card__pill {
-  display: inline-block;
-  background: var(--c-cta);
-  color: white;
-  font-size: 0.6875rem;
-  font-weight: 800;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  padding: 0.25rem 0.75rem;
-  border-radius: 50px;
-  margin-bottom: 1.25rem;
-  align-self: flex-start;
-}
-.p-card__tier {
-  font-size: 0.75rem;
-  font-weight: 800;
-  text-transform: uppercase;
-  letter-spacing: 0.12em;
-  color: var(--c-text-3);
-  margin-bottom: 0.5rem;
-}
-.p-card__price-row {
-  display: flex;
-  align-items: baseline;
-  gap: 0.2rem;
-  margin-bottom: 0.25rem;
-}
+/* ── PRICING ── */
+.pricing { padding: 5.5rem 0; background: var(--c-bg); border-top: 1px solid var(--c-border); }
+.pricing-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.25rem; align-items: start; max-width: 920px; margin: 0 auto; }
+.p-card { background: var(--c-surface); border: 2px solid var(--c-border); border-radius: 20px; padding: 2rem; display: flex; flex-direction: column; transition: border-color 0.2s, box-shadow 0.2s; }
+.p-card:hover { border-color: var(--c-coral); }
+.p-card--featured { border-color: var(--c-coral); box-shadow: 0 0 0 4px var(--c-coral-sub), var(--s-lg); }
+.p-card__pill { display: inline-block; background: var(--c-coral); color: white; font-size: 0.6875rem; font-weight: 800; letter-spacing: 0.08em; text-transform: uppercase; padding: 0.25rem 0.75rem; border-radius: 50px; margin-bottom: 1.25rem; align-self: flex-start; }
+.p-card__tier { font-size: 0.75rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.12em; color: var(--c-text-3); margin-bottom: 0.5rem; }
+.p-card__price-row { display: flex; align-items: baseline; gap: 0.2rem; margin-bottom: 0.25rem; }
 .p-card__dollar { font-size: 1.25rem; font-weight: 900; color: var(--c-text); margin-top: 0.375rem; }
-.p-card__amount {
-  font-size: 3rem;
-  font-weight: 900;
-  color: var(--c-text);
-  letter-spacing: -0.04em;
-  line-height: 1;
-  font-variant-numeric: tabular-nums;
-}
+.p-card__amount { font-size: 3rem; font-weight: 900; color: var(--c-text); letter-spacing: -0.04em; line-height: 1; font-variant-numeric: tabular-nums; }
 .p-card__period { font-size: 0.9375rem; color: var(--c-text-3); }
-.p-card__billing {
-  font-size: 0.8125rem;
-  color: var(--c-text-3);
-  margin-bottom: 1.5rem;
-}
-.p-card__divider {
-  height: 1px;
-  background: var(--c-border);
-  margin-bottom: 1.375rem;
-}
-.p-card__features {
-  display: flex;
-  flex-direction: column;
-  gap: 0.625rem;
-  margin-bottom: 1.75rem;
-}
-.p-feat {
-  display: flex;
-  align-items: flex-start;
-  gap: 0.625rem;
-  font-size: 0.875rem;
-  color: var(--c-text-2);
-  line-height: 1.4;
-}
+.p-card__billing { font-size: 0.8125rem; color: var(--c-text-3); margin-bottom: 1.5rem; }
+.p-card__divider { height: 1px; background: var(--c-border); margin-bottom: 1.375rem; }
+.p-card__features { display: flex; flex-direction: column; gap: 0.625rem; margin-bottom: 1.75rem; }
+.p-feat { display: flex; align-items: flex-start; gap: 0.625rem; font-size: 0.875rem; color: var(--c-text-2); line-height: 1.4; }
 .p-feat svg { color: var(--c-good); flex-shrink: 0; margin-top: 2px; }
 .p-feat--no { color: var(--c-text-3); }
 .p-feat--no svg { color: var(--c-border); }
-.p-card .btn-cta, .p-card .btn-outline { width: 100%; }
 
-/* ═══════════════════════════════════════
-   TESTIMONIALS
-═══════════════════════════════════════ */
-.testi {
-  padding: 5.5rem 0;
-  background: var(--c-surface);
-  border-top: 1px solid var(--c-border);
-  border-bottom: 1px solid var(--c-border);
-}
-.testi-grid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 1.375rem;
-}
-.testi-card {
-  background: var(--c-bg);
-  border: 1px solid var(--c-border);
-  border-radius: var(--r);
-  padding: 1.75rem;
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
-}
-.testi-stars { display: flex; gap: 0.25rem; color: var(--c-cta); }
-.testi-quote {
-  font-size: 1rem;
-  line-height: 1.65;
-  color: var(--c-text);
-  flex: 1;
-}
-.testi-person {
-  display: flex;
-  align-items: center;
-  gap: 0.75rem;
-  padding-top: 1rem;
-  border-top: 1px solid var(--c-border);
-}
-.testi-avi {
-  width: 40px; height: 40px;
-  border-radius: 50%;
-  font-size: 1rem;
-  font-weight: 800;
-  color: white;
-  display: flex; align-items: center; justify-content: center;
-  flex-shrink: 0;
-}
-.testi-avi--j { background: linear-gradient(135deg, #2D9E78, #145A3C); }
-.testi-avi--m { background: linear-gradient(135deg, #5A7FC4, #2A4588); }
-.testi-avi--r { background: linear-gradient(135deg, #8A4AC4, #4A1880); }
-.testi-name { font-size: 0.9375rem; font-weight: 800; color: var(--c-text); letter-spacing: -0.01em; }
-.testi-meta { font-size: 0.8125rem; color: var(--c-text-3); }
+/* ── TESTIMONIALS ── */
+.testi { padding: 5.5rem 0; background: var(--c-surface); border-top: 1px solid var(--c-border); }
+.testi__stars-row { display: flex; align-items: center; gap: 0.625rem; margin-bottom: 2.5rem; }
+.testi__stars { display: flex; gap: 0.25rem; color: var(--c-coral); }
+.testi__avg { font-size: 0.9375rem; color: var(--c-text-2); }
+.testi-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.25rem; }
+.testi-card { background: var(--c-surface); border: 1.5px solid var(--c-border); border-radius: 20px; padding: 1.75rem; display: flex; flex-direction: column; gap: 1rem; box-shadow: var(--s-sm); }
+.testi-stars { display: flex; gap: 0.25rem; color: var(--c-coral); }
+.testi-quote { font-size: 1rem; line-height: 1.65; color: var(--c-text); flex: 1; }
+.testi-name { font-size: 0.9375rem; font-weight: 800; color: var(--c-text); letter-spacing: -0.01em; margin-bottom: 0.1rem; }
+.testi-since { font-size: 0.8125rem; color: var(--c-text-3); }
 
-/* ═══════════════════════════════════════
-   FAQ
-═══════════════════════════════════════ */
-.faq {
-  padding: 5.5rem 0;
-  background: var(--c-bg);
-}
-.faq__inner {
-  display: grid;
-  grid-template-columns: 5fr 7fr;
-  gap: 4rem;
-  align-items: start;
-}
-.faq__left { position: sticky; top: 5rem; }
-.faq__title {
-  font-size: clamp(1.5rem, 3vw, 2.125rem);
-  font-weight: 900;
-  color: var(--c-text);
-  letter-spacing: -0.025em;
-  line-height: 1.15;
-  text-wrap: balance;
-  margin-bottom: 0.875rem;
-}
-.faq__desc {
-  font-size: 0.9375rem;
-  color: var(--c-text-2);
-  line-height: 1.65;
-  margin-bottom: 1.5rem;
-}
-.faq__cta {
-  font-size: 0.9375rem;
-  font-weight: 700;
-  color: var(--c-accent);
-  display: inline-flex;
-  align-items: center;
-  gap: 0.375rem;
-  transition: gap 0.15s;
-}
-.faq__cta:hover { gap: 0.6rem; }
+/* ── TRUST ── */
+.trust { background: var(--c-how-bg); padding: 5.5rem 0; border-top: 1px solid var(--c-border); }
+.trust__inner { display: grid; grid-template-columns: 1fr 1fr; gap: 3rem; align-items: start; }
+.trust-items { display: flex; flex-direction: column; gap: 2.5rem; }
+.trust-item__icon { width: 52px; height: 52px; border-radius: 50%; background: var(--c-coral-sub); color: var(--c-coral); display: flex; align-items: center; justify-content: center; margin-bottom: 0.75rem; }
+.trust-item__title { font-size: 1.25rem; font-weight: 800; color: var(--c-text); letter-spacing: -0.02em; margin-bottom: 0.375rem; }
+.trust-item__desc { font-size: 0.9375rem; color: var(--c-text-2); line-height: 1.65; }
+
+/* ── FAQ ── */
+.faq { padding: 5.5rem 0; background: var(--c-bg); }
+.faq__inner { max-width: 720px; }
+.faq__title { font-size: clamp(2rem, 5vw, 3rem); font-weight: 900; color: var(--c-text); letter-spacing: -0.035em; line-height: 1.1; text-wrap: balance; margin-bottom: 2.5rem; }
 .faq-list { display: flex; flex-direction: column; }
 .faq-item { border-bottom: 1px solid var(--c-border); }
 .faq-item:first-child { border-top: 1px solid var(--c-border); }
-.faq-btn {
-  width: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 1rem;
-  padding: 1.25rem 0;
-  background: transparent;
-  font-size: 1rem;
-  font-weight: 700;
-  color: var(--c-text);
-  text-align: left;
-  cursor: pointer;
-  border: none;
-  letter-spacing: -0.01em;
-  transition: color 0.15s;
-}
-.faq-btn:hover { color: var(--c-accent); }
-.faq-btn svg { flex-shrink: 0; color: var(--c-text-3); transition: transform 0.25s var(--ease), color 0.15s; }
-.faq-btn[aria-expanded="true"] svg { transform: rotate(45deg); color: var(--c-accent); }
-.faq-answer {
-  font-size: 0.9375rem;
-  color: var(--c-text-2);
-  line-height: 1.7;
-  padding-bottom: 1.25rem;
-  display: none;
-}
+.faq-btn { width: 100%; display: flex; align-items: center; justify-content: space-between; gap: 1rem; padding: 1.375rem 0; background: transparent; font-size: 1rem; font-weight: 700; color: var(--c-text); text-align: left; cursor: pointer; border: none; letter-spacing: -0.01em; transition: color 0.15s; }
+.faq-btn:hover { color: var(--c-coral); }
+.faq-btn svg { flex-shrink: 0; color: var(--c-coral); transition: transform 0.25s var(--ease); }
+.faq-btn[aria-expanded="true"] svg { transform: rotate(45deg); }
+.faq-answer { font-size: 0.9375rem; color: var(--c-text-2); line-height: 1.7; padding-bottom: 1.375rem; display: none; }
 .faq-answer.open { display: block; }
 
-/* ═══════════════════════════════════════
-   CTA BANNER
-═══════════════════════════════════════ */
-.cta-strip {
-  background: var(--c-accent);
-  padding: 4.5rem 0;
-}
-.cta-strip__inner {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 2rem;
-  flex-wrap: wrap;
-}
-.cta-strip__text {}
-.cta-strip__headline {
-  font-size: clamp(1.5rem, 3vw, 2rem);
-  font-weight: 900;
-  color: white;
-  letter-spacing: -0.025em;
-  line-height: 1.15;
-  margin-bottom: 0.5rem;
-  text-wrap: balance;
-}
-.cta-strip__sub {
-  font-size: 1rem;
-  color: rgba(255,255,255,0.75);
-  line-height: 1.55;
-  max-width: 44ch;
-}
-.cta-strip .btn-cta {
-  background: white;
-  color: var(--c-accent);
-  flex-shrink: 0;
-}
-.cta-strip .btn-cta:hover { background: var(--c-cta-sub); color: var(--c-cta); }
-.cta-strip__note {
-  font-size: 0.8125rem;
-  color: rgba(255,255,255,0.6);
-  margin-top: 0.625rem;
-  text-align: right;
-}
+/* ── CTA ── */
+.cta-strip { padding: 4.5rem 0; background: var(--c-bg); border-top: 1px solid var(--c-border); }
+.cta-card { max-width: 680px; margin: 0 auto; border-radius: 28px; padding: 3.5rem 2.5rem; background: linear-gradient(135deg, #F9C4C0 0%, #F0A8C8 50%, #C8A0E8 100%); text-align: center; }
+.cta-card__headline { font-size: clamp(1.625rem, 4vw, 2.5rem); font-weight: 900; color: #2B2445; letter-spacing: -0.03em; line-height: 1.15; margin-bottom: 0.875rem; text-wrap: balance; }
+.cta-card__sub { font-size: 1.0625rem; color: #5A4E6E; line-height: 1.55; margin-bottom: 2rem; }
 
-/* ═══════════════════════════════════════
-   FOOTER
-═══════════════════════════════════════ */
-.footer {
-  background: var(--c-stats);
-  padding: 3.5rem 0 2rem;
-}
-.footer__grid {
-  display: grid;
-  grid-template-columns: 2fr 1fr 1fr 1fr;
-  gap: 2.5rem;
-  margin-bottom: 2.5rem;
-}
-.footer__brand-logo {
-  display: flex;
-  align-items: center;
-  gap: 0.625rem;
-  margin-bottom: 0.875rem;
-}
-.footer__logo-icon {
-  width: 30px; height: 30px;
-  position: relative; flex-shrink: 0;
-}
-.footer__logo-icon::before {
-  content: '';
-  position: absolute;
-  width: 20px; height: 20px;
-  background: var(--c-accent);
-  border-radius: 50% 50% 50% 4px;
-  top: 0; left: 0;
-}
-.footer__logo-icon::after {
-  content: '';
-  position: absolute;
-  width: 14px; height: 14px;
-  background: var(--c-cta);
-  border-radius: 50% 50% 4px 50%;
-  bottom: 0; right: 0;
-}
-.footer__brand-name {
-  font-size: 1.25rem;
-  font-weight: 900;
-  color: white;
-  letter-spacing: -0.03em;
-}
-.footer__brand p {
-  font-size: 0.875rem;
-  color: rgba(255,255,255,0.5);
-  line-height: 1.65;
-  max-width: 30ch;
-}
-.footer__col-title {
-  font-size: 0.75rem;
-  font-weight: 800;
-  text-transform: uppercase;
-  letter-spacing: 0.1em;
-  color: rgba(255,255,255,0.4);
-  margin-bottom: 1rem;
-}
-.footer__links { display: flex; flex-direction: column; gap: 0.5625rem; }
-.footer__links a {
-  font-size: 0.875rem;
-  color: rgba(255,255,255,0.6);
-  transition: color 0.15s;
-}
-.footer__links a:hover { color: white; }
-.footer__disclaimer {
-  background: rgba(0,0,0,0.2);
-  border: 1px solid rgba(255,255,255,0.08);
-  border-radius: 8px;
-  padding: 1rem 1.25rem;
-  font-size: 0.8125rem;
-  color: rgba(255,255,255,0.4);
-  line-height: 1.6;
-  margin-bottom: 1.75rem;
-}
-.footer__bottom {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 1rem;
-  flex-wrap: wrap;
-  border-top: 1px solid rgba(255,255,255,0.1);
-  padding-top: 1.5rem;
-  font-size: 0.8125rem;
-  color: rgba(255,255,255,0.35);
-}
+/* ── FOOTER ── */
+.footer { background: var(--c-how-bg); padding: 4rem 0 2rem; border-top: 1px solid var(--c-border); }
+.footer__grid { display: grid; grid-template-columns: 2fr 1fr 1fr; gap: 3rem; margin-bottom: 3rem; }
+.footer__brand-logo { display: flex; align-items: center; gap: 0.625rem; margin-bottom: 0.875rem; }
+.footer__brand-name { font-size: 1.25rem; font-weight: 900; color: var(--c-text); letter-spacing: -0.03em; }
+.footer__brand p { font-size: 0.9375rem; color: var(--c-text-2); line-height: 1.65; max-width: 34ch; }
+.footer__col-title { font-size: 0.875rem; font-weight: 800; color: var(--c-text); margin-bottom: 1.125rem; }
+.footer__links { display: flex; flex-direction: column; gap: 0.75rem; }
+.footer__links a { font-size: 0.9375rem; color: var(--c-text-2); transition: color 0.15s; }
+.footer__links a:hover { color: var(--c-coral); }
+.footer__crisis { margin-top: 2rem; padding-top: 2rem; border-top: 1px solid var(--c-border); }
+.footer__crisis-title { font-size: 0.9375rem; font-weight: 800; color: var(--c-text); margin-bottom: 0.5rem; }
+.footer__crisis p { font-size: 0.875rem; color: var(--c-text-2); line-height: 1.65; }
+.footer__bottom { display: flex; align-items: center; justify-content: space-between; gap: 1rem; flex-wrap: wrap; border-top: 1px solid var(--c-border); padding-top: 1.5rem; font-size: 0.8125rem; color: var(--c-text-3); }
 .footer__bottom-links { display: flex; gap: 1.25rem; }
-.footer__bottom-links a { color: rgba(255,255,255,0.35); transition: color 0.15s; }
-.footer__bottom-links a:hover { color: rgba(255,255,255,0.7); }
+.footer__bottom-links a { color: var(--c-text-3); transition: color 0.15s; }
+.footer__bottom-links a:hover { color: var(--c-text); }
 
-/* ═══════════════════════════════════════
-   RESPONSIVE
-═══════════════════════════════════════ */
-@media (max-width: 960px) {
-  .hero__inner { grid-template-columns: 1fr; }
-  .hero__ui { display: none; }
-  .hero { padding: 4rem 0 3.5rem; }
-  .stats__grid { grid-template-columns: repeat(2, 1fr); }
-  .stat-item:nth-child(2) { border-right: none; }
-  .therapist-grid { grid-template-columns: repeat(2, 1fr); }
-  .pricing-grid { grid-template-columns: 1fr; }
-  .testi-grid { grid-template-columns: 1fr 1fr; }
-  .faq__inner { grid-template-columns: 1fr; gap: 2rem; }
-  .faq__left { position: static; }
-  .footer__grid { grid-template-columns: 1fr 1fr; }
-  .how-steps { grid-template-columns: 1fr; gap: 1.75rem; }
-  .cta-strip__inner { flex-direction: column; align-items: flex-start; }
-  .cta-strip__note { text-align: left; }
-}
-
-@media (max-width: 640px) {
-  .nav__links { display: none; }
-  .stats__grid { grid-template-columns: repeat(2, 1fr); }
-  .therapist-grid { grid-template-columns: 1fr 1fr; }
-  .testi-grid { grid-template-columns: 1fr; }
-  .footer__grid { grid-template-columns: 1fr; }
-  .pricing-grid { max-width: 100%; }
-  .treat-tag { font-size: 0.875rem; }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  *, *::before, *::after { transition-duration: 0.01ms !important; animation-duration: 0.01ms !important; }
-}
-
-/* ═══════════════════════════════════════
-   SIGN IN / CREATE ACCOUNT MODAL
-═══════════════════════════════════════ */
-.modal-backdrop {
-  position: fixed; inset: 0; z-index: 1000;
-  background: rgba(10,20,16,0.72);
-  backdrop-filter: blur(4px);
-  display: flex; align-items: center; justify-content: center;
-  padding: 1rem;
-  opacity: 0; pointer-events: none;
-  transition: opacity 0.22s var(--ease);
-}
+/* ── AUTH MODAL ── */
+.modal-backdrop { position: fixed; inset: 0; z-index: 1000; background: rgba(43,36,69,0.72); backdrop-filter: blur(4px); display: flex; align-items: center; justify-content: center; padding: 1rem; opacity: 0; pointer-events: none; transition: opacity 0.22s var(--ease); }
 .modal-backdrop.open { opacity: 1; pointer-events: all; }
-.modal {
-  background: var(--c-surface);
-  border-radius: 20px;
-  box-shadow: var(--s-xl);
-  width: 100%; max-width: 400px;
-  position: relative;
-  transform: translateY(14px) scale(0.97);
-  transition: transform 0.22s var(--ease);
-}
+.modal { background: var(--c-surface); border-radius: 20px; box-shadow: var(--s-xl); width: 100%; max-width: 400px; position: relative; transform: translateY(14px) scale(0.97); transition: transform 0.22s var(--ease); }
 .modal-backdrop.open .modal { transform: translateY(0) scale(1); }
-.modal__close {
-  position: absolute; top: 1rem; right: 1rem;
-  width: 30px; height: 30px;
-  background: var(--c-surface-2); border: none; border-radius: 50%;
-  color: var(--c-text-3); font-size: 1.125rem; cursor: pointer;
-  display: flex; align-items: center; justify-content: center;
-  transition: background 0.15s;
-  line-height: 1;
-}
+.modal__close { position: absolute; top: 1rem; right: 1rem; width: 30px; height: 30px; background: var(--c-surface-2); border: none; border-radius: 50%; color: var(--c-text-3); font-size: 1.125rem; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: background 0.15s; line-height: 1; }
 .modal__close:hover { background: var(--c-border); color: var(--c-text); }
 .modal__head { padding: 1.75rem 2rem 0; text-align: center; }
-.modal__logo {
-  display: inline-flex; align-items: center; gap: 0.5rem;
-  margin-bottom: 1.375rem;
-}
-.modal__logo-icon {
-  width: 26px; height: 26px; position: relative; flex-shrink: 0;
-}
-.modal__logo-icon::before {
-  content: ''; position: absolute;
-  width: 17px; height: 17px; background: var(--c-accent);
-  border-radius: 50% 50% 50% 3px; top: 0; left: 0;
-}
-.modal__logo-icon::after {
-  content: ''; position: absolute;
-  width: 12px; height: 12px; background: var(--c-cta);
-  border-radius: 50% 50% 3px 50%; bottom: 0; right: 0;
-}
-.modal__logo-name {
-  font-size: 1.125rem; font-weight: 800;
-  color: var(--c-text); letter-spacing: -0.03em;
-}
-.modal__tabs {
-  display: flex; background: var(--c-surface-2);
-  border-radius: 10px; padding: 3px; gap: 2px; margin: 0 2rem;
-}
-.modal__tab {
-  flex: 1; padding: 0.5rem;
-  font-size: 0.875rem; font-weight: 700;
-  background: transparent; border: none; border-radius: 8px;
-  color: var(--c-text-2); cursor: pointer;
-  transition: background 0.15s, color 0.15s;
-}
+.modal__logo { display: inline-flex; align-items: center; gap: 0.5rem; margin-bottom: 1.375rem; }
+.modal__logo-name { font-size: 1.125rem; font-weight: 800; color: var(--c-text); letter-spacing: -0.03em; }
+.modal__tabs { display: flex; background: var(--c-surface-2); border-radius: 10px; padding: 3px; gap: 2px; margin: 0 2rem; }
+.modal__tab { flex: 1; padding: 0.5rem; font-size: 0.875rem; font-weight: 700; background: transparent; border: none; border-radius: 8px; color: var(--c-text-2); cursor: pointer; transition: background 0.15s, color 0.15s; }
 .modal__tab.active { background: var(--c-surface); color: var(--c-text); box-shadow: var(--s-sm); }
 .modal__body { padding: 1.375rem 2rem 2rem; }
 .form-group { display: flex; flex-direction: column; gap: 0.3rem; margin-bottom: 1rem; }
 .form-label-row { display: flex; align-items: center; justify-content: space-between; }
 .form-label { font-size: 0.8125rem; font-weight: 700; color: var(--c-text-2); }
-.form-forgot { font-size: 0.8125rem; font-weight: 600; color: var(--c-accent); transition: opacity 0.15s; }
+.form-forgot { font-size: 0.8125rem; font-weight: 600; color: var(--c-coral); transition: opacity 0.15s; }
 .form-forgot:hover { opacity: 0.75; }
-.form-input {
-  padding: 0.6875rem 0.875rem;
-  border: 1.5px solid var(--c-border);
-  border-radius: 10px;
-  background: var(--c-bg); color: var(--c-text);
-  font-size: 0.9375rem; font-family: inherit; outline: none;
-  transition: border-color 0.15s, box-shadow 0.15s;
-}
-.form-input:focus { border-color: var(--c-accent); box-shadow: 0 0 0 3px var(--c-accent-sub); }
+.form-input { padding: 0.6875rem 0.875rem; border: 1.5px solid var(--c-border); border-radius: 10px; background: var(--c-bg); color: var(--c-text); font-size: 0.9375rem; font-family: inherit; outline: none; transition: border-color 0.15s, box-shadow 0.15s; }
+.form-input:focus { border-color: var(--c-coral); box-shadow: 0 0 0 3px var(--c-coral-sub); }
 .form-input::placeholder { color: var(--c-text-3); }
-.form-check {
-  display: flex; align-items: flex-start; gap: 0.625rem;
-  font-size: 0.8125rem; color: var(--c-text-2);
-  line-height: 1.5; margin-bottom: 1rem; cursor: pointer;
-}
-.form-check input[type="checkbox"] {
-  width: 15px; height: 15px; flex-shrink: 0;
-  margin-top: 2px; accent-color: var(--c-accent);
-}
-.form-check a { color: var(--c-accent); }
-.modal-form-btn {
-  width: 100%; padding: 0.75rem;
-  background: var(--c-cta); color: white;
-  font-size: 1rem; font-weight: 700;
-  border: none; border-radius: 50px; cursor: pointer;
-  transition: background 0.15s, transform 0.15s;
-  margin-bottom: 1.125rem;
-}
-.modal-form-btn:hover { background: var(--c-cta-h); transform: translateY(-1px); }
-.modal-divider {
-  display: flex; align-items: center; gap: 0.75rem;
-  font-size: 0.8125rem; color: var(--c-text-3); margin-bottom: 1.125rem;
-}
+.form-check { display: flex; align-items: flex-start; gap: 0.625rem; font-size: 0.8125rem; color: var(--c-text-2); line-height: 1.5; margin-bottom: 1rem; cursor: pointer; }
+.form-check input[type="checkbox"] { width: 15px; height: 15px; flex-shrink: 0; margin-top: 2px; accent-color: var(--c-coral); }
+.form-check a { color: var(--c-coral); }
+.modal-form-btn { width: 100%; padding: 0.75rem; background: var(--c-coral); color: white; font-size: 1rem; font-weight: 700; border: none; border-radius: 50px; cursor: pointer; transition: background 0.15s, transform 0.15s; margin-bottom: 1.125rem; }
+.modal-form-btn:hover { background: var(--c-coral-h); transform: translateY(-1px); }
+.modal-divider { display: flex; align-items: center; gap: 0.75rem; font-size: 0.8125rem; color: var(--c-text-3); margin-bottom: 1.125rem; }
 .modal-divider::before, .modal-divider::after { content: ''; flex: 1; height: 1px; background: var(--c-border); }
-.modal-google {
-  width: 100%; padding: 0.6875rem;
-  background: transparent; border: 1.5px solid var(--c-border);
-  border-radius: 50px; font-size: 0.9375rem; font-weight: 600;
-  color: var(--c-text); cursor: pointer;
-  display: flex; align-items: center; justify-content: center; gap: 0.625rem;
-  transition: background 0.15s, border-color 0.15s; font-family: inherit;
-}
-.modal-google:hover { background: var(--c-surface-2); border-color: var(--c-accent); }
-.modal__connect-note {
-  background: var(--c-accent-sub); border: 1px solid var(--c-border);
-  border-radius: 10px; padding: 0.625rem 0.875rem;
-  font-size: 0.8125rem; color: var(--c-text-2);
-  margin-bottom: 1rem; display: flex; align-items: center; gap: 0.5rem;
-}
-.modal__connect-note strong { color: var(--c-accent); }
+.modal-google { width: 100%; padding: 0.6875rem; background: transparent; border: 1.5px solid var(--c-border); border-radius: 50px; font-size: 0.9375rem; font-weight: 600; color: var(--c-text); cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 0.625rem; transition: background 0.15s, border-color 0.15s; font-family: inherit; }
+.modal-google:hover { background: var(--c-surface-2); border-color: var(--c-coral); }
+.modal__connect-note { background: var(--c-coral-sub); border: 1px solid var(--c-border); border-radius: 10px; padding: 0.625rem 0.875rem; font-size: 0.8125rem; color: var(--c-text-2); margin-bottom: 1rem; display: flex; align-items: center; gap: 0.5rem; }
+.modal__connect-note strong { color: var(--c-coral); }
 
-/* ═══════════════════════════════════════
-   LIVE VIDEO MODAL
-═══════════════════════════════════════ */
-.video-backdrop {
-  position: fixed; inset: 0; z-index: 2000;
-  background: #080F0B;
-  display: flex; flex-direction: column; align-items: stretch;
-  opacity: 0; pointer-events: none;
-  transition: opacity 0.28s var(--ease);
-}
+/* ── VIDEO MODAL ── */
+.video-backdrop { position: fixed; inset: 0; z-index: 2000; background: #080F0B; display: flex; flex-direction: column; align-items: stretch; opacity: 0; pointer-events: none; transition: opacity 0.28s var(--ease); }
 .video-backdrop.open { opacity: 1; pointer-events: all; }
-.video__header {
-  display: flex; align-items: center; justify-content: space-between;
-  padding: 1rem 1.5rem;
-  position: absolute; top: 0; left: 0; right: 0; z-index: 10;
-  background: linear-gradient(180deg, rgba(0,0,0,0.75) 0%, transparent 100%);
-}
+.video__header { display: flex; align-items: center; justify-content: space-between; padding: 1rem 1.5rem; position: absolute; top: 0; left: 0; right: 0; z-index: 10; background: linear-gradient(180deg, rgba(0,0,0,0.75) 0%, transparent 100%); }
 .video__header-left { display: flex; align-items: center; gap: 0.75rem; }
-.video__header-avi {
-  width: 36px; height: 36px; border-radius: 50%;
-  background: linear-gradient(135deg, #3DBD90, #1F6B50);
-  display: flex; align-items: center; justify-content: center;
-  font-size: 0.8125rem; font-weight: 800; color: white;
-}
+.video__header-avi { width: 36px; height: 36px; border-radius: 50%; background: linear-gradient(135deg, #E8A090, #C85048); display: flex; align-items: center; justify-content: center; font-size: 0.8125rem; font-weight: 800; color: white; }
 .video__header-name { font-size: 0.9375rem; font-weight: 700; color: white; line-height: 1.2; }
-.video__header-timer {
-  font-size: 0.8125rem; color: rgba(255,255,255,0.6);
-  font-variant-numeric: tabular-nums;
-}
-.video__enc-badge {
-  display: flex; align-items: center; gap: 0.375rem;
-  font-size: 0.75rem; font-weight: 600; color: rgba(255,255,255,0.5);
-  background: rgba(255,255,255,0.09); border-radius: 50px;
-  padding: 0.3rem 0.75rem;
-}
-.video__enc-badge::before {
-  content: ''; width: 6px; height: 6px;
-  background: #5CE890; border-radius: 50%; flex-shrink: 0;
-}
-.video__stage {
-  flex: 1; position: relative;
-  display: flex; align-items: center; justify-content: center; overflow: hidden;
-}
-.video__therapist-bg {
-  position: absolute; inset: 0;
-  background: linear-gradient(160deg, #0D2C22 0%, #193D2E 50%, #0A1C14 100%);
-  display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 1rem;
-}
-.video__therapist-avi {
-  width: 110px; height: 110px; border-radius: 50%;
-  background: linear-gradient(135deg, #3DBD90, #145A3C);
-  display: flex; align-items: center; justify-content: center;
-  font-size: 2.25rem; font-weight: 800; color: white; letter-spacing: -0.02em;
-  box-shadow: 0 0 0 8px rgba(61,189,144,0.18), 0 0 0 18px rgba(61,189,144,0.07);
-}
+.video__header-timer { font-size: 0.8125rem; color: rgba(255,255,255,0.6); font-variant-numeric: tabular-nums; }
+.video__enc-badge { display: flex; align-items: center; gap: 0.375rem; font-size: 0.75rem; font-weight: 600; color: rgba(255,255,255,0.5); background: rgba(255,255,255,0.09); border-radius: 50px; padding: 0.3rem 0.75rem; }
+.video__enc-badge::before { content: ''; width: 6px; height: 6px; background: #5CE890; border-radius: 50%; flex-shrink: 0; }
+.video__stage { flex: 1; position: relative; display: flex; align-items: center; justify-content: center; overflow: hidden; }
+.video__therapist-bg { position: absolute; inset: 0; background: linear-gradient(160deg, #1E1228 0%, #2A1840 50%, #0E0A1A 100%); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 1rem; }
+.video__therapist-avi { width: 110px; height: 110px; border-radius: 50%; background: linear-gradient(135deg, #E8A090, #C85048); display: flex; align-items: center; justify-content: center; font-size: 2.25rem; font-weight: 800; color: white; letter-spacing: -0.02em; box-shadow: 0 0 0 8px rgba(232,102,90,0.18), 0 0 0 18px rgba(232,102,90,0.07); }
 .video__therapist-name { font-size: 1rem; font-weight: 700; color: rgba(255,255,255,0.85); }
 .video__therapist-sub { font-size: 0.875rem; color: rgba(255,255,255,0.4); }
-.video__self-pip {
-  position: absolute; bottom: 5.75rem; right: 1.25rem;
-  width: 130px; height: 98px;
-  background: linear-gradient(135deg, #1E3A2E, #0E2018);
-  border-radius: 12px; border: 2px solid rgba(255,255,255,0.18);
-  box-shadow: 0 4px 24px rgba(0,0,0,0.5);
-  display: flex; align-items: center; justify-content: center; flex-direction: column; gap: 0.375rem;
-}
+.video__self-pip { position: absolute; bottom: 5.75rem; right: 1.25rem; width: 130px; height: 98px; background: linear-gradient(135deg, #2A1840, #1A0E28); border-radius: 12px; border: 2px solid rgba(255,255,255,0.18); box-shadow: 0 4px 24px rgba(0,0,0,0.5); display: flex; align-items: center; justify-content: center; flex-direction: column; gap: 0.375rem; }
 .video__self-pip-label { font-size: 0.6875rem; font-weight: 700; color: rgba(255,255,255,0.45); }
-.video__controls {
-  position: absolute; bottom: 0; left: 0; right: 0;
-  display: flex; align-items: center; justify-content: center;
-  gap: 1.25rem; padding: 1.25rem 1.5rem 1.75rem;
-  background: linear-gradient(0deg, rgba(0,0,0,0.82) 0%, transparent 100%);
-}
+.video__controls { position: absolute; bottom: 0; left: 0; right: 0; display: flex; align-items: center; justify-content: center; gap: 1.25rem; padding: 1.25rem 1.5rem 1.75rem; background: linear-gradient(0deg, rgba(0,0,0,0.82) 0%, transparent 100%); }
 .vid-ctrl { display: flex; flex-direction: column; align-items: center; gap: 0.375rem; }
-.vid-btn {
-  width: 52px; height: 52px; border-radius: 50%; border: none;
-  cursor: pointer; display: flex; align-items: center; justify-content: center;
-  transition: background 0.15s, transform 0.12s; flex-shrink: 0;
-}
+.vid-btn { width: 52px; height: 52px; border-radius: 50%; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: background 0.15s, transform 0.12s; flex-shrink: 0; }
 .vid-btn:active { transform: scale(0.9); }
 .vid-btn--ctrl { background: rgba(255,255,255,0.16); color: white; }
 .vid-btn--ctrl:hover { background: rgba(255,255,255,0.26); }
@@ -1382,17 +419,41 @@ ul { list-style: none; }
 .vid-btn--end { background: #E05252; color: white; width: 60px; height: 60px; }
 .vid-btn--end:hover { background: #C43E3E; }
 .vid-btn__label { font-size: 0.6875rem; font-weight: 600; color: rgba(255,255,255,0.5); }
+
+/* ── RESPONSIVE ── */
+@media (max-width: 960px) {
+  .nav__links { display: none; }
+  .nav__hamburger { display: flex; }
+  .nav__right .btn-ghost, .nav__right .btn-coral { display: none; }
+  .hero { padding: 4rem 0 3.5rem; }
+  .how-steps { grid-template-columns: 1fr; }
+  .therapist-grid { grid-template-columns: repeat(2, 1fr); }
+  .pricing-grid { grid-template-columns: 1fr; max-width: 420px; margin: 0 auto; }
+  .testi-grid { grid-template-columns: 1fr 1fr; }
+  .trust__inner { grid-template-columns: 1fr; }
+  .footer__grid { grid-template-columns: 1fr 1fr; }
+}
+@media (max-width: 640px) {
+  .treat-grid { grid-template-columns: 1fr 1fr; }
+  .therapist-grid { grid-template-columns: 1fr 1fr; }
+  .testi-grid { grid-template-columns: 1fr; }
+  .footer__grid { grid-template-columns: 1fr; }
+  .cta-card { padding: 2.5rem 1.5rem; }
+}
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { transition-duration: 0.01ms !important; animation-duration: 0.01ms !important; }
+}
 </style>
 </head>
 <body>
 
-<!-- ── SIGN IN / CREATE ACCOUNT MODAL ── -->
+<!-- ── AUTH MODAL ── -->
 <div class="modal-backdrop" id="authModal" role="dialog" aria-modal="true" aria-labelledby="authModalTitle">
   <div class="modal">
     <button class="modal__close" id="authClose" aria-label="Close">&#10005;</button>
     <div class="modal__head">
       <div class="modal__logo" aria-hidden="true">
-        <div class="modal__logo-icon"></div>
+        <div class="logo-circle logo-circle--sm"></div>
         <span class="modal__logo-name">Thrive</span>
       </div>
     </div>
@@ -1401,8 +462,6 @@ ul { list-style: none; }
       <button class="modal__tab" role="tab" aria-selected="false" data-tab="signup">Create account</button>
     </div>
     <div class="modal__body">
-
-      <!-- Sign in panel -->
       <div id="panelSignin">
         <div class="modal__connect-note" id="connectNote" style="display:none" aria-live="polite">
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" aria-hidden="true"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
@@ -1426,8 +485,6 @@ ul { list-style: none; }
           Continue with Google
         </button>
       </div>
-
-      <!-- Create account panel -->
       <div id="panelSignup" style="display:none">
         <div class="form-group">
           <label class="form-label" for="suEmail">Email address</label>
@@ -1448,12 +505,11 @@ ul { list-style: none; }
           Sign up with Google
         </button>
       </div>
-
     </div>
   </div>
 </div>
 
-<!-- ── LIVE VIDEO SESSION MODAL ── -->
+<!-- ── VIDEO MODAL ── -->
 <div class="video-backdrop" id="videoModal" role="dialog" aria-modal="true" aria-label="Live video session with Dr. Amara Osei">
   <div class="video__header">
     <div class="video__header-left">
@@ -1504,25 +560,51 @@ ul { list-style: none; }
   </div>
 </div>
 
+<!-- ── MOBILE DRAWER ── -->
+<div class="drawer-backdrop" id="mobileDrawer" aria-hidden="true">
+  <div class="drawer" role="dialog" aria-label="Navigation menu">
+    <div class="drawer__head">
+      <div class="drawer__logo">
+        <div class="logo-circle"></div>
+        <span class="logo-name">Thrive</span>
+      </div>
+      <button class="drawer__close" id="drawerClose" aria-label="Close menu">&#10005;</button>
+    </div>
+    <nav class="drawer__links" aria-label="Mobile navigation">
+      <a href="#how">How it works</a>
+      <a href="#therapists">Therapists</a>
+      <a href="#pricing">Pricing</a>
+      <a href="#faq">FAQ</a>
+    </nav>
+    <div class="drawer__actions">
+      <button class="btn-outline js-open-auth" data-tab="signin">Sign in</button>
+      <button class="btn-coral js-open-auth" data-tab="signup">Get started</button>
+    </div>
+  </div>
+</div>
+
 <!-- ── NAV ── -->
 <nav class="nav">
   <div class="container nav__inner">
     <a href="#" class="nav__logo" aria-label="Thrive home">
-      <div class="nav__logo-icon" aria-hidden="true"></div>
-      <span class="nav__logo-name">Thrive</span>
+      <div class="logo-circle" aria-hidden="true"></div>
+      <span class="logo-name">Thrive</span>
     </a>
     <ul class="nav__links" role="list">
       <li><a href="#how">How it works</a></li>
-      <li><a href="#therapists">Our therapists</a></li>
+      <li><a href="#therapists">Therapists</a></li>
       <li><a href="#pricing">Pricing</a></li>
       <li><a href="#faq">FAQ</a></li>
     </ul>
     <div class="nav__right">
       <button class="btn-ghost js-open-auth" data-tab="signin">Sign in</button>
-      <button class="btn-cta btn-cta--sm js-open-auth" data-tab="signup">Get started</button>
+      <button class="btn-coral js-open-auth" data-tab="signup">Get started</button>
       <button class="nav__theme" id="themeToggle" aria-label="Toggle dark mode">
         <svg id="iconSun" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M2 12h2M20 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>
         <svg id="iconMoon" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" style="display:none" aria-hidden="true"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+      </button>
+      <button class="nav__hamburger" id="navHamburger" aria-label="Open menu" aria-expanded="false">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
       </button>
     </div>
   </div>
@@ -1530,84 +612,27 @@ ul { list-style: none; }
 
 <!-- ── HERO ── -->
 <section class="hero">
-  <div class="container hero__inner">
-    <div>
-      <div class="hero__label">
-        <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
-        Rated #1 online therapy platform
+  <div class="container">
+    <div class="hero__inner">
+      <h1 class="hero__headline">You deserve to be heard.<br><em>Start therapy today.</em></h1>
+      <p class="hero__sub">Get matched with a licensed therapist within 48 hours — by message, phone, or video, on your schedule.</p>
+      <div class="hero__form">
+        <input class="hero__email" type="email" placeholder="Enter your email address" aria-label="Email address">
+        <button class="btn-coral btn-coral--lg btn-coral--full js-open-auth" data-tab="signup">Get started &rarr;</button>
       </div>
-      <h1 class="hero__headline">
-        Online therapy<br>that <span>actually works</span>
-      </h1>
-      <p class="hero__sub">
-        Get matched with a licensed therapist and start feeling better — by message, phone, or video, whenever works for you.
-      </p>
-      <div class="hero__actions">
-        <button class="btn-cta btn-cta--lg js-open-auth" data-tab="signup">Get matched now</button>
-        <button class="btn-outline" onclick="document.getElementById('how').scrollIntoView({behavior:'smooth'})">Learn how it works</button>
-      </div>
-      <div class="hero__note">
-        <span class="hero__note-item">
+      <div class="hero__badges">
+        <span class="hero__badge">
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
           Licensed therapists only
         </span>
-        <span class="hero__note-item">
+        <span class="hero__badge">
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
-          Start within 48 hours
+          Matched in 48 hours
         </span>
-        <span class="hero__note-item">
+        <span class="hero__badge">
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
           Cancel anytime
         </span>
-      </div>
-    </div>
-
-    <div class="hero__ui" aria-hidden="true">
-      <!-- Match float card -->
-      <div class="ui-float ui-float--match">
-        <div class="ui-float__label">Your match</div>
-        <div class="ui-float__name">Dr. Amara Osei</div>
-        <div class="ui-float__sub">Ph.D · Anxiety & Depression</div>
-        <button class="ui-float__connect">Connect</button>
-      </div>
-
-      <!-- Phone mockup -->
-      <div class="ui-phone">
-        <div class="ui-phone__bar">
-          <div class="ui-phone__avatar">AO</div>
-          <div class="ui-phone__info">
-            <div class="ui-phone__name">Dr. Amara Osei</div>
-            <div class="ui-phone__status">
-              <span class="ui-phone__dot"></span>
-              Online now
-            </div>
-          </div>
-        </div>
-        <div class="ui-phone__body">
-          <div class="ui-msg">I've been feeling really overwhelmed lately and not sleeping well.</div>
-          <div class="ui-msg ui-msg--me">That's something we can definitely work through together.</div>
-          <div class="ui-msg">What do you think is driving that feeling most right now?</div>
-        </div>
-        <div class="ui-phone__input">
-          <div class="ui-phone__input-field">Type a message…</div>
-          <div class="ui-phone__send">
-            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 2 11 13M22 2 15 22l-4-9-9-4 20-7z"/></svg>
-          </div>
-        </div>
-      </div>
-
-      <!-- Session float card -->
-      <div class="ui-float ui-float--session" id="heroVideoCard" role="button" tabindex="0" aria-label="Join live video session" style="cursor:pointer">
-        <div class="ui-float__label">Upcoming · tap to join</div>
-        <div class="ui-float__session-row">
-          <div class="ui-float__session-icon">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2"/></svg>
-          </div>
-          <div>
-            <div class="ui-float__session-text">Video session</div>
-            <div class="ui-float__session-time">Today at 4:00 pm</div>
-          </div>
-        </div>
       </div>
     </div>
   </div>
@@ -1618,20 +643,12 @@ ul { list-style: none; }
   <div class="container">
     <div class="stats__grid">
       <div class="stat-item">
-        <div class="stat-item__value">4.5<span>M+</span></div>
-        <div class="stat-item__label">People helped worldwide</div>
+        <div class="stat-item__value">5M+</div>
+        <div class="stat-item__label">People helped</div>
       </div>
       <div class="stat-item">
-        <div class="stat-item__value">50<span>K+</span></div>
-        <div class="stat-item__label">Licensed therapists</div>
-      </div>
-      <div class="stat-item">
-        <div class="stat-item__value">100<span>+</span></div>
-        <div class="stat-item__label">Specialties covered</div>
-      </div>
-      <div class="stat-item">
-        <div class="stat-item__value">4.8<span>★</span></div>
-        <div class="stat-item__label">Average member rating</div>
+        <div class="stat-item__value">48h</div>
+        <div class="stat-item__label">Average match time</div>
       </div>
     </div>
   </div>
@@ -1641,26 +658,37 @@ ul { list-style: none; }
 <section class="how" id="how" aria-labelledby="howHeading">
   <div class="container">
     <div class="sec-hdr sec-hdr--center">
-      <p class="sec-label">Getting started</p>
+      <span class="sec-label">HOW IT WORKS</span>
       <h2 class="sec-title" id="howHeading">Therapy in three simple steps</h2>
-      <p class="sec-sub">You can be matched with a therapist and have your first session within 48 hours of signing up.</p>
     </div>
     <div class="how-steps">
       <div class="how-step">
-        <div class="how-step__num">1</div>
+        <div class="how-step__badge" aria-hidden="true">1</div>
+        <div class="how-step__icon" aria-hidden="true">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+        </div>
         <div class="how-step__title">Answer a few questions</div>
-        <div class="how-step__desc">Tell us about what you're going through, your preferences, and your goals. It takes about five minutes and is completely confidential.</div>
+        <div class="how-step__desc">Tell us what you're going through, your preferences, and goals. It takes about five minutes and is completely confidential.</div>
       </div>
       <div class="how-step">
-        <div class="how-step__num">2</div>
-        <div class="how-step__title">Get matched with a therapist</div>
-        <div class="how-step__desc">We match you based on your needs and therapist specialties. You're free to switch therapists at any time, for any reason, at no extra cost.</div>
+        <div class="how-step__badge" aria-hidden="true">2</div>
+        <div class="how-step__icon" aria-hidden="true">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+        </div>
+        <div class="how-step__title">Get matched in 48 hours</div>
+        <div class="how-step__desc">We match you based on your needs and therapist specialties. Switch therapists any time, for any reason, at no extra cost.</div>
       </div>
       <div class="how-step">
-        <div class="how-step__num">3</div>
-        <div class="how-step__title">Start therapy your way</div>
-        <div class="how-step__desc">Connect by message, voice note, phone call, or live video — on your schedule. Therapy built around your life, not the other way around.</div>
+        <div class="how-step__badge" aria-hidden="true">3</div>
+        <div class="how-step__icon" aria-hidden="true">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2"/></svg>
+        </div>
+        <div class="how-step__title">Start therapy, your way</div>
+        <div class="how-step__desc">Connect by message, voice note, phone, or live video — on your schedule. Therapy built around your life.</div>
       </div>
+    </div>
+    <div class="how__cta">
+      <button class="btn-coral btn-coral--lg js-open-auth" data-tab="signup">Get started &rarr;</button>
     </div>
   </div>
 </section>
@@ -1668,30 +696,22 @@ ul { list-style: none; }
 <!-- ── WHAT WE TREAT ── -->
 <section class="treat" aria-labelledby="treatHeading">
   <div class="container">
-    <div class="sec-hdr">
-      <p class="sec-label">What we can help with</p>
-      <h2 class="sec-title" id="treatHeading">Whatever you're going through</h2>
-      <p class="sec-sub">Our therapists are trained across a wide range of areas. If you don't see yours listed, we can still help.</p>
+    <div class="treat__hdr">
+      <div>
+        <span class="sec-label">WHAT WE TREAT</span>
+        <h2 class="sec-title" id="treatHeading">Whatever you're going through</h2>
+      </div>
+      <a href="#" class="arrow-link">Find your therapist &rarr;</a>
     </div>
-    <div class="treat-tags" role="list">
-      <span class="treat-tag treat-tag--active" role="listitem">Anxiety</span>
-      <span class="treat-tag" role="listitem">Depression</span>
-      <span class="treat-tag" role="listitem">Stress</span>
-      <span class="treat-tag" role="listitem">Relationship issues</span>
-      <span class="treat-tag" role="listitem">Grief &amp; loss</span>
-      <span class="treat-tag" role="listitem">Trauma &amp; PTSD</span>
-      <span class="treat-tag" role="listitem">OCD</span>
-      <span class="treat-tag" role="listitem">Self-esteem</span>
-      <span class="treat-tag" role="listitem">Life transitions</span>
-      <span class="treat-tag" role="listitem">Sleep issues</span>
-      <span class="treat-tag" role="listitem">Anger management</span>
-      <span class="treat-tag" role="listitem">LGBTQ+ issues</span>
-      <span class="treat-tag" role="listitem">Eating concerns</span>
-      <span class="treat-tag" role="listitem">Parenting</span>
-      <span class="treat-tag" role="listitem">Addiction</span>
-      <span class="treat-tag" role="listitem">Chronic illness</span>
-      <span class="treat-tag" role="listitem">Work &amp; burnout</span>
-      <span class="treat-tag" role="listitem">Family conflict</span>
+    <div class="treat-grid" role="list">
+      <button class="treat-card treat-card--active" role="listitem">Anxiety</button>
+      <button class="treat-card" role="listitem">Depression</button>
+      <button class="treat-card" role="listitem">Stress &amp; burnout</button>
+      <button class="treat-card" role="listitem">Relationships</button>
+      <button class="treat-card" role="listitem">Grief &amp; loss</button>
+      <button class="treat-card" role="listitem">Trauma &amp; PTSD</button>
+      <button class="treat-card" role="listitem">Self-esteem</button>
+      <button class="treat-card" role="listitem">LGBTQ+ support</button>
     </div>
   </div>
 </section>
@@ -1701,16 +721,12 @@ ul { list-style: none; }
   <div class="container">
     <div class="therapists__hdr">
       <div>
-        <p class="sec-label">Our therapists</p>
+        <span class="sec-label">OUR THERAPISTS</span>
         <h2 class="sec-title" id="therapistsHeading">Meet some of our team</h2>
       </div>
-      <a href="#" class="faq__cta">
-        Browse all therapists
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
-      </a>
+      <a href="#" class="arrow-link">Browse all therapists &rarr;</a>
     </div>
     <div class="therapist-grid">
-
       <div class="t-card">
         <div class="t-card__top">
           <div class="t-card__avi t-card__avi--a">AO</div>
@@ -1720,17 +736,10 @@ ul { list-style: none; }
             <div class="t-card__avail">Available today</div>
           </div>
         </div>
-        <div class="t-card__tags">
-          <span class="t-card__tag">Anxiety</span>
-          <span class="t-card__tag">Depression</span>
-          <span class="t-card__tag">Trauma</span>
-        </div>
+        <div class="t-card__tags"><span class="t-card__tag">Anxiety</span><span class="t-card__tag">Depression</span><span class="t-card__tag">Trauma</span></div>
         <div class="t-card__meta">12 years experience · CBT &amp; ACT</div>
-        <div class="t-card__footer">
-          <button class="t-card__btn js-open-auth" data-tab="signup">View &amp; connect</button>
-        </div>
+        <div class="t-card__footer"><button class="t-card__btn js-open-auth" data-tab="signup">View &amp; connect</button></div>
       </div>
-
       <div class="t-card">
         <div class="t-card__top">
           <div class="t-card__avi t-card__avi--b">JW</div>
@@ -1740,17 +749,10 @@ ul { list-style: none; }
             <div class="t-card__avail">Available today</div>
           </div>
         </div>
-        <div class="t-card__tags">
-          <span class="t-card__tag">Relationships</span>
-          <span class="t-card__tag">Couples</span>
-          <span class="t-card__tag">Grief</span>
-        </div>
+        <div class="t-card__tags"><span class="t-card__tag">Relationships</span><span class="t-card__tag">Couples</span><span class="t-card__tag">Grief</span></div>
         <div class="t-card__meta">9 years experience · EFT</div>
-        <div class="t-card__footer">
-          <button class="t-card__btn js-open-auth" data-tab="signup">View &amp; connect</button>
-        </div>
+        <div class="t-card__footer"><button class="t-card__btn js-open-auth" data-tab="signup">View &amp; connect</button></div>
       </div>
-
       <div class="t-card">
         <div class="t-card__top">
           <div class="t-card__avi t-card__avi--c">PS</div>
@@ -1760,17 +762,10 @@ ul { list-style: none; }
             <div class="t-card__avail">Available today</div>
           </div>
         </div>
-        <div class="t-card__tags">
-          <span class="t-card__tag">OCD</span>
-          <span class="t-card__tag">Phobias</span>
-          <span class="t-card__tag">Life transitions</span>
-        </div>
+        <div class="t-card__tags"><span class="t-card__tag">OCD</span><span class="t-card__tag">Phobias</span><span class="t-card__tag">Life transitions</span></div>
         <div class="t-card__meta">7 years experience · CBT &amp; ERP</div>
-        <div class="t-card__footer">
-          <button class="t-card__btn js-open-auth" data-tab="signup">View &amp; connect</button>
-        </div>
+        <div class="t-card__footer"><button class="t-card__btn js-open-auth" data-tab="signup">View &amp; connect</button></div>
       </div>
-
       <div class="t-card">
         <div class="t-card__top">
           <div class="t-card__avi t-card__avi--d">MC</div>
@@ -1780,17 +775,10 @@ ul { list-style: none; }
             <div class="t-card__avail">Available today</div>
           </div>
         </div>
-        <div class="t-card__tags">
-          <span class="t-card__tag">Identity</span>
-          <span class="t-card__tag">LGBTQ+</span>
-          <span class="t-card__tag">Self-esteem</span>
-        </div>
+        <div class="t-card__tags"><span class="t-card__tag">Identity</span><span class="t-card__tag">LGBTQ+</span><span class="t-card__tag">Self-esteem</span></div>
         <div class="t-card__meta">11 years experience · Person-centred</div>
-        <div class="t-card__footer">
-          <button class="t-card__btn js-open-auth" data-tab="signup">View &amp; connect</button>
-        </div>
+        <div class="t-card__footer"><button class="t-card__btn js-open-auth" data-tab="signup">View &amp; connect</button></div>
       </div>
-
     </div>
   </div>
 </section>
@@ -1799,103 +787,51 @@ ul { list-style: none; }
 <section class="pricing" id="pricing" aria-labelledby="pricingHeading">
   <div class="container">
     <div class="sec-hdr sec-hdr--center">
-      <p class="sec-label">Plans &amp; pricing</p>
+      <span class="sec-label">PLANS &amp; PRICING</span>
       <h2 class="sec-title" id="pricingHeading">Simple, transparent pricing</h2>
-      <p class="sec-sub">Financial aid available for those who qualify. All plans include unlimited messaging with your therapist.</p>
+      <p class="sec-sub">Financial aid available for those who qualify. All plans include unlimited messaging.</p>
     </div>
     <div class="pricing-grid">
-
       <div class="p-card">
         <div class="p-card__tier">Basic</div>
-        <div class="p-card__price-row">
-          <span class="p-card__dollar">$</span>
-          <span class="p-card__amount">60</span>
-          <span class="p-card__period">/wk</span>
-        </div>
+        <div class="p-card__price-row"><span class="p-card__dollar">$</span><span class="p-card__amount">60</span><span class="p-card__period">/wk</span></div>
         <div class="p-card__billing">Billed monthly · cancel anytime</div>
         <div class="p-card__divider"></div>
         <ul class="p-card__features">
-          <li class="p-feat">
-            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
-            Unlimited messaging
-          </li>
-          <li class="p-feat">
-            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
-            Therapist matching
-          </li>
-          <li class="p-feat p-feat--no">
-            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
-            Live video sessions
-          </li>
-          <li class="p-feat p-feat--no">
-            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
-            Group workshops
-          </li>
+          <li class="p-feat"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>Unlimited messaging</li>
+          <li class="p-feat"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>Therapist matching</li>
+          <li class="p-feat p-feat--no"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>Live video sessions</li>
+          <li class="p-feat p-feat--no"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>Group workshops</li>
         </ul>
         <button class="btn-outline js-open-auth" data-tab="signup" style="width:100%">Get started</button>
       </div>
-
       <div class="p-card p-card--featured">
         <span class="p-card__pill">Most popular</span>
         <div class="p-card__tier">Standard</div>
-        <div class="p-card__price-row">
-          <span class="p-card__dollar">$</span>
-          <span class="p-card__amount">80</span>
-          <span class="p-card__period">/wk</span>
-        </div>
+        <div class="p-card__price-row"><span class="p-card__dollar">$</span><span class="p-card__amount">80</span><span class="p-card__period">/wk</span></div>
         <div class="p-card__billing">Billed monthly · cancel anytime</div>
         <div class="p-card__divider"></div>
         <ul class="p-card__features">
-          <li class="p-feat">
-            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
-            Unlimited messaging
-          </li>
-          <li class="p-feat">
-            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
-            Therapist matching
-          </li>
-          <li class="p-feat">
-            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
-            4 live video sessions/month
-          </li>
-          <li class="p-feat p-feat--no">
-            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
-            Group workshops
-          </li>
+          <li class="p-feat"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>Unlimited messaging</li>
+          <li class="p-feat"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>Therapist matching</li>
+          <li class="p-feat"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>4 live video sessions/month</li>
+          <li class="p-feat p-feat--no"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>Group workshops</li>
         </ul>
-        <button class="btn-cta js-open-auth" data-tab="signup" style="width:100%">Get started</button>
+        <button class="btn-coral btn-coral--full js-open-auth" data-tab="signup">Get started</button>
       </div>
-
       <div class="p-card">
         <div class="p-card__tier">Premium</div>
-        <div class="p-card__price-row">
-          <span class="p-card__dollar">$</span>
-          <span class="p-card__amount">100</span>
-          <span class="p-card__period">/wk</span>
-        </div>
+        <div class="p-card__price-row"><span class="p-card__dollar">$</span><span class="p-card__amount">100</span><span class="p-card__period">/wk</span></div>
         <div class="p-card__billing">Billed monthly · cancel anytime</div>
         <div class="p-card__divider"></div>
         <ul class="p-card__features">
-          <li class="p-feat">
-            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
-            Unlimited messaging
-          </li>
-          <li class="p-feat">
-            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
-            Priority matching
-          </li>
-          <li class="p-feat">
-            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
-            Unlimited live video sessions
-          </li>
-          <li class="p-feat">
-            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
-            Group workshops included
-          </li>
+          <li class="p-feat"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>Unlimited messaging</li>
+          <li class="p-feat"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>Priority matching</li>
+          <li class="p-feat"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>Unlimited live video sessions</li>
+          <li class="p-feat"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>Group workshops included</li>
         </ul>
         <button class="btn-outline js-open-auth" data-tab="signup" style="width:100%">Get started</button>
       </div>
-
     </div>
   </div>
 </section>
@@ -1903,12 +839,19 @@ ul { list-style: none; }
 <!-- ── TESTIMONIALS ── -->
 <section class="testi" aria-labelledby="testiHeading">
   <div class="container">
-    <div class="sec-hdr">
-      <p class="sec-label">What members say</p>
-      <h2 class="sec-title" id="testiHeading">Real people, real progress</h2>
+    <span class="sec-label">WHAT OUR MEMBERS SAY</span>
+    <h2 class="sec-title" id="testiHeading" style="margin-bottom:1rem">Real stories from real people.</h2>
+    <div class="testi__stars-row">
+      <div class="testi__stars" aria-label="4.9 out of 5 stars">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+      </div>
+      <span class="testi__avg">4.9 average from 40,000+ reviews</span>
     </div>
     <div class="testi-grid">
-
       <div class="testi-card">
         <div class="testi-stars" aria-label="5 out of 5 stars">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
@@ -1917,16 +860,9 @@ ul { list-style: none; }
           <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
           <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
         </div>
-        <p class="testi-quote">"I put off therapy for years because I couldn't commit to a fixed schedule. Being able to message my therapist whenever I needed to changed everything. Three months in and I feel genuinely different."</p>
-        <div class="testi-person">
-          <div class="testi-avi testi-avi--j" aria-hidden="true">J</div>
-          <div>
-            <div class="testi-name">Jordan, 31</div>
-            <div class="testi-meta">Anxiety · 3 months on Standard</div>
-          </div>
-        </div>
+        <p class="testi-quote">"It's the first time therapy has ever felt like something I looked forward to. The matching worked — my therapist actually listens."</p>
+        <div><div class="testi-name">Sasha M.</div><div class="testi-since">with Thrive since 2023</div></div>
       </div>
-
       <div class="testi-card">
         <div class="testi-stars" aria-label="5 out of 5 stars">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
@@ -1935,16 +871,9 @@ ul { list-style: none; }
           <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
           <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
         </div>
-        <p class="testi-quote">"My partner and I tried to get couples therapy locally twice — the waitlist was four months both times. We matched with James within 24 hours and had our first session that same week. It's been seven months now."</p>
-        <div class="testi-person">
-          <div class="testi-avi testi-avi--m" aria-hidden="true">M</div>
-          <div>
-            <div class="testi-name">Maya &amp; Dan, 34 &amp; 37</div>
-            <div class="testi-meta">Couples therapy · 7 months on Premium</div>
-          </div>
-        </div>
+        <p class="testi-quote">"I was skeptical about online therapy. Three sessions in, I'm converted. Being able to message between sessions changed everything."</p>
+        <div><div class="testi-name">Devin T.</div><div class="testi-since">with Thrive since 2023</div></div>
       </div>
-
       <div class="testi-card">
         <div class="testi-stars" aria-label="5 out of 5 stars">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
@@ -1953,89 +882,87 @@ ul { list-style: none; }
           <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
           <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
         </div>
-        <p class="testi-quote">"I live rurally with no therapists for an hour's drive. Thrive gave me access to a specialist in OCD I never could have found locally. I can't overstate how much access like this matters."</p>
-        <div class="testi-person">
-          <div class="testi-avi testi-avi--r" aria-hidden="true">R</div>
-          <div>
-            <div class="testi-name">Riley, 26</div>
-            <div class="testi-meta">OCD &amp; anxiety · 5 months on Standard</div>
+        <p class="testi-quote">"The quiz felt like it actually got me. My therapist and I clicked from the first session. I've recommended Thrive to two friends already."</p>
+        <div><div class="testi-name">Riley K.</div><div class="testi-since">with Thrive since 2024</div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── TRUST ── -->
+<section class="trust" aria-labelledby="trustHeading">
+  <div class="container">
+    <div class="trust__inner">
+      <div>
+        <span class="sec-label">WHY THRIVE</span>
+        <h2 class="sec-title" id="trustHeading">Gentle, professional care — built around you.</h2>
+      </div>
+      <div class="trust-items">
+        <div>
+          <div class="trust-item__icon" aria-hidden="true">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><polyline points="9 12 11 14 15 10"/></svg>
           </div>
+          <div class="trust-item__title">Licensed &amp; vetted</div>
+          <div class="trust-item__desc">Every Thrive therapist is board-licensed, background-checked, and averages 10+ years of clinical experience.</div>
+        </div>
+        <div>
+          <div class="trust-item__icon" aria-hidden="true">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+          </div>
+          <div class="trust-item__title">Private by design</div>
+          <div class="trust-item__desc">Sessions and messages are end-to-end encrypted. We never sell your data — full stop.</div>
+        </div>
+        <div>
+          <div class="trust-item__icon" aria-hidden="true">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+          </div>
+          <div class="trust-item__title">Flexible and affordable</div>
+          <div class="trust-item__desc">One flat weekly rate covers messaging, video, and phone. Cancel any time from your dashboard.</div>
         </div>
       </div>
-
     </div>
   </div>
 </section>
 
 <!-- ── FAQ ── -->
 <section class="faq" id="faq" aria-labelledby="faqHeading">
-  <div class="container faq__inner">
-    <div class="faq__left">
-      <p class="sec-label">FAQ</p>
-      <h2 class="faq__title" id="faqHeading">Questions we get asked a lot</h2>
-      <p class="faq__desc">Can't find what you're looking for? Our support team is available seven days a week.</p>
-      <a href="#" class="faq__cta">
-        Contact support
-        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
-      </a>
-    </div>
-    <div class="faq-list">
-      <div class="faq-item">
-        <button class="faq-btn" aria-expanded="false" aria-controls="faq1">
-          Are Thrive therapists licensed?
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-        </button>
-        <div class="faq-answer" id="faq1">Yes — every therapist holds an active licence from their state or national regulatory body. All are Masters- or Doctorate-level clinicians with at least three years of post-qualification experience. We verify credentials before anyone can see clients.</div>
-      </div>
-      <div class="faq-item">
-        <button class="faq-btn" aria-expanded="false" aria-controls="faq2">
-          Is my therapy private and secure?
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-        </button>
-        <div class="faq-answer" id="faq2">All sessions — text, voice, or video — are end-to-end encrypted. We are HIPAA-compliant and will never sell your data. Your therapist cannot share anything without your explicit consent, except where required by law.</div>
-      </div>
-      <div class="faq-item">
-        <button class="faq-btn" aria-expanded="false" aria-controls="faq3">
-          How quickly will I be matched?
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-        </button>
-        <div class="faq-answer" id="faq3">Most members are matched within 24 hours of completing the questionnaire, and can have their first session within 48 hours of signing up.</div>
-      </div>
-      <div class="faq-item">
-        <button class="faq-btn" aria-expanded="false" aria-controls="faq4">
-          Can I switch therapists?
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-        </button>
-        <div class="faq-answer" id="faq4">Yes — at any time, for any reason, at no extra cost. Request a new match from your account and you'll typically be rematched within 24 hours.</div>
-      </div>
-      <div class="faq-item">
-        <button class="faq-btn" aria-expanded="false" aria-controls="faq5">
-          Is financial aid available?
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-        </button>
-        <div class="faq-answer" id="faq5">Yes. When signing up you'll be asked about your financial situation — if you qualify, you'll automatically be offered a discounted rate. Cost should never be the reason someone doesn't get support.</div>
-      </div>
-      <div class="faq-item">
-        <button class="faq-btn" aria-expanded="false" aria-controls="faq6">
-          What if I'm in crisis right now?
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-        </button>
-        <div class="faq-answer" id="faq6">Thrive is not a crisis service. If you are in immediate danger, call 000 or go to your nearest emergency department. For mental health crisis support call Lifeline on 13 11 14 (24/7, free).</div>
+  <div class="container">
+    <div class="faq__inner">
+      <span class="sec-label">FAQ</span>
+      <h2 class="faq__title" id="faqHeading">Questions, answered.</h2>
+      <div class="faq-list">
+        <div class="faq-item">
+          <button class="faq-btn" aria-expanded="false" aria-controls="faq1">How much does Thrive cost?<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></button>
+          <div class="faq-answer" id="faq1">Plans start at $60/week, billed monthly. That includes unlimited messaging plus one live session (video or phone) each week on Standard. Financial aid is available.</div>
+        </div>
+        <div class="faq-item">
+          <button class="faq-btn" aria-expanded="false" aria-controls="faq2">Are Thrive therapists licensed?<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></button>
+          <div class="faq-answer" id="faq2">Yes — every therapist holds an active licence from their state or national regulatory body. All are Masters- or Doctorate-level clinicians with at least three years of post-qualification experience.</div>
+        </div>
+        <div class="faq-item">
+          <button class="faq-btn" aria-expanded="false" aria-controls="faq3">Can I switch therapists?<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></button>
+          <div class="faq-answer" id="faq3">Yes — at any time, for any reason, at no extra cost. Request a new match from your account and you'll typically be rematched within 24 hours.</div>
+        </div>
+        <div class="faq-item">
+          <button class="faq-btn" aria-expanded="false" aria-controls="faq4">Is Thrive covered by insurance?<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></button>
+          <div class="faq-answer" id="faq4">Thrive is not currently covered by most insurance plans, but we offer financial aid for those who qualify. Many members use their HSA or FSA accounts to pay.</div>
+        </div>
+        <div class="faq-item">
+          <button class="faq-btn" aria-expanded="false" aria-controls="faq5">Is this the right kind of help for a crisis?<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></button>
+          <div class="faq-answer" id="faq5">Thrive is not a crisis service. If you are in immediate danger, call 000 or go to your nearest emergency department. For mental health crisis support call Lifeline on 13 11 14 (24/7, free).</div>
+        </div>
       </div>
     </div>
   </div>
 </section>
 
-<!-- ── CTA STRIP ── -->
+<!-- ── CTA ── -->
 <section class="cta-strip" aria-labelledby="ctaHeading">
-  <div class="container cta-strip__inner">
-    <div class="cta-strip__text">
-      <h2 class="cta-strip__headline" id="ctaHeading">You don't have to figure this out alone</h2>
-      <p class="cta-strip__sub">Taking the first step is the hardest part. Your matched therapist will meet you right where you are.</p>
-    </div>
-    <div>
-      <button class="btn-cta btn-cta--lg js-open-auth" data-tab="signup">Get matched — free to start</button>
-      <p class="cta-strip__note">No waitlist. No commitment. Cancel anytime.</p>
+  <div class="container">
+    <div class="cta-card">
+      <h2 class="cta-card__headline" id="ctaHeading">Your first breath of relief starts today.</h2>
+      <p class="cta-card__sub">Three minutes, no credit card, no pressure.</p>
+      <button class="btn-coral btn-coral--lg js-open-auth" data-tab="signup">Get matched &rarr;</button>
     </div>
   </div>
 </section>
@@ -2046,44 +973,33 @@ ul { list-style: none; }
     <div class="footer__grid">
       <div>
         <div class="footer__brand-logo">
-          <div class="footer__logo-icon" aria-hidden="true"></div>
+          <div class="logo-circle logo-circle--sm" aria-hidden="true"></div>
           <span class="footer__brand-name">Thrive</span>
         </div>
-        <p>Online therapy from licensed clinicians — accessible, private, and built around your life.</p>
+        <p style="font-size:0.9375rem;color:var(--c-text-2);line-height:1.65;max-width:34ch">Gentle, professional therapy — matched to you and delivered wherever you feel most at ease.</p>
       </div>
       <div>
-        <p class="footer__col-title">Therapy</p>
+        <p class="footer__col-title">Product</p>
         <ul class="footer__links">
-          <li><a href="#">Individual therapy</a></li>
-          <li><a href="#">Couples therapy</a></li>
-          <li><a href="#">Teen therapy</a></li>
-          <li><a href="#">Psychiatry</a></li>
-          <li><a href="#">Group sessions</a></li>
+          <li><a href="#how">How it works</a></li>
+          <li><a href="#therapists">Our therapists</a></li>
+          <li><a href="#pricing">Pricing</a></li>
+          <li><a href="#">Take the quiz</a></li>
         </ul>
       </div>
       <div>
         <p class="footer__col-title">Company</p>
         <ul class="footer__links">
-          <li><a href="#">About us</a></li>
-          <li><a href="#">For therapists</a></li>
-          <li><a href="#">Our therapists</a></li>
+          <li><a href="#">About</a></li>
+          <li><a href="#">Contact</a></li>
           <li><a href="#">Careers</a></li>
-          <li><a href="#">Press</a></li>
-        </ul>
-      </div>
-      <div>
-        <p class="footer__col-title">Support</p>
-        <ul class="footer__links">
-          <li><a href="#">Help centre</a></li>
-          <li><a href="#">Crisis resources</a></li>
-          <li><a href="#">Privacy policy</a></li>
-          <li><a href="#">Terms of service</a></li>
-          <li><a href="#">Accessibility</a></li>
+          <li><a href="#">For therapists</a></li>
         </ul>
       </div>
     </div>
-    <div class="footer__disclaimer" role="note">
-      <strong>Not a crisis service.</strong> Thrive is not suitable for emergencies. If you are in immediate danger, call 000. For mental health crisis support, call Lifeline on 13 11 14. Therapy provided on this platform does not constitute a clinical care relationship under all regulatory definitions. Consult your GP for medical advice.
+    <div class="footer__crisis">
+      <p class="footer__crisis-title">In a crisis?</p>
+      <p>Thrive isn't for emergencies. If you're in crisis, please call your local emergency line or a crisis hotline in your area. In Australia, call Lifeline on 13 11 14.</p>
     </div>
     <div class="footer__bottom">
       <span>&copy; 2026 Thrive Health Pty Ltd. All rights reserved.</span>
@@ -2091,7 +1007,6 @@ ul { list-style: none; }
         <a href="#">Privacy</a>
         <a href="#">Terms</a>
         <a href="#">Cookies</a>
-        <a href="#">Sitemap</a>
       </div>
     </div>
   </div>
@@ -2113,69 +1028,63 @@ ul { list-style: none; }
   apply(saved || (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'));
   btn.addEventListener('click', () => {
     const next = root.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
-    apply(next);
-    localStorage.setItem('thrive-theme', next);
+    apply(next); localStorage.setItem('thrive-theme', next);
   });
+})();
+
+/* ── MOBILE DRAWER ── */
+(function () {
+  const backdrop  = document.getElementById('mobileDrawer');
+  const hamburger = document.getElementById('navHamburger');
+  const closeBtn  = document.getElementById('drawerClose');
+  function openDrawer()  { backdrop.classList.add('open'); backdrop.removeAttribute('aria-hidden'); hamburger.setAttribute('aria-expanded','true'); document.body.style.overflow='hidden'; }
+  function closeDrawer() { backdrop.classList.remove('open'); backdrop.setAttribute('aria-hidden','true'); hamburger.setAttribute('aria-expanded','false'); document.body.style.overflow=''; }
+  hamburger.addEventListener('click', openDrawer);
+  closeBtn.addEventListener('click', closeDrawer);
+  backdrop.addEventListener('click', e => { if (e.target === backdrop) closeDrawer(); });
+  document.addEventListener('keydown', e => { if (e.key === 'Escape' && backdrop.classList.contains('open')) closeDrawer(); });
+  backdrop.querySelectorAll('a').forEach(a => a.addEventListener('click', closeDrawer));
 })();
 
 /* ── FAQ ── */
 document.querySelectorAll('.faq-btn').forEach(btn => {
   btn.addEventListener('click', function () {
     const open = this.getAttribute('aria-expanded') === 'true';
-    document.querySelectorAll('.faq-btn').forEach(b => b.setAttribute('aria-expanded', 'false'));
+    document.querySelectorAll('.faq-btn').forEach(b => b.setAttribute('aria-expanded','false'));
     document.querySelectorAll('.faq-answer').forEach(a => a.classList.remove('open'));
-    if (!open) {
-      this.setAttribute('aria-expanded', 'true');
-      document.getElementById(this.getAttribute('aria-controls')).classList.add('open');
-    }
+    if (!open) { this.setAttribute('aria-expanded','true'); document.getElementById(this.getAttribute('aria-controls')).classList.add('open'); }
   });
 });
 
-/* ── TREAT TAGS ── */
-document.querySelectorAll('.treat-tag').forEach(tag => {
-  tag.addEventListener('click', function () {
-    document.querySelectorAll('.treat-tag').forEach(t => t.classList.remove('treat-tag--active'));
-    this.classList.add('treat-tag--active');
+/* ── TREAT CARDS ── */
+document.querySelectorAll('.treat-card').forEach(card => {
+  card.addEventListener('click', function () {
+    document.querySelectorAll('.treat-card').forEach(c => c.classList.remove('treat-card--active'));
+    this.classList.add('treat-card--active');
   });
 });
 
 /* ── AUTH MODAL ── */
 (function () {
-  const backdrop  = document.getElementById('authModal');
-  const closeBtn  = document.getElementById('authClose');
-  const tabs      = backdrop.querySelectorAll('.modal__tab');
-  const panelSI   = document.getElementById('panelSignin');
-  const panelSU   = document.getElementById('panelSignup');
+  const backdrop    = document.getElementById('authModal');
+  const closeBtn    = document.getElementById('authClose');
+  const tabs        = backdrop.querySelectorAll('.modal__tab');
+  const panelSI     = document.getElementById('panelSignin');
+  const panelSU     = document.getElementById('panelSignup');
   const connectNote = document.getElementById('connectNote');
   const connectName = document.getElementById('connectName');
 
   function openAuth(tab, therapistName) {
     switchTab(tab || 'signup');
-    if (therapistName) {
-      connectNote.style.display = 'flex';
-      connectName.textContent = therapistName;
-    } else {
-      connectNote.style.display = 'none';
-    }
+    connectNote.style.display = therapistName ? 'flex' : 'none';
+    if (therapistName) connectName.textContent = therapistName;
     backdrop.classList.add('open');
     document.body.style.overflow = 'hidden';
-    setTimeout(() => {
-      const first = backdrop.querySelector('.form-input');
-      if (first) first.focus();
-    }, 240);
+    setTimeout(() => { const f = backdrop.querySelector('.form-input'); if (f) f.focus(); }, 240);
   }
-
-  function closeAuth() {
-    backdrop.classList.remove('open');
-    document.body.style.overflow = '';
-  }
-
+  function closeAuth() { backdrop.classList.remove('open'); document.body.style.overflow = ''; }
   function switchTab(name) {
-    tabs.forEach(t => {
-      const active = t.dataset.tab === name;
-      t.classList.toggle('active', active);
-      t.setAttribute('aria-selected', active);
-    });
+    tabs.forEach(t => { const a = t.dataset.tab === name; t.classList.toggle('active',a); t.setAttribute('aria-selected',a); });
     panelSI.style.display = name === 'signin' ? '' : 'none';
     panelSU.style.display = name === 'signup' ? '' : 'none';
   }
@@ -2184,28 +1093,13 @@ document.querySelectorAll('.treat-tag').forEach(tag => {
   closeBtn.addEventListener('click', closeAuth);
   backdrop.addEventListener('click', e => { if (e.target === backdrop) closeAuth(); });
   document.addEventListener('keydown', e => { if (e.key === 'Escape' && backdrop.classList.contains('open')) closeAuth(); });
-
   document.querySelectorAll('.js-open-auth').forEach(btn => {
-    btn.addEventListener('click', function () {
-      const tab = this.dataset.tab || 'signup';
-      const tName = this.dataset.therapist || null;
-      openAuth(tab, tName);
-    });
+    btn.addEventListener('click', function () { openAuth(this.dataset.tab || 'signup', this.dataset.therapist || null); });
   });
-
-  /* Give each therapist connect button its name context */
-  const therapistNames = ['Dr. Amara Osei', 'James Whitfield', 'Dr. Priya Sharma', 'Marcus Chen'];
-  document.querySelectorAll('.t-card__btn').forEach((btn, i) => {
-    btn.dataset.therapist = therapistNames[i] || null;
-  });
-
-  /* Demo: form submit shows a toast instead of navigating */
+  const tNames = ['Dr. Amara Osei','James Whitfield','Dr. Priya Sharma','Marcus Chen'];
+  document.querySelectorAll('.t-card__btn').forEach((btn,i) => { btn.dataset.therapist = tNames[i] || null; });
   backdrop.querySelectorAll('.modal-form-btn, .modal-google').forEach(btn => {
-    btn.addEventListener('click', function (e) {
-      e.preventDefault();
-      closeAuth();
-      showToast('Welcome to Thrive! Your account is being set up.');
-    });
+    btn.addEventListener('click', e => { e.preventDefault(); closeAuth(); showToast('Welcome to Thrive! Your account is being set up.'); });
   });
 })();
 
@@ -2218,94 +1112,43 @@ document.querySelectorAll('.treat-tag').forEach(tag => {
   const timerEl   = document.getElementById('sessionTimer');
   const micLabel  = document.getElementById('micLabel');
   const camLabel  = document.getElementById('camLabel');
-  let timerInterval = null;
-  let seconds = 0;
+  let timerInterval = null, seconds = 0;
 
   function startTimer() {
-    seconds = 0;
-    clearInterval(timerInterval);
+    seconds = 0; clearInterval(timerInterval);
     timerInterval = setInterval(() => {
       seconds++;
-      const m = String(Math.floor(seconds / 60)).padStart(2, '0');
-      const s = String(seconds % 60).padStart(2, '0');
-      timerEl.textContent = m + ':' + s;
+      timerEl.textContent = String(Math.floor(seconds/60)).padStart(2,'0') + ':' + String(seconds%60).padStart(2,'0');
     }, 1000);
   }
-
-  function openVideo() {
-    vBackdrop.classList.add('open');
-    document.body.style.overflow = 'hidden';
-    startTimer();
-    btnEnd.focus();
-  }
-
+  function openVideo()  { vBackdrop.classList.add('open'); document.body.style.overflow='hidden'; startTimer(); btnEnd.focus(); }
   function closeVideo() {
-    vBackdrop.classList.remove('open');
-    document.body.style.overflow = '';
-    clearInterval(timerInterval);
-    timerEl.textContent = '00:00';
-    btnMic.classList.remove('muted');
-    btnCam.classList.remove('muted');
-    micLabel.textContent = 'Mute';
-    camLabel.textContent = 'Camera';
+    vBackdrop.classList.remove('open'); document.body.style.overflow=''; clearInterval(timerInterval);
+    timerEl.textContent='00:00'; btnMic.classList.remove('muted'); btnCam.classList.remove('muted');
+    micLabel.textContent='Mute'; camLabel.textContent='Camera';
   }
-
-  btnEnd.addEventListener('click', () => {
-    closeVideo();
-    showToast('Session ended. A summary has been sent to your email.');
-  });
-
+  btnEnd.addEventListener('click', () => { closeVideo(); showToast('Session ended. A summary has been sent to your email.'); });
   btnMic.addEventListener('click', function () {
-    this.classList.toggle('muted');
-    const muted = this.classList.contains('muted');
-    this.setAttribute('aria-pressed', muted);
-    this.setAttribute('aria-label', muted ? 'Unmute microphone' : 'Mute microphone');
-    micLabel.textContent = muted ? 'Unmute' : 'Mute';
+    this.classList.toggle('muted'); const m = this.classList.contains('muted');
+    this.setAttribute('aria-pressed',m); this.setAttribute('aria-label',m?'Unmute microphone':'Mute microphone');
+    micLabel.textContent = m ? 'Unmute' : 'Mute';
   });
-
   btnCam.addEventListener('click', function () {
-    this.classList.toggle('muted');
-    const off = this.classList.contains('muted');
-    this.setAttribute('aria-pressed', off);
-    this.setAttribute('aria-label', off ? 'Turn on camera' : 'Turn off camera');
+    this.classList.toggle('muted'); const off = this.classList.contains('muted');
+    this.setAttribute('aria-pressed',off); this.setAttribute('aria-label',off?'Turn on camera':'Turn off camera');
     camLabel.textContent = off ? 'Cam off' : 'Camera';
   });
-
   document.addEventListener('keydown', e => { if (e.key === 'Escape' && vBackdrop.classList.contains('open')) closeVideo(); });
-
-  /* Video card in hero */
-  const heroCard = document.getElementById('heroVideoCard');
-  if (heroCard) {
-    heroCard.addEventListener('click', openVideo);
-    heroCard.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); openVideo(); } });
-  }
 })();
 
 /* ── TOAST ── */
 function showToast(msg) {
   const t = document.createElement('div');
   t.textContent = msg;
-  Object.assign(t.style, {
-    position: 'fixed', bottom: '1.5rem', left: '50%',
-    transform: 'translateX(-50%) translateY(8px)',
-    background: 'var(--c-stats)', color: 'white',
-    padding: '0.75rem 1.5rem', borderRadius: '50px',
-    fontSize: '0.9375rem', fontWeight: '600',
-    boxShadow: '0 4px 24px rgba(0,0,0,0.3)',
-    zIndex: '9999', opacity: '0',
-    transition: 'opacity 0.2s, transform 0.2s',
-    whiteSpace: 'nowrap', maxWidth: '90vw',
-  });
+  Object.assign(t.style, { position:'fixed', bottom:'1.5rem', left:'50%', transform:'translateX(-50%) translateY(8px)', background:'#2B2445', color:'white', padding:'0.75rem 1.5rem', borderRadius:'50px', fontSize:'0.9375rem', fontWeight:'600', boxShadow:'0 4px 24px rgba(43,36,69,0.3)', zIndex:'9999', opacity:'0', transition:'opacity 0.2s, transform 0.2s', whiteSpace:'nowrap', maxWidth:'90vw' });
   document.body.appendChild(t);
-  requestAnimationFrame(() => {
-    t.style.opacity = '1';
-    t.style.transform = 'translateX(-50%) translateY(0)';
-  });
-  setTimeout(() => {
-    t.style.opacity = '0';
-    t.style.transform = 'translateX(-50%) translateY(8px)';
-    setTimeout(() => t.remove(), 250);
-  }, 3500);
+  requestAnimationFrame(() => { t.style.opacity='1'; t.style.transform='translateX(-50%) translateY(0)'; });
+  setTimeout(() => { t.style.opacity='0'; t.style.transform='translateX(-50%) translateY(8px)'; setTimeout(() => t.remove(), 300); }, 3500);
 }
 </script>
 </body>
