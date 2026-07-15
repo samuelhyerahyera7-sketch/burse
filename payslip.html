@@ -30,12 +30,13 @@
       .meta { grid-template-columns:1fr; }
       .net-box { flex-wrap:wrap; gap:6px; }
     }
-    h2.section { font-size:0.78rem; font-weight:700; text-transform:uppercase; letter-spacing:0.06em; color:#7a8fb0; margin:20px 0 8px; }
+    h2.section { font-size:0.78rem; font-weight:700; text-transform:uppercase; letter-spacing:0.06em; color:#7a8fb0; margin:20px 0 8px; page-break-after:avoid; break-after:avoid; }
     table { width:100%; border-collapse:collapse; font-size:0.85rem; }
+    tr { page-break-inside:avoid; break-inside:avoid; }
     td { padding:6px 0; border-bottom:1px solid #eef1f6; }
     td:last-child { text-align:right; font-variant-numeric:tabular-nums; }
     .total-row td { font-weight:800; border-top:2px solid #0e1c40; border-bottom:none; padding-top:10px; }
-    .net-box { background:#0e1c40; color:#fff; border-radius:10px; padding:16px 20px; display:flex; justify-content:space-between; align-items:center; margin-top:20px; }
+    .net-box { background:#0e1c40; color:#fff; border-radius:10px; padding:16px 20px; display:flex; justify-content:space-between; align-items:center; margin-top:20px; page-break-inside:avoid; break-inside:avoid; }
     .net-box .label { font-size:0.8rem; color:rgba(255,255,255,0.6); }
     .net-box .val { font-size:1.4rem; font-weight:900; }
     .foot { margin-top:24px; font-size:0.72rem; color:#7a8fb0; line-height:1.6; }
@@ -250,14 +251,16 @@
       btn.disabled = true; btn.textContent = 'Preparing…';
       try {
         await loadHtml2Pdf();
+        const sheetEl = document.getElementById('sheet');
         await window.html2pdf()
           .set({
             filename: `${window.__payslipFilename || 'payslip'}.pdf`,
             margin: 10,
             jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' },
             html2canvas: { scale: 2, useCORS: true },
+            pagebreak: { mode: ['css', 'legacy'], avoid: ['tr', '.net-box', '.meta'] },
           })
-          .from(document.getElementById('sheet'))
+          .from(sheetEl)
           .save();
       } catch (e) {
         alert(e.message || 'Could not generate the PDF. Try Print instead and choose "Save as PDF".');

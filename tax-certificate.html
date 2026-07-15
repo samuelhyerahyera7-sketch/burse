@@ -30,8 +30,9 @@
       .sheet { padding:20px; }
       .meta { grid-template-columns:1fr; }
     }
-    h2.section { font-size:0.75rem; font-weight:700; text-transform:uppercase; letter-spacing:0.06em; color:#7a8fb0; margin:22px 0 8px; }
+    h2.section { font-size:0.75rem; font-weight:700; text-transform:uppercase; letter-spacing:0.06em; color:#7a8fb0; margin:22px 0 8px; page-break-after:avoid; break-after:avoid; }
     table { width:100%; border-collapse:collapse; font-size:0.85rem; }
+    tr { page-break-inside:avoid; break-inside:avoid; }
     td { padding:7px 0; border-bottom:1px solid #eef1f6; vertical-align:top; }
     td.code { color:#7a8fb0; font-variant-numeric:tabular-nums; width:52px; }
     td:last-child { text-align:right; font-variant-numeric:tabular-nums; }
@@ -244,14 +245,16 @@
       btn.disabled = true; btn.textContent = 'Preparing…';
       try {
         await loadHtml2Pdf();
+        const sheetEl = document.getElementById('sheet');
         await window.html2pdf()
           .set({
             filename: `${window.__certFilename || 'tax-certificate'}.pdf`,
             margin: 10,
             jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' },
             html2canvas: { scale: 2, useCORS: true },
+            pagebreak: { mode: ['css', 'legacy'], avoid: ['tr'] },
           })
-          .from(document.getElementById('sheet'))
+          .from(sheetEl)
           .save();
       } catch (e) {
         alert(e.message || 'Could not generate the PDF. Try Print instead and choose "Save as PDF".');

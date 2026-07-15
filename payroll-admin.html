@@ -75,6 +75,7 @@
     .card-title { font-size:0.92rem; font-weight:700; }
 
     table { width:100%; min-width:520px; border-collapse:collapse; }
+    table tr { page-break-inside:avoid; break-inside:avoid; }
     [id$="Wrap"], #dashCurrentRun { overflow-x:auto; -webkit-overflow-scrolling:touch; }
     th { font-size:0.68rem; font-weight:700; letter-spacing:0.06em; text-transform:uppercase; color:var(--soft); padding:8px 12px; text-align:left; border-bottom:1px solid var(--border); }
     td { font-size:0.83rem; padding:12px; border-bottom:1px solid var(--border); }
@@ -386,6 +387,11 @@
             <div class="form-group"><label>Or select an employee <span style="font-weight:400;color:var(--soft)">(shows their full history)</span></label><select id="payslipsStaffSelect" onchange="document.getElementById('payslipsRunSelect').value=''; loadPayslipsForStaff();"><option value="">— choose an employee —</option></select></div>
           </div>
           <div id="payslipsTableWrap"><div class="empty">Select a pay run to view its payslips.</div></div>
+        </div>
+        <div class="card" id="payrollSummaryCard" style="display:none">
+          <div class="card-header"><div class="card-title">Payroll summary — all employees</div></div>
+          <p class="form-hint" style="margin-bottom:14px">Every employee in this pay run on a single sheet — gross, deductions and net pay side by side. Handy for a quick sign-off instead of opening each payslip.</p>
+          <div id="payrollSummaryWrap"></div>
         </div>
       </section>
 
@@ -2472,19 +2478,56 @@ function renderPayslipsTable(payslips, opts) {
 async function loadPayslipsForRun() {
   const runId = document.getElementById('payslipsRunSelect').value;
   const wrap = document.getElementById('payslipsTableWrap');
-  if (!runId) { wrap.innerHTML = '<div class="empty">Select a pay run or an employee to view payslips.</div>'; return; }
+  if (!runId) { wrap.innerHTML = '<div class="empty">Select a pay run or an employee to view payslips.</div>'; document.getElementById('payrollSummaryCard').style.display = 'none'; return; }
   wrap.innerHTML = '<div class="loading">Loading…</div>';
   const { data: payslips } = await sb.from('payroll_payslips').select('*, payroll_staff(full_name)').eq('run_id', runId);
   renderPayslipsTable(payslips, { showPeriod: false });
+  loadPayrollSummary(runId);
 }
 
 async function loadPayslipsForStaff() {
   const staffId = document.getElementById('payslipsStaffSelect').value;
   const wrap = document.getElementById('payslipsTableWrap');
+  document.getElementById('payrollSummaryCard').style.display = 'none';
   if (!staffId) { wrap.innerHTML = '<div class="empty">Select a pay run or an employee to view payslips.</div>'; return; }
   wrap.innerHTML = '<div class="loading">Loading…</div>';
   const { data: payslips } = await sb.from('payroll_payslips').select('*, payroll_runs(period_start, period_end)').eq('staff_id', staffId).order('created_at', { ascending: false });
   renderPayslipsTable(payslips, { showPeriod: true });
+}
+
+async function loadPayrollSummary(runId) {
+  const card = document.getElementById('payrollSummaryCard');
+  const wrap = document.getElementById('payrollSummaryWrap');
+  const run = runsCache.find(r => r.id === runId);
+  const { data: payslips } = await sb.from('payroll_payslips').select('*, payroll_staff(full_name, employee_number, job_title)').eq('run_id', runId).order('payroll_staff(full_name)');
+  if (!payslips || payslips.length === 0) { card.style.display = 'none'; return; }
+  card.style.display = 'block';
+
+  const totals = payslips.reduce((acc, p) => ({
+    gross: acc.gross + Number(p.gross_pay), paye: acc.paye + Number(p.paye), uif: acc.uif + Number(p.uif_employee),
+    otherDed: acc.otherDed + (Number(p.total_deductions) - Number(p.paye) - Number(p.uif_employee)), net: acc.net + Number(p.net_pay),
+  }), { gross: 0, paye: 0, uif: 0, otherDed: 0, net: 0 });
+
+  wrap.innerHTML = `<table id="payrollSummaryTable"><thead><tr>
+      <th>Employee</th><th>Emp. no.</th><th>Job title</th>
+      <th class="num">Gross pay</th><th class="num">PAYE</th><th class="num">UIF</th><th class="num">Other deductions</th><th class="num">Net pay</th>
+    </tr></thead><tbody>
+    ${payslips.map(p => `<tr>
+      <td>${esc(p.payroll_staff?.full_name || '—')}</td>
+      <td>${esc(p.payroll_staff?.employee_number || '—')}</td>
+      <td>${esc(p.payroll_staff?.job_title || '—')}</td>
+      <td class="num">${money(p.gross_pay)}</td>
+      <td class="num">${money(p.paye)}</td>
+      <td class="num">${money(p.uif_employee)}</td>
+      <td class="num">${money(Number(p.total_deductions) - Number(p.paye) - Number(p.uif_employee))}</td>
+      <td class="num"><strong>${money(p.net_pay)}</strong></td>
+    </tr>`).join('')}
+    <tr class="total-row">
+      <td colspan="3">Total — ${payslips.length} employee(s)</td>
+      <td class="num">${money(totals.gross)}</td><td class="num">${money(totals.paye)}</td><td class="num">${money(totals.uif)}</td><td class="num">${money(totals.otherDed)}</td><td class="num">${money(totals.net)}</td>
+    </tr>
+    </tbody></table>
+    ${exportButtonsHtml('payrollSummaryWrap', `burse-payroll-summary-${run?.period_start || 'run'}`, 'Payroll Summary')}`;
 }
 
 async function emailPayslip(payslipId, btnEl) {
@@ -3595,6 +3638,7 @@ async function downloadTablePdf(containerId, filename) {
       margin: 10,
       jsPDF: { unit: 'mm', format: 'a4', orientation: 'landscape' },
       html2canvas: { scale: 2, useCORS: true, ignoreElements: (node) => node.tagName === 'BUTTON' },
+      pagebreak: { mode: ['css', 'legacy'], avoid: ['tr'] },
     }).from(el).save();
   } catch (e) {
     alert(e.message || 'Could not generate the PDF.');
