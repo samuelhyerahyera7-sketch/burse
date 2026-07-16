@@ -132,12 +132,13 @@
     function esc(str) { return String(str??'').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
 
     (async function () {
+      const sheet = document.getElementById('sheet');
+      try {
       const { data: sessionData } = await sb.auth.getSession();
       if (!sessionData.session) { window.location.href = '/login'; return; }
 
       const params = new URLSearchParams(window.location.search);
       const id = params.get('id');
-      const sheet = document.getElementById('sheet');
       if (!id) { sheet.innerHTML = '<div class="error">No payslip specified.</div>'; return; }
 
       const { data: p, error } = await sb
@@ -146,7 +147,8 @@
         .eq('id', id)
         .single();
 
-      if (error || !p) { sheet.innerHTML = '<div class="error">Payslip not found, or you do not have access to it.</div>'; return; }
+      if (error || !p) { sheet.innerHTML = `<div class="error">Payslip not found, or you do not have access to it.${error ? `<br><span style="font-size:0.72rem;color:#b3b8c4">${esc(error.message)}</span>` : ''}</div>`; return; }
+      if (!p.payroll_runs) { sheet.innerHTML = '<div class="error">This payslip\'s pay run could not be loaded. Contact your employer.</div>'; return; }
 
       const staff = p.payroll_staff;
       const run = p.payroll_runs;
@@ -250,6 +252,11 @@
       `;
       document.getElementById('btnRow').style.display = 'flex';
       window.__payslipFilename = `Payslip-${(staff?.full_name || 'employee').replace(/[^a-z0-9]+/gi, '-')}-${run.period_start}`;
+      } catch (e) {
+        console.error('Payslip render failed:', e);
+        sheet.innerHTML = `<div class="error">Something went wrong showing this payslip.<br><span style="font-size:0.72rem;color:#b3b8c4">${esc(e && e.message || String(e))}</span></div>`;
+        document.getElementById('btnRow').style.display = 'none';
+      }
     })();
 
     // Loaded on demand so a plain print doesn't pay for a PDF library it

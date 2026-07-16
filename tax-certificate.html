@@ -129,13 +129,14 @@
     function sum(rows, key) { return rows.reduce((t, r) => t + Number(r[key] || 0), 0); }
 
     (async function () {
+      const sheet = document.getElementById('sheet');
+      try {
       const { data: sessionData } = await sb.auth.getSession();
       if (!sessionData.session) { window.location.href = '/login'; return; }
 
       const params = new URLSearchParams(window.location.search);
       const staffId = params.get('staff_id');
       const taxYear = params.get('tax_year');
-      const sheet = document.getElementById('sheet');
       if (!staffId || !taxYear) { sheet.innerHTML = '<div class="error">No employee or tax year specified.</div>'; return; }
 
       const { data: staff, error: staffErr } = await sb.from('payroll_staff').select('*, payroll_companies(*)').eq('id', staffId).single();
@@ -224,6 +225,11 @@
       `;
       document.getElementById('actions').style.display = 'flex';
       window.__certFilename = `Tax-Certificate-${(staff.full_name || 'employee').replace(/[^a-z0-9]+/gi, '-')}-${taxYear.replace('/', '-')}`;
+      } catch (e) {
+        console.error('Tax certificate render failed:', e);
+        sheet.innerHTML = `<div class="error">Something went wrong showing this certificate.<br><span style="font-size:0.72rem;color:#b3b8c4">${esc(e && e.message || String(e))}</span></div>`;
+        document.getElementById('actions').style.display = 'none';
+      }
     })();
 
     function loadHtml2Pdf() {
