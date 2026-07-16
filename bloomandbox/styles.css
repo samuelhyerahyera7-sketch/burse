@@ -64,9 +64,9 @@ ul{list-style:none}
 .icon-btn svg{width:19px;height:19px;stroke:var(--ink2);fill:none;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
 .icon-btn-label{font-size:.6rem;font-weight:600;color:var(--muted);letter-spacing:.02em}
 .cart-dot{position:absolute;top:-5px;right:-5px;width:16px;height:16px;background:var(--rose);border-radius:50%;border:2px solid var(--white);display:flex;align-items:center;justify-content:center;font-size:.6rem;font-weight:700;color:#fff;z-index:1}
-.mob-menu{display:none;width:38px;height:38px;align-items:center;justify-content:center;background:none;border:1.5px solid var(--border);border-radius:50%;cursor:pointer;flex-direction:column;gap:5px;padding:0;transition:border-color var(--ease),background var(--ease)}
-.mob-menu:hover{border-color:var(--rose)}
-.mob-menu span{display:block;width:16px;height:1.5px;background:var(--ink2);border-radius:1px;transition:all .2s ease}
+.mob-menu{display:none;width:28px;height:28px;align-items:center;justify-content:center;background:none;border:none;cursor:pointer;flex-direction:column;gap:5px;padding:0}
+.mob-menu span{display:block;width:22px;height:2px;background:var(--ink2);border-radius:1px;transition:all .2s ease}
+.mob-menu:hover span{background:var(--rose)}
 .mob-nav{display:none;position:fixed;top:76px;left:0;right:0;background:var(--white);border-bottom:1px solid var(--border);z-index:199;flex-direction:column;padding:0 40px;box-shadow:0 8px 24px rgba(0,0,0,.08)}
 body.nav-open .mob-nav{display:flex}
 .mob-nav a{padding:15px 0;font-size:.96rem;font-weight:600;color:var(--ink2);border-bottom:1px solid var(--border);transition:color var(--ease)}
