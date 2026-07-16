@@ -55,8 +55,10 @@
     @media (min-width: 900px) { .topbar { padding:0 28px; } }
     .nav-burger { display:none; align-items:center; justify-content:center; width:36px; height:36px; border-radius:8px; border:1px solid var(--border); background:none; color:var(--navy-dark); flex-shrink:0; }
     .nav-burger svg { width:18px; height:18px; }
-    .topbar-left { display:flex; align-items:center; gap:12px; }
-    .topbar-title { font-size:1rem; font-weight:700; }
+    .topbar-left { display:flex; align-items:center; gap:12px; min-width:0; flex:1; }
+    .topbar-title { font-size:1rem; font-weight:700; min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+    #companySwitcherRoot { flex-shrink:0; }
+    @media (max-width:480px) { .company-switch-btn { max-width:130px; } }
     .content { padding:28px; max-width:1200px; }
     .section { display:none; } .section.active { display:block; }
 

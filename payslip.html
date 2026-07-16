@@ -155,6 +155,9 @@
       const otherDeductions = Array.isArray(p.other_deductions_json) ? p.other_deductions_json : [];
       const fringeBenefits = Array.isArray(p.fringe_benefits_json) ? p.fringe_benefits_json : [];
 
+      const employmentTypeLabel = { permanent: 'Permanent', fixed_term: 'Fixed term', part_time: 'Part time' }[staff?.employment_type] || staff?.employment_type || '—';
+      const retirementFundLabel = { pension: 'Pension fund', provident: 'Provident fund', ra: 'Retirement annuity', none: 'None' }[staff?.retirement_fund_type] || staff?.retirement_fund_type || '—';
+
       sheet.innerHTML = `
         <div class="top">
           <div>
@@ -163,22 +166,41 @@
           </div>
           <div style="text-align:right">
             <p style="font-weight:700;color:#0e1c40">${esc(company?.trading_name || '')}</p>
+            ${company?.registered_name && company.registered_name !== company.trading_name ? `<p>${esc(company.registered_name)}</p>` : ''}
             ${company?.address ? `<p>${esc(company.address)}</p>` : ''}
+            ${company?.company_reg_number ? `<p>Reg. no. ${esc(company.company_reg_number)}</p>` : ''}
             <p>PAYE ${esc(company?.paye_reference || '—')}</p>
             <p>UIF ${esc(company?.uif_reference || '—')}</p>
+            ${!company?.sdl_exempt ? `<p>SDL ${esc(company?.sdl_reference || '—')}</p>` : ''}
           </div>
         </div>
 
         <div class="meta">
           <div><span>Employee</span><span style="font-weight:600">${esc(staff?.full_name)}</span></div>
           <div><span>Employee no.</span><span>${esc(staff?.employee_number || '—')}</span></div>
-          <div><span>Job title</span><span>${esc(staff?.job_title || '—')}</span></div>
+          <div><span>ID number</span><span>${esc(staff?.id_number || '—')}</span></div>
           <div><span>Tax number</span><span>${esc(staff?.tax_number || '—')}</span></div>
+          <div><span>Job title</span><span>${esc(staff?.job_title || '—')}</span></div>
+          <div><span>Department</span><span>${esc(staff?.department || '—')}</span></div>
+          <div><span>Employment type</span><span>${esc(employmentTypeLabel)}</span></div>
+          <div><span>Start date</span><span>${esc(staff?.start_date || '—')}</span></div>
           <div><span>Pay frequency</span><span style="text-transform:capitalize">${esc(staff?.pay_frequency)}</span></div>
           <div><span>Pay date</span><span>${esc(run.pay_date)}</span></div>
+          <div><span>Pay period</span><span>${esc(run.period_start)} – ${esc(run.period_end)}</span></div>
           <div><span>Tax year</span><span>${esc(run.tax_year)}</span></div>
           <div><span>Status</span><span style="text-transform:capitalize">${esc(run.status)}</span></div>
+          ${staff?.retirement_fund_type ? `<div><span>Retirement fund</span><span>${esc(retirementFundLabel)}</span></div>` : ''}
+          ${Number(staff?.medical_aid_dependants) ? `<div><span>Medical aid dependants</span><span>${esc(staff.medical_aid_dependants)}</span></div>` : ''}
         </div>
+
+        ${staff?.bank_name || staff?.bank_account_number ? `
+        <h2 class="section">Payment details</h2>
+        <div class="meta">
+          <div><span>Bank</span><span>${esc(staff?.bank_name || '—')}</span></div>
+          <div><span>Account type</span><span>${esc(staff?.account_type || '—')}</span></div>
+          <div><span>Account number</span><span>${esc(staff?.bank_account_number || '—')}</span></div>
+          <div><span>Branch code</span><span>${esc(staff?.bank_branch_code || '—')}</span></div>
+        </div>` : ''}
 
         <h2 class="section">Earnings</h2>
         <table>
