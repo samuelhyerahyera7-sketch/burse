@@ -281,12 +281,17 @@
       try {
         await loadHtml2Pdf();
         const sheetEl = document.getElementById('sheet');
+        // html2canvas captures relative to the page's current scroll position —
+        // on a long page (very likely on mobile, since this button sits below
+        // a full payslip) that leaves the captured canvas blank or offset
+        // unless we're pinned to the top first.
+        window.scrollTo(0, 0);
         await window.html2pdf()
           .set({
             filename: `${window.__payslipFilename || 'payslip'}.pdf`,
             margin: 10,
             jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' },
-            html2canvas: { scale: 2, useCORS: true },
+            html2canvas: { scale: 2, useCORS: true, scrollX: 0, scrollY: 0 },
             pagebreak: { mode: ['css', 'legacy'], avoid: ['tr', '.net-box', '.meta'] },
           })
           .from(sheetEl)

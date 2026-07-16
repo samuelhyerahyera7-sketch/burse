@@ -3658,11 +3658,12 @@ async function downloadTablePdf(containerId, filename) {
   if (!el) return;
   try {
     await loadHtml2PdfLib();
+    window.scrollTo(0, 0);
     await window.html2pdf().set({
       filename,
       margin: 10,
       jsPDF: { unit: 'mm', format: 'a4', orientation: 'landscape' },
-      html2canvas: { scale: 2, useCORS: true, ignoreElements: (node) => node.tagName === 'BUTTON' },
+      html2canvas: { scale: 2, useCORS: true, scrollX: 0, scrollY: 0, ignoreElements: (node) => node.tagName === 'BUTTON' },
       pagebreak: { mode: ['css', 'legacy'], avoid: ['tr'] },
     }).from(el).save();
   } catch (e) {
