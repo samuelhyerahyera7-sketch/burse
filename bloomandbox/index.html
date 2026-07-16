@@ -3,8 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Bloom &amp; Box – Flowers &amp; Gifts Delivered Across South Africa</title>
-<meta name="description" content="Fresh flowers, curated gift hampers, chocolates and plants delivered same-day across South Africa.">
+<title>Bloom &amp; Box – Flowers &amp; Gifts Delivered Across Gauteng</title>
+<meta name="description" content="Fresh flowers, curated gift hampers, chocolates and plants delivered same-day across Gauteng, South Africa.">
 <link rel="stylesheet" href="styles.css">
 </head>
 <body>
@@ -12,57 +12,43 @@
 <!-- HEADER -->
 <header class="hdr" id="hdr">
   <div class="hdr-inner">
-
-    <!-- LOGO -->
-    <a href="#" class="logo">
+    <a href="index.html" class="logo">
       <span class="logo-name">Bloom <span class="amp">&amp;</span> Box</span>
       <span class="logo-tag">Flowers &amp; Gifts</span>
     </a>
-
-    <!-- SEARCH -->
     <div class="hdr-search">
       <svg class="search-icon" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
       <input type="search" placeholder="Search flowers, gifts, hampers...">
     </div>
-
-    <!-- NAV -->
     <nav class="hdr-nav">
-      <a href="#occasions">Occasions</a>
-      <a href="#shop">Flowers</a>
-      <a href="#gifts">Gifts</a>
+      <a href="products.html?cat=all">Shop</a>
+      <a href="products.html?cat=flowers">Flowers</a>
+      <a href="products.html?cat=hampers">Gifts</a>
       <a href="#contact">Help</a>
     </nav>
-
-    <!-- ACTIONS -->
     <div class="hdr-actions">
-      <button class="icon-btn" aria-label="Track Order" title="Track Your Order">
-        <svg viewBox="0 0 24 24"><rect x="1" y="3" width="15" height="13"/><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg>
-        <span class="icon-btn-label">Track</span>
-      </button>
-      <button class="icon-btn" aria-label="Wishlist">
-        <svg viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
-        <span class="icon-btn-label">Saved</span>
-      </button>
-      <button class="icon-btn" aria-label="Cart" style="flex-direction:column;gap:3px;position:relative">
+      <a href="cart.html" class="icon-btn" aria-label="Cart" style="flex-direction:column;gap:3px;position:relative">
         <svg viewBox="0 0 24 24"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
-        <span class="cart-dot">2</span>
+        <span class="cart-count" style="display:none"></span>
         <span class="icon-btn-label">Cart</span>
-      </button>
+      </a>
       <button class="mob-menu" id="mob" aria-label="Menu">
         <span></span><span></span><span></span>
       </button>
     </div>
-
   </div>
 </header>
 
 <!-- MOBILE NAV -->
 <div class="mob-overlay" id="moboverlay"></div>
 <nav class="mob-nav" id="mobnav">
-  <a href="#occasions">Occasions</a>
-  <a href="#shop">Flowers</a>
-  <a href="#gifts">Gifts</a>
+  <a href="products.html?cat=all">Shop All</a>
+  <a href="products.html?cat=flowers">Flowers</a>
+  <a href="products.html?cat=hampers">Gift Hampers</a>
+  <a href="products.html?cat=chocolates">Chocolates</a>
+  <a href="products.html?cat=plants">Plants</a>
   <a href="#contact">Help</a>
+  <a href="cart.html">Cart</a>
 </nav>
 
 <!-- DELIVERY FINDER -->
@@ -94,11 +80,9 @@
           <option value="Alberton"><option value="Germiston"><option value="Boksburg">
           <option value="Benoni"><option value="Kempton Park"><option value="Edenvale">
           <option value="Bedfordview"><option value="Brakpan"><option value="Springs">
-          <option value="Tembisa"><option value="Alexandra"><option value="Diepsloot">
-          <option value="Kyalami"><option value="Rivonia"><option value="Bryanston">
-          <option value="Randpark Ridge"><option value="Sunninghill"><option value="Woodmead">
-          <option value="Vereeniging"><option value="Vanderbijlpark"><option value="Meyerton">
-          <option value="Atteridgeville"><option value="Mamelodi"><option value="Soshanguve">
+          <option value="Tembisa"><option value="Alexandra"><option value="Kyalami">
+          <option value="Rivonia"><option value="Bryanston"><option value="Sunninghill">
+          <option value="Vereeniging"><option value="Vanderbijlpark"><option value="Mamelodi">
         </datalist>
       </div>
       <div class="df-field" style="flex:0.65">
@@ -115,7 +99,7 @@
         </div>
       </div>
     </div>
-    <button class="df-go">Find Gifts &#8594;</button>
+    <a href="products.html?cat=all" class="df-go">Find Gifts &#8594;</a>
   </div>
 </div>
 
@@ -126,8 +110,8 @@
     <h1 class="hero-title">Send <em>Love</em><br>Across Gauteng</h1>
     <p class="hero-desc">Fresh bouquets, luxury hampers, premium chocolates and beautiful plants, hand-delivered across Johannesburg, Pretoria and surrounding areas.</p>
     <div class="hero-btns">
-      <a href="#shop" class="btn btn-primary btn-lg">Shop Flowers</a>
-      <a href="#gifts" class="btn btn-outline btn-lg">Explore Gifts</a>
+      <a href="products.html?cat=flowers" class="btn btn-primary btn-lg">Shop Flowers</a>
+      <a href="products.html?cat=hampers" class="btn btn-outline btn-lg">Explore Gifts</a>
     </div>
     <div class="hero-tags">
       <span class="htag"><svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>Freshness guaranteed</span>
@@ -174,49 +158,49 @@
       <p class="sub">Find the perfect gift for every moment — from joyful celebrations to heartfelt gestures.</p>
     </div>
     <div class="ogrid">
-      <a href="#" class="ocard">
+      <a href="products.html?cat=all" class="ocard">
         <div class="ocard-img oc1">
           <svg class="ocard-icon" viewBox="0 0 60 60"><ellipse cx="25.5" cy="6" rx="2.5" ry="4" fill="currentColor"/><ellipse cx="34.5" cy="7" rx="2" ry="3.5" fill="currentColor"/><rect x="23" y="9" width="5" height="9" rx="2.5" fill="currentColor" opacity=".7"/><rect x="32" y="10" width="4" height="8" rx="2" fill="currentColor" opacity=".7"/><rect x="20" y="18" width="20" height="9" rx="3" fill="currentColor" opacity=".5"/><rect x="13" y="27" width="34" height="11" rx="3" fill="currentColor" opacity=".7"/><rect x="7" y="38" width="46" height="15" rx="3" fill="currentColor"/><circle cx="18" cy="45" r="2" fill="white" opacity=".5"/><circle cx="30" cy="45" r="2" fill="white" opacity=".5"/><circle cx="42" cy="45" r="2" fill="white" opacity=".5"/></svg>
         </div>
         <div class="ocard-name">Birthday</div>
       </a>
-      <a href="#" class="ocard">
+      <a href="products.html?cat=all" class="ocard">
         <div class="ocard-img oc2">
           <svg class="ocard-icon" viewBox="0 0 60 60"><circle cx="21" cy="30" r="11" fill="none" stroke="currentColor" stroke-width="5.5"/><circle cx="39" cy="30" r="11" fill="none" stroke="currentColor" stroke-width="5.5"/></svg>
         </div>
         <div class="ocard-name">Anniversary</div>
       </a>
-      <a href="#" class="ocard">
+      <a href="products.html?cat=flowers" class="ocard">
         <div class="ocard-img oc3">
           <svg class="ocard-icon" viewBox="0 0 60 60"><ellipse cx="30" cy="15" rx="5.5" ry="9" fill="currentColor" opacity=".5"/><ellipse cx="30" cy="45" rx="5.5" ry="9" fill="currentColor" opacity=".5"/><ellipse cx="15" cy="22.5" rx="5.5" ry="9" transform="rotate(-60 15 22.5)" fill="currentColor" opacity=".5"/><ellipse cx="45" cy="22.5" rx="5.5" ry="9" transform="rotate(60 45 22.5)" fill="currentColor" opacity=".5"/><ellipse cx="15" cy="37.5" rx="5.5" ry="9" transform="rotate(60 15 37.5)" fill="currentColor" opacity=".5"/><ellipse cx="45" cy="37.5" rx="5.5" ry="9" transform="rotate(-60 45 37.5)" fill="currentColor" opacity=".5"/><circle cx="30" cy="30" r="10" fill="currentColor"/><circle cx="30" cy="30" r="5" fill="white" opacity=".3"/></svg>
         </div>
         <div class="ocard-name">Get Well Soon</div>
       </a>
-      <a href="#" class="ocard">
+      <a href="products.html?cat=all" class="ocard">
         <div class="ocard-img oc4">
           <svg class="ocard-icon" viewBox="0 0 60 60"><rect x="6" y="16" width="48" height="32" rx="3" fill="currentColor" opacity=".5"/><path d="M6 16 L30 36 L54 16Z" fill="currentColor"/><line x1="6" y1="48" x2="22" y2="34" stroke="currentColor" stroke-width="2" fill="none" opacity=".7"/><line x1="54" y1="48" x2="38" y2="34" stroke="currentColor" stroke-width="2" fill="none" opacity=".7"/></svg>
         </div>
         <div class="ocard-name">Thank You</div>
       </a>
-      <a href="#" class="ocard">
+      <a href="products.html?cat=hampers" class="ocard">
         <div class="ocard-img oc5">
           <svg class="ocard-icon" viewBox="0 0 60 60"><path d="M18 8 H42 L39 33 C37 42 23 42 21 33Z" fill="currentColor"/><path d="M18 12 C10 12 10 26 18 26" fill="none" stroke="currentColor" stroke-width="4.5" stroke-linecap="round"/><path d="M42 12 C50 12 50 26 42 26" fill="none" stroke="currentColor" stroke-width="4.5" stroke-linecap="round"/><rect x="27" y="42" width="6" height="9" rx="1.5" fill="currentColor" opacity=".8"/><rect x="18" y="51" width="24" height="5" rx="2.5" fill="currentColor"/><polygon points="30,14 31.5,19 36.5,19 32.5,22.5 34,27.5 30,24.5 26,27.5 27.5,22.5 23.5,19 28.5,19" fill="white" opacity=".4"/></svg>
         </div>
         <div class="ocard-name">Congratulations</div>
       </a>
-      <a href="#" class="ocard">
+      <a href="products.html?cat=flowers" class="ocard">
         <div class="ocard-img oc6">
           <svg class="ocard-icon" viewBox="0 0 60 60"><path d="M30 50 C10 36 4 24 4 17 C4 9 10 5 17 7 C21 9 26 13 30 18 C34 13 39 9 43 7 C50 5 56 9 56 17 C56 24 50 36 30 50Z" fill="currentColor"/><ellipse cx="20" cy="17" rx="6" ry="4" fill="white" opacity=".25" transform="rotate(-30 20 17)"/></svg>
         </div>
         <div class="ocard-name">Just Because</div>
       </a>
-      <a href="#" class="ocard">
+      <a href="products.html?cat=all" class="ocard">
         <div class="ocard-img oc7">
           <svg class="ocard-icon" viewBox="0 0 60 60"><polygon points="30,8 56,22 30,36 4,22" fill="currentColor"/><ellipse cx="30" cy="22" rx="16" ry="6" fill="currentColor" opacity=".4"/><line x1="50" y1="23" x2="50" y2="38" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" fill="none"/><circle cx="50" cy="42" r="4" fill="currentColor" opacity=".8"/></svg>
         </div>
         <div class="ocard-name">Graduation</div>
       </a>
-      <a href="#" class="ocard">
+      <a href="products.html?cat=plants" class="ocard">
         <div class="ocard-img oc8">
           <svg class="ocard-icon" viewBox="0 0 60 60"><path d="M30 13 C26 9 25 5 30 1 C35 5 34 9 30 13Z" fill="currentColor"/><path d="M30 13 C27 10 27 7 30 4 C33 7 33 10 30 13Z" fill="currentColor" opacity=".4"/><line x1="30" y1="13" x2="30" y2="22" stroke="currentColor" stroke-width="2" stroke-linecap="round" fill="none"/><ellipse cx="30" cy="22" rx="9" ry="3" fill="currentColor" opacity=".6"/><rect x="21" y="22" width="18" height="32" rx="3" fill="currentColor"/><rect x="21" y="22" width="18" height="32" rx="3" fill="white" opacity=".1"/></svg>
         </div>
@@ -226,96 +210,28 @@
   </div>
 </section>
 
-<!-- BROWSE CATEGORIES -->
-<section class="sec sec-alt" id="shop">
-  <div class="container">
-    <div class="sh">
-      <span class="eyebrow">Browse by Category</span>
-      <h2 class="h2">Shop the Full Range</h2>
-      <p class="sub">From fresh-cut roses to indulgent hampers, something beautiful for every budget and occasion.</p>
-    </div>
-    <div class="cgrid">
-      <a href="#" class="ccard">
-        <div class="ccard-bg c1"></div>
-        <div class="ccard-body"><span class="ccard-name">Flowers &amp; Roses</span><span class="ccard-count">120+ arrangements</span></div>
-        <div class="ccard-arrow"><svg viewBox="0 0 24 24"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></div>
-      </a>
-      <a href="#" class="ccard">
-        <div class="ccard-bg c2"></div>
-        <div class="ccard-body"><span class="ccard-name">Plants &amp; Succulents</span><span class="ccard-count">60+ varieties</span></div>
-        <div class="ccard-arrow"><svg viewBox="0 0 24 24"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></div>
-      </a>
-      <a href="#" class="ccard">
-        <div class="ccard-bg c3"></div>
-        <div class="ccard-body"><span class="ccard-name">Chocolates &amp; Sweets</span><span class="ccard-count">80+ products</span></div>
-        <div class="ccard-arrow"><svg viewBox="0 0 24 24"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></div>
-      </a>
-      <a href="#" class="ccard">
-        <div class="ccard-bg c4"></div>
-        <div class="ccard-body"><span class="ccard-name">Gift Hampers</span><span class="ccard-count">45+ hampers</span></div>
-        <div class="ccard-arrow"><svg viewBox="0 0 24 24"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></div>
-      </a>
-      <a href="#" class="ccard">
-        <div class="ccard-bg c5"></div>
-        <div class="ccard-body"><span class="ccard-name">Alcohol &amp; Wine</span><span class="ccard-count">50+ selections</span></div>
-        <div class="ccard-arrow"><svg viewBox="0 0 24 24"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></div>
-      </a>
-      <a href="#" class="ccard">
-        <div class="ccard-bg c6"></div>
-        <div class="ccard-body"><span class="ccard-name">Personalised Gifts</span><span class="ccard-count">30+ custom items</span></div>
-        <div class="ccard-arrow"><svg viewBox="0 0 24 24"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></div>
-      </a>
-    </div>
-  </div>
-</section>
-
 <!-- FEATURED PRODUCTS -->
-<section class="sec" id="gifts">
+<section class="sec" id="featured">
   <div class="container">
     <div class="sh">
       <span class="eyebrow">Featured Products</span>
       <h2 class="h2">Most Loved Gifts</h2>
+      <p class="sub">Our top picks — hand-arranged and ready to brighten someone's day.</p>
     </div>
-
-    <!-- Shop For tabs -->
-    <div class="shop-for">
-      <span class="shop-for-label">Shop for</span>
-      <button class="sf-btn act">Everyone</button>
-      <button class="sf-btn">For Her</button>
-      <button class="sf-btn">For Him</button>
-      <button class="sf-btn">For Kids</button>
-      <button class="sf-btn">Corporate</button>
-    </div>
-
-    <div class="pf-control">
-      <div class="pf-btns">
-        <button class="pf-btn act">All</button>
-        <button class="pf-btn">Flowers</button>
-        <button class="pf-btn">Chocolates</button>
-        <button class="pf-btn">Hampers</button>
-        <button class="pf-btn">Plants</button>
-        <button class="pf-btn">On Sale</button>
-      </div>
-      <div class="pf-sort"><span>Sort by</span>
-        <select><option>Featured</option><option>Price: Low to High</option><option>Price: High to Low</option><option>Most Popular</option><option>Newest</option></select>
-      </div>
-    </div>
-
-    <div class="pgrid">
+    <div class="pgrid" style="grid-template-columns:repeat(4,1fr)">
 
       <div class="pcard">
         <div class="pcard-img pi1">
           <div class="pcard-img-inner"><svg class="pcard-icon" viewBox="0 0 60 60"><circle cx="19" cy="18" r="9" fill="currentColor" opacity=".55"/><circle cx="30" cy="12" r="10" fill="currentColor"/><circle cx="41" cy="18" r="9" fill="currentColor" opacity=".75"/><circle cx="19" cy="18" r="4" fill="white" opacity=".25"/><circle cx="30" cy="12" r="4.5" fill="white" opacity=".25"/><circle cx="41" cy="18" r="4" fill="white" opacity=".25"/><line x1="19" y1="26" x2="14" y2="54" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" fill="none"/><line x1="30" y1="21" x2="30" y2="54" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" fill="none"/><line x1="41" y1="26" x2="46" y2="54" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" fill="none"/><path d="M11 41 Q30 49 49 41" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round"/></svg></div>
           <span class="pcard-badge b-hot">Best Seller</span>
           <div class="pcard-actions">
-            <button class="pac" title="Save to Wishlist"><svg viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg></button>
-            <button class="pac" title="Quick View"><svg viewBox="0 0 24 24"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></button>
+            <button class="pac" title="Save"><svg viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg></button>
           </div>
         </div>
         <div class="pcard-info">
           <div class="pcard-cat">Flowers &amp; Roses</div>
           <div class="pcard-name">Classic Red Rose Bouquet</div>
-          <div class="pcard-price-row"><span class="pcard-price">R249.00</span><button class="pcard-atc">Add to Cart</button></div>
+          <div class="pcard-price-row"><span class="pcard-price">R249.00</span><button class="pcard-atc" onclick="addToCart(1)">Add to Cart</button></div>
         </div>
       </div>
 
@@ -324,30 +240,13 @@
           <div class="pcard-img-inner"><svg class="pcard-icon" viewBox="0 0 60 60"><circle cx="19" cy="26" r="6" fill="currentColor" opacity=".5"/><circle cx="30" cy="21" r="7" fill="currentColor" opacity=".8"/><circle cx="41" cy="26" r="6" fill="currentColor" opacity=".6"/><path d="M8 30 L12 54 L48 54 L52 30Z" fill="currentColor" opacity=".7"/><path d="M8 30 Q30 21 52 30" fill="currentColor"/><line x1="23" y1="30" x2="21" y2="54" stroke="white" stroke-width="1.5" opacity=".3" fill="none"/><line x1="37" y1="30" x2="39" y2="54" stroke="white" stroke-width="1.5" opacity=".3" fill="none"/><line x1="9" y1="41" x2="51" y2="41" stroke="white" stroke-width="1.5" opacity=".3" fill="none"/><line x1="10" y1="49" x2="50" y2="49" stroke="white" stroke-width="1.5" opacity=".3" fill="none"/><path d="M20 30 Q30 12 40 30" fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round"/></svg></div>
           <span class="pcard-badge b-hot">Best Seller</span>
           <div class="pcard-actions">
-            <button class="pac" title="Save to Wishlist"><svg viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg></button>
-            <button class="pac" title="Quick View"><svg viewBox="0 0 24 24"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></button>
+            <button class="pac" title="Save"><svg viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg></button>
           </div>
         </div>
         <div class="pcard-info">
           <div class="pcard-cat">Gift Hampers</div>
           <div class="pcard-name">Luxury Birthday Gift Hamper</div>
-          <div class="pcard-price-row"><span class="pcard-price">R649.00</span><button class="pcard-atc">Add to Cart</button></div>
-        </div>
-      </div>
-
-      <div class="pcard">
-        <div class="pcard-img pi3">
-          <div class="pcard-img-inner"><svg class="pcard-icon" viewBox="0 0 60 60"><rect x="8" y="30" width="44" height="24" rx="3" fill="currentColor" opacity=".7"/><rect x="6" y="22" width="48" height="10" rx="3" fill="currentColor"/><rect x="28" y="22" width="4" height="32" fill="white" opacity=".25"/><path d="M30 23 C22 13 8 16 10 22 C12 28 26 26 30 23Z" fill="currentColor"/><path d="M30 23 C38 13 52 16 50 22 C48 28 34 26 30 23Z" fill="currentColor"/><circle cx="30" cy="23" r="3.5" fill="currentColor"/></svg></div>
-          <span class="pcard-badge b-sale">30% Off</span>
-          <div class="pcard-actions">
-            <button class="pac" title="Save to Wishlist"><svg viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg></button>
-            <button class="pac" title="Quick View"><svg viewBox="0 0 24 24"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></button>
-          </div>
-        </div>
-        <div class="pcard-info">
-          <div class="pcard-cat">Chocolates</div>
-          <div class="pcard-name">Lindt Chocolate Luxury Box</div>
-          <div class="pcard-price-row"><span class="pcard-price">R245.00</span><span class="pcard-price-orig">R349.00</span><button class="pcard-atc">Add</button></div>
+          <div class="pcard-price-row"><span class="pcard-price">R649.00</span><button class="pcard-atc" onclick="addToCart(2)">Add to Cart</button></div>
         </div>
       </div>
 
@@ -356,145 +255,35 @@
           <div class="pcard-img-inner"><svg class="pcard-icon" viewBox="0 0 60 60"><path d="M19 44 L16 58 L44 58 L41 44Z" fill="currentColor" opacity=".8"/><rect x="16" y="40" width="28" height="6" rx="3" fill="currentColor"/><line x1="30" y1="40" x2="30" y2="20" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" fill="none"/><ellipse cx="19" cy="28" rx="10" ry="5" transform="rotate(-35 19 28)" fill="currentColor" opacity=".4"/><ellipse cx="41" cy="28" rx="10" ry="5" transform="rotate(35 41 28)" fill="currentColor" opacity=".4"/><circle cx="30" cy="13" r="8" fill="currentColor"/><circle cx="30" cy="6" r="4.5" fill="currentColor" opacity=".5"/><circle cx="37" cy="10" r="4.5" fill="currentColor" opacity=".5"/><circle cx="23" cy="10" r="4.5" fill="currentColor" opacity=".5"/><circle cx="30" cy="13" r="3.5" fill="white" opacity=".25"/></svg></div>
           <span class="pcard-badge b-new">New</span>
           <div class="pcard-actions">
-            <button class="pac" title="Save to Wishlist"><svg viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg></button>
-            <button class="pac" title="Quick View"><svg viewBox="0 0 24 24"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></button>
+            <button class="pac" title="Save"><svg viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg></button>
           </div>
         </div>
         <div class="pcard-info">
           <div class="pcard-cat">Plants</div>
           <div class="pcard-name">Orchid Plant in Ceramic Pot</div>
-          <div class="pcard-price-row"><span class="pcard-price">R399.00</span><button class="pcard-atc">Add to Cart</button></div>
+          <div class="pcard-price-row"><span class="pcard-price">R399.00</span><button class="pcard-atc" onclick="addToCart(4)">Add to Cart</button></div>
         </div>
       </div>
 
       <div class="pcard">
-        <div class="pcard-img pi5">
-          <div class="pcard-img-inner"><svg class="pcard-icon" viewBox="0 0 60 60"><circle cx="19" cy="17" r="9" fill="currentColor" opacity=".5"/><circle cx="30" cy="11" r="10" fill="currentColor"/><circle cx="41" cy="17" r="9" fill="currentColor" opacity=".75"/><circle cx="19" cy="17" r="4" fill="white" opacity=".25"/><circle cx="30" cy="11" r="4.5" fill="white" opacity=".25"/><circle cx="41" cy="17" r="4" fill="white" opacity=".25"/><line x1="19" y1="25" x2="14" y2="54" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" fill="none"/><line x1="30" y1="20" x2="30" y2="54" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" fill="none"/><line x1="41" y1="25" x2="46" y2="54" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" fill="none"/><path d="M11 41 Q30 49 49 41" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round"/></svg></div>
-          <span class="pcard-badge b-hot">Best Seller</span>
+        <div class="pcard-img pi3">
+          <div class="pcard-img-inner"><svg class="pcard-icon" viewBox="0 0 60 60"><rect x="8" y="30" width="44" height="24" rx="3" fill="currentColor" opacity=".7"/><rect x="6" y="22" width="48" height="10" rx="3" fill="currentColor"/><rect x="28" y="22" width="4" height="32" fill="white" opacity=".25"/><path d="M30 23 C22 13 8 16 10 22 C12 28 26 26 30 23Z" fill="currentColor"/><path d="M30 23 C38 13 52 16 50 22 C48 28 34 26 30 23Z" fill="currentColor"/><circle cx="30" cy="23" r="3.5" fill="currentColor"/></svg></div>
+          <span class="pcard-badge b-sale">30% Off</span>
           <div class="pcard-actions">
-            <button class="pac" title="Save to Wishlist"><svg viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg></button>
-            <button class="pac" title="Quick View"><svg viewBox="0 0 24 24"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></button>
-          </div>
-        </div>
-        <div class="pcard-info">
-          <div class="pcard-cat">Flowers &amp; Roses</div>
-          <div class="pcard-name">Mixed Seasonal Bouquet</div>
-          <div class="pcard-price-row"><span class="pcard-price">R349.00</span><button class="pcard-atc">Add to Cart</button></div>
-        </div>
-      </div>
-
-      <div class="pcard">
-        <div class="pcard-img pi6">
-          <div class="pcard-img-inner"><svg class="pcard-icon" viewBox="0 0 60 60"><rect x="5" y="5" width="50" height="50" rx="4" fill="currentColor"/><rect x="13" y="13" width="34" height="34" rx="2" fill="white" opacity=".45"/><path d="M30 43 C18 35 12 27 12 21 C12 14 17 11 22 14 C25 16 28 20 30 22 C32 20 35 16 38 14 C43 11 48 14 48 21 C48 27 42 35 30 43Z" fill="currentColor"/></svg></div>
-          <div class="pcard-actions">
-            <button class="pac" title="Save to Wishlist"><svg viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg></button>
-            <button class="pac" title="Quick View"><svg viewBox="0 0 24 24"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></button>
-          </div>
-        </div>
-        <div class="pcard-info">
-          <div class="pcard-cat">Personalised Gifts</div>
-          <div class="pcard-name">Custom Photo Gift Frame</div>
-          <div class="pcard-price-row"><span class="pcard-price">R259.00</span><button class="pcard-atc">Add to Cart</button></div>
-        </div>
-      </div>
-
-      <div class="pcard">
-        <div class="pcard-img pi7">
-          <div class="pcard-img-inner"><svg class="pcard-icon" viewBox="0 0 60 60"><rect x="26" y="6" width="8" height="5" rx="2" fill="currentColor"/><rect x="24" y="10" width="12" height="18" rx="3" fill="currentColor"/><path d="M22 28 C14 33 12 42 12 52 L48 52 C48 42 46 33 38 28Z" fill="currentColor" opacity=".75"/><rect x="15" y="38" width="30" height="12" rx="2" fill="white" opacity=".25"/><ellipse cx="21" cy="36" rx="3" ry="8" fill="white" opacity=".15"/></svg></div>
-          <span class="pcard-badge b-new">New</span>
-          <div class="pcard-actions">
-            <button class="pac" title="Save to Wishlist"><svg viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg></button>
-            <button class="pac" title="Quick View"><svg viewBox="0 0 24 24"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></button>
-          </div>
-        </div>
-        <div class="pcard-info">
-          <div class="pcard-cat">Alcohol &amp; Wine</div>
-          <div class="pcard-name">Premium Red Wine &amp; Roses Set</div>
-          <div class="pcard-price-row"><span class="pcard-price">R799.00</span><button class="pcard-atc">Add to Cart</button></div>
-        </div>
-      </div>
-
-      <div class="pcard">
-        <div class="pcard-img pi8">
-          <div class="pcard-img-inner"><svg class="pcard-icon" viewBox="0 0 60 60"><ellipse cx="30" cy="11" rx="5" ry="10" fill="currentColor" opacity=".55"/><ellipse cx="30" cy="49" rx="5" ry="10" fill="currentColor" opacity=".55"/><ellipse cx="11" cy="30" rx="10" ry="5" fill="currentColor" opacity=".55"/><ellipse cx="49" cy="30" rx="10" ry="5" fill="currentColor" opacity=".55"/><ellipse cx="17.5" cy="17.5" rx="5" ry="10" transform="rotate(45 17.5 17.5)" fill="currentColor" opacity=".45"/><ellipse cx="42.5" cy="17.5" rx="5" ry="10" transform="rotate(-45 42.5 17.5)" fill="currentColor" opacity=".45"/><ellipse cx="17.5" cy="42.5" rx="5" ry="10" transform="rotate(-45 17.5 42.5)" fill="currentColor" opacity=".45"/><ellipse cx="42.5" cy="42.5" rx="5" ry="10" transform="rotate(45 42.5 42.5)" fill="currentColor" opacity=".45"/><circle cx="30" cy="30" r="13" fill="currentColor"/><circle cx="30" cy="30" r="7" fill="white" opacity=".2"/></svg></div>
-          <span class="pcard-badge b-sale">15% Off</span>
-          <div class="pcard-actions">
-            <button class="pac" title="Save to Wishlist"><svg viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg></button>
-            <button class="pac" title="Quick View"><svg viewBox="0 0 24 24"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></button>
-          </div>
-        </div>
-        <div class="pcard-info">
-          <div class="pcard-cat">Flowers &amp; Roses</div>
-          <div class="pcard-name">Sunflower &amp; Pink Rose Bouquet</div>
-          <div class="pcard-price-row"><span class="pcard-price">R279.00</span><span class="pcard-price-orig">R329.00</span><button class="pcard-atc">Add</button></div>
-        </div>
-      </div>
-
-      <div class="pcard">
-        <div class="pcard-img pi9">
-          <div class="pcard-img-inner"><svg class="pcard-icon" viewBox="0 0 60 60"><circle cx="18" cy="24" r="6" fill="currentColor" opacity=".5"/><circle cx="30" cy="20" r="7" fill="currentColor" opacity=".7"/><circle cx="42" cy="24" r="6" fill="currentColor" opacity=".6"/><rect x="6" y="28" width="48" height="26" rx="3" fill="currentColor"/><line x1="6" y1="37" x2="54" y2="37" stroke="white" stroke-width="1.5" opacity=".3" fill="none"/><line x1="6" y1="46" x2="54" y2="46" stroke="white" stroke-width="1.5" opacity=".3" fill="none"/><line x1="20" y1="28" x2="20" y2="54" stroke="white" stroke-width="1.5" opacity=".3" fill="none"/><line x1="40" y1="28" x2="40" y2="54" stroke="white" stroke-width="1.5" opacity=".3" fill="none"/></svg></div>
-          <span class="pcard-badge b-hot">Best Seller</span>
-          <div class="pcard-actions">
-            <button class="pac" title="Save to Wishlist"><svg viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg></button>
-            <button class="pac" title="Quick View"><svg viewBox="0 0 24 24"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></button>
-          </div>
-        </div>
-        <div class="pcard-info">
-          <div class="pcard-cat">Gourmet &amp; Snacks</div>
-          <div class="pcard-name">SA Biltong &amp; Snack Crate</div>
-          <div class="pcard-price-row"><span class="pcard-price">R449.00</span><button class="pcard-atc">Add to Cart</button></div>
-        </div>
-      </div>
-
-      <div class="pcard">
-        <div class="pcard-img pi10">
-          <div class="pcard-img-inner"><svg class="pcard-icon" viewBox="0 0 60 60"><ellipse cx="30" cy="12" rx="4" ry="11" fill="currentColor" opacity=".4"/><ellipse cx="30" cy="48" rx="4" ry="11" fill="currentColor" opacity=".4"/><ellipse cx="12" cy="30" rx="11" ry="4" fill="currentColor" opacity=".4"/><ellipse cx="48" cy="30" rx="11" ry="4" fill="currentColor" opacity=".4"/><ellipse cx="18" cy="18" rx="4" ry="11" transform="rotate(45 18 18)" fill="currentColor" opacity=".35"/><ellipse cx="42" cy="18" rx="4" ry="11" transform="rotate(-45 42 18)" fill="currentColor" opacity=".35"/><ellipse cx="18" cy="42" rx="4" ry="11" transform="rotate(-45 18 42)" fill="currentColor" opacity=".35"/><ellipse cx="42" cy="42" rx="4" ry="11" transform="rotate(45 42 42)" fill="currentColor" opacity=".35"/><circle cx="30" cy="30" r="14" fill="currentColor" opacity=".65"/><circle cx="30" cy="30" r="8" fill="currentColor"/><circle cx="30" cy="30" r="4" fill="white" opacity=".3"/></svg></div>
-          <span class="pcard-badge b-new">New</span>
-          <div class="pcard-actions">
-            <button class="pac" title="Save to Wishlist"><svg viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg></button>
-            <button class="pac" title="Quick View"><svg viewBox="0 0 24 24"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></button>
-          </div>
-        </div>
-        <div class="pcard-info">
-          <div class="pcard-cat">Flowers &amp; Roses</div>
-          <div class="pcard-name">Pink Protea &amp; Fynbos Arrangement</div>
-          <div class="pcard-price-row"><span class="pcard-price">R499.00</span><button class="pcard-atc">Add to Cart</button></div>
-        </div>
-      </div>
-
-      <div class="pcard">
-        <div class="pcard-img pi11">
-          <div class="pcard-img-inner"><svg class="pcard-icon" viewBox="0 0 60 60"><circle cx="16" cy="16" r="6" fill="currentColor" opacity=".5"/><circle cx="26" cy="11" r="7" fill="currentColor" opacity=".7"/><circle cx="36" cy="14" r="6" fill="currentColor" opacity=".6"/><circle cx="44" cy="18" r="5" fill="currentColor" opacity=".55"/><path d="M12 22 L12 52 C12 54 14 56 16 56 L42 56 C44 56 46 54 46 52 L46 22Z" fill="currentColor" opacity=".8"/><path d="M46 30 C54 30 54 46 46 46" fill="none" stroke="currentColor" stroke-width="5" stroke-linecap="round"/><rect x="15" y="30" width="4" height="18" rx="2" fill="white" opacity=".15"/></svg></div>
-          <div class="pcard-actions">
-            <button class="pac" title="Save to Wishlist"><svg viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg></button>
-            <button class="pac" title="Quick View"><svg viewBox="0 0 24 24"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></button>
-          </div>
-        </div>
-        <div class="pcard-info">
-          <div class="pcard-cat">Gourmet &amp; Snacks</div>
-          <div class="pcard-name">Craft Beer &amp; Snacks Gift Set</div>
-          <div class="pcard-price-row"><span class="pcard-price">R549.00</span><button class="pcard-atc">Add to Cart</button></div>
-        </div>
-      </div>
-
-      <div class="pcard">
-        <div class="pcard-img pi12">
-          <div class="pcard-img-inner"><svg class="pcard-icon" viewBox="0 0 60 60"><rect x="9" y="30" width="42" height="24" rx="3" fill="currentColor" opacity=".65"/><rect x="7" y="22" width="46" height="10" rx="3" fill="currentColor"/><rect x="28" y="22" width="4" height="32" fill="white" opacity=".25"/><rect x="7" y="25" width="46" height="4" fill="white" opacity=".2"/><path d="M30 23 C22 12 6 15 9 22 C12 29 26 27 30 23Z" fill="currentColor"/><path d="M30 23 C38 12 54 15 51 22 C48 29 34 27 30 23Z" fill="currentColor"/><path d="M30 23 C24 24 15 30 13 38" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"/><path d="M30 23 C36 24 45 30 47 38" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"/><circle cx="30" cy="22" r="4" fill="currentColor"/></svg></div>
-          <span class="pcard-badge b-sale">12% Off</span>
-          <div class="pcard-actions">
-            <button class="pac" title="Save to Wishlist"><svg viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg></button>
-            <button class="pac" title="Quick View"><svg viewBox="0 0 24 24"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></button>
+            <button class="pac" title="Save"><svg viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg></button>
           </div>
         </div>
         <div class="pcard-info">
           <div class="pcard-cat">Chocolates</div>
-          <div class="pcard-name">Ferrero Rocher Tower Gift Box</div>
-          <div class="pcard-price-row"><span class="pcard-price">R379.00</span><span class="pcard-price-orig">R429.00</span><button class="pcard-atc">Add</button></div>
+          <div class="pcard-name">Lindt Chocolate Luxury Box</div>
+          <div class="pcard-price-row"><span class="pcard-price">R245.00</span><span class="pcard-price-orig">R349.00</span><button class="pcard-atc" onclick="addToCart(3)">Add to Cart</button></div>
         </div>
       </div>
 
     </div>
-    <div style="text-align:center;margin-top:44px"><a href="#" class="btn btn-outline btn-lg">View All Products</a></div>
+    <div style="text-align:center;margin-top:40px">
+      <a href="products.html?cat=all" class="btn btn-outline btn-lg">View All 12+ Products</a>
+    </div>
   </div>
 </section>
 
@@ -507,26 +296,11 @@
       <p class="sub">Personalise any order with a thoughtful extra, from a handwritten card to a bottle of bubbly.</p>
     </div>
     <div class="addon-grid">
-      <div class="addon-card">
-        <div class="addon-name">Message Card</div>
-        <div class="addon-price">Free</div>
-      </div>
-      <div class="addon-card">
-        <div class="addon-name">Balloon</div>
-        <div class="addon-price">+ R49.00</div>
-      </div>
-      <div class="addon-card">
-        <div class="addon-name">Vase</div>
-        <div class="addon-price">+ R89.00</div>
-      </div>
-      <div class="addon-card">
-        <div class="addon-name">Box of Chocolates</div>
-        <div class="addon-price">+ R129.00</div>
-      </div>
-      <div class="addon-card">
-        <div class="addon-name">Champagne</div>
-        <div class="addon-price">+ R249.00</div>
-      </div>
+      <div class="addon-card"><div class="addon-name">Message Card</div><div class="addon-price">Free</div></div>
+      <div class="addon-card"><div class="addon-name">Balloon</div><div class="addon-price">+ R49.00</div></div>
+      <div class="addon-card"><div class="addon-name">Vase</div><div class="addon-price">+ R89.00</div></div>
+      <div class="addon-card"><div class="addon-name">Box of Chocolates</div><div class="addon-price">+ R129.00</div></div>
+      <div class="addon-card"><div class="addon-name">Champagne</div><div class="addon-price">+ R249.00</div></div>
     </div>
   </div>
 </section>
@@ -548,7 +322,7 @@
           <span class="sd-city">Soweto</span>
         </div>
       </div>
-      <a href="#shop" class="btn btn-primary btn-lg">Order Now</a>
+      <a href="products.html?cat=all" class="btn btn-primary btn-lg">Order Now</a>
     </div>
   </div>
 </section>
@@ -565,7 +339,7 @@
       <div class="feat">
         <div class="feat-icon"><svg viewBox="0 0 24 24"><rect x="1" y="3" width="15" height="13"/><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg></div>
         <h3>Next-Day Delivery</h3>
-        <p>Order by 2pm for next-day delivery to all major cities across South Africa.</p>
+        <p>Order by 2pm for next-day delivery to all major cities across Gauteng.</p>
       </div>
       <div class="feat">
         <div class="feat-icon"><svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg></div>
@@ -580,7 +354,6 @@
     </div>
   </div>
 </section>
-
 
 <!-- CONTACT -->
 <section class="sec sec-alt" id="contact">
@@ -620,7 +393,7 @@
       <div>
         <span class="nl-badge">Get up to 50% off</span>
         <h2 class="nl-h">Exclusive specials, delivered to your inbox</h2>
-        <p class="nl-p">Be the first to hear about seasonal deals, new arrivals, and subscriber-only discounts. Join over 120,000 South Africans already subscribed.</p>
+        <p class="nl-p">Be the first to hear about seasonal deals, new arrivals, and subscriber-only discounts.</p>
       </div>
       <div>
         <form class="nl-form" onsubmit="nlSub(event)">
@@ -656,34 +429,33 @@
       <div class="footer-col">
         <h4>Shop</h4>
         <ul>
-          <li><a href="#">Flowers &amp; Roses</a></li>
-          <li><a href="#">Plants</a></li>
-          <li><a href="#">Chocolates</a></li>
-          <li><a href="#">Gift Hampers</a></li>
-          <li><a href="#">Alcohol &amp; Wine</a></li>
-          <li><a href="#">Personalised Gifts</a></li>
+          <li><a href="products.html?cat=flowers">Flowers &amp; Roses</a></li>
+          <li><a href="products.html?cat=plants">Plants</a></li>
+          <li><a href="products.html?cat=chocolates">Chocolates</a></li>
+          <li><a href="products.html?cat=hampers">Gift Hampers</a></li>
+          <li><a href="products.html?cat=wine">Alcohol &amp; Wine</a></li>
+          <li><a href="products.html?cat=gifts">Personalised Gifts</a></li>
         </ul>
       </div>
       <div class="footer-col">
         <h4>Occasions</h4>
         <ul>
-          <li><a href="#">Birthday</a></li>
-          <li><a href="#">Anniversary</a></li>
-          <li><a href="#">Get Well Soon</a></li>
-          <li><a href="#">Thank You</a></li>
-          <li><a href="#">Sympathy</a></li>
-          <li><a href="#">Corporate Gifts</a></li>
+          <li><a href="products.html?cat=all">Birthday</a></li>
+          <li><a href="products.html?cat=all">Anniversary</a></li>
+          <li><a href="products.html?cat=flowers">Get Well Soon</a></li>
+          <li><a href="products.html?cat=all">Thank You</a></li>
+          <li><a href="products.html?cat=plants">Sympathy</a></li>
+          <li><a href="products.html?cat=hampers">Corporate Gifts</a></li>
         </ul>
       </div>
       <div class="footer-col">
-        <h4>Account &amp; Help</h4>
+        <h4>Help</h4>
         <ul>
-          <li><a href="#">Track My Order</a></li>
-          <li><a href="#">My Wishlist</a></li>
-          <li><a href="#">Delivery Info</a></li>
-          <li><a href="#">Returns Policy</a></li>
-          <li><a href="#">FAQ</a></li>
-          <li><a href="#">Contact Us</a></li>
+          <li><a href="cart.html">My Cart</a></li>
+          <li><a href="#contact">Delivery Info</a></li>
+          <li><a href="#contact">Returns Policy</a></li>
+          <li><a href="#contact">FAQ</a></li>
+          <li><a href="#contact">Contact Us</a></li>
         </ul>
       </div>
     </div>

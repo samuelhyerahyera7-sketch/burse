@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Shop All Gifts – Bloom &amp; Box</title>
+<meta name="description" content="Browse fresh flowers, gift hampers, chocolates, plants, wine and personalised gifts delivered across Gauteng.">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<!-- HEADER -->
+<header class="hdr" id="hdr">
+  <div class="hdr-inner">
+    <a href="index.html" class="logo">
+      <span class="logo-name">Bloom <span class="amp">&amp;</span> Box</span>
+      <span class="logo-tag">Flowers &amp; Gifts</span>
+    </a>
+    <div class="hdr-search">
+      <svg class="search-icon" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+      <input type="search" placeholder="Search flowers, gifts, hampers...">
+    </div>
+    <nav class="hdr-nav">
+      <a href="products.html?cat=all" class="active">Shop</a>
+      <a href="products.html?cat=flowers">Flowers</a>
+      <a href="products.html?cat=hampers">Gifts</a>
+      <a href="index.html#contact">Help</a>
+    </nav>
+    <div class="hdr-actions">
+      <a href="cart.html" class="icon-btn" aria-label="Cart" style="flex-direction:column;gap:3px;position:relative">
+        <svg viewBox="0 0 24 24"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
+        <span class="cart-count" style="display:none"></span>
+        <span class="icon-btn-label">Cart</span>
+      </a>
+      <button class="mob-menu" id="mob" aria-label="Menu">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </div>
+</header>
+
+<!-- MOBILE NAV -->
+<div class="mob-overlay" id="moboverlay"></div>
+<nav class="mob-nav" id="mobnav">
+  <a href="products.html?cat=all">Shop All</a>
+  <a href="products.html?cat=flowers">Flowers</a>
+  <a href="products.html?cat=hampers">Gift Hampers</a>
+  <a href="products.html?cat=chocolates">Chocolates</a>
+  <a href="products.html?cat=plants">Plants</a>
+  <a href="index.html#contact">Help</a>
+  <a href="cart.html">Cart</a>
+</nav>
+
+<!-- PAGE HEADER -->
+<div class="page-hero">
+  <div class="page-hero-inner">
+    <h1>Shop All Gifts</h1>
+    <p>Fresh flowers, luxury hampers, chocolates, plants and more — delivered across Gauteng.</p>
+  </div>
+</div>
+
+<!-- FILTER BAR -->
+<div class="filter-bar">
+  <div class="filter-bar-inner">
+    <button class="filter-btn act" data-filter="all">All Products</button>
+    <button class="filter-btn" data-filter="flowers">Flowers &amp; Roses</button>
+    <button class="filter-btn" data-filter="hampers">Gift Hampers</button>
+    <button class="filter-btn" data-filter="chocolates">Chocolates</button>
+    <button class="filter-btn" data-filter="plants">Plants</button>
+    <button class="filter-btn" data-filter="wine">Alcohol &amp; Wine</button>
+    <button class="filter-btn" data-filter="gifts">Personalised</button>
+    <button class="filter-btn" data-filter="gourmet">Gourmet</button>
+  </div>
+</div>
+
+<!-- PRODUCTS GRID -->
+<div class="shop-wrap">
+  <div class="shop-grid">
+
+    <!-- 1: Classic Red Rose Bouquet -->
+    <div class="pcard" data-cat="flowers">
+      <div class="pcard-img pi1">
+        <div class="pcard-img-inner"><svg class="pcard-icon" viewBox="0 0 60 60"><circle cx="19" cy="18" r="9" fill="currentColor" opacity=".55"/><circle cx="30" cy="12" r="10" fill="currentColor"/><circle cx="41" cy="18" r="9" fill="currentColor" opacity=".75"/><circle cx="19" cy="18" r="4" fill="white" opacity=".25"/><circle cx="30" cy="12" r="4.5" fill="white" opacity=".25"/><circle cx="41" cy="18" r="4" fill="white" opacity=".25"/><line x1="19" y1="26" x2="14" y2="54" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" fill="none"/><line x1="30" y1="21" x2="30" y2="54" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" fill="none"/><line x1="41" y1="26" x2="46" y2="54" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" fill="none"/><path d="M11 41 Q30 49 49 41" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round"/></svg></div>
+        <span class="pcard-badge b-hot">Best Seller</span>
+        <div class="pcard-actions">
+          <button class="pac" title="Save"><svg viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg></button>
+        </div>
+      </div>
+      <div class="pcard-info">
+        <div class="pcard-cat">Flowers &amp; Roses</div>
+        <div class="pcard-name">Classic Red Rose Bouquet</div>
+        <div class="pcard-price-row"><span class="pcard-price">R249.00</span><button class="pcard-atc" onclick="addToCart(1)">Add to Cart</button></div>
+      </div>
+    </div>
+
+    <!-- 2: Luxury Birthday Gift Hamper -->
+    <div class="pcard" data-cat="hampers">
+      <div class="pcard-img pi2">
+        <div class="pcard-img-inner"><svg class="pcard-icon" viewBox="0 0 60 60"><circle cx="19" cy="26" r="6" fill="currentColor" opacity=".5"/><circle cx="30" cy="21" r="7" fill="currentColor" opacity=".8"/><circle cx="41" cy="26" r="6" fill="currentColor" opacity=".6"/><path d="M8 30 L12 54 L48 54 L52 30Z" fill="currentColor" opacity=".7"/><path d="M8 30 Q30 21 52 30" fill="currentColor"/><line x1="23" y1="30" x2="21" y2="54" stroke="white" stroke-width="1.5" opacity=".3" fill="none"/><line x1="37" y1="30" x2="39" y2="54" stroke="white" stroke-width="1.5" opacity=".3" fill="none"/><line x1="9" y1="41" x2="51" y2="41" stroke="white" stroke-width="1.5" opacity=".3" fill="none"/><line x1="10" y1="49" x2="50" y2="49" stroke="white" stroke-width="1.5" opacity=".3" fill="none"/><path d="M20 30 Q30 12 40 30" fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round"/></svg></div>
+        <span class="pcard-badge b-hot">Best Seller</span>
+        <div class="pcard-actions">
+          <button class="pac" title="Save"><svg viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg></button>
+        </div>
+      </div>
+      <div class="pcard-info">
+        <div class="pcard-cat">Gift Hampers</div>
+        <div class="pcard-name">Luxury Birthday Gift Hamper</div>
+        <div class="pcard-price-row"><span class="pcard-price">R649.00</span><button class="pcard-atc" onclick="addToCart(2)">Add to Cart</button></div>
+      </div>
+    </div>
+
+    <!-- 3: Lindt Chocolate Luxury Box -->
+    <div class="pcard" data-cat="chocolates">
+      <div class="pcard-img pi3">
+        <div class="pcard-img-inner"><svg class="pcard-icon" viewBox="0 0 60 60"><rect x="8" y="30" width="44" height="24" rx="3" fill="currentColor" opacity=".7"/><rect x="6" y="22" width="48" height="10" rx="3" fill="currentColor"/><rect x="28" y="22" width="4" height="32" fill="white" opacity=".25"/><path d="M30 23 C22 13 8 16 10 22 C12 28 26 26 30 23Z" fill="currentColor"/><path d="M30 23 C38 13 52 16 50 22 C48 28 34 26 30 23Z" fill="currentColor"/><circle cx="30" cy="23" r="3.5" fill="currentColor"/></svg></div>
+        <span class="pcard-badge b-sale">30% Off</span>
+        <div class="pcard-actions">
+          <button class="pac" title="Save"><svg viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg></button>
+        </div>
+      </div>
+      <div class="pcard-info">
+        <div class="pcard-cat">Chocolates</div>
+        <div class="pcard-name">Lindt Chocolate Luxury Box</div>
+        <div class="pcard-price-row"><span class="pcard-price">R245.00</span><span class="pcard-price-orig">R349.00</span><button class="pcard-atc" onclick="addToCart(3)">Add to Cart</button></div>
+      </div>
+    </div>
+
+    <!-- 4: Orchid Plant in Ceramic Pot -->
+    <div class="pcard" data-cat="plants">
+      <div class="pcard-img pi4">
+        <div class="pcard-img-inner"><svg class="pcard-icon" viewBox="0 0 60 60"><path d="M19 44 L16 58 L44 58 L41 44Z" fill="currentColor" opacity=".8"/><rect x="16" y="40" width="28" height="6" rx="3" fill="currentColor"/><line x1="30" y1="40" x2="30" y2="20" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" fill="none"/><ellipse cx="19" cy="28" rx="10" ry="5" transform="rotate(-35 19 28)" fill="currentColor" opacity=".4"/><ellipse cx="41" cy="28" rx="10" ry="5" transform="rotate(35 41 28)" fill="currentColor" opacity=".4"/><circle cx="30" cy="13" r="8" fill="currentColor"/><circle cx="30" cy="6" r="4.5" fill="currentColor" opacity=".5"/><circle cx="37" cy="10" r="4.5" fill="currentColor" opacity=".5"/><circle cx="23" cy="10" r="4.5" fill="currentColor" opacity=".5"/><circle cx="30" cy="13" r="3.5" fill="white" opacity=".25"/></svg></div>
+        <span class="pcard-badge b-new">New</span>
+        <div class="pcard-actions">
+          <button class="pac" title="Save"><svg viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg></button>
+        </div>
+      </div>
+      <div class="pcard-info">
+        <div class="pcard-cat">Plants</div>
+        <div class="pcard-name">Orchid Plant in Ceramic Pot</div>
+        <div class="pcard-price-row"><span class="pcard-price">R399.00</span><button class="pcard-atc" onclick="addToCart(4)">Add to Cart</button></div>
+      </div>
+    </div>
+
+    <!-- 5: Mixed Seasonal Bouquet -->
+    <div class="pcard" data-cat="flowers">
+      <div class="pcard-img pi5">
+        <div class="pcard-img-inner"><svg class="pcard-icon" viewBox="0 0 60 60"><circle cx="19" cy="17" r="9" fill="currentColor" opacity=".5"/><circle cx="30" cy="11" r="10" fill="currentColor"/><circle cx="41" cy="17" r="9" fill="currentColor" opacity=".75"/><circle cx="19" cy="17" r="4" fill="white" opacity=".25"/><circle cx="30" cy="11" r="4.5" fill="white" opacity=".25"/><circle cx="41" cy="17" r="4" fill="white" opacity=".25"/><line x1="19" y1="25" x2="14" y2="54" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" fill="none"/><line x1="30" y1="20" x2="30" y2="54" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" fill="none"/><line x1="41" y1="25" x2="46" y2="54" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" fill="none"/><path d="M11 41 Q30 49 49 41" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round"/></svg></div>
+        <span class="pcard-badge b-hot">Best Seller</span>
+        <div class="pcard-actions">
+          <button class="pac" title="Save"><svg viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg></button>
+        </div>
+      </div>
+      <div class="pcard-info">
+        <div class="pcard-cat">Flowers &amp; Roses</div>
+        <div class="pcard-name">Mixed Seasonal Bouquet</div>
+        <div class="pcard-price-row"><span class="pcard-price">R349.00</span><button class="pcard-atc" onclick="addToCart(5)">Add to Cart</button></div>
+      </div>
+    </div>
+
+    <!-- 6: Custom Photo Gift Frame -->
+    <div class="pcard" data-cat="gifts">
+      <div class="pcard-img pi6">
+        <div class="pcard-img-inner"><svg class="pcard-icon" viewBox="0 0 60 60"><rect x="5" y="5" width="50" height="50" rx="4" fill="currentColor"/><rect x="13" y="13" width="34" height="34" rx="2" fill="white" opacity=".45"/><path d="M30 43 C18 35 12 27 12 21 C12 14 17 11 22 14 C25 16 28 20 30 22 C32 20 35 16 38 14 C43 11 48 14 48 21 C48 27 42 35 30 43Z" fill="currentColor"/></svg></div>
+        <div class="pcard-actions">
+          <button class="pac" title="Save"><svg viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg></button>
+        </div>
+      </div>
+      <div class="pcard-info">
+        <div class="pcard-cat">Personalised Gifts</div>
+        <div class="pcard-name">Custom Photo Gift Frame</div>
+        <div class="pcard-price-row"><span class="pcard-price">R259.00</span><button class="pcard-atc" onclick="addToCart(6)">Add to Cart</button></div>
+      </div>
+    </div>
+
+    <!-- 7: Premium Red Wine & Roses Set -->
+    <div class="pcard" data-cat="wine">
+      <div class="pcard-img pi7">
+        <div class="pcard-img-inner"><svg class="pcard-icon" viewBox="0 0 60 60"><rect x="26" y="6" width="8" height="5" rx="2" fill="currentColor"/><rect x="24" y="10" width="12" height="18" rx="3" fill="currentColor"/><path d="M22 28 C14 33 12 42 12 52 L48 52 C48 42 46 33 38 28Z" fill="currentColor" opacity=".75"/><rect x="15" y="38" width="30" height="12" rx="2" fill="white" opacity=".25"/><ellipse cx="21" cy="36" rx="3" ry="8" fill="white" opacity=".15"/></svg></div>
+        <span class="pcard-badge b-new">New</span>
+        <div class="pcard-actions">
+          <button class="pac" title="Save"><svg viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg></button>
+        </div>
+      </div>
+      <div class="pcard-info">
+        <div class="pcard-cat">Alcohol &amp; Wine</div>
+        <div class="pcard-name">Premium Red Wine &amp; Roses Set</div>
+        <div class="pcard-price-row"><span class="pcard-price">R799.00</span><button class="pcard-atc" onclick="addToCart(7)">Add to Cart</button></div>
+      </div>
+    </div>
+
+    <!-- 8: Sunflower & Pink Rose Bouquet -->
+    <div class="pcard" data-cat="flowers">
+      <div class="pcard-img pi8">
+        <div class="pcard-img-inner"><svg class="pcard-icon" viewBox="0 0 60 60"><ellipse cx="30" cy="11" rx="5" ry="10" fill="currentColor" opacity=".55"/><ellipse cx="30" cy="49" rx="5" ry="10" fill="currentColor" opacity=".55"/><ellipse cx="11" cy="30" rx="10" ry="5" fill="currentColor" opacity=".55"/><ellipse cx="49" cy="30" rx="10" ry="5" fill="currentColor" opacity=".55"/><ellipse cx="17.5" cy="17.5" rx="5" ry="10" transform="rotate(45 17.5 17.5)" fill="currentColor" opacity=".45"/><ellipse cx="42.5" cy="17.5" rx="5" ry="10" transform="rotate(-45 42.5 17.5)" fill="currentColor" opacity=".45"/><ellipse cx="17.5" cy="42.5" rx="5" ry="10" transform="rotate(-45 17.5 42.5)" fill="currentColor" opacity=".45"/><ellipse cx="42.5" cy="42.5" rx="5" ry="10" transform="rotate(45 42.5 42.5)" fill="currentColor" opacity=".45"/><circle cx="30" cy="30" r="13" fill="currentColor"/><circle cx="30" cy="30" r="7" fill="white" opacity=".2"/></svg></div>
+        <span class="pcard-badge b-sale">15% Off</span>
+        <div class="pcard-actions">
+          <button class="pac" title="Save"><svg viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg></button>
+        </div>
+      </div>
+      <div class="pcard-info">
+        <div class="pcard-cat">Flowers &amp; Roses</div>
+        <div class="pcard-name">Sunflower &amp; Pink Rose Bouquet</div>
+        <div class="pcard-price-row"><span class="pcard-price">R279.00</span><span class="pcard-price-orig">R329.00</span><button class="pcard-atc" onclick="addToCart(8)">Add to Cart</button></div>
+      </div>
+    </div>
+
+    <!-- 9: SA Biltong & Snack Crate -->
+    <div class="pcard" data-cat="gourmet">
+      <div class="pcard-img pi9">
+        <div class="pcard-img-inner"><svg class="pcard-icon" viewBox="0 0 60 60"><circle cx="18" cy="24" r="6" fill="currentColor" opacity=".5"/><circle cx="30" cy="20" r="7" fill="currentColor" opacity=".7"/><circle cx="42" cy="24" r="6" fill="currentColor" opacity=".6"/><rect x="6" y="28" width="48" height="26" rx="3" fill="currentColor"/><line x1="6" y1="37" x2="54" y2="37" stroke="white" stroke-width="1.5" opacity=".3" fill="none"/><line x1="6" y1="46" x2="54" y2="46" stroke="white" stroke-width="1.5" opacity=".3" fill="none"/><line x1="20" y1="28" x2="20" y2="54" stroke="white" stroke-width="1.5" opacity=".3" fill="none"/><line x1="40" y1="28" x2="40" y2="54" stroke="white" stroke-width="1.5" opacity=".3" fill="none"/></svg></div>
+        <span class="pcard-badge b-hot">Best Seller</span>
+        <div class="pcard-actions">
+          <button class="pac" title="Save"><svg viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg></button>
+        </div>
+      </div>
+      <div class="pcard-info">
+        <div class="pcard-cat">Gourmet &amp; Snacks</div>
+        <div class="pcard-name">SA Biltong &amp; Snack Crate</div>
+        <div class="pcard-price-row"><span class="pcard-price">R449.00</span><button class="pcard-atc" onclick="addToCart(9)">Add to Cart</button></div>
+      </div>
+    </div>
+
+    <!-- 10: Pink Protea & Fynbos Arrangement -->
+    <div class="pcard" data-cat="flowers">
+      <div class="pcard-img pi10">
+        <div class="pcard-img-inner"><svg class="pcard-icon" viewBox="0 0 60 60"><ellipse cx="30" cy="12" rx="4" ry="11" fill="currentColor" opacity=".4"/><ellipse cx="30" cy="48" rx="4" ry="11" fill="currentColor" opacity=".4"/><ellipse cx="12" cy="30" rx="11" ry="4" fill="currentColor" opacity=".4"/><ellipse cx="48" cy="30" rx="11" ry="4" fill="currentColor" opacity=".4"/><ellipse cx="18" cy="18" rx="4" ry="11" transform="rotate(45 18 18)" fill="currentColor" opacity=".35"/><ellipse cx="42" cy="18" rx="4" ry="11" transform="rotate(-45 42 18)" fill="currentColor" opacity=".35"/><ellipse cx="18" cy="42" rx="4" ry="11" transform="rotate(-45 18 42)" fill="currentColor" opacity=".35"/><ellipse cx="42" cy="42" rx="4" ry="11" transform="rotate(45 42 42)" fill="currentColor" opacity=".35"/><circle cx="30" cy="30" r="14" fill="currentColor" opacity=".65"/><circle cx="30" cy="30" r="8" fill="currentColor"/><circle cx="30" cy="30" r="4" fill="white" opacity=".3"/></svg></div>
+        <span class="pcard-badge b-new">New</span>
+        <div class="pcard-actions">
+          <button class="pac" title="Save"><svg viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg></button>
+        </div>
+      </div>
+      <div class="pcard-info">
+        <div class="pcard-cat">Flowers &amp; Roses</div>
+        <div class="pcard-name">Pink Protea &amp; Fynbos Arrangement</div>
+        <div class="pcard-price-row"><span class="pcard-price">R499.00</span><button class="pcard-atc" onclick="addToCart(10)">Add to Cart</button></div>
+      </div>
+    </div>
+
+    <!-- 11: Craft Beer & Snacks Gift Set -->
+    <div class="pcard" data-cat="gourmet">
+      <div class="pcard-img pi11">
+        <div class="pcard-img-inner"><svg class="pcard-icon" viewBox="0 0 60 60"><circle cx="16" cy="16" r="6" fill="currentColor" opacity=".5"/><circle cx="26" cy="11" r="7" fill="currentColor" opacity=".7"/><circle cx="36" cy="14" r="6" fill="currentColor" opacity=".6"/><circle cx="44" cy="18" r="5" fill="currentColor" opacity=".55"/><path d="M12 22 L12 52 C12 54 14 56 16 56 L42 56 C44 56 46 54 46 52 L46 22Z" fill="currentColor" opacity=".8"/><path d="M46 30 C54 30 54 46 46 46" fill="none" stroke="currentColor" stroke-width="5" stroke-linecap="round"/><rect x="15" y="30" width="4" height="18" rx="2" fill="white" opacity=".15"/></svg></div>
+        <div class="pcard-actions">
+          <button class="pac" title="Save"><svg viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg></button>
+        </div>
+      </div>
+      <div class="pcard-info">
+        <div class="pcard-cat">Gourmet &amp; Snacks</div>
+        <div class="pcard-name">Craft Beer &amp; Snacks Gift Set</div>
+        <div class="pcard-price-row"><span class="pcard-price">R549.00</span><button class="pcard-atc" onclick="addToCart(11)">Add to Cart</button></div>
+      </div>
+    </div>
+
+    <!-- 12: Ferrero Rocher Tower Gift Box -->
+    <div class="pcard" data-cat="chocolates">
+      <div class="pcard-img pi12">
+        <div class="pcard-img-inner"><svg class="pcard-icon" viewBox="0 0 60 60"><rect x="9" y="30" width="42" height="24" rx="3" fill="currentColor" opacity=".65"/><rect x="7" y="22" width="46" height="10" rx="3" fill="currentColor"/><rect x="28" y="22" width="4" height="32" fill="white" opacity=".25"/><rect x="7" y="25" width="46" height="4" fill="white" opacity=".2"/><path d="M30 23 C22 12 6 15 9 22 C12 29 26 27 30 23Z" fill="currentColor"/><path d="M30 23 C38 12 54 15 51 22 C48 29 34 27 30 23Z" fill="currentColor"/><circle cx="30" cy="22" r="4" fill="currentColor"/></svg></div>
+        <span class="pcard-badge b-sale">12% Off</span>
+        <div class="pcard-actions">
+          <button class="pac" title="Save"><svg viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg></button>
+        </div>
+      </div>
+      <div class="pcard-info">
+        <div class="pcard-cat">Chocolates</div>
+        <div class="pcard-name">Ferrero Rocher Tower Gift Box</div>
+        <div class="pcard-price-row"><span class="pcard-price">R379.00</span><span class="pcard-price-orig">R429.00</span><button class="pcard-atc" onclick="addToCart(12)">Add to Cart</button></div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- FOOTER -->
+<footer class="footer">
+  <div class="container">
+    <div class="footer-grid">
+      <div>
+        <div class="footer-logo-wrap">
+          <span class="footer-logo-name">Bloom <span class="amp">&amp;</span> Box</span>
+        </div>
+        <p class="footer-desc">Gauteng's favourite online florist and gift delivery service.</p>
+        <div class="footer-contact">
+          <span><svg viewBox="0 0 24 24"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12 19.79 19.79 0 0 1 1.61 3.4 2 2 0 0 1 3.58 1.18h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 8.72a16 16 0 0 0 6.29 6.29l.82-.82a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>+27 (0)00 000 0000</span>
+          <span><svg viewBox="0 0 24 24"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>hello@bloomandbox.co.za</span>
+        </div>
+      </div>
+      <div class="footer-col">
+        <h4>Categories</h4>
+        <ul>
+          <li><a href="products.html?cat=flowers">Flowers &amp; Roses</a></li>
+          <li><a href="products.html?cat=plants">Plants</a></li>
+          <li><a href="products.html?cat=chocolates">Chocolates</a></li>
+          <li><a href="products.html?cat=hampers">Gift Hampers</a></li>
+          <li><a href="products.html?cat=wine">Alcohol &amp; Wine</a></li>
+          <li><a href="products.html?cat=gifts">Personalised Gifts</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Navigate</h4>
+        <ul>
+          <li><a href="index.html">Home</a></li>
+          <li><a href="products.html?cat=all">All Products</a></li>
+          <li><a href="cart.html">Cart</a></li>
+          <li><a href="index.html#contact">Contact</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Help</h4>
+        <ul>
+          <li><a href="index.html#contact">Delivery Info</a></li>
+          <li><a href="index.html#contact">Returns Policy</a></li>
+          <li><a href="index.html#contact">FAQ</a></li>
+          <li><a href="index.html#contact">Contact Us</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span class="footer-legal">&copy; 2026 Bloom &amp; Box. All rights reserved.</span>
+      <div class="footer-leg-links"><a href="#">Privacy Policy</a><a href="#">Terms &amp; Conditions</a><a href="#">Refund Policy</a></div>
+    </div>
+  </div>
+</footer>
+
+<script src="app.js"></script>
+</body>
+</html>

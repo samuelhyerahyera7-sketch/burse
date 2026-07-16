@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Your Cart – Bloom &amp; Box</title>
+<meta name="description" content="Review your cart and checkout for flower and gift delivery across Gauteng.">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<!-- HEADER -->
+<header class="hdr" id="hdr">
+  <div class="hdr-inner">
+    <a href="index.html" class="logo">
+      <span class="logo-name">Bloom <span class="amp">&amp;</span> Box</span>
+      <span class="logo-tag">Flowers &amp; Gifts</span>
+    </a>
+    <div class="hdr-search">
+      <svg class="search-icon" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+      <input type="search" placeholder="Search flowers, gifts, hampers...">
+    </div>
+    <nav class="hdr-nav">
+      <a href="products.html?cat=all">Shop</a>
+      <a href="products.html?cat=flowers">Flowers</a>
+      <a href="products.html?cat=hampers">Gifts</a>
+      <a href="index.html#contact">Help</a>
+    </nav>
+    <div class="hdr-actions">
+      <a href="cart.html" class="icon-btn" aria-label="Cart" style="flex-direction:column;gap:3px;position:relative">
+        <svg viewBox="0 0 24 24"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
+        <span class="cart-count" style="display:none"></span>
+        <span class="icon-btn-label">Cart</span>
+      </a>
+      <button class="mob-menu" id="mob" aria-label="Menu">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </div>
+</header>
+
+<!-- MOBILE NAV -->
+<div class="mob-overlay" id="moboverlay"></div>
+<nav class="mob-nav" id="mobnav">
+  <a href="products.html?cat=all">Shop All</a>
+  <a href="products.html?cat=flowers">Flowers</a>
+  <a href="products.html?cat=hampers">Gift Hampers</a>
+  <a href="products.html?cat=chocolates">Chocolates</a>
+  <a href="products.html?cat=plants">Plants</a>
+  <a href="index.html#contact">Help</a>
+  <a href="cart.html">Cart</a>
+</nav>
+
+<!-- PAGE HEADER -->
+<div class="page-hero">
+  <div class="page-hero-inner">
+    <h1>Your Cart</h1>
+    <p>Review your items, then proceed to checkout for Gauteng delivery.</p>
+  </div>
+</div>
+
+<!-- CART CONTENT (rendered by JS) -->
+<div class="cart-wrap">
+  <div id="cart-wrap"></div>
+</div>
+
+<!-- FOOTER -->
+<footer class="footer">
+  <div class="container">
+    <div class="footer-grid">
+      <div>
+        <div class="footer-logo-wrap">
+          <span class="footer-logo-name">Bloom <span class="amp">&amp;</span> Box</span>
+        </div>
+        <p class="footer-desc">Gauteng's favourite online florist and gift delivery service.</p>
+      </div>
+      <div class="footer-col">
+        <h4>Shop</h4>
+        <ul>
+          <li><a href="products.html?cat=flowers">Flowers &amp; Roses</a></li>
+          <li><a href="products.html?cat=hampers">Gift Hampers</a></li>
+          <li><a href="products.html?cat=chocolates">Chocolates</a></li>
+          <li><a href="products.html?cat=plants">Plants</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Navigate</h4>
+        <ul>
+          <li><a href="index.html">Home</a></li>
+          <li><a href="products.html?cat=all">All Products</a></li>
+          <li><a href="index.html#contact">Contact</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Help</h4>
+        <ul>
+          <li><a href="index.html#contact">Delivery Info</a></li>
+          <li><a href="index.html#contact">Returns</a></li>
+          <li><a href="index.html#contact">FAQ</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span class="footer-legal">&copy; 2026 Bloom &amp; Box. All rights reserved.</span>
+      <div class="footer-leg-links"><a href="#">Privacy Policy</a><a href="#">Terms &amp; Conditions</a></div>
+    </div>
+  </div>
+</footer>
+
+<script src="app.js"></script>
+</body>
+</html>
