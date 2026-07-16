@@ -403,6 +403,11 @@
           <p class="form-hint" style="margin-bottom:14px">Every employee in this pay run on a single sheet — gross, deductions and net pay side by side. Handy for a quick sign-off instead of opening each payslip.</p>
           <div id="payrollSummaryWrap"></div>
         </div>
+        <div class="card" id="allPayslipsCard" style="display:none">
+          <div class="card-header"><div class="card-title">Full payslips — all employees</div></div>
+          <p class="form-hint" style="margin-bottom:14px">Every employee's complete payslip for this pay run — the same detail as opening each one individually — combined into a single PDF, one employee per page.</p>
+          <button class="btn-primary" id="downloadAllPayslipsBtn" onclick="downloadAllPayslipsPdf()">Download All Payslips (PDF)</button>
+        </div>
       </section>
 
       <!-- LEAVE -->
@@ -2490,7 +2495,7 @@ function switchPayslipsMode(name) {
   document.getElementById('payslipsModePanelByRun').style.display = name === 'ps-byrun' ? 'block' : 'none';
   document.getElementById('payslipsModePanelByEmployee').style.display = name === 'ps-byemployee' ? 'block' : 'none';
   if (name === 'ps-byrun' && document.getElementById('payslipsRunSelect').value) loadPayrollSummary(document.getElementById('payslipsRunSelect').value);
-  else document.getElementById('payrollSummaryCard').style.display = 'none';
+  else { document.getElementById('payrollSummaryCard').style.display = 'none'; document.getElementById('allPayslipsCard').style.display = 'none'; }
 }
 
 function filterPayslipsTable() {
@@ -2504,11 +2509,12 @@ async function loadPayslipsForRun() {
   const runId = document.getElementById('payslipsRunSelect').value;
   const wrap = document.getElementById('payslipsTableWrap');
   document.getElementById('payslipsRunFilter').value = '';
-  if (!runId) { wrap.innerHTML = '<div class="empty">Select a pay run to view its payslips.</div>'; document.getElementById('payrollSummaryCard').style.display = 'none'; return; }
+  if (!runId) { wrap.innerHTML = '<div class="empty">Select a pay run to view its payslips.</div>'; document.getElementById('payrollSummaryCard').style.display = 'none'; document.getElementById('allPayslipsCard').style.display = 'none'; return; }
   wrap.innerHTML = '<div class="loading">Loading…</div>';
   const { data: payslips } = await sb.from('payroll_payslips').select('*, payroll_staff(full_name)').eq('run_id', runId);
   renderPayslipsTable(payslips, { showPeriod: false, wrapId: 'payslipsTableWrap' });
   loadPayrollSummary(runId);
+  document.getElementById('allPayslipsCard').style.display = payslips && payslips.length ? 'block' : 'none';
 }
 
 async function loadPayslipsForStaff() {
@@ -2518,6 +2524,129 @@ async function loadPayslipsForStaff() {
   wrap.innerHTML = '<div class="loading">Loading…</div>';
   const { data: payslips } = await sb.from('payroll_payslips').select('*, payroll_runs(period_start, period_end)').eq('staff_id', staffId).order('created_at', { ascending: false });
   renderPayslipsTable(payslips, { showPeriod: true, wrapId: 'payslipsStaffTableWrap' });
+}
+
+function renderOnePayslipHtml(p) {
+  const staff = p.payroll_staff;
+  const run = p.payroll_runs;
+  const company = run.payroll_companies;
+  const otherDeductions = Array.isArray(p.other_deductions_json) ? p.other_deductions_json : [];
+  const fringeBenefits = Array.isArray(p.fringe_benefits_json) ? p.fringe_benefits_json : [];
+  const employmentTypeLabel = { permanent: 'Permanent', fixed_term: 'Fixed term', part_time: 'Part time' }[staff?.employment_type] || staff?.employment_type || '—';
+  const mny = n => 'R ' + Number(n || 0).toLocaleString('en-ZA', { minimumFractionDigits: 2 });
+  return `
+    <div class="aps-sheet">
+      <div class="aps-top">
+        <div>
+          <h1 class="aps-h1"><span style="color:#2ab3b3">B</span>urse Payroll</h1>
+          <p class="aps-sub">Payslip for ${esc(run.period_start)} to ${esc(run.period_end)}</p>
+        </div>
+        <div style="text-align:right">
+          <p style="font-weight:700;color:#0e1c40">${esc(company?.trading_name || '')}</p>
+          ${company?.address ? `<p class="aps-sub">${esc(company.address)}</p>` : ''}
+          ${company?.company_reg_number ? `<p class="aps-sub">Reg. no. ${esc(company.company_reg_number)}</p>` : ''}
+          <p class="aps-sub">PAYE ${esc(company?.paye_reference || '—')}</p>
+          <p class="aps-sub">UIF ${esc(company?.uif_reference || '—')}</p>
+        </div>
+      </div>
+      <div class="aps-meta">
+        <div><span>Employee</span><span style="font-weight:600">${esc(staff?.full_name)}</span></div>
+        <div><span>Employee no.</span><span>${esc(staff?.employee_number || '—')}</span></div>
+        <div><span>ID number</span><span>${esc(staff?.id_number || '—')}</span></div>
+        <div><span>Tax number</span><span>${esc(staff?.tax_number || '—')}</span></div>
+        <div><span>Job title</span><span>${esc(staff?.job_title || '—')}</span></div>
+        <div><span>Employment type</span><span>${esc(employmentTypeLabel)}</span></div>
+        <div><span>Pay date</span><span>${esc(run.pay_date)}</span></div>
+        <div><span>Status</span><span style="text-transform:capitalize">${esc(run.status)}</span></div>
+      </div>
+      <h2 class="aps-section">Earnings</h2>
+      <table class="aps-table">
+        <tr><td>Basic salary</td><td>${mny(p.basic_salary)}</td></tr>
+        ${Number(p.travel_allowance) ? `<tr><td>Travel allowance</td><td>${mny(p.travel_allowance)}</td></tr>` : ''}
+        ${Number(p.other_taxable_allowance) ? `<tr><td>Other taxable allowance</td><td>${mny(p.other_taxable_allowance)}</td></tr>` : ''}
+        ${Number(p.other_nontaxable_allowance) ? `<tr><td>Other allowance (non-taxable)</td><td>${mny(p.other_nontaxable_allowance)}</td></tr>` : ''}
+        ${Number(p.once_off_taxable) ? `<tr><td>Bonus / once-off payment</td><td>${mny(p.once_off_taxable)}</td></tr>` : ''}
+        ${Number(p.once_off_nontaxable) ? `<tr><td>Bonus / once-off payment (non-taxable)</td><td>${mny(p.once_off_nontaxable)}</td></tr>` : ''}
+        <tr class="aps-total"><td>Gross pay</td><td>${mny(p.gross_pay)}</td></tr>
+      </table>
+      ${fringeBenefits.length ? `
+      <h2 class="aps-section">Taxable fringe benefits</h2>
+      <table class="aps-table">${fringeBenefits.map(f => `<tr><td>${esc(f.label)}</td><td>${mny(f.amount)}</td></tr>`).join('')}</table>` : ''}
+      <h2 class="aps-section">Deductions</h2>
+      <table class="aps-table">
+        <tr><td>PAYE (income tax)</td><td>${mny(p.paye)}</td></tr>
+        <tr><td>UIF contribution</td><td>${mny(p.uif_employee)}</td></tr>
+        ${Number(p.retirement_contribution) ? `<tr><td>Retirement fund contribution</td><td>${mny(p.retirement_contribution)}</td></tr>` : ''}
+        ${Number(p.loan_repayment) ? `<tr><td>Loan repayment</td><td>${mny(p.loan_repayment)}</td></tr>` : ''}
+        ${otherDeductions.map(d => `<tr><td>${esc(d.label)}</td><td>${mny(d.amount)}</td></tr>`).join('')}
+        <tr class="aps-total"><td>Total deductions</td><td>${mny(p.total_deductions)}</td></tr>
+      </table>
+      <div class="aps-netbox"><span style="opacity:0.7">Net pay</span><span style="font-size:1.3rem;font-weight:900">${mny(p.net_pay)}</span></div>
+      <h2 class="aps-section">Year to date</h2>
+      <table class="aps-table">
+        <tr><td>YTD gross</td><td>${mny(p.ytd_gross)}</td></tr>
+        <tr><td>YTD PAYE</td><td>${mny(p.ytd_paye)}</td></tr>
+        <tr><td>YTD UIF</td><td>${mny(p.ytd_uif_employee)}</td></tr>
+      </table>
+      <p class="aps-foot">This payslip is issued in terms of Section 33 of the Basic Conditions of Employment Act, 1997.</p>
+    </div>`;
+}
+
+async function downloadAllPayslipsPdf() {
+  const runId = document.getElementById('payslipsRunSelect').value;
+  if (!runId) { alert('Select a pay run first.'); return; }
+  const btn = document.getElementById('downloadAllPayslipsBtn');
+  const original = btn.textContent;
+  btn.disabled = true; btn.textContent = 'Preparing…';
+  let container;
+  try {
+    const { data: payslips, error } = await sb.from('payroll_payslips')
+      .select('*, payroll_staff(*), payroll_runs(*, payroll_companies(*))')
+      .eq('run_id', runId)
+      .order('payroll_staff(full_name)');
+    if (error) throw error;
+    if (!payslips || payslips.length === 0) { alert('No payslips found for this run.'); return; }
+
+    await loadHtml2PdfLib();
+
+    container = document.createElement('div');
+    container.id = 'allPayslipsPdfContainer';
+    container.innerHTML = `<style>
+      #allPayslipsPdfContainer { font-family:'Inter',sans-serif; color:#0e1c40; }
+      #allPayslipsPdfContainer .aps-sheet { max-width:720px; margin:0 auto; padding:20px 0 40px; page-break-after:always; break-after:page; }
+      #allPayslipsPdfContainer .aps-sheet:last-child { page-break-after:auto; break-after:auto; }
+      #allPayslipsPdfContainer .aps-top { display:flex; justify-content:space-between; align-items:flex-start; gap:12px; margin-bottom:20px; border-bottom:2px solid #0e1c40; padding-bottom:16px; }
+      #allPayslipsPdfContainer .aps-h1 { font-size:1.2rem; font-weight:900; }
+      #allPayslipsPdfContainer .aps-sub { font-size:0.76rem; color:#7a8fb0; margin-top:2px; }
+      #allPayslipsPdfContainer .aps-meta { display:grid; grid-template-columns:1fr 1fr; gap:6px 24px; font-size:0.8rem; margin-bottom:18px; }
+      #allPayslipsPdfContainer .aps-meta div { display:flex; justify-content:space-between; }
+      #allPayslipsPdfContainer .aps-meta div span:first-child { color:#7a8fb0; padding-right:10px; }
+      #allPayslipsPdfContainer .aps-section { font-size:0.74rem; font-weight:700; text-transform:uppercase; letter-spacing:0.06em; color:#7a8fb0; margin:16px 0 6px; }
+      #allPayslipsPdfContainer .aps-table { width:100%; border-collapse:collapse; font-size:0.82rem; }
+      #allPayslipsPdfContainer .aps-table tr { page-break-inside:avoid; break-inside:avoid; }
+      #allPayslipsPdfContainer .aps-table td { padding:5px 0; border-bottom:1px solid #eef1f6; }
+      #allPayslipsPdfContainer .aps-table td:last-child { text-align:right; font-variant-numeric:tabular-nums; }
+      #allPayslipsPdfContainer .aps-total td { font-weight:800; border-top:2px solid #0e1c40; border-bottom:none; padding-top:8px; }
+      #allPayslipsPdfContainer .aps-netbox { background:#0e1c40; color:#fff; border-radius:10px; padding:14px 18px; display:flex; justify-content:space-between; align-items:center; margin-top:16px; page-break-inside:avoid; break-inside:avoid; }
+      #allPayslipsPdfContainer .aps-foot { margin-top:18px; font-size:0.68rem; color:#7a8fb0; }
+    </style>` + payslips.map(p => renderOnePayslipHtml(p)).join('');
+    document.body.appendChild(container);
+
+    const run = runsCache.find(r => r.id === runId);
+    window.scrollTo(0, 0);
+    await window.html2pdf().set({
+      filename: `Burse-Payslips-${run ? run.period_start : 'run'}.pdf`,
+      margin: 10,
+      jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' },
+      html2canvas: { scale: 2, useCORS: true, scrollX: 0, scrollY: 0 },
+      pagebreak: { mode: ['css', 'legacy'], avoid: ['tr', '.aps-netbox', '.aps-meta'] },
+    }).from(container).save();
+  } catch (e) {
+    alert(e.message || 'Could not generate the combined PDF.');
+  } finally {
+    if (container) container.remove();
+    btn.disabled = false; btn.textContent = original;
+  }
 }
 
 async function loadPayrollSummary(runId) {
