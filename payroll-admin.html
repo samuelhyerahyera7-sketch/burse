@@ -3938,25 +3938,141 @@ async function loadEmp201() {
   wrap.innerHTML = '<div class="loading">Calculating…</div>';
   try {
     const r = await callEngine('emp201_summary', { run_id: runId });
+    const mny = n => 'R ' + Number(n || 0).toLocaleString('en-ZA', { minimumFractionDigits: 2 });
+    const e = r.emp201;
     wrap.innerHTML = `
-      <div style="margin-top:16px;border-top:1px solid var(--border);padding-top:16px">
-        <h3 style="font-size:1rem;margin-bottom:4px">${esc(r.company)}</h3>
-        <p style="font-size:0.8rem;color:var(--soft);margin-bottom:16px">PAYE ${r.paye_reference||'—'} · UIF ${r.uif_reference||'—'} · SDL ${r.sdl_reference||'—'} · Period ${r.period_start} – ${r.period_end} · Tax year ${r.tax_year}</p>
-        <table><tbody>
-          <tr><td>Gross remuneration</td><td style="text-align:right">R ${r.totals.gross_remuneration.toLocaleString('en-ZA',{minimumFractionDigits:2})}</td></tr>
-          <tr><td>PAYE deducted</td><td style="text-align:right">R ${r.totals.paye.toLocaleString('en-ZA',{minimumFractionDigits:2})}</td></tr>
-          <tr><td>Less: ETI</td><td style="text-align:right">– R ${r.totals.eti.toLocaleString('en-ZA',{minimumFractionDigits:2})}</td></tr>
-          <tr><td><strong>PAYE payable (EMP201)</strong></td><td style="text-align:right"><strong>R ${r.emp201.paye_payable.toLocaleString('en-ZA',{minimumFractionDigits:2})}</strong></td></tr>
-          <tr><td>UIF (employee + employer)</td><td style="text-align:right">R ${r.emp201.uif_payable.toLocaleString('en-ZA',{minimumFractionDigits:2})}</td></tr>
-          <tr><td>SDL</td><td style="text-align:right">R ${r.emp201.sdl_payable.toLocaleString('en-ZA',{minimumFractionDigits:2})}</td></tr>
-          <tr><td><strong>Total payable to SARS</strong></td><td style="text-align:right"><strong>R ${r.emp201.total_payable.toLocaleString('en-ZA',{minimumFractionDigits:2})}</strong></td></tr>
+      <div class="emp201-sheet" style="margin-top:16px;border:1px solid var(--border);border-radius:8px;padding:20px;position:relative;overflow:hidden">
+        ${r.is_draft ? `<div style="position:absolute;top:14px;right:-38px;transform:rotate(45deg);background:#f59e0b;color:#fff;font-weight:800;font-size:0.7rem;letter-spacing:0.08em;padding:4px 46px;box-shadow:0 1px 3px rgba(0,0,0,.2)">DRAFT</div>` : ''}
+        <h3 style="font-size:1.05rem;margin-bottom:2px">${esc(r.company)}</h3>
+        <p style="font-size:0.8rem;color:var(--soft);margin-bottom:2px">EMP201 — Monthly Employer Declaration</p>
+        <p style="font-size:0.8rem;color:var(--soft);margin-bottom:16px">PAYE ${esc(r.paye_reference||'—')} · UIF ${esc(r.uif_reference||'—')} · SDL ${esc(r.sdl_reference||'—')} · Period ${r.period_start} – ${r.period_end} · Tax year ${r.tax_year}</p>
+
+        <div style="font-weight:700;font-size:0.85rem;margin-bottom:8px;padding-bottom:6px;border-bottom:2px solid var(--navy,#0f2942)">Payment Details</div>
+        <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:16px">
+          <div>
+            <div style="font-size:0.72rem;font-weight:700;color:var(--soft);text-transform:uppercase;letter-spacing:.04em;margin-bottom:6px">Liability</div>
+            <table style="width:100%"><tbody>
+              <tr><td>PAYE</td><td style="text-align:right">${mny(e.paye_liability)}</td></tr>
+              <tr><td>SDL</td><td style="text-align:right">${mny(e.sdl_payable)}</td></tr>
+              <tr><td>UIF</td><td style="text-align:right">${mny(e.uif_payable)}</td></tr>
+            </tbody></table>
+          </div>
+          <div>
+            <div style="font-size:0.72rem;font-weight:700;color:var(--soft);text-transform:uppercase;letter-spacing:.04em;margin-bottom:6px">ETI</div>
+            <table style="width:100%"><tbody>
+              <tr><td>Brought forward</td><td style="text-align:right">${mny(e.eti_brought_forward)}</td></tr>
+              <tr><td>Calculated</td><td style="text-align:right">${mny(e.eti_calculated)}</td></tr>
+              <tr><td>Utilised</td><td style="text-align:right">– ${mny(e.eti_utilised)}</td></tr>
+              <tr><td><strong>Carried forward</strong></td><td style="text-align:right"><strong>${mny(e.eti_carried_forward)}</strong></td></tr>
+            </tbody></table>
+          </div>
+          <div>
+            <div style="font-size:0.72rem;font-weight:700;color:var(--soft);text-transform:uppercase;letter-spacing:.04em;margin-bottom:6px">Payable</div>
+            <table style="width:100%"><tbody>
+              <tr><td>PAYE</td><td style="text-align:right">${mny(e.paye_payable)}</td></tr>
+              <tr><td>SDL</td><td style="text-align:right">${mny(e.sdl_payable)}</td></tr>
+              <tr><td>UIF</td><td style="text-align:right">${mny(e.uif_payable)}</td></tr>
+            </tbody></table>
+          </div>
+        </div>
+
+        <table style="width:100%;border-top:2px solid var(--navy,#0f2942)"><tbody>
+          <tr><td style="padding-top:10px"><strong>Total payroll liability</strong></td><td style="text-align:right;padding-top:10px"><strong>${mny(e.paye_liability + e.sdl_payable + e.uif_payable)}</strong></td></tr>
+          <tr><td style="font-size:1rem"><strong>Total payable to SARS</strong></td><td style="text-align:right;font-size:1rem"><strong>${mny(e.total_payable)}</strong></td></tr>
         </tbody></table>
-        <p class="form-hint" style="margin-top:14px">These figures are for you to capture on SARS eFiling / e@syFile — Burse does not submit EMP201s directly to SARS.</p>
+
+        <table style="width:100%;margin-top:14px"><tbody>
+          <tr><td colspan="2" style="font-size:0.72rem;font-weight:700;color:var(--soft);text-transform:uppercase;letter-spacing:.04em;padding-bottom:4px">Underlying totals</td></tr>
+          <tr><td>Gross remuneration</td><td style="text-align:right">${mny(r.totals.gross_remuneration)}</td></tr>
+          <tr><td>Employees</td><td style="text-align:right">${r.employee_count}</td></tr>
+        </tbody></table>
+
+        <p class="form-hint" style="margin-top:14px">These figures are for you to capture on SARS eFiling / e@syFile — Burse does not submit EMP201s directly to SARS. ETI carried forward automatically offsets a future period's PAYE liability, per SARS rules.</p>
+        <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:10px">
+          <button class="btn-outline" onclick='downloadEmp201Worksheet(${JSON.stringify(r).replace(/'/g, "&apos;")})'>Download SARS filing worksheet (CSV)</button>
+          <button class="btn-outline" onclick="downloadUifDeclarationWorksheet('${runId}')">Download UIF declaration worksheet (CSV)</button>
+        </div>
         ${exportButtonsHtml('emp201Wrap', `burse-emp201-${r.period_start}`, `EMP201 ${r.period_start}`)}
       </div>`;
-  } catch (e) {
-    wrap.innerHTML = `<div class="error-box" style="display:block">${e.message}</div>`;
+  } catch (err) {
+    wrap.innerHTML = `<div class="error-box" style="display:block">${err.message}</div>`;
   }
+}
+
+function downloadCsvRows(filename, rows) {
+  const csv = rows.map(row => row.map(cell => {
+    const s = String(cell ?? '');
+    return /[",\n]/.test(s) ? `"${s.replace(/"/g, '""')}"` : s;
+  }).join(',')).join('\r\n');
+  const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url; a.download = filename; a.click();
+  URL.revokeObjectURL(url);
+}
+
+// This is a manual-capture worksheet laid out in the same field order as
+// the EMP201 form — not a SARS e@syFile bulk-import file. SARS's e@syFile
+// bulk-import schema isn't fully public and changes by version, so
+// generating a file that silently fails (or worse, imports wrong) would be
+// riskier than a worksheet you copy into eFiling/e@syFile by hand.
+function downloadEmp201Worksheet(r) {
+  const e = r.emp201;
+  const rows = [
+    ['SARS EMP201 filing worksheet — capture these values on eFiling or e@syFile'],
+    ['Employer', r.company],
+    ['PAYE reference', r.paye_reference || ''],
+    ['UIF reference', r.uif_reference || ''],
+    ['SDL reference', r.sdl_reference || ''],
+    ['Period', `${r.period_start} to ${r.period_end}`],
+    ['Tax year', r.tax_year],
+    [],
+    ['Field', 'Amount (R)'],
+    ['Total gross remuneration', r.totals.gross_remuneration],
+    ['PAYE liability (before ETI)', e.paye_liability],
+    ['ETI brought forward', e.eti_brought_forward],
+    ['ETI calculated this period', e.eti_calculated],
+    ['ETI utilised this period', e.eti_utilised],
+    ['ETI carried forward to next period', e.eti_carried_forward],
+    ['PAYE payable (after ETI)', e.paye_payable],
+    ['SDL payable', e.sdl_payable],
+    ['UIF payable (employee + employer)', e.uif_payable],
+    ['Total payable to SARS', e.total_payable],
+  ];
+  downloadCsvRows(`SARS-EMP201-worksheet-${r.period_start}.csv`, rows);
+}
+
+// Same idea for the UIF monthly declaration — a per-employee worksheet in
+// uFiling's field order, not an automated uFiling submission (see the
+// EMP201 worksheet comment above for why).
+async function downloadUifDeclarationWorksheet(runId) {
+  const { data: payslips, error } = await sb
+    .from('payroll_payslips')
+    .select('*, payroll_staff(*), payroll_runs(*, payroll_companies(*))')
+    .eq('run_id', runId)
+    .order('payroll_staff(full_name)');
+  if (error || !payslips || payslips.length === 0) { alert('Could not load payslips for this run.'); return; }
+  const run = payslips[0].payroll_runs;
+  const co = run.payroll_companies;
+  const rows = [
+    ['UIF monthly declaration worksheet — capture on uFiling (ufiling.labour.gov.za)'],
+    ['Employer', co.trading_name],
+    ['UIF reference', co.uif_reference || ''],
+    ['Period', `${run.period_start} to ${run.period_end}`],
+    [],
+    ['Employee number', 'Full name', 'ID number', 'Remuneration (R)', 'Employee UIF (R)', 'Employer UIF (R)', 'Total UIF contribution (R)'],
+  ];
+  for (const p of payslips) {
+    const s = p.payroll_staff;
+    rows.push([
+      s?.employee_number || '', s?.full_name || '', s?.id_number || '',
+      Number(p.gross_pay || 0).toFixed(2), Number(p.uif_employee || 0).toFixed(2),
+      Number(p.uif_employer || 0).toFixed(2), (Number(p.uif_employee || 0) + Number(p.uif_employer || 0)).toFixed(2),
+    ]);
+  }
+  const totalUif = payslips.reduce((s, p) => s + Number(p.uif_employee || 0) + Number(p.uif_employer || 0), 0);
+  rows.push([], ['Total UIF contribution', '', '', '', '', '', totalUif.toFixed(2)]);
+  downloadCsvRows(`UIF-declaration-worksheet-${run.period_start}.csv`, rows);
 }
 
 // ── Bank Payment Files ──

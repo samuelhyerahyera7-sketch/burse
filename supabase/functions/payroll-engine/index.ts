@@ -239,6 +239,14 @@ Deno.serve(async (req) => {
           meta: { run_id, period_start: run.period_start, period_end: run.period_end, payslip_count: payslips.length },
         });
 
+        // ETI carry-forward: SARS never lets ETI take PAYE below zero, so
+        // any calculated ETI beyond this period's PAYE liability rolls
+        // forward to offset a future period. This must be locked in at
+        // finalize time, in strict chronological order — the previous
+        // finalized run (by period_end) supplies this run's brought-forward
+        // figure.
+        await upsertEtiLedgerEntry(sb, run, payslips).catch((e) => console.error('ETI ledger update skipped:', e));
+
         // Best-effort — a business that hasn't opened Bookkeeping yet has no
         // chart of accounts, and that's fine; payroll finalization must never
         // fail because the sibling product hasn't been set up.
@@ -287,7 +295,58 @@ Deno.serve(async (req) => {
           eti:                acc.eti + Number(p.eti_employer),
         }), { gross_remuneration: 0, paye: 0, uif_employee: 0, uif_employer: 0, sdl: 0, eti: 0 });
 
-        const paye_payable = Math.max(0, totals.paye - totals.eti);
+        // Finalized runs read their locked-in ledger row (set at finalize
+        // time, in chronological order — see upsertEtiLedgerEntry). Draft
+        // runs get a live preview computed the same way, but nothing is
+        // persisted — the real carry-forward is only locked in on finalize,
+        // since a draft can still be recalculated or discarded.
+        let broughtForward = 0;
+        if (run.status === 'finalized') {
+          const { data: ledgerRow } = await sb
+            .from('payroll_eti_ledger')
+            .select('brought_forward, calculated, paye_liability, utilised, carried_forward')
+            .eq('run_id', run_id)
+            .maybeSingle();
+          if (ledgerRow) {
+            const uif_payable = totals.uif_employee + totals.uif_employer;
+            return json({
+              company: company.trading_name, paye_reference: company.paye_reference,
+              uif_reference: company.uif_reference, sdl_reference: company.sdl_reference,
+              period_start: run.period_start, period_end: run.period_end, pay_date: run.pay_date,
+              tax_year: run.tax_year, employee_count: (payslips ?? []).length, totals, is_draft: false,
+              emp201: {
+                eti_brought_forward: round2(ledgerRow.brought_forward),
+                eti_calculated: round2(ledgerRow.calculated),
+                eti_utilised: round2(ledgerRow.utilised),
+                eti_carried_forward: round2(ledgerRow.carried_forward),
+                paye_liability: round2(ledgerRow.paye_liability),
+                paye_payable: round2(Math.max(0, ledgerRow.paye_liability - ledgerRow.utilised)),
+                uif_payable: round2(uif_payable),
+                sdl_payable: round2(totals.sdl),
+                total_payable: round2(Math.max(0, ledgerRow.paye_liability - ledgerRow.utilised) + uif_payable + totals.sdl),
+              },
+            });
+          }
+          // Finalized before the ETI ledger existed — fall through to the
+          // preview path below, brought_forward defaults to 0.
+        }
+
+        const { data: priorLedger } = await sb
+          .from('payroll_eti_ledger')
+          .select('carried_forward')
+          .eq('company_id', run.company_id)
+          .lt('period_end', run.period_end)
+          .order('period_end', { ascending: false })
+          .limit(1)
+          .maybeSingle();
+        broughtForward = round2(Number(priorLedger?.carried_forward || 0));
+
+        const calculated = round2(totals.eti);
+        const payeLiability = round2(totals.paye);
+        const available = round2(broughtForward + calculated);
+        const utilised = round2(Math.min(available, payeLiability));
+        const carriedForward = round2(available - utilised);
+        const paye_payable = round2(Math.max(0, payeLiability - utilised));
         const uif_payable = totals.uif_employee + totals.uif_employer;
 
         return json({
@@ -301,11 +360,16 @@ Deno.serve(async (req) => {
           tax_year: run.tax_year,
           employee_count: (payslips ?? []).length,
           totals,
+          is_draft: run.status !== 'finalized',
           emp201: {
-            paye_payable: round2(paye_payable),
+            eti_brought_forward: broughtForward,
+            eti_calculated: calculated,
+            eti_utilised: utilised,
+            eti_carried_forward: carriedForward,
+            paye_liability: payeLiability,
+            paye_payable,
             uif_payable: round2(uif_payable),
             sdl_payable: round2(totals.sdl),
-            eti_used: round2(totals.eti),
             total_payable: round2(paye_payable + uif_payable + totals.sdl),
           },
         });
@@ -746,6 +810,47 @@ async function upsertLeaveBalance(sb: any, staffId: string, leaveType: string, c
   }
   return sb.from('payroll_leave_balances')
     .insert({ staff_id: staffId, leave_type: leaveType, cycle_start: iso, entitled_days: entitled, taken_days: 0 });
+}
+
+// deno-lint-ignore no-explicit-any
+async function upsertEtiLedgerEntry(sb: any, run: any, payslips: any[]) {
+  const totals = payslips.reduce((acc, p) => ({
+    paye: acc.paye + Number(p.paye || 0),
+    eti: acc.eti + Number(p.eti_employer || 0),
+  }), { paye: 0, eti: 0 });
+
+  // Most recent *finalized* run for this company strictly before this
+  // one's period_end supplies the brought-forward figure. Runs are
+  // finalized in order in normal use, but we key off period_end (not
+  // finalized_at) so an out-of-order finalize still carries forward from
+  // the correct prior period rather than whichever run happened to be
+  // finalized last.
+  const { data: priorLedger } = await sb
+    .from('payroll_eti_ledger')
+    .select('carried_forward, period_end')
+    .eq('company_id', run.company_id)
+    .lt('period_end', run.period_end)
+    .order('period_end', { ascending: false })
+    .limit(1)
+    .maybeSingle();
+
+  const broughtForward = round2(Number(priorLedger?.carried_forward || 0));
+  const calculated = round2(totals.eti);
+  const payeLiability = round2(totals.paye);
+  const available = round2(broughtForward + calculated);
+  const utilised = round2(Math.min(available, payeLiability));
+  const carriedForward = round2(available - utilised);
+
+  await sb.from('payroll_eti_ledger').upsert({
+    company_id: run.company_id,
+    run_id: run.id,
+    period_end: run.period_end,
+    brought_forward: broughtForward,
+    calculated,
+    paye_liability: payeLiability,
+    utilised,
+    carried_forward: carriedForward,
+  }, { onConflict: 'run_id' });
 }
 
 // deno-lint-ignore no-explicit-any
