@@ -98,7 +98,7 @@ body.nav-open .mob-overlay{display:block}
 .hero-title em{font-style:italic;color:var(--rose)}
 .hero-desc{font-size:1rem;color:var(--muted);line-height:1.85;margin-bottom:44px;max-width:440px}
 .hero-btns{display:flex;gap:14px;flex-wrap:wrap;margin-bottom:48px}
-.hero-tags{display:flex;align-items:center;gap:24px;flex-wrap:wrap}
+.hero-tags{display:flex;align-items:center;gap:18px;flex-wrap:nowrap}
 .htag{font-size:.7rem;font-weight:600;letter-spacing:.05em;color:var(--muted);display:flex;align-items:center;gap:7px;text-transform:uppercase}
 .htag svg{width:12px;height:12px;stroke:var(--rose);fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;flex-shrink:0}
 .hero-right{display:grid;grid-template-columns:1fr 1fr;grid-template-rows:1fr 1fr;gap:2px;background:var(--border);position:relative;z-index:1}
