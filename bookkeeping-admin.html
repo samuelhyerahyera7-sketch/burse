@@ -152,6 +152,79 @@
   @keyframes spin { to { transform:rotate(360deg); } }
   #auth-gate p { color:rgba(255,255,255,0.5); font-size:0.82rem; }
   .layout { visibility:hidden; }
+
+  /* ── Job Orders ── */
+  .badge-orange { background:#fff7ed; color:#c2410c; }
+  .jo-filters { display:flex; gap:8px; flex-wrap:wrap; margin-bottom:16px; }
+  .jo-filter-btn { padding:6px 14px; border-radius:20px; border:1.5px solid var(--border); font-size:0.78rem; font-weight:700; color:var(--soft); cursor:pointer; background:var(--card); font-family:'Inter',sans-serif; transition:all .15s; }
+  .jo-filter-btn.active { border-color:var(--teal); color:var(--teal); background:rgba(42,179,179,0.08); }
+  .priority-dot { display:inline-block; width:8px; height:8px; border-radius:50%; margin-right:5px; }
+  .priority-low { background:#94a3b8; }
+  .priority-normal { background:#60a5fa; }
+  .priority-high { background:#fb923c; }
+  .priority-urgent { background:#ef4444; }
+
+  /* ── Job Card Print ── */
+  .job-card-view { border:2px solid var(--border); border-radius:14px; padding:28px; margin-bottom:20px; }
+  .job-card-header { display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:20px; border-bottom:2px solid var(--navy-dark); padding-bottom:16px; }
+  .job-card-no { font-size:1.6rem; font-weight:900; color:var(--navy-dark); }
+  .job-card-meta { display:grid; grid-template-columns:1fr 1fr; gap:10px 24px; margin-bottom:20px; }
+  .job-card-field label { font-size:0.68rem; font-weight:700; text-transform:uppercase; letter-spacing:0.06em; color:var(--soft); display:block; margin-bottom:2px; }
+  .job-card-field span { font-size:0.88rem; font-weight:600; }
+  .job-card-desc { background:var(--bg); border-radius:10px; padding:14px; font-size:0.88rem; line-height:1.6; }
+  @media print {
+    body > *:not(#jobCardPrintArea) { display:none !important; }
+    #jobCardPrintArea { display:block !important; padding:20mm; }
+    .no-print { display:none !important; }
+    .job-card-view { border:1px solid #000; }
+  }
+
+  /* ── Invoice Print ── */
+  .inv-print-template { border:1px solid var(--border); border-radius:14px; overflow:hidden; }
+  .inv-print-header { background:var(--navy-dark); color:#fff; padding:28px 32px; display:flex; justify-content:space-between; align-items:flex-start; }
+  .inv-print-company { font-size:1.4rem; font-weight:900; letter-spacing:-0.02em; }
+  .inv-print-company small { display:block; font-size:0.7rem; font-weight:400; opacity:.6; margin-top:2px; letter-spacing:0; }
+  .inv-print-title { text-align:right; }
+  .inv-print-title h2 { font-size:2rem; font-weight:900; letter-spacing:-0.03em; opacity:.9; }
+  .inv-print-title .inv-num { font-size:0.9rem; color:var(--teal); font-weight:700; margin-top:4px; }
+  .inv-print-body { padding:28px 32px; }
+  .inv-print-parties { display:grid; grid-template-columns:1fr 1fr; gap:24px; margin-bottom:24px; }
+  .inv-print-party h4 { font-size:0.68rem; font-weight:700; text-transform:uppercase; letter-spacing:0.08em; color:var(--soft); margin-bottom:6px; }
+  .inv-print-party p { font-size:0.88rem; font-weight:600; color:var(--text); line-height:1.6; }
+  .inv-print-dates { display:flex; gap:32px; margin-bottom:24px; padding:14px 0; border-top:1px solid var(--border); border-bottom:1px solid var(--border); }
+  .inv-print-dates div label { font-size:0.68rem; font-weight:700; text-transform:uppercase; letter-spacing:0.06em; color:var(--soft); display:block; }
+  .inv-print-dates div span { font-size:0.9rem; font-weight:700; }
+  .inv-print-lines table { width:100%; border-collapse:collapse; font-size:0.85rem; }
+  .inv-print-lines th { background:var(--bg); padding:9px 12px; font-size:0.68rem; font-weight:700; text-transform:uppercase; letter-spacing:0.06em; color:var(--soft); text-align:left; }
+  .inv-print-lines td { padding:11px 12px; border-bottom:1px solid var(--border); }
+  .inv-print-totals { display:flex; justify-content:flex-end; margin-top:20px; }
+  .inv-print-totals table { min-width:260px; }
+  .inv-print-totals td { padding:5px 12px; font-size:0.88rem; }
+  .inv-print-totals .grand { font-size:1.1rem; font-weight:900; border-top:2px solid var(--navy-dark); }
+  .inv-print-footer { background:var(--bg); padding:14px 32px; font-size:0.76rem; color:var(--soft); text-align:center; border-top:1px solid var(--border); }
+  @media print {
+    body > *:not(#invPrintArea) { display:none !important; }
+    #invPrintArea { display:block !important; padding:0; }
+    .no-print { display:none !important; }
+  }
+
+  /* ── Calendar ── */
+  .cal-nav { display:flex; align-items:center; gap:16px; margin-bottom:18px; }
+  .cal-month-label { font-size:1.05rem; font-weight:800; flex:1; }
+  .cal-grid { display:grid; grid-template-columns:repeat(7,1fr); gap:1px; background:var(--border); border-radius:10px; overflow:hidden; }
+  .cal-day-hdr { background:var(--bg); padding:8px 4px; text-align:center; font-size:0.68rem; font-weight:700; text-transform:uppercase; letter-spacing:0.06em; color:var(--soft); }
+  .cal-cell { background:var(--card); min-height:80px; padding:6px; position:relative; }
+  .cal-cell.other-month { background:#fafbfd; }
+  .cal-cell.today { outline:2px solid var(--teal); outline-offset:-2px; }
+  .cal-date { font-size:0.78rem; font-weight:700; color:var(--soft); margin-bottom:4px; }
+  .cal-cell.today .cal-date { color:var(--teal); }
+  .cal-event { font-size:0.68rem; font-weight:600; padding:2px 6px; border-radius:4px; margin-bottom:2px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; cursor:pointer; }
+  .cal-event-received { background:#dbeafe; color:#1d4ed8; }
+  .cal-event-due { background:#fee2e2; color:#dc2626; }
+  .cal-event-due.urgent { background:#ef4444; color:#fff; }
+  .cal-legend { display:flex; gap:16px; font-size:0.76rem; margin-bottom:12px; flex-wrap:wrap; }
+  .cal-legend span { display:flex; align-items:center; gap:5px; }
+  .cal-legend i { display:inline-block; width:12px; height:12px; border-radius:3px; }
 </style>
 </head>
 <body>
@@ -180,6 +253,8 @@
       <a class="nav-item" onclick="showSection('reconcile')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12V7a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-1"/><path d="M18 12a2 2 0 1 0 0 4 2 2 0 0 0 0-4z"/></svg><span class="nav-label">Bank Reconciliation</span></a>
       <a class="nav-item" onclick="showSection('reports')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg><span class="nav-label">Reports</span></a>
       <a class="nav-item" onclick="showSection('analytics')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg><span class="nav-label">Analytics</span></a>
+      <a class="nav-item" onclick="showSection('joborders')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 5H7a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-2"/><rect x="9" y="3" width="6" height="4" rx="1"/><path d="M9 12h6"/><path d="M9 16h4"/></svg><span class="nav-label">Job Orders</span><span id="joNavBadge" style="display:none;background:#ef4444;color:#fff;font-size:0.6rem;font-weight:800;padding:1px 6px;border-radius:50px;margin-left:auto">0</span></a>
+      <a class="nav-item" onclick="showSection('calendar')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg><span class="nav-label">Calendar</span></a>
       <a class="nav-item" id="payrollNavLink" href="#"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg><span class="nav-label">Payroll</span></a>
     </nav>
     <div class="sidebar-footer">
@@ -376,6 +451,51 @@
         </div>
         <div class="subtab-panel" id="reportpanel-expbyvendor">
           <div class="card"><div class="card-title" style="margin-bottom:14px">Expenses by vendor (all-time)</div><div id="expByVendorWrap"><div class="loading">Loading…</div></div></div>
+        </div>
+      </section>
+
+      <!-- JOB ORDERS -->
+      <section class="section" id="section-joborders">
+        <div class="page-header"><h1>Job Orders</h1><p>Every order that comes in — never lose track of a job again.</p></div>
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title">All job orders</div>
+            <div style="display:flex;gap:8px">
+              <button class="btn-outline btn-sm" onclick="showSection('calendar')">View Calendar</button>
+              <button class="btn-teal btn-sm" onclick="openJobOrderModal()">New Job Order</button>
+            </div>
+          </div>
+          <div class="jo-filters">
+            <button class="jo-filter-btn active" onclick="filterJobOrders('all',this)">All</button>
+            <button class="jo-filter-btn" onclick="filterJobOrders('new',this)">New</button>
+            <button class="jo-filter-btn" onclick="filterJobOrders('in_progress',this)">In Progress</button>
+            <button class="jo-filter-btn" onclick="filterJobOrders('ready',this)">Ready for Pickup</button>
+            <button class="jo-filter-btn" onclick="filterJobOrders('completed',this)">Completed</button>
+            <button class="jo-filter-btn" onclick="filterJobOrders('archived',this)">Archived</button>
+          </div>
+          <div id="jobOrdersTableWrap"><div class="loading">Loading…</div></div>
+        </div>
+      </section>
+
+      <!-- CALENDAR -->
+      <section class="section" id="section-calendar">
+        <div class="page-header"><h1>Calendar</h1><p>See orders by when they came in and when they're due.</p></div>
+        <div class="card">
+          <div class="subtabs" style="margin-bottom:20px">
+            <div class="subtab active" onclick="switchCalTab('received',this)">Orders Received</div>
+            <div class="subtab" onclick="switchCalTab('due',this)">Due Dates</div>
+          </div>
+          <div class="cal-legend">
+            <span><i style="background:#dbeafe"></i>Order received</span>
+            <span><i style="background:#fee2e2"></i>Due date</span>
+            <span><i style="background:#ef4444"></i>Urgent / overdue</span>
+          </div>
+          <div class="cal-nav">
+            <button class="btn-outline btn-sm" onclick="calPrev()">&#8592; Prev</button>
+            <div class="cal-month-label" id="calMonthLabel">—</div>
+            <button class="btn-outline btn-sm" onclick="calNext()">Next &#8594;</button>
+          </div>
+          <div id="calGridWrap"></div>
         </div>
       </section>
 
@@ -693,6 +813,78 @@
   </div>
 </div>
 
+<!-- Job Order Modal -->
+<div class="modal-overlay" id="jobOrderModal" hidden>
+  <div class="modal-box" style="max-width:600px">
+    <button class="modal-close" onclick="closeModal('jobOrderModal')">✕</button>
+    <h2 id="jobOrderModalTitle">New Job Order</h2>
+    <input type="hidden" id="jo-id">
+    <div class="error-box" id="joError"></div>
+    <div class="form-row">
+      <div class="form-group"><label>Customer name</label><input id="jo-customer" placeholder="e.g. John Smith"></div>
+      <div class="form-group"><label>Customer phone</label><input id="jo-phone" placeholder="e.g. 082 000 0000"></div>
+    </div>
+    <div class="form-row">
+      <div class="form-group"><label>Customer email (optional)</label><input type="email" id="jo-email" placeholder="e.g. john@example.com"></div>
+      <div class="form-group"><label>Priority</label>
+        <select id="jo-priority">
+          <option value="low">Low</option>
+          <option value="normal" selected>Normal</option>
+          <option value="high">High</option>
+          <option value="urgent">Urgent</option>
+        </select>
+      </div>
+    </div>
+    <div class="form-group" style="margin-bottom:14px"><label>Job description</label><textarea id="jo-description" rows="3" placeholder="What does this job involve? Materials, size, colour, finish…"></textarea></div>
+    <div class="form-row">
+      <div class="form-group"><label>Date received</label><input type="date" id="jo-received"></div>
+      <div class="form-group"><label>Due date</label><input type="date" id="jo-duedate"></div>
+    </div>
+    <div class="form-group" style="margin-bottom:14px"><label>Notes (internal)</label><textarea id="jo-notes" rows="2" placeholder="Any special instructions or reminders…"></textarea></div>
+    <div class="form-group" style="margin-bottom:14px"><label>Status</label>
+      <select id="jo-status">
+        <option value="new">New</option>
+        <option value="in_progress">In Progress</option>
+        <option value="ready">Ready for Pickup</option>
+        <option value="completed">Completed</option>
+        <option value="archived">Archived</option>
+      </select>
+    </div>
+    <div class="modal-actions">
+      <button class="btn-outline" onclick="closeModal('jobOrderModal')">Cancel</button>
+      <button class="btn-primary" onclick="submitJobOrder()" id="submitJobOrderBtn">Save Job Order</button>
+    </div>
+  </div>
+</div>
+
+<!-- Job Card View Modal -->
+<div class="modal-overlay" id="jobCardModal" hidden>
+  <div class="modal-box" style="max-width:680px">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:18px">
+      <h2 style="margin:0">Job Card</h2>
+      <div style="display:flex;gap:8px">
+        <button class="btn-teal btn-sm no-print" onclick="printJobCard()">Print / Save PDF</button>
+        <button class="modal-close no-print" onclick="closeModal('jobCardModal')">✕</button>
+      </div>
+    </div>
+    <div id="jobCardContent"></div>
+  </div>
+</div>
+
+<!-- Invoice Print Modal -->
+<div class="modal-overlay" id="invoicePrintModal" hidden>
+  <div class="modal-box" style="max-width:740px">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:18px">
+      <h2 style="margin:0">Invoice</h2>
+      <div style="display:flex;gap:8px">
+        <button class="btn-teal btn-sm no-print" onclick="printCurrentInvoice()">Print / Save PDF</button>
+        <button class="modal-close no-print" onclick="closeModal('invoicePrintModal')">✕</button>
+      </div>
+    </div>
+    <div id="invoicePrintContent"></div>
+  </div>
+</div>
+
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
 const SUPABASE_URL = 'https://pnpfurfodmejdggnyjof.supabase.co';
@@ -866,8 +1058,8 @@ function showSection(name) {
   document.getElementById('section-' + name).classList.add('active');
   document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
   event?.target?.closest('.nav-item')?.classList.add('active');
-  const titles = { dashboard:'Dashboard', accounts:'Chart of Accounts', journal:'Journal', invoices:'Invoices', expenses:'Expenses', estimates:'Estimates', customers:'Customers', vendors:'Vendors & Bills', stock:'Stock', reconcile:'Bank Reconciliation', reports:'Reports', analytics:'Analytics' };
-  document.getElementById('topbarTitle').textContent = titles[name];
+  const titles = { dashboard:'Dashboard', accounts:'Chart of Accounts', journal:'Journal', invoices:'Invoices', expenses:'Expenses', estimates:'Estimates', customers:'Customers', vendors:'Vendors & Bills', stock:'Stock', reconcile:'Bank Reconciliation', reports:'Reports', analytics:'Analytics', joborders:'Job Orders', calendar:'Calendar' };
+  document.getElementById('topbarTitle').textContent = titles[name] || name;
   if (name === 'accounts') loadAccounts();
   if (name === 'journal') loadJournal();
   if (name === 'invoices') { loadInvoices(); loadRecurring(); }
@@ -879,6 +1071,8 @@ function showSection(name) {
   if (name === 'reconcile') loadBankTxns();
   if (name === 'reports') { loadTrialBalance(); populateVatPeriodSelector(); }
   if (name === 'analytics') { loadAnalytics(); }
+  if (name === 'joborders') loadJobOrders();
+  if (name === 'calendar') loadCalendarSection();
   closeSidebar();
 }
 
@@ -1062,6 +1256,7 @@ async function loadInvoices() {
       <td style="white-space:nowrap">
         ${inv.status === 'draft' ? `<button class="btn-outline btn-sm" onclick="issueInvoiceAction('${inv.id}')">Issue</button>` : ''}
         ${['sent','overdue','partial'].includes(inv.status) ? `<button class="btn-outline btn-sm" onclick="openInvPaymentModal('${inv.id}', ${inv.total - (inv.amount_paid || 0)})">Record Payment</button>` : ''}
+        <button class="btn-outline btn-sm" onclick="openInvoicePrint('${inv.id}')">Print</button>
       </td>
     </tr>`).join('')}
   </tbody></table>`;
@@ -2185,6 +2380,363 @@ async function loadExpensesByVendor() {
     ${rows.map(r => `<tr><td>${esc(r.name)}</td><td class="num">${money(r.total)}</td></tr>`).join('')}
     <tr class="total-row"><td>Total</td><td class="num">${money(grand)}</td></tr>
   </tbody></table>`;
+}
+
+// ── Job Orders ──
+let _allJobOrders = [];
+let _joFilterStatus = 'all';
+
+async function loadJobOrders() {
+  const wrap = document.getElementById('jobOrdersTableWrap');
+  if (!requireCompany()) { wrap.innerHTML = '<div class="empty">Set up your company first.</div>'; return; }
+  wrap.innerHTML = '<div class="loading">Loading…</div>';
+  const { data, error } = await sb.from('bk_job_orders').select('*').eq('company_id', company.id).order('received_date', { ascending: false });
+  if (error) { wrap.innerHTML = `<div class="empty">${esc(error.message)}</div>`; return; }
+  _allJobOrders = data || [];
+  updateJobOrderNavBadge();
+  renderJobOrdersTable();
+}
+
+function updateJobOrderNavBadge() {
+  const active = _allJobOrders.filter(j => ['new','in_progress'].includes(j.status)).length;
+  const badge = document.getElementById('joNavBadge');
+  if (active > 0) { badge.textContent = active; badge.style.display = 'inline-block'; }
+  else { badge.style.display = 'none'; }
+}
+
+function filterJobOrders(status, btn) {
+  _joFilterStatus = status;
+  document.querySelectorAll('.jo-filter-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  renderJobOrdersTable();
+}
+
+function renderJobOrdersTable() {
+  const wrap = document.getElementById('jobOrdersTableWrap');
+  const rows = _joFilterStatus === 'all' ? _allJobOrders : _allJobOrders.filter(j => j.status === _joFilterStatus);
+  if (rows.length === 0) { wrap.innerHTML = '<div class="empty">No job orders found.</div>'; return; }
+  const priorityLabel = { low:'Low', normal:'Normal', high:'High', urgent:'Urgent' };
+  const statusBadge = { new:'badge-blue', in_progress:'badge-yellow', ready:'badge-purple', completed:'badge-green', archived:'badge-gray' };
+  const priorityColor = { low:'priority-low', normal:'priority-normal', high:'priority-high', urgent:'priority-urgent' };
+  const today = new Date(); today.setHours(0,0,0,0);
+  wrap.innerHTML = `<table><thead><tr>
+    <th>Job #</th><th>Customer</th><th>Description</th><th>Received</th><th>Due Date</th><th>Priority</th><th>Status</th><th></th>
+  </tr></thead><tbody>
+    ${rows.map(j => {
+      const due = j.due_date ? new Date(j.due_date) : null;
+      const overdue = due && due < today && !['completed','archived'].includes(j.status);
+      return `<tr>
+        <td><strong>${esc(j.job_number)}</strong></td>
+        <td><div>${esc(j.customer_name)}</div>${j.customer_phone ? `<div style="font-size:0.73rem;color:var(--soft)">${esc(j.customer_phone)}</div>` : ''}</td>
+        <td style="max-width:220px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${esc(j.description)}</td>
+        <td>${esc(j.received_date)}</td>
+        <td style="color:${overdue ? 'var(--red)' : 'inherit'};font-weight:${overdue ? '700' : '400'}">${j.due_date ? esc(j.due_date) + (overdue ? ' ⚠' : '') : '—'}</td>
+        <td><span class="priority-dot ${priorityColor[j.priority] || 'priority-normal'}"></span>${priorityLabel[j.priority] || j.priority}</td>
+        <td><span class="badge ${statusBadge[j.status] || 'badge-gray'}">${j.status.replace('_',' ')}</span></td>
+        <td style="white-space:nowrap">
+          <button class="btn-outline btn-sm" onclick="viewJobCard('${j.id}')">Job Card</button>
+          <button class="btn-outline btn-sm" onclick="openJobOrderModal('${j.id}')">Edit</button>
+        </td>
+      </tr>`;
+    }).join('')}
+  </tbody></table>`;
+}
+
+function openJobOrderModal(id) {
+  if (!requireCompany()) return;
+  const errEl = document.getElementById('joError');
+  errEl.style.display = 'none';
+  document.getElementById('jo-id').value = id || '';
+  const existing = id ? _allJobOrders.find(j => j.id === id) : null;
+  document.getElementById('jobOrderModalTitle').textContent = existing ? 'Edit Job Order' : 'New Job Order';
+  document.getElementById('jo-customer').value = existing?.customer_name || '';
+  document.getElementById('jo-phone').value = existing?.customer_phone || '';
+  document.getElementById('jo-email').value = existing?.customer_email || '';
+  document.getElementById('jo-priority').value = existing?.priority || 'normal';
+  document.getElementById('jo-description').value = existing?.description || '';
+  document.getElementById('jo-received').value = existing?.received_date || today();
+  document.getElementById('jo-duedate').value = existing?.due_date || '';
+  document.getElementById('jo-notes').value = existing?.notes || '';
+  document.getElementById('jo-status').value = existing?.status || 'new';
+  document.getElementById('jobOrderModal').hidden = false;
+}
+
+async function submitJobOrder() {
+  const errEl = document.getElementById('joError');
+  errEl.style.display = 'none';
+  const customer_name = val('jo-customer');
+  const description = val('jo-description');
+  const received_date = val('jo-received');
+  if (!customer_name || !description || !received_date) {
+    errEl.textContent = 'Customer name, description, and received date are required.';
+    errEl.style.display = 'block'; return;
+  }
+  const btn = document.getElementById('submitJobOrderBtn');
+  btn.disabled = true; btn.textContent = 'Saving…';
+  const id = document.getElementById('jo-id').value;
+  const payload = {
+    customer_name, description, received_date,
+    customer_phone: val('jo-phone') || null,
+    customer_email: val('jo-email') || null,
+    priority: val('jo-priority'),
+    due_date: val('jo-duedate') || null,
+    notes: val('jo-notes') || null,
+    status: val('jo-status'),
+  };
+  let error;
+  if (id) {
+    ({ error } = await sb.from('bk_job_orders').update({ ...payload, updated_at: new Date().toISOString() }).eq('id', id));
+  } else {
+    const joCount = _allJobOrders.length + 1;
+    const job_number = 'JO-' + String(joCount).padStart(4, '0');
+    ({ error } = await sb.from('bk_job_orders').insert({ ...payload, company_id: company.id, job_number }));
+  }
+  btn.disabled = false; btn.textContent = 'Save Job Order';
+  if (error) { errEl.textContent = error.message; errEl.style.display = 'block'; return; }
+  closeModal('jobOrderModal');
+  loadJobOrders();
+}
+
+function viewJobCard(id) {
+  const j = _allJobOrders.find(x => x.id === id);
+  if (!j) return;
+  const priorityLabel = { low:'Low', normal:'Normal', high:'High', urgent:'URGENT' };
+  const statusLabel = { new:'New', in_progress:'In Progress', ready:'Ready for Pickup', completed:'Completed', archived:'Archived' };
+  const priorityColor = { low:'#94a3b8', normal:'#60a5fa', high:'#fb923c', urgent:'#ef4444' };
+  document.getElementById('jobCardContent').innerHTML = `
+    <div class="job-card-view" id="jobCardPrint">
+      <div class="job-card-header">
+        <div>
+          <div class="job-card-no">${esc(j.job_number)}</div>
+          <div style="font-size:0.78rem;color:var(--soft);margin-top:2px">${company?.name || 'Business'}</div>
+        </div>
+        <div style="text-align:right">
+          <span class="badge" style="background:${priorityColor[j.priority] || '#60a5fa'}1a;color:${priorityColor[j.priority] || '#60a5fa'};font-size:0.78rem">${priorityLabel[j.priority] || j.priority}</span>
+          <div style="font-size:0.78rem;color:var(--soft);margin-top:6px">${statusLabel[j.status] || j.status}</div>
+        </div>
+      </div>
+      <div class="job-card-meta">
+        <div class="job-card-field"><label>Customer</label><span>${esc(j.customer_name)}</span></div>
+        <div class="job-card-field"><label>Phone</label><span>${j.customer_phone ? esc(j.customer_phone) : '—'}</span></div>
+        <div class="job-card-field"><label>Email</label><span>${j.customer_email ? esc(j.customer_email) : '—'}</span></div>
+        <div class="job-card-field"><label>Received</label><span>${esc(j.received_date)}</span></div>
+        <div class="job-card-field"><label>Due date</label><span style="${j.due_date ? '' : 'color:var(--soft)'}">${j.due_date ? esc(j.due_date) : 'Not set'}</span></div>
+        <div class="job-card-field"><label>Job number</label><span>${esc(j.job_number)}</span></div>
+      </div>
+      <div style="font-size:0.78rem;font-weight:700;text-transform:uppercase;letter-spacing:0.06em;color:var(--soft);margin-bottom:8px">Job Description</div>
+      <div class="job-card-desc">${esc(j.description).replace(/\n/g, '<br>')}</div>
+      ${j.notes ? `<div style="margin-top:16px"><div style="font-size:0.78rem;font-weight:700;text-transform:uppercase;letter-spacing:0.06em;color:var(--soft);margin-bottom:8px">Internal Notes</div><div class="job-card-desc" style="background:#fff8e1">${esc(j.notes).replace(/\n/g, '<br>')}</div></div>` : ''}
+      <div style="margin-top:24px;border-top:1px dashed var(--border);padding-top:14px;display:grid;grid-template-columns:1fr 1fr;gap:12px">
+        <div><div style="font-size:0.72rem;color:var(--soft);margin-bottom:4px">Signature (received by)</div><div style="height:40px;border-bottom:1px solid var(--text)"></div></div>
+        <div><div style="font-size:0.72rem;color:var(--soft);margin-bottom:4px">Date collected</div><div style="height:40px;border-bottom:1px solid var(--text)"></div></div>
+      </div>
+    </div>`;
+  document.getElementById('jobCardModal').hidden = false;
+}
+
+function printJobCard() {
+  const content = document.getElementById('jobCardContent').innerHTML;
+  const win = window.open('', '_blank', 'width=800,height=600');
+  win.document.write(`<!DOCTYPE html><html><head><title>Job Card</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+    <style>*{box-sizing:border-box;margin:0;padding:0}body{font-family:Inter,sans-serif;padding:20mm;color:#0e1c40}
+    .job-card-view{border:2px solid #e6eaf0;border-radius:10px;padding:24px}
+    .job-card-header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:18px;border-bottom:2px solid #0e1c40;padding-bottom:14px}
+    .job-card-no{font-size:1.5rem;font-weight:900}.job-card-meta{display:grid;grid-template-columns:1fr 1fr;gap:10px 24px;margin-bottom:18px}
+    .job-card-field label{font-size:0.62rem;font-weight:700;text-transform:uppercase;letter-spacing:0.06em;color:#7a8fb0;display:block;margin-bottom:2px}
+    .job-card-field span{font-size:0.85rem;font-weight:600}.job-card-desc{background:#f7f9fc;border-radius:8px;padding:12px;font-size:0.85rem;line-height:1.6}
+    .badge{display:inline-flex;align-items:center;font-size:0.72rem;font-weight:700;padding:3px 8px;border-radius:50px}
+    </style></head><body>${content}</body></html>`);
+  win.document.close();
+  win.focus();
+  setTimeout(() => { win.print(); win.close(); }, 500);
+}
+
+// ── Invoice Print ──
+async function openInvoicePrint(id) {
+  const { data: inv, error: invErr } = await sb.from('bk_invoices').select('*').eq('id', id).single();
+  if (invErr || !inv) { alert('Could not load invoice.'); return; }
+  const { data: lines } = await sb.from('bk_invoice_lines').select('*').eq('invoice_id', id).order('created_at');
+  const companyName = company?.name || 'Your Business';
+  const content = `
+    <div class="inv-print-template" id="invPrintTemplate">
+      <div class="inv-print-header">
+        <div><div class="inv-print-company">${esc(companyName)}<small>VAT Registered · Tax Invoice</small></div></div>
+        <div class="inv-print-title">
+          <h2>INVOICE</h2>
+          <div class="inv-num">${esc(inv.invoice_number)}</div>
+        </div>
+      </div>
+      <div class="inv-print-body">
+        <div class="inv-print-parties">
+          <div class="inv-print-party">
+            <h4>Billed To</h4>
+            <p>${esc(inv.customer_name)}${inv.customer_email ? '<br>' + esc(inv.customer_email) : ''}</p>
+          </div>
+          <div class="inv-print-party" style="text-align:right">
+            <h4>From</h4>
+            <p>${esc(companyName)}</p>
+          </div>
+        </div>
+        <div class="inv-print-dates">
+          <div><label>Issue Date</label><span>${esc(inv.issue_date)}</span></div>
+          ${inv.due_date ? `<div><label>Due Date</label><span>${esc(inv.due_date)}</span></div>` : ''}
+          <div><label>Status</label><span style="text-transform:capitalize">${esc(inv.status)}</span></div>
+        </div>
+        <div class="inv-print-lines">
+          <table>
+            <thead><tr><th>Description</th><th class="num">Qty</th><th class="num">Unit Price</th><th class="num">VAT %</th><th class="num">Line Total</th></tr></thead>
+            <tbody>
+              ${(lines || []).map(l => `<tr>
+                <td>${esc(l.description)}</td>
+                <td class="num">${l.quantity}</td>
+                <td class="num">${money(l.unit_price)}</td>
+                <td class="num">${l.vat_rate}%</td>
+                <td class="num">${money(l.line_total)}</td>
+              </tr>`).join('')}
+            </tbody>
+          </table>
+        </div>
+        <div class="inv-print-totals">
+          <table>
+            <tr><td>Subtotal</td><td class="num">${money(inv.subtotal)}</td></tr>
+            <tr><td>VAT (15%)</td><td class="num">${money(inv.vat_amount)}</td></tr>
+            <tr class="grand"><td><strong>Total</strong></td><td class="num"><strong>${money(inv.total)}</strong></td></tr>
+            ${inv.amount_paid > 0 ? `<tr><td style="color:var(--green)">Amount Paid</td><td class="num" style="color:var(--green)">${money(inv.amount_paid)}</td></tr>
+            <tr><td><strong>Balance Due</strong></td><td class="num"><strong>${money(inv.total - inv.amount_paid)}</strong></td></tr>` : ''}
+          </table>
+        </div>
+      </div>
+      <div class="inv-print-footer">Thank you for your business · Payment is due ${inv.due_date ? 'by ' + esc(inv.due_date) : 'on receipt'} · ${esc(companyName)}</div>
+    </div>`;
+  document.getElementById('invoicePrintContent').innerHTML = content;
+  document.getElementById('invoicePrintModal').hidden = false;
+}
+
+function printCurrentInvoice() {
+  const content = document.getElementById('invoicePrintContent').innerHTML;
+  const win = window.open('', '_blank', 'width=900,height=700');
+  win.document.write(`<!DOCTYPE html><html><head><title>Invoice</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+    <style>*{box-sizing:border-box;margin:0;padding:0}body{font-family:Inter,sans-serif;background:#f7f9fc}
+    .inv-print-template{border:1px solid #e6eaf0;border-radius:10px;overflow:hidden;max-width:760px;margin:20px auto;background:#fff}
+    .inv-print-header{background:#0e1c40;color:#fff;padding:28px 32px;display:flex;justify-content:space-between;align-items:flex-start}
+    .inv-print-company{font-size:1.4rem;font-weight:900}.inv-print-company small{display:block;font-size:0.68rem;font-weight:400;opacity:.6;margin-top:2px}
+    .inv-print-title{text-align:right}.inv-print-title h2{font-size:2rem;font-weight:900;opacity:.9}
+    .inv-num{font-size:0.9rem;color:#2ab3b3;font-weight:700;margin-top:4px}
+    .inv-print-body{padding:28px 32px}.inv-print-parties{display:grid;grid-template-columns:1fr 1fr;gap:24px;margin-bottom:24px}
+    .inv-print-party h4{font-size:0.62rem;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:#7a8fb0;margin-bottom:6px}
+    .inv-print-party p{font-size:0.88rem;font-weight:600;line-height:1.6}
+    .inv-print-dates{display:flex;gap:32px;margin-bottom:24px;padding:14px 0;border-top:1px solid #e6eaf0;border-bottom:1px solid #e6eaf0}
+    .inv-print-dates div label{font-size:0.62rem;font-weight:700;text-transform:uppercase;letter-spacing:0.06em;color:#7a8fb0;display:block}
+    .inv-print-dates div span{font-size:0.9rem;font-weight:700}
+    .inv-print-lines table{width:100%;border-collapse:collapse;font-size:0.85rem}
+    .inv-print-lines th{background:#f7f9fc;padding:9px 12px;font-size:0.62rem;font-weight:700;text-transform:uppercase;letter-spacing:0.06em;color:#7a8fb0;text-align:left}
+    .inv-print-lines td{padding:10px 12px;border-bottom:1px solid #e6eaf0}
+    .num{text-align:right;font-variant-numeric:tabular-nums}
+    .inv-print-totals{display:flex;justify-content:flex-end;margin-top:20px}
+    .inv-print-totals table{min-width:260px}.inv-print-totals td{padding:5px 12px;font-size:0.88rem}
+    .grand{font-size:1.1rem;font-weight:900;border-top:2px solid #0e1c40}
+    .inv-print-footer{background:#f7f9fc;padding:14px 32px;font-size:0.72rem;color:#7a8fb0;text-align:center;border-top:1px solid #e6eaf0}
+    @media print{body{background:#fff}.inv-print-template{border:none;max-width:100%;margin:0;border-radius:0}}
+    </style></head><body>${content}</body></html>`);
+  win.document.close();
+  win.focus();
+  setTimeout(() => { win.print(); win.close(); }, 500);
+}
+
+// ── Calendar ──
+let _calMode = 'received';
+let _calYear = new Date().getFullYear();
+let _calMonth = new Date().getMonth();
+let _calJobs = [];
+
+function switchCalTab(mode, el) {
+  _calMode = mode;
+  document.querySelectorAll('#section-calendar .subtab').forEach(t => t.classList.remove('active'));
+  el.classList.add('active');
+  renderCalendar();
+}
+
+async function loadCalendarSection() {
+  if (!requireCompany()) return;
+  const { data } = await sb.from('bk_job_orders').select('*').eq('company_id', company.id).neq('status','archived');
+  _calJobs = data || [];
+  _calYear = new Date().getFullYear();
+  _calMonth = new Date().getMonth();
+  renderCalendar();
+}
+
+function calPrev() {
+  _calMonth--;
+  if (_calMonth < 0) { _calMonth = 11; _calYear--; }
+  renderCalendar();
+}
+function calNext() {
+  _calMonth++;
+  if (_calMonth > 11) { _calMonth = 0; _calYear++; }
+  renderCalendar();
+}
+
+function renderCalendar() {
+  const wrap = document.getElementById('calGridWrap');
+  const MONTHS = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+  const DAYS = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+  document.getElementById('calMonthLabel').textContent = `${MONTHS[_calMonth]} ${_calYear}`;
+
+  const firstDay = new Date(_calYear, _calMonth, 1).getDay();
+  const daysInMonth = new Date(_calYear, _calMonth + 1, 0).getDate();
+  const daysInPrevMonth = new Date(_calYear, _calMonth, 0).getDate();
+  const todayStr = new Date().toISOString().slice(0, 10);
+
+  const eventsByDate = {};
+  _calJobs.forEach(j => {
+    const dateKey = _calMode === 'received' ? j.received_date : j.due_date;
+    if (!dateKey) return;
+    if (!eventsByDate[dateKey]) eventsByDate[dateKey] = [];
+    eventsByDate[dateKey].push(j);
+  });
+
+  let cells = '';
+  const totalCells = Math.ceil((firstDay + daysInMonth) / 7) * 7;
+
+  for (let i = 0; i < totalCells; i++) {
+    let day, dateStr, isCurrentMonth = true;
+    if (i < firstDay) {
+      day = daysInPrevMonth - firstDay + i + 1;
+      const m = String(_calMonth).padStart(2,'0');
+      const prevYear = _calMonth === 0 ? _calYear - 1 : _calYear;
+      const prevMonth = _calMonth === 0 ? 12 : _calMonth;
+      dateStr = `${prevYear}-${String(prevMonth).padStart(2,'0')}-${String(day).padStart(2,'0')}`;
+      isCurrentMonth = false;
+    } else if (i >= firstDay + daysInMonth) {
+      day = i - firstDay - daysInMonth + 1;
+      const nextYear = _calMonth === 11 ? _calYear + 1 : _calYear;
+      const nextMonth = _calMonth === 11 ? 1 : _calMonth + 2;
+      dateStr = `${nextYear}-${String(nextMonth).padStart(2,'0')}-${String(day).padStart(2,'0')}`;
+      isCurrentMonth = false;
+    } else {
+      day = i - firstDay + 1;
+      dateStr = `${_calYear}-${String(_calMonth + 1).padStart(2,'0')}-${String(day).padStart(2,'0')}`;
+    }
+
+    const events = eventsByDate[dateStr] || [];
+    const isToday = dateStr === todayStr;
+    const isPast = dateStr < todayStr;
+    cells += `<div class="cal-cell${!isCurrentMonth ? ' other-month' : ''}${isToday ? ' today' : ''}">
+      <div class="cal-date">${day}</div>
+      ${events.slice(0, 3).map(j => {
+        const cls = _calMode === 'received' ? 'cal-event-received' : (j.priority === 'urgent' || isPast ? 'cal-event-due urgent' : 'cal-event-due');
+        return `<div class="cal-event ${cls}" title="${j.customer_name}: ${j.description}" onclick="openJobOrderModal('${j.id}')">${esc(j.customer_name)}</div>`;
+      }).join('')}
+      ${events.length > 3 ? `<div style="font-size:0.65rem;color:var(--soft);padding:1px 4px">+${events.length - 3} more</div>` : ''}
+    </div>`;
+  }
+
+  wrap.innerHTML = `<div class="cal-grid">
+    ${DAYS.map(d => `<div class="cal-day-hdr">${d}</div>`).join('')}
+    ${cells}
+  </div>`;
 }
 </script>
 </body>
